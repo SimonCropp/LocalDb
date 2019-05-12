@@ -1,6 +1,6 @@
 <!--
 This file was generate by MarkdownSnippets.
-Source File: /readme.source.md
+Source File: /mdsource/readme.source.md
 To change this file edit the source file and then re-run the generation using either the dotnet global tool (https://github.com/SimonCropp/MarkdownSnippets#markdownsnippetstool) or using the api (https://github.com/SimonCropp/MarkdownSnippets#running-as-a-unit-test).
 -->
 # EfLocalDb
@@ -14,7 +14,7 @@ Provides a wrapper around the [LocalDB](https://docs.microsoft.com/en-us/sql/dat
 ### Why not [InMemory](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
 
  * Difficult to debug the state
-   When debugging a test, or looking at the final state, it is helpful to be able to interrogate the Database using tooling
+   When debugging a test, or looking at the resultant state, it is helpful to be able to interrogate the Database using tooling
  * InMemory is implemented with shared mutable state between instance. This results in strange behaviors when running tests in parallel, for example when [creating keys](https://github.com/aspnet/EntityFrameworkCore/issues/6872).
  * InMemory is not intended to be an alternative to SqlServer, and as such it does not support the full suite of SqlServer features. For example:
     * Does not support [Timestamp/row version](https://docs.microsoft.com/en-us/ef/core/modeling/concurrency#timestamprow-version).
