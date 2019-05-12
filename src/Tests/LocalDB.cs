@@ -1,14 +1,14 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
-public class LocalDB
+public class LocalDB<T>
 {
     static LocalDbWrapper localDbWrapper;
     
-    public static void Init(string key)
+    public static void Init(string key, Action<SqlConnection> buildTemplate)
     {
         var dataDirectory = DataDirectoryFinder.Find(key);
         localDbWrapper = new LocalDbWrapper(key, dataDirectory);
@@ -21,8 +21,7 @@ public class LocalDB
         using (var connection = new SqlConnection(connectionString))
         {
             connection.Open();
-
-            Migrate(connection);
+            buildTemplate(connection);
         }
 
         localDbWrapper.Detach("template");
@@ -33,25 +32,6 @@ public class LocalDB
         return localDbWrapper.CreateDatabaseFromTemplate(dbName, "template");
     }
 
-    static void Migrate(SqlConnection connection)
-    {
-        var builder = new DbContextOptionsBuilder<TestDataContext>();
-        builder.ConfigureWarnings(warnings => warnings.Throw(CoreEventId.IncludeIgnoredWarning));
-        builder.UseSqlServer(connection);
-        //TODO:
-        //optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
-        using (var dataContext = new TestDataContext(builder.Options))
-        {
-            dataContext.Database.EnsureCreated();
-            //TODO:
-            //dataContext.Database.Migrate();
-        }
-        //TODO:
-        // TrackChanges.EnableChangeTrackingOnDb(connection);
-    }
-
-
-
     public string ConnectionString;
 
     /// <summary>
@@ -60,7 +40,7 @@ public class LocalDB
     /// <param name="caller">Normally pass this </param>
     /// <param name="suffix">For Xunit theories add some text based on the inline data to make the db name unique</param>
     /// <param name="memberName">do not use, will default to the caller method name is used</param>
-    public static async Task<LocalDB> Build(object caller, string suffix = null, [CallerMemberName] string memberName = null)
+    public static async Task<LocalDB<TestDataContext>> Build(object caller, string suffix = null, [CallerMemberName] string memberName = null)
     {
         var type = caller.GetType();
         var dbName = $"{type.Name}_{memberName}";
@@ -69,7 +49,7 @@ public class LocalDB
             dbName = $"{dbName}_{suffix}";
         }
 
-        return new LocalDB
+        return new LocalDB<TestDataContext>
         {
             ConnectionString = await BuildContext(dbName)
         };
