@@ -27,6 +27,26 @@ class LocalDbWrapper
             command.ExecuteNonQuery();
         }
     }
+    public void Purge()
+    {
+        using (var connection = new SqlConnection(masterConnection))
+        using (var command = connection.CreateCommand())
+        {
+            connection.Open();
+            command.CommandText = @"DECLARE @command nvarchar(max)
+SET @command = ''
+
+SELECT  @command = @command
++ 'ALTER DATABASE [' + [name] + ']  SET single_user with rollback immediate;'+CHAR(13)+CHAR(10)
++ 'DROP DATABASE [' + [name] +'];'+CHAR(13)+CHAR(10)
+FROM  [master].[sys].[databases] 
+ where [name] not in ( 'master', 'model', 'msdb', 'tempdb');
+
+SELECT @command
+EXECUTE sp_executesql @command";
+            command.ExecuteNonQuery();
+        }
+    }
 
     public async Task<string> CreateDatabaseFromTemplate(string name, string templateName)
     {
@@ -97,9 +117,9 @@ log on
         }
         return $"Data Source=(LocalDb)\\{instance};Database=template; Integrated Security=True";
     }
-    public void CleanAndRestart()
+
+    public void Start()
     {
-        Clean();
         RunLocalDbCommand($"create \"{instance}\"");
         RunLocalDbCommand($"start \"{instance}\"");
     }
@@ -108,6 +128,11 @@ log on
     {
         RunLocalDbCommand($"stop \"{instance}\"");
         RunLocalDbCommand($"delete \"{instance}\"");
+        DeleteFiles();
+    }
+
+    public void DeleteFiles()
+    {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
             File.Delete(file);

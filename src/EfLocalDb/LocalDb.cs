@@ -24,7 +24,9 @@ namespace EFLocalDb
             localDbWrapper = new LocalDbWrapper(scope, dataDirectory);
 
             LocalDb<T>.constructInstance = constructInstance;
-            localDbWrapper.CleanAndRestart();
+            localDbWrapper.Start();
+            localDbWrapper.Purge();
+            localDbWrapper.DeleteFiles();
 
             var connectionString = localDbWrapper.CreateDatabase("template");
             // needs to be pooling=false so that we can immediately detach and use the files
