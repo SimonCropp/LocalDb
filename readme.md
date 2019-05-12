@@ -10,7 +10,26 @@ To change this file edit the source file and then re-run the generation using ei
 ### Usage
 
 
-
+<!-- snippet: ModuleInitializer -->
+```cs
+static class ModuleInitializer
+{
+    public static void Initialize()
+    {
+        LocalDb<TheDataContext>.Register(
+            (connection, optionsBuilder) =>
+            {
+                using (var dataContext = new TheDataContext(optionsBuilder.Options))
+                {
+                    dataContext.Database.EnsureCreated();
+                }
+            },
+            builder => new TheDataContext(builder.Options));
+    }
+}
+```
+<sup>[snippet source](/src/Tests/ModuleInitializerSnippet.cs#L5-L22)</sup>
+<!-- endsnippet -->
 
 
 ## Icon

@@ -5,7 +5,7 @@
 ### Usage
 
 
-
+snippet: ModuleInitializer
 
 
 ## Icon
