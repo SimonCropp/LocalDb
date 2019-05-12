@@ -323,7 +323,9 @@ namespace EFLocalDb
         /// <summary>
         ///   Build DB with a name based on the calling Method
         /// </summary>
-        /// <param name="suffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
+        /// <param name="suffix">Text based on the inline data to make the db name unique.
+        /// Used for parameterized tests that need to run in paralel (eg Xunit [Theory] or XUnit [TestCase]).
+        /// </param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
         public Task<LocalDb<T>> LocalDb(
             string suffix = null,
@@ -334,7 +336,7 @@ namespace EFLocalDb
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/LocalDbTestBase.cs#L1-L22)</sup>
+<sup>[snippet source](/src/EfLocalDb/LocalDbTestBase.cs#L1-L24)</sup>
 ```cs
 using System.Threading.Tasks;
 using EFLocalDb;
@@ -438,7 +440,7 @@ public class Tests:
     }
 }
 ```
-<sup>[snippet source](/readme.md#L345-L388)</sup>
+<sup>[snippet source](/readme.md#L347-L390)</sup>
 ```cs
 public class MyTestBase:
     LocalDbTestBase<TheDbContext>
