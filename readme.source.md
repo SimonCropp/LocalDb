@@ -59,7 +59,7 @@ The signature is as follows:
 
 snippet: BuildLocalDbSignature
 
-The database name is the derives as follows:
+The database name is the derived as follows:
 
 snippet: DeriveName
 

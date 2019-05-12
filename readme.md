@@ -105,7 +105,7 @@ public static Task<LocalDb<TDbContext>> Build(
 <sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L99-L112)</sup>
 <!-- endsnippet -->
 
-The database name is the derives as follows:
+The database name is the derived as follows:
 
 <!-- snippet: DeriveName -->
 ```cs
