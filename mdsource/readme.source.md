@@ -1,6 +1,6 @@
 # EfLocalDb
 
-Provides a wrapper around the [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests that require [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
+Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests that require [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
 
 ## Why
