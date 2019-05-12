@@ -17,6 +17,10 @@ public class Tests
             dataContext.Add(entity);
             dataContext.SaveChanges();
         }
+        using (var dataContext = localDb.NewDataContext())
+        {
+            Assert.Single(dataContext.TestEntities);
+        }
     }
 
     [Fact]
@@ -32,6 +36,10 @@ public class Tests
             dataContext.Add(entity);
             dataContext.SaveChanges();
         }
+        using (var dataContext = localDb.NewDataContext())
+        {
+            Assert.Single(dataContext.TestEntities);
+        }
     }
 
     [Fact]
@@ -46,6 +54,10 @@ public class Tests
             };
             dataContext.Add(entity);
             dataContext.SaveChanges();
+        }
+        using (var dataContext = localDb.NewDataContext())
+        {
+            Assert.Single(dataContext.TestEntities);
         }
     }
 }

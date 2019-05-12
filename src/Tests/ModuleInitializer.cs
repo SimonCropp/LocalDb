@@ -13,7 +13,7 @@ static class ModuleInitializer
                 }
             },
             builder => new ScopedDataContext(builder.Options),
-            scopeSuffix:"theSuffix");
+            scopeSuffix: "theSuffix");
         LocalDb<TestDataContext>.Register(
             (connection, optionsBuilder) =>
             {
