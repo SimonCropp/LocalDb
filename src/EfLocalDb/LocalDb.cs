@@ -96,6 +96,12 @@ namespace EFLocalDb
 
             #endregion
 
+            return await Build(dbName);
+        }
+
+        public static async Task<LocalDb<T>> Build(string dbName)
+        {
+            Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             return new LocalDb<T>
             {
                 ConnectionString = await BuildContext(dbName)

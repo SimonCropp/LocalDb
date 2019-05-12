@@ -119,6 +119,11 @@ using (var dbContext = localDb.NewDbContext())
 {
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L14-L17)</sup>
+```cs
+using (var dbContext = localDb.NewDbContext())
+{
+```
+<sup>[snippet source](/src/Snippets/Tests.cs#L37-L40)</sup>
 <!-- endsnippet -->
 
 

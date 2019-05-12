@@ -54,6 +54,10 @@ The database name is the derives as follows:
 
 snippet: DeriveName
 
+There is also an override that takes an explicit dbName:
+
+snippet: WithDbName
+
 
 #### Building and using DbContexts
 

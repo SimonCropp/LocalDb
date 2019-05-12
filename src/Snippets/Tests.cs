@@ -5,16 +5,23 @@ using Xunit;
 public class Tests
 {
     #region Test
+
     [Fact]
     public async Task TheTest()
     {
         #region BuildLocalDbInstance
+
         var localDb = await LocalDb<TheDbContext>.Build(this);
+
         #endregion
+
         #region BuildDbContext
+
         using (var dbContext = localDb.NewDbContext())
         {
+
             #endregion
+
             var entity = new TestEntity
             {
                 Property = "prop"
@@ -22,10 +29,37 @@ public class Tests
             dbContext.Add(entity);
             dbContext.SaveChanges();
         }
+
         using (var dbContext = localDb.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
     }
+
     #endregion
+
+    [Fact]
+    public async Task TheTestWithDbName()
+    {
+        #region WithDbName
+
+        var localDb = await LocalDb<TheDbContext>.Build("TheTestWithDbName");
+
+        #endregion
+
+        using (var dbContext = localDb.NewDbContext())
+        {
+            var entity = new TestEntity
+            {
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
+
+        using (var dbContext = localDb.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
+    }
 }

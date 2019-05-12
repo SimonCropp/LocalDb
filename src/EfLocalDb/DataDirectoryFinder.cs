@@ -13,13 +13,13 @@ static class DataDirectoryFinder
 
         return Path.Combine(dataRoot, scope);
     }
-
-    private static string FindDataRoot()
+    
+    static string FindDataRoot()
     {
-        var efLocalDbEnv = Environment.GetEnvironmentVariable("LocalDBData");
-        if (efLocalDbEnv != null)
+        var localDbEnv = Environment.GetEnvironmentVariable("LocalDBData");
+        if (localDbEnv != null)
         {
-            return efLocalDbEnv;
+            return localDbEnv;
         }
 
         var tfsAgentDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
