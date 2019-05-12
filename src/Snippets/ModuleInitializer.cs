@@ -8,15 +8,15 @@ namespace Snippet
     {
         public static void Initialize()
         {
-            LocalDb<TheDataContext>.Register(
+            LocalDb<TheDbContext>.Register(
                 (connection, optionsBuilder) =>
                 {
-                    using (var dataContext = new TheDataContext(optionsBuilder.Options))
+                    using (var dbContext = new TheDbContext(optionsBuilder.Options))
                     {
-                        dataContext.Database.EnsureCreated();
+                        dbContext.Database.EnsureCreated();
                     }
                 },
-                builder => new TheDataContext(builder.Options));
+                builder => new TheDbContext(builder.Options));
         }
     }
     #endregion

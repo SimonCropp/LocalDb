@@ -4,33 +4,33 @@ static class ModuleInitializer
 {
     public static void Initialize()
     {
-        LocalDb<ScopedDataContext>.Register(
+        LocalDb<ScopedDbContext>.Register(
             (connection, optionsBuilder) =>
             {
-                using (var dataContext = new ScopedDataContext(optionsBuilder.Options))
+                using (var dbContext = new ScopedDbContext(optionsBuilder.Options))
                 {
-                    dataContext.Database.EnsureCreated();
+                    dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new ScopedDataContext(builder.Options),
+            builder => new ScopedDbContext(builder.Options),
             scopeSuffix: "theSuffix");
-        LocalDb<TestDataContext>.Register(
+        LocalDb<TestDbContext>.Register(
             (connection, optionsBuilder) =>
             {
-                using (var dataContext = new TestDataContext(optionsBuilder.Options))
+                using (var dbContext = new TestDbContext(optionsBuilder.Options))
                 {
-                    dataContext.Database.EnsureCreated();
+                    dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new TestDataContext(builder.Options));
-        LocalDb<SecondaryDataContext>.Register(
+            builder => new TestDbContext(builder.Options));
+        LocalDb<SecondaryDbContext>.Register(
             (connection, optionsBuilder) =>
             {
-                using (var dataContext = new SecondaryDataContext(optionsBuilder.Options))
+                using (var dbContext = new SecondaryDbContext(optionsBuilder.Options))
                 {
-                    dataContext.Database.EnsureCreated();
+                    dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new SecondaryDataContext(builder.Options));
+            builder => new SecondaryDbContext(builder.Options));
     }
 }
