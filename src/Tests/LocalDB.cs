@@ -3,12 +3,14 @@ using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 public class LocalDB<T>
+    where T: DbContext
 {
     static LocalDbWrapper localDbWrapper;
-    
-    public static void Init(string key, Action<SqlConnection> buildTemplate)
+
+    public static void Init(string key, Action<SqlConnection, DbContextOptionsBuilder<T>> buildTemplate)
     {
         var dataDirectory = DataDirectoryFinder.Find(key);
         localDbWrapper = new LocalDbWrapper(key, dataDirectory);
@@ -17,11 +19,15 @@ public class LocalDB<T>
 
         var connectionString = localDbWrapper.CreateDatabase("template");
         // needs to be pooling=false so that we can immediately detach and use the files
-        connectionString+= ";Pooling=false";
+        connectionString += ";Pooling=false";
         using (var connection = new SqlConnection(connectionString))
         {
             connection.Open();
-            buildTemplate(connection);
+
+            var builder = new DbContextOptionsBuilder<T>();
+            builder.ConfigureWarnings(warnings => warnings.Throw(CoreEventId.IncludeIgnoredWarning));
+            builder.UseSqlServer(connection);
+            buildTemplate(connection, builder);
         }
 
         localDbWrapper.Detach("template");
@@ -40,7 +46,7 @@ public class LocalDB<T>
     /// <param name="caller">Normally pass this </param>
     /// <param name="suffix">For Xunit theories add some text based on the inline data to make the db name unique</param>
     /// <param name="memberName">do not use, will default to the caller method name is used</param>
-    public static async Task<LocalDB<TestDataContext>> Build(object caller, string suffix = null, [CallerMemberName] string memberName = null)
+    public static async Task<LocalDB<T>> Build(object caller, string suffix = null, [CallerMemberName] string memberName = null)
     {
         var type = caller.GetType();
         var dbName = $"{type.Name}_{memberName}";
@@ -49,7 +55,7 @@ public class LocalDB<T>
             dbName = $"{dbName}_{suffix}";
         }
 
-        return new LocalDB<TestDataContext>
+        return new LocalDB<T>
         {
             ConnectionString = await BuildContext(dbName)
         };
