@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -66,7 +67,7 @@ for attach;
         return $"Data Source=(LocalDb)\\{key};Database={dbName}; Integrated Security=True";
     }
 
-    public void CreateDatabase(string name)
+    public string CreateDatabase(string name)
     {
         var dataFile = Path.Combine(dataDirectory, name + ".mdf");
         var logFile = Path.Combine(dataDirectory, name + ".ldf");
@@ -93,6 +94,27 @@ log on
 ";
             connection.Open();
             command.ExecuteNonQuery();
+        }
+        return $"Data Source=(LocalDb)\\{key};Database=template; Integrated Security=True";
+    }
+    public void ResetLocalDb()
+    {
+        RunLocalDbCommand($"stop \"{key}\"");
+        RunLocalDbCommand($"delete \"{key}\"");
+        RunLocalDbCommand($"create \"{key}\"");
+        RunLocalDbCommand($"start \"{key}\"");
+
+        foreach (var file in Directory.EnumerateFiles(dataDirectory))
+        {
+            File.Delete(file);
+        }
+    }
+
+    static void RunLocalDbCommand(string command)
+    {
+        using (var start = Process.Start("sqllocaldb", command))
+        {
+            start.WaitForExit();
         }
     }
 }

@@ -7,30 +7,21 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 public static class LocalDBContextBuilder
 {
-    static string dataDirectory;
-    static string templateDataFile;
-    static string templateLogFile;
-    static string key;
-    
     static LocalDbWrapper localDbWrapper;
 
     public static void Init(string key)
     {
-        LocalDBContextBuilder.key = key;
-
-        dataDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
+        var dataDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
         dataDirectory = dataDirectory ?? Environment.GetEnvironmentVariable("LocalDBData");
         dataDirectory = dataDirectory ?? Path.GetTempPath();
         dataDirectory = Path.Combine(dataDirectory, key);
         localDbWrapper = new LocalDbWrapper(key, dataDirectory);
 
-        templateDataFile = Path.Combine(dataDirectory, "template.mdf");
-        templateLogFile = Path.Combine(dataDirectory, "template.ldf");
-        LocalDbCommands.ResetLocalDb(key,dataDirectory);
+        localDbWrapper.ResetLocalDb();
 
-        localDbWrapper.CreateDatabase("template");
+        var connectionString = localDbWrapper.CreateDatabase("template");
         // needs to be pooling=false so that we can immediately detach and use the files
-        var connectionString = $"Data Source=(LocalDb)\\{key};Database=template; Integrated Security=True;Pooling=false";
+        connectionString+= ";Pooling=false";
         using (var connection = new SqlConnection(connectionString))
         {
             connection.Open();
@@ -38,44 +29,12 @@ public static class LocalDBContextBuilder
             Migrate(connection);
         }
 
-        localDbWrapper.Detach( "template");
+        localDbWrapper.Detach("template");
     }
 
-    public static async Task<string> BuildContext(string dbName)
+    public static Task<string> BuildContext(string dbName)
     {
-        var dbFilePath = Path.Combine(dataDirectory, $"{dbName}.mdf");
-        var dbLogPath = Path.Combine(dataDirectory, $"{dbName}.ldf");
-
-        File.Copy(templateDataFile, dbFilePath);
-        File.Copy(templateLogFile, dbLogPath);
-
-        using (var connection = new SqlConnection(localDbWrapper.MasterConnection))
-        using (var command = connection.CreateCommand())
-        {
-            command.CommandText = $@"
-create database [{dbName}] on
-(
-    name = [{dbName}],
-    filename = '{dbFilePath}',
-    size = 10MB,
-    maxSize = 10GB,
-    fileGrowth = 5MB
-)
-log on
-(
-    name = [{dbName}_log],
-    filename = '{dbLogPath}',
-    size = 10MB,
-    maxSize = 10GB,
-    fileGrowth = 5MB
-)
-for attach;
-";
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-        }
-
-        return $"Data Source=(LocalDb)\\{key};Database={dbName}; Integrated Security=True";
+       return localDbWrapper.CreateDatabaseFromTemplate(dbName, "template");
     }
 
     static void Migrate(SqlConnection connection)
