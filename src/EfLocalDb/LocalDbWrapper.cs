@@ -53,12 +53,9 @@ EXECUTE sp_executesql @command";
     public async Task<string> CreateDatabaseFromTemplate(string name, string templateName)
     {
         var dataFile = Path.Combine(directory, $"{name}.mdf");
-        var logFile = Path.Combine(directory, $"{name}.ldf");
         var templateDataFile = Path.Combine(directory, templateName + ".mdf");
-        var templateLogFile = Path.Combine(directory, templateName + ".ldf");
 
         File.Copy(templateDataFile, dataFile);
-        File.Copy(templateLogFile, logFile);
 
         using (var connection = new SqlConnection(masterConnection))
         using (var command = connection.CreateCommand())
@@ -68,14 +65,6 @@ create database [{name}] on
 (
     name = [{name}],
     filename = '{dataFile}',
-    size = 10MB,
-    maxSize = 10GB,
-    fileGrowth = 5MB
-)
-log on
-(
-    name = [{name}_log],
-    filename = '{logFile}',
     size = 10MB,
     maxSize = 10GB,
     fileGrowth = 5MB
@@ -92,7 +81,6 @@ for attach;
     public string CreateDatabase(string name)
     {
         var dataFile = Path.Combine(directory, name + ".mdf");
-        var logFile = Path.Combine(directory, name + ".ldf");
         using (var connection = new SqlConnection(masterConnection))
         using (var command = connection.CreateCommand())
         {
@@ -101,14 +89,6 @@ create database [{name}] on
 (
     name = [{name}],
     filename = '{dataFile}',
-    size = 10MB,
-    maxSize = 10GB,
-    fileGrowth = 5MB
-)
-log on
-(
-    name = [{name}_log],
-    filename = '{logFile}',
     size = 10MB,
     maxSize = 10GB,
     fileGrowth = 5MB
