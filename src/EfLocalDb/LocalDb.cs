@@ -18,18 +18,11 @@ namespace EFLocalDb
             Func<DbContextOptionsBuilder<T>, T> constructInstance,
             string scopeSuffix = null)
         {
-            string scope;
-            if (scopeSuffix == null)
-            {
-                scope = typeof(T).Name;
-            }
-            else
-            {
-                scope = typeof(T).Name + "_" + scopeSuffix;
-            }
+            var scope = GetScope(scopeSuffix);
 
             var dataDirectory = DataDirectoryFinder.Find(scope);
             localDbWrapper = new LocalDbWrapper(scope, dataDirectory);
+
             LocalDb<T>.constructInstance = constructInstance;
             localDbWrapper.CleanAndRestart();
 
@@ -47,6 +40,16 @@ namespace EFLocalDb
             }
 
             localDbWrapper.Detach("template");
+        }
+
+        static string GetScope(string scopeSuffix)
+        {
+            if (scopeSuffix == null)
+            {
+                return typeof(T).Name;
+            }
+
+            return typeof(T).Name + "_" + scopeSuffix;
         }
 
         public static void Cleanup()
