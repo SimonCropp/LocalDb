@@ -1,8 +1,10 @@
-﻿static class ModuleInitializer
+﻿using EFLocalDb;
+
+static class ModuleInitializer
 {
     public static void Initialize()
     {
-        LocalDB<TestDataContext>.Init(
+        LocalDb<TestDataContext>.Init(
             "Foo",
             (connection, optionsBuilder) =>
             {
