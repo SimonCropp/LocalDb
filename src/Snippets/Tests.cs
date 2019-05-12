@@ -19,9 +19,7 @@ public class Tests
 
         using (var dbContext = localDb.NewDbContext())
         {
-
             #endregion
-
             var entity = new TestEntity
             {
                 Property = "prop"

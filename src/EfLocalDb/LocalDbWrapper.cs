@@ -27,13 +27,15 @@ class LocalDbWrapper
             command.ExecuteNonQuery();
         }
     }
+
     public void Purge()
     {
         using (var connection = new SqlConnection(masterConnection))
         using (var command = connection.CreateCommand())
         {
             connection.Open();
-            command.CommandText = @"DECLARE @command nvarchar(max)
+            command.CommandText = @"
+DECLARE @command nvarchar(max)
 SET @command = ''
 
 SELECT  @command = @command

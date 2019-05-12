@@ -2,7 +2,9 @@
 
 Provides a wrapper around the [SQL Server Express LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests that require Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
+
 ## Why
+
 
 ### Why not [InMemory](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
 
@@ -11,10 +13,10 @@ Provides a wrapper around the [SQL Server Express LocalDB](https://docs.microsof
  * InMemory is implemented with shared mutable state between instance. This results in strange behaviors when running tests in parallel, for example when [creating keys](https://github.com/aspnet/EntityFrameworkCore/issues/6872).
  * InMemory is not intended to be an alternative to SqlServer, and as such it does not support the full suite of SqlServer features. For example:
     * Does not support [Timestamp/row version](https://docs.microsoft.com/en-us/ef/core/modeling/concurrency#timestamprow-version).
-    * [Does not validate constainnts](https://github.com/aspnet/EntityFrameworkCore/issues/2166).
+    * [Does not validate constraints](https://github.com/aspnet/EntityFrameworkCore/issues/2166).
 
 
-## Why not SQL Express or full SQL Server
+### Why not SQL Express or full SQL Server
 
  * Control over file location. LocalDB connections support AttachDbFileName property, which allows developers to specify a database file location. LocalDB will attach the specified database file and the connection will be made to it. This allows database files to be stored in a temporary location, and cleaned up, as required by tests.
  * No installed service is required.  Processes are started and stopped automatically when needed.
@@ -25,6 +27,13 @@ References:
 
  * [Which Edition of SQL Server is Best for Development Work?](https://www.red-gate.com/simple-talk/sql/sql-development/edition-sql-server-best-development-work/#8)
  * [Introducing LocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
+
+
+## The NuGet package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+
+https://nuget.org/packages/EfLocalDb/
+
+    PM> Install-Package EfLocalDb
 
 
 ## Usage
@@ -102,6 +111,18 @@ snippet: ModuleInitializer
 
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
 
+
+### LocalDbTestBase
+
+There is a helper class `LocalDbTestBase`:
+
+snippet: LocalDbTestBase.cs
+
+`LocalDbTestBase` simplifies the construction of the LocalDb instance.
+
+It can be used in combination with any of the above initialization methods. For example using a Static constructor in test base:
+
+snippet: LocalDbTestBase
 
 
 ## Icon

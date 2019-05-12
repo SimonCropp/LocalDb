@@ -1,20 +1,20 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using EFLocalDb;
 using Xunit;
 
-namespace TestBase
+namespace LocalDbTestBase
 {
-    #region TestBase
-
-    public class TestBase
+    #region LocalDbTestBase
+    
+    public class MyTestBase:
+        LocalDbTestBase<TheDbContext>
     {
-        static TestBase()
+        static MyTestBase()
         {
             LocalDb<TheDbContext>.Register(
-                (connection, builder) =>
+                (connection, optionsBuilder) =>
                 {
-                    using (var dbContext = new TheDbContext(builder.Options))
+                    using (var dbContext = new TheDbContext(optionsBuilder.Options))
                     {
                         dbContext.Database.EnsureCreated();
                     }
@@ -24,12 +24,12 @@ namespace TestBase
     }
 
     public class Tests:
-        TestBase
+        MyTestBase
     {
         [Fact]
         public async Task Test()
         {
-            var localDb = await LocalDb<TheDbContext>.Build(this);
+            var localDb = await LocalDb();
             using (var dbContext = localDb.NewDbContext())
             {
                 var entity = new TestEntity
