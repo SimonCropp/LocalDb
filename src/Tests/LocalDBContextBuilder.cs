@@ -10,18 +10,19 @@ public static class LocalDBContextBuilder
     static string dataDirectory;
     static string templateDataFile;
     static string templateLogFile;
-    static string masterConnection;
     static string key;
+    
+    static LocalDbWrapper localDbWrapper;
 
     public static void Init(string key)
     {
         LocalDBContextBuilder.key = key;
-        masterConnection = $"Data Source=(LocalDb)\\{key};Database=master; Integrated Security=True";
+
         dataDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
         dataDirectory = dataDirectory ?? Environment.GetEnvironmentVariable("LocalDBData");
         dataDirectory = dataDirectory ?? Path.GetTempPath();
         dataDirectory = Path.Combine(dataDirectory, key);
-        Directory.CreateDirectory(dataDirectory);
+        localDbWrapper = new LocalDbWrapper(key, dataDirectory);
 
         templateDataFile = Path.Combine(dataDirectory, "template.mdf");
         templateLogFile = Path.Combine(dataDirectory, "template.ldf");
@@ -42,7 +43,7 @@ public static class LocalDBContextBuilder
 
     static void Detach(string dbName)
     {
-        using (var connection = new SqlConnection(masterConnection))
+        using (var connection = new SqlConnection(localDbWrapper.MasterConnection))
         using (var command = connection.CreateCommand())
         {
             connection.Open();
@@ -59,7 +60,7 @@ public static class LocalDBContextBuilder
         File.Copy(templateDataFile, dbFilePath);
         File.Copy(templateLogFile, dbLogPath);
 
-        using (var connection = new SqlConnection(masterConnection))
+        using (var connection = new SqlConnection(localDbWrapper.MasterConnection))
         using (var command = connection.CreateCommand())
         {
             command.CommandText = $@"
@@ -107,7 +108,7 @@ for attach;
 
     static void RecreateTemplateDatabase()
     {
-        using (var connection = new SqlConnection(masterConnection))
+        using (var connection = new SqlConnection(localDbWrapper.MasterConnection))
         using (var command = connection.CreateCommand())
         {
             command.CommandText = $@"
