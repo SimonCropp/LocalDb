@@ -337,110 +337,13 @@ namespace EFLocalDb
 }
 ```
 <sup>[snippet source](/src/EfLocalDb/LocalDbTestBase.cs#L1-L24)</sup>
-```cs
-using System.Threading.Tasks;
-using EFLocalDb;
-using Xunit;
-
-namespace LocalDbTestBase
-{
-    #region LocalDbTestBase
-    
-    public class MyTestBase:
-        LocalDbTestBase<TheDbContext>
-    {
-        static MyTestBase()
-        {
-            LocalDb<TheDbContext>.Register(
-                (connection, optionsBuilder) =>
-                {
-                    using (var dbContext = new TheDbContext(optionsBuilder.Options))
-                    {
-                        dbContext.Database.EnsureCreated();
-                    }
-                },
-                builder => new TheDbContext(builder.Options));
-        }
-    }
-
-    public class Tests:
-        MyTestBase
-    {
-        [Fact]
-        public async Task Test()
-        {
-            var localDb = await LocalDb();
-            using (var dbContext = localDb.NewDbContext())
-            {
-                var entity = new TestEntity
-                {
-                    Property = "prop"
-                };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
-            }
-
-            using (var dbContext = localDb.NewDbContext())
-            {
-                Assert.Single(dbContext.TestEntities);
-            }
-        }
-    }
-
-    #endregion
-}
-```
-<sup>[snippet source](/src/Snippets/LocalDbTestBase.cs#L1-L51)</sup>
 <!-- endsnippet -->
 
 `LocalDbTestBase` simplifies the construction of the LocalDb instance.
 
 It can be used in combination with any of the above initialization methods. For example using a Static constructor in test base:
 
-<!-- snippet: LocalDbTestBase -->
-```md
-public class MyTestBase:
-    LocalDbTestBase<TheDbContext>
-{
-    static MyTestBase()
-    {
-        LocalDb<TheDbContext>.Register(
-            (connection, optionsBuilder) =>
-            {
-                using (var dbContext = new TheDbContext(optionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            builder => new TheDbContext(builder.Options));
-    }
-}
-
-public class Tests:
-    MyTestBase
-{
-    [Fact]
-    public async Task Test()
-    {
-        var localDb = await LocalDb();
-        using (var dbContext = localDb.NewDbContext())
-        {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
-
-        using (var dbContext = localDb.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
-        }
-    }
-}
-```
-<sup>[snippet source](/readme.md#L347-L390)</sup>
+<!-- snippet: LocalDbTestBaseUsage -->
 ```cs
 public class MyTestBase:
     LocalDbTestBase<TheDbContext>
@@ -483,7 +386,7 @@ public class Tests:
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/LocalDbTestBase.cs#L7-L50)</sup>
+<sup>[snippet source](/src/Snippets/LocalDbTestBaseUsage.cs#L7-L50)</sup>
 <!-- endsnippet -->
 
 

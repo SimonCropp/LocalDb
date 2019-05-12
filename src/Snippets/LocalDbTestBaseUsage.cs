@@ -2,9 +2,9 @@
 using EFLocalDb;
 using Xunit;
 
-namespace LocalDbTestBase
+namespace LocalDbTestBaseUsage
 {
-    #region LocalDbTestBase
+    #region LocalDbTestBaseUsage
     
     public class MyTestBase:
         LocalDbTestBase<TheDbContext>

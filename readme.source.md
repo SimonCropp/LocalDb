@@ -122,7 +122,7 @@ snippet: LocalDbTestBase.cs
 
 It can be used in combination with any of the above initialization methods. For example using a Static constructor in test base:
 
-snippet: LocalDbTestBase
+snippet: LocalDbTestBaseUsage
 
 
 ## Directory and Instance Name Resolution
