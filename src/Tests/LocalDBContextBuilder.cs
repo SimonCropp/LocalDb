@@ -37,11 +37,16 @@ public static class LocalDBContextBuilder
             Migrate(connection);
         }
 
+        Detach( "template");
+    }
+
+    static void Detach(string dbName)
+    {
         using (var connection = new SqlConnection(masterConnection))
         using (var command = connection.CreateCommand())
         {
             connection.Open();
-            command.CommandText = "EXEC sp_detach_db 'template', 'true';";
+            command.CommandText = $"EXEC sp_detach_db '{dbName}', 'true';";
             command.ExecuteNonQuery();
         }
     }
