@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Description>Add EntityFramework Core IQueryable support to GraphQL</Description>
+    <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
     <GeneratePackageOnBuild Condition="$(Configuration) == 'Release'">true</GeneratePackageOnBuild>
     <GenerateDocumentationFile Condition="$(Configuration) == 'Release'">true</GenerateDocumentationFile>
   </PropertyGroup>

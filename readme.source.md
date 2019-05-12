@@ -55,7 +55,7 @@ Usage inside a test consists of two parts:
 
 snippet: BuildLocalDbInstance
 
-The Build is as follows:
+The signature is as follows:
 
 snippet: BuildLocalDbSignature
 

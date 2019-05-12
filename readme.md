@@ -86,7 +86,7 @@ var localDb = await LocalDb<TheDbContext>.Build(this);
 <sup>[snippet source](/src/Snippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
 
-The Build is as follows:
+The signature is as follows:
 
 <!-- snippet: BuildLocalDbSignature -->
 ```cs
