@@ -97,13 +97,17 @@ log on
         }
         return $"Data Source=(LocalDb)\\{instance};Database=template; Integrated Security=True";
     }
-    public void ResetLocalDb()
+    public void CleanAndRestart()
+    {
+        Clean();
+        RunLocalDbCommand($"create \"{instance}\"");
+        RunLocalDbCommand($"start \"{instance}\"");
+    }
+
+    public void Clean()
     {
         RunLocalDbCommand($"stop \"{instance}\"");
         RunLocalDbCommand($"delete \"{instance}\"");
-        RunLocalDbCommand($"create \"{instance}\"");
-        RunLocalDbCommand($"start \"{instance}\"");
-
         foreach (var file in Directory.EnumerateFiles(directory))
         {
             File.Delete(file);

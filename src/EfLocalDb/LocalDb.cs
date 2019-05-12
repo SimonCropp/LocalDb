@@ -27,10 +27,11 @@ namespace EFLocalDb
             {
                 scope = typeof(T).Name + "_" + scopeSuffix;
             }
+
             var dataDirectory = DataDirectoryFinder.Find(scope);
             localDbWrapper = new LocalDbWrapper(scope, dataDirectory);
             LocalDb<T>.constructInstance = constructInstance;
-            localDbWrapper.ResetLocalDb();
+            localDbWrapper.CleanAndRestart();
 
             var connectionString = localDbWrapper.CreateDatabase("template");
             // needs to be pooling=false so that we can immediately detach and use the files
@@ -46,6 +47,11 @@ namespace EFLocalDb
             }
 
             localDbWrapper.Detach("template");
+        }
+
+        public static void Cleanup()
+        {
+            localDbWrapper.Clean();
         }
 
         static Task<string> BuildContext(string dbName)

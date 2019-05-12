@@ -18,6 +18,7 @@ public class Tests
             dataContext.SaveChanges();
         }
     }
+
     [Fact]
     public async Task Secondary()
     {
@@ -32,6 +33,7 @@ public class Tests
             dataContext.SaveChanges();
         }
     }
+
     [Fact]
     public async Task Simple()
     {
