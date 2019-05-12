@@ -14,12 +14,21 @@ namespace EFLocalDb
         static Func<DbContextOptionsBuilder<T>, T> constructInstance;
 
         public static void Init(
-            string key,
             Action<SqlConnection, DbContextOptionsBuilder<T>> buildTemplate,
-            Func<DbContextOptionsBuilder<T>, T> constructInstance)
+            Func<DbContextOptionsBuilder<T>, T> constructInstance,
+            string scopeSuffix = null)
         {
-            var dataDirectory = DataDirectoryFinder.Find(key);
-            localDbWrapper = new LocalDbWrapper(key, dataDirectory);
+            string scope;
+            if (scopeSuffix == null)
+            {
+                scope = typeof(T).Name;
+            }
+            else
+            {
+                scope = typeof(T).Name + "_" + scopeSuffix;
+            }
+            var dataDirectory = DataDirectoryFinder.Find(scope);
+            localDbWrapper = new LocalDbWrapper(scope, dataDirectory);
             LocalDb<T>.constructInstance = constructInstance;
             localDbWrapper.ResetLocalDb();
 

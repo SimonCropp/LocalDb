@@ -3,12 +3,31 @@ using System.IO;
 
 static class DataDirectoryFinder
 {
-    public static string Find(string key)
+    public static string Find(string scope)
     {
-        var dataDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
-        dataDirectory = dataDirectory ?? Environment.GetEnvironmentVariable("LocalDBData");
-        dataDirectory = dataDirectory ?? Path.GetTempPath();
-        dataDirectory = Path.Combine(dataDirectory, key);
-        return dataDirectory;
+        var dataRoot = FindDataRoot();
+        if (scope == null)
+        {
+            return dataRoot;
+        }
+
+        return Path.Combine(dataRoot, scope);
+    }
+
+    private static string FindDataRoot()
+    {
+        var efLocalDbEnv = Environment.GetEnvironmentVariable("LocalDBData");
+        if (efLocalDbEnv != null)
+        {
+            return efLocalDbEnv;
+        }
+
+        var tfsAgentDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
+        if (tfsAgentDirectory != null)
+        {
+            return Path.Combine(tfsAgentDirectory, "EfLocalDb");
+        }
+
+        return Path.Combine(Path.GetTempPath(), "EfLocalDb");
     }
 }

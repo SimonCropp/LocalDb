@@ -3,57 +3,57 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-public class LocalDbWrapper
+class LocalDbWrapper
 {
-    string dataDirectory;
+    string directory;
     string masterConnection;
-    string key;
+    string instance;
 
-    public LocalDbWrapper(string key, string dataDirectory)
+    public LocalDbWrapper(string instance, string directory)
     {
-        this.key = key;
-        masterConnection = $"Data Source=(LocalDb)\\{key};Database=master; Integrated Security=True";
-        this.dataDirectory = dataDirectory;
-        Directory.CreateDirectory(dataDirectory);
+        this.instance = instance;
+        masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master; Integrated Security=True";
+        this.directory = directory;
+        Directory.CreateDirectory(directory);
     }
 
-    public void Detach(string dbName)
+    public void Detach(string name)
     {
         using (var connection = new SqlConnection(masterConnection))
         using (var command = connection.CreateCommand())
         {
             connection.Open();
-            command.CommandText = $"EXEC sp_detach_db '{dbName}', 'true';";
+            command.CommandText = $"EXEC sp_detach_db '{name}', 'true';";
             command.ExecuteNonQuery();
         }
     }
 
-    public async Task<string> CreateDatabaseFromTemplate(string dbName, string templateDbName)
+    public async Task<string> CreateDatabaseFromTemplate(string name, string templateName)
     {
-        var dbFilePath = Path.Combine(dataDirectory, $"{dbName}.mdf");
-        var dbLogPath = Path.Combine(dataDirectory, $"{dbName}.ldf");
-        var templateDataFile = Path.Combine(dataDirectory, templateDbName + ".mdf");
-        var templateLogFile = Path.Combine(dataDirectory, templateDbName + ".ldf");
+        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var logFile = Path.Combine(directory, $"{name}.ldf");
+        var templateDataFile = Path.Combine(directory, templateName + ".mdf");
+        var templateLogFile = Path.Combine(directory, templateName + ".ldf");
 
-        File.Copy(templateDataFile, dbFilePath);
-        File.Copy(templateLogFile, dbLogPath);
+        File.Copy(templateDataFile, dataFile);
+        File.Copy(templateLogFile, logFile);
 
         using (var connection = new SqlConnection(masterConnection))
         using (var command = connection.CreateCommand())
         {
             command.CommandText = $@"
-create database [{dbName}] on
+create database [{name}] on
 (
-    name = [{dbName}],
-    filename = '{dbFilePath}',
+    name = [{name}],
+    filename = '{dataFile}',
     size = 10MB,
     maxSize = 10GB,
     fileGrowth = 5MB
 )
 log on
 (
-    name = [{dbName}_log],
-    filename = '{dbLogPath}',
+    name = [{name}_log],
+    filename = '{logFile}',
     size = 10MB,
     maxSize = 10GB,
     fileGrowth = 5MB
@@ -64,13 +64,13 @@ for attach;
             await command.ExecuteNonQueryAsync();
         }
 
-        return $"Data Source=(LocalDb)\\{key};Database={dbName}; Integrated Security=True";
+        return $"Data Source=(LocalDb)\\{instance};Database={name}; Integrated Security=True";
     }
 
     public string CreateDatabase(string name)
     {
-        var dataFile = Path.Combine(dataDirectory, name + ".mdf");
-        var logFile = Path.Combine(dataDirectory, name + ".ldf");
+        var dataFile = Path.Combine(directory, name + ".mdf");
+        var logFile = Path.Combine(directory, name + ".ldf");
         using (var connection = new SqlConnection(masterConnection))
         using (var command = connection.CreateCommand())
         {
@@ -95,16 +95,16 @@ log on
             connection.Open();
             command.ExecuteNonQuery();
         }
-        return $"Data Source=(LocalDb)\\{key};Database=template; Integrated Security=True";
+        return $"Data Source=(LocalDb)\\{instance};Database=template; Integrated Security=True";
     }
     public void ResetLocalDb()
     {
-        RunLocalDbCommand($"stop \"{key}\"");
-        RunLocalDbCommand($"delete \"{key}\"");
-        RunLocalDbCommand($"create \"{key}\"");
-        RunLocalDbCommand($"start \"{key}\"");
+        RunLocalDbCommand($"stop \"{instance}\"");
+        RunLocalDbCommand($"delete \"{instance}\"");
+        RunLocalDbCommand($"create \"{instance}\"");
+        RunLocalDbCommand($"start \"{instance}\"");
 
-        foreach (var file in Directory.EnumerateFiles(dataDirectory))
+        foreach (var file in Directory.EnumerateFiles(directory))
         {
             File.Delete(file);
         }
