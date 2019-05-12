@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.IO;
+﻿using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +10,7 @@ public class LocalDB
     
     public static void Init(string key)
     {
-        var dataDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
-        dataDirectory = dataDirectory ?? Environment.GetEnvironmentVariable("LocalDBData");
-        dataDirectory = dataDirectory ?? Path.GetTempPath();
-        dataDirectory = Path.Combine(dataDirectory, key);
+        var dataDirectory = DataDirectoryFinder.Find(key);
         localDbWrapper = new LocalDbWrapper(key, dataDirectory);
 
         localDbWrapper.ResetLocalDb();
