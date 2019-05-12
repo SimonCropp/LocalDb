@@ -28,7 +28,7 @@ public static class LocalDBContextBuilder
         templateLogFile = Path.Combine(dataDirectory, "template.ldf");
         LocalDbCommands.ResetLocalDb(key,dataDirectory);
 
-        RecreateTemplateDatabase();
+        localDbWrapper.CreateDatabase("template");
         // needs to be pooling=false so that we can immediately detach and use the files
         var connectionString = $"Data Source=(LocalDb)\\{key};Database=template; Integrated Security=True;Pooling=false";
         using (var connection = new SqlConnection(connectionString))
@@ -38,18 +38,7 @@ public static class LocalDBContextBuilder
             Migrate(connection);
         }
 
-        Detach( "template");
-    }
-
-    static void Detach(string dbName)
-    {
-        using (var connection = new SqlConnection(localDbWrapper.MasterConnection))
-        using (var command = connection.CreateCommand())
-        {
-            connection.Open();
-            command.CommandText = $"EXEC sp_detach_db '{dbName}', 'true';";
-            command.ExecuteNonQuery();
-        }
+        localDbWrapper.Detach( "template");
     }
 
     public static async Task<string> BuildContext(string dbName)
@@ -104,33 +93,5 @@ for attach;
         }
        //TODO:
        // TrackChanges.EnableChangeTrackingOnDb(connection);
-    }
-
-    static void RecreateTemplateDatabase()
-    {
-        using (var connection = new SqlConnection(localDbWrapper.MasterConnection))
-        using (var command = connection.CreateCommand())
-        {
-            command.CommandText = $@"
-create database [template] on
-(
-    name = [template],
-    filename = '{templateDataFile}',
-    size = 10MB,
-    maxSize = 10GB,
-    fileGrowth = 5MB
-)
-log on
-(
-    name = [template_log],
-    filename = '{templateLogFile}',
-    size = 10MB,
-    maxSize = 10GB,
-    fileGrowth = 5MB
-);
-";
-            connection.Open();
-            command.ExecuteNonQuery();
-        }
     }
 }
