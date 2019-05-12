@@ -17,6 +17,7 @@
 
                 //TODO:
                 // TrackChanges.EnableChangeTrackingOnDb(connection);
-            });
+            },
+            builder => new TestDataContext(builder.Options));
     }
 }

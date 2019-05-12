@@ -9,12 +9,16 @@ public class LocalDB<T>
     where T: DbContext
 {
     static LocalDbWrapper localDbWrapper;
+    static Func<DbContextOptionsBuilder<T>,T> constructInstance;
 
-    public static void Init(string key, Action<SqlConnection, DbContextOptionsBuilder<T>> buildTemplate)
+    public static void Init(
+        string key,
+        Action<SqlConnection, DbContextOptionsBuilder<T>> buildTemplate,
+        Func<DbContextOptionsBuilder<T>, T> constructInstance)
     {
         var dataDirectory = DataDirectoryFinder.Find(key);
         localDbWrapper = new LocalDbWrapper(key, dataDirectory);
-
+        LocalDB<T>.constructInstance = constructInstance;
         localDbWrapper.ResetLocalDb();
 
         var connectionString = localDbWrapper.CreateDatabase("template");
@@ -33,12 +37,12 @@ public class LocalDB<T>
         localDbWrapper.Detach("template");
     }
 
-    public static Task<string> BuildContext(string dbName)
+    static Task<string> BuildContext(string dbName)
     {
         return localDbWrapper.CreateDatabaseFromTemplate(dbName, "template");
     }
 
-    public string ConnectionString;
+    public string ConnectionString { get; private set; }
 
     /// <summary>
     ///   Build DB with a name based on the calling Method
@@ -70,10 +74,10 @@ public class LocalDB<T>
         }
     }
 
-    public TestDataContext NewDataContext()
+    public T NewDataContext()
     {
-        var builder = new DbContextOptionsBuilder<TestDataContext>();
+        var builder = new DbContextOptionsBuilder<T>();
         builder.UseSqlServer(ConnectionString);
-        return new TestDataContext(builder.Options);
+        return constructInstance(builder);
     }
 }
