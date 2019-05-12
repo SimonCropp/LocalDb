@@ -124,7 +124,7 @@ log on
         RunLocalDbCommand($"start \"{instance}\"");
     }
 
-    public void Clean()
+    public void DeleteInstance()
     {
         RunLocalDbCommand($"stop \"{instance}\"");
         RunLocalDbCommand($"delete \"{instance}\"");

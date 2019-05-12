@@ -56,7 +56,7 @@ namespace EFLocalDb
 
         public static void Cleanup()
         {
-            localDbWrapper.Clean();
+            localDbWrapper.DeleteInstance();
         }
 
         static Task<string> BuildContext(string dbName)
