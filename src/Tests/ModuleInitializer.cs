@@ -2,6 +2,6 @@
 {
     public static void Initialize()
     {
-        LocalDBContextBuilder.Init("Foo");
+        LocalDB.Init("Foo");
     }
 }
