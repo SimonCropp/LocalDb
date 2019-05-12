@@ -13,7 +13,7 @@ namespace EFLocalDb
         static LocalDbWrapper localDbWrapper;
         static Func<DbContextOptionsBuilder<T>, T> constructInstance;
 
-        public static void Init(
+        public static void Register(
             Action<SqlConnection, DbContextOptionsBuilder<T>> buildTemplate,
             Func<DbContextOptionsBuilder<T>, T> constructInstance,
             string scopeSuffix = null)
