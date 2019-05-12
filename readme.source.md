@@ -125,6 +125,23 @@ It can be used in combination with any of the above initialization methods. For 
 snippet: LocalDbTestBase
 
 
+## Directory and Instance Name Resolution
+
+The instance name is defined as: 
+
+snippet: GetInstanceName
+
+That InstanceName is then used to derive the data directory. In order:
+
+ * If `LocalDBData` environment variable exists then use `AGENT_TEMPDIRECTORY\EfLocalDb\InstanceName`.
+ * If `AGENT_TEMPDIRECTORY` environment variable exists then use `AGENT_TEMPDIRECTORY\EfLocalDb\InstanceName`.
+ * Use `%TempDir%\EfLocalDb\InstanceName`
+
+There is an explicit registration override that takes an instance name and a directory for that instance:
+
+snippet: RegisterExplcit
+
+
 ## Icon
 
 <a href="https://thenounproject.com/term/robot/960055/" target="_blank">Robot</a> designed by Creaticca Creative Agency from The Noun Project.

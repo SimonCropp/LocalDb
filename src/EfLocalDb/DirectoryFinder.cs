@@ -1,17 +1,17 @@
 ﻿using System;
 using System.IO;
 
-static class DataDirectoryFinder
+static class DirectoryFinder
 {
-    public static string Find(string scope)
+    public static string Find(string instanceName)
     {
         var dataRoot = FindDataRoot();
-        if (scope == null)
+        if (instanceName == null)
         {
             return dataRoot;
         }
 
-        return Path.Combine(dataRoot, scope);
+        return Path.Combine(dataRoot, instanceName);
     }
     
     static string FindDataRoot()

@@ -96,13 +96,13 @@ The Build is as follows:
 /// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
 /// <param name="suffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-public static Task<LocalDb<T>> Build(
+public static Task<LocalDb<TDbContext>> Build(
     object caller,
     string suffix = null,
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L69-L82)</sup>
+<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L99-L112)</sup>
 <!-- endsnippet -->
 
 The database name is the derives as follows:
@@ -116,7 +116,7 @@ if (suffix != null)
     dbName = $"{dbName}_{suffix}";
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L88-L97)</sup>
+<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L118-L127)</sup>
 <!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
@@ -273,7 +273,7 @@ public class Tests:
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/TestBaseUsage.cs#L8-L50)</sup>
+<sup>[snippet source](/src/Snippets/TestBaseUsage.cs#L7-L49)</sup>
 <!-- endsnippet -->
 
 
@@ -482,6 +482,49 @@ public class Tests:
 }
 ```
 <sup>[snippet source](/src/Snippets/LocalDbTestBase.cs#L7-L50)</sup>
+<!-- endsnippet -->
+
+
+## Directory and Instance Name Resolution
+
+The instance name is defined as: 
+
+<!-- snippet: GetInstanceName -->
+```cs
+if (scopeSuffix == null)
+{
+    return typeof(TDbContext).Name;
+}
+
+return $"{typeof(TDbContext).Name}_{scopeSuffix}";
+```
+<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L75-L84)</sup>
+<!-- endsnippet -->
+
+That InstanceName is then used to derive the data directory. In order:
+
+ * If `LocalDBData` environment variable exists then use `AGENT_TEMPDIRECTORY\EfLocalDb\InstanceName`.
+ * If `AGENT_TEMPDIRECTORY` environment variable exists then use `AGENT_TEMPDIRECTORY\EfLocalDb\InstanceName`.
+ * Use `%TempDir%\EfLocalDb\InstanceName`
+
+There is an explicit registration override that takes an instance name and a directory for that instance:
+
+<!-- snippet: RegisterExplcit -->
+```cs
+LocalDb<TheDbContext>.Register(
+    (connection, optionsBuilder) =>
+    {
+        using (var dbContext = new TheDbContext(optionsBuilder.Options))
+        {
+            dbContext.Database.EnsureCreated();
+        }
+    },
+    builder => new TheDbContext(builder.Options),
+    instanceName: "theInstanceName",
+    directory: @"C:\EfLocalDb\theInstance"
+);
+```
+<sup>[snippet source](/src/Snippets/Snippets.cs#L7-L22)</sup>
 <!-- endsnippet -->
 
 
