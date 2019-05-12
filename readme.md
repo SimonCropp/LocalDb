@@ -331,7 +331,7 @@ namespace EFLocalDb
             string suffix = null,
             [CallerMemberName] string memberName = null)
         {
-            return LocalDb<T>.Build(this,suffix,memberName);
+            return LocalDb<T>.Build(this, suffix, memberName);
         }
     }
 }
