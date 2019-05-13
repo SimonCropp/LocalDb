@@ -7,24 +7,24 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EFLocalDb
 {
-    public class LocalDb<TDbContext>
+    public class Instance<TDbContext>
         where TDbContext : DbContext
     {
-        static LocalDbWrapper localDbWrapper;
-        static Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        Wrapper wrapper;
+        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
 
-        public static void Register(
+        public Instance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string scopeSuffix = null)
+            string instanceSuffix = null)
         {
-            Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
-            var instanceName = GetInstanceName(scopeSuffix);
+            Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
+            var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
-            Register(buildTemplate, constructInstance, instanceName, directory);
+            Init(buildTemplate, constructInstance, instanceName, directory);
         }
 
-        public static void Register(
+        public Instance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
@@ -34,16 +34,21 @@ namespace EFLocalDb
             Guard.AgainstNullWhiteSpace(nameof(instanceName), instanceName);
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
+            Init(buildTemplate, constructInstance, instanceName, directory);
+        }
+
+        void Init(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance, string instanceName, string directory)
+        {
             try
             {
-                localDbWrapper = new LocalDbWrapper(instanceName, directory);
+                wrapper = new Wrapper(instanceName, directory);
 
-                LocalDb<TDbContext>.constructInstance = constructInstance;
-                localDbWrapper.Start();
-                localDbWrapper.Purge();
-                localDbWrapper.DeleteFiles();
+                this.constructInstance = constructInstance;
+                wrapper.Start();
+                wrapper.Purge();
+                wrapper.DeleteFiles();
 
-                var connectionString = localDbWrapper.CreateDatabase("template");
+                var connectionString = wrapper.CreateDatabase("template");
                 // needs to be pooling=false so that we can immediately detach and use the files
                 connectionString += ";Pooling=false";
                 using (var connection = new SqlConnection(connectionString))
@@ -56,7 +61,7 @@ namespace EFLocalDb
                     buildTemplate(connection, builder);
                 }
 
-                localDbWrapper.Detach("template");
+                wrapper.Detach("template");
             }
             catch (Exception exception)
             {
@@ -73,7 +78,7 @@ To cleanup perform the following actions:
         static string GetInstanceName(string scopeSuffix)
         {
             #region GetInstanceName
-            
+
             if (scopeSuffix == null)
             {
                 return typeof(TDbContext).Name;
@@ -84,17 +89,15 @@ To cleanup perform the following actions:
             #endregion
         }
 
-        public static void Cleanup()
+        public void Cleanup()
         {
-            localDbWrapper.DeleteInstance();
+            wrapper.DeleteInstance();
         }
 
-        static Task<string> BuildContext(string dbName)
+        Task<string> BuildContext(string dbName)
         {
-            return localDbWrapper.CreateDatabaseFromTemplate(dbName, "template");
+            return wrapper.CreateDatabaseFromTemplate(dbName, "template");
         }
-
-        public string ConnectionString { get; private set; }
 
         #region BuildLocalDbSignature
 
@@ -102,26 +105,27 @@ To cleanup perform the following actions:
         ///   Build DB with a name based on the calling Method.
         /// </summary>
         /// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
-        /// <param name="suffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
+        /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-        public static Task<LocalDb<TDbContext>> Build(
+        public Task<Database<TDbContext>> Build(
             object caller,
-            string suffix = null,
+            string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
+
             #endregion
 
             Guard.AgainstNull(nameof(caller), caller);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
-            Guard.AgainstWhiteSpace(nameof(suffix), suffix);
+            Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
 
             #region DeriveName
 
             var type = caller.GetType();
             var dbName = $"{type.Name}_{memberName}";
-            if (suffix != null)
+            if (databaseSuffix != null)
             {
-                dbName = $"{dbName}_{suffix}";
+                dbName = $"{dbName}_{databaseSuffix}";
             }
 
             #endregion
@@ -129,29 +133,10 @@ To cleanup perform the following actions:
             return Build(dbName);
         }
 
-        public static async Task<LocalDb<TDbContext>> Build(string dbName)
+        public async Task<Database<TDbContext>> Build(string dbName)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            return new LocalDb<TDbContext>
-            {
-                ConnectionString = await BuildContext(dbName)
-            };
-        }
-
-        public async Task AddSeed(params object[] entities)
-        {
-            using (var dbContext = NewDbContext())
-            {
-                dbContext.AddRange(entities);
-                await dbContext.SaveChangesAsync();
-            }
-        }
-
-        public TDbContext NewDbContext()
-        {
-            var builder = new DbContextOptionsBuilder<TDbContext>();
-            builder.UseSqlServer(ConnectionString);
-            return constructInstance(builder);
+            return new Database<TDbContext>(await BuildContext(dbName), constructInstance);
         }
     }
 }

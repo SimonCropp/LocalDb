@@ -6,7 +6,7 @@ class Snippets
     {
         #region RegisterExplcit
 
-        LocalDb<TheDbContext>.Register(
+        StaticInstance<TheDbContext>.Register(
             (connection, optionsBuilder) =>
             {
                 using (var dbContext = new TheDbContext(optionsBuilder.Options))

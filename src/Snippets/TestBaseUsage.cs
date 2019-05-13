@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using EFLocalDb;
 using Xunit;
 
@@ -8,9 +9,11 @@ namespace TestBase
 
     public class TestBase
     {
+        static Instance<TheDbContext> instance;
+
         static TestBase()
         {
-            LocalDb<TheDbContext>.Register(
+            instance = new Instance<TheDbContext>(
                 (connection, builder) =>
                 {
                     using (var dbContext = new TheDbContext(builder.Options))
@@ -20,6 +23,13 @@ namespace TestBase
                 },
                 builder => new TheDbContext(builder.Options));
         }
+
+        public Task<Database<TheDbContext>> LocalDb(
+            string suffix = null,
+            [CallerMemberName] string memberName = null)
+        {
+            return instance.Build(this, suffix, memberName);
+        }
     }
 
     public class Tests:
@@ -28,7 +38,7 @@ namespace TestBase
         [Fact]
         public async Task Test()
         {
-            var localDb = await LocalDb<TheDbContext>.Build(this);
+            var localDb = await LocalDb();
             using (var dbContext = localDb.NewDbContext())
             {
                 var entity = new TestEntity

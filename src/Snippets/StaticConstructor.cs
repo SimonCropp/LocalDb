@@ -2,16 +2,15 @@
 using EFLocalDb;
 using Xunit;
 
-namespace LocalDbTestBaseUsage
+namespace StaticConstructor
 {
-    #region LocalDbTestBaseUsage
-    
-    public class MyTestBase:
-        LocalDbTestBase<TheDbContext>
+    #region StaticConstructor
+
+    public class Tests
     {
-        static MyTestBase()
+        static Tests()
         {
-            LocalDb<TheDbContext>.Register(
+            StaticInstance<TheDbContext>.Register(
                 (connection, optionsBuilder) =>
                 {
                     using (var dbContext = new TheDbContext(optionsBuilder.Options))
@@ -21,15 +20,11 @@ namespace LocalDbTestBaseUsage
                 },
                 builder => new TheDbContext(builder.Options));
         }
-    }
 
-    public class Tests:
-        MyTestBase
-    {
         [Fact]
         public async Task Test()
         {
-            var localDb = await LocalDb();
+            var localDb = await StaticInstance<TheDbContext>.Build(this);
             using (var dbContext = localDb.NewDbContext())
             {
                 var entity = new TestEntity

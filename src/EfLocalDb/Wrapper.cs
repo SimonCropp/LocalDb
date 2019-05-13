@@ -3,13 +3,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
-class LocalDbWrapper
+class Wrapper
 {
     string directory;
     string masterConnection;
     string instance;
 
-    public LocalDbWrapper(string instance, string directory)
+    public Wrapper(string instance, string directory)
     {
         this.instance = instance;
         masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master; Integrated Security=True";

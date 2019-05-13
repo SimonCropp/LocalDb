@@ -111,19 +111,6 @@ snippet: ModuleInitializer
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
 
 
-### LocalDbTestBase
-
-There is a helper class `LocalDbTestBase`:
-
-snippet: LocalDbTestBase.cs
-
-`LocalDbTestBase` simplifies the construction of the LocalDb instance.
-
-It can be used in combination with any of the above initialization methods. For example using a Static constructor in test base:
-
-snippet: LocalDbTestBaseUsage
-
-
 ## Directory and Instance Name Resolution
 
 The instance name is defined as: 

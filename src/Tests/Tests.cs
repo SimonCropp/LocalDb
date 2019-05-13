@@ -7,7 +7,18 @@ public class Tests
     [Fact]
     public async Task ScopedDbContext()
     {
-        var localDb = await LocalDb<ScopedDbContext>.Build(this);
+        var instance = new Instance<ScopedDbContext>(
+            (connection, optionsBuilder) =>
+            {
+                using (var dbContext = new ScopedDbContext(optionsBuilder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            builder => new ScopedDbContext(builder.Options),
+            instanceSuffix: "theSuffix");
+
+        var localDb = await instance.Build(this);
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -17,6 +28,7 @@ public class Tests
             dbContext.Add(entity);
             dbContext.SaveChanges();
         }
+
         using (var dbContext = localDb.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
@@ -26,7 +38,16 @@ public class Tests
     [Fact]
     public async Task Secondary()
     {
-        var localDb = await LocalDb<SecondaryDbContext>.Build(this);
+        var instance = new Instance<SecondaryDbContext>(
+            (connection, optionsBuilder) =>
+            {
+                using (var dbContext = new SecondaryDbContext(optionsBuilder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            builder => new SecondaryDbContext(builder.Options));
+        var localDb = await instance.Build(this);
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -36,6 +57,7 @@ public class Tests
             dbContext.Add(entity);
             dbContext.SaveChanges();
         }
+
         using (var dbContext = localDb.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
@@ -45,7 +67,16 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        var localDb = await LocalDb<TestDbContext>.Build(this);
+        var instance = new Instance<TestDbContext>(
+            (connection, optionsBuilder) =>
+            {
+                using (var dbContext = new TestDbContext(optionsBuilder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            builder => new TestDbContext(builder.Options));
+        var localDb = await instance.Build(this);
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -55,6 +86,7 @@ public class Tests
             dbContext.Add(entity);
             dbContext.SaveChanges();
         }
+
         using (var dbContext = localDb.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);

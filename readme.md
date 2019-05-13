@@ -80,7 +80,7 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-var localDb = await LocalDb<TheDbContext>.Build(this);
+var localDb = await StaticInstance<TheDbContext>.Build(this);
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
@@ -93,15 +93,15 @@ The signature is as follows:
 ///   Build DB with a name based on the calling Method.
 /// </summary>
 /// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
-/// <param name="suffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
+/// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-public static Task<LocalDb<TDbContext>> Build(
+public Task<Database<TDbContext>> Build(
     object caller,
-    string suffix = null,
+    string databaseSuffix = null,
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L99-L112)</sup>
+<sup>[snippet source](/src/EfLocalDb/Instance.cs#L102-L116)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
@@ -110,19 +110,19 @@ The database name is the derived as follows:
 ```cs
 var type = caller.GetType();
 var dbName = $"{type.Name}_{memberName}";
-if (suffix != null)
+if (databaseSuffix != null)
 {
-    dbName = $"{dbName}_{suffix}";
+    dbName = $"{dbName}_{databaseSuffix}";
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L118-L127)</sup>
+<sup>[snippet source](/src/EfLocalDb/Instance.cs#L122-L131)</sup>
 <!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
 ```cs
-var localDb = await LocalDb<TheDbContext>.Build("TheTestWithDbName");
+var localDb = await StaticInstance<TheDbContext>.Build("TheTestWithDbName");
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L42-L46)</sup>
 <!-- endsnippet -->
@@ -149,7 +149,7 @@ The above are combined in a full test:
 public async Task TheTest()
 {
 
-    var localDb = await LocalDb<TheDbContext>.Build(this);
+    var localDb = await StaticInstance<TheDbContext>.Build(this);
 
     using (var dbContext = localDb.NewDbContext())
     {
@@ -190,7 +190,7 @@ public class Tests
 {
     static Tests()
     {
-        LocalDb<TheDbContext>.Register(
+        StaticInstance<TheDbContext>.Register(
             (connection, optionsBuilder) =>
             {
                 using (var dbContext = new TheDbContext(optionsBuilder.Options))
@@ -204,7 +204,7 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var localDb = await LocalDb<TheDbContext>.Build(this);
+        var localDb = await StaticInstance<TheDbContext>.Build(this);
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -222,7 +222,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/StaticConstructorTest.cs#L7-L45)</sup>
+<sup>[snippet source](/src/Snippets/StaticConstructor.cs#L7-L45)</sup>
 <!-- endsnippet -->
 
 
@@ -234,9 +234,11 @@ If multiple tests need to use the LocalDB instance, then the LocalDB instance sh
 ```cs
 public class TestBase
 {
+    static Instance<TheDbContext> instance;
+
     static TestBase()
     {
-        LocalDb<TheDbContext>.Register(
+        instance = new Instance<TheDbContext>(
             (connection, builder) =>
             {
                 using (var dbContext = new TheDbContext(builder.Options))
@@ -246,123 +248,17 @@ public class TestBase
             },
             builder => new TheDbContext(builder.Options));
     }
+
+    public Task<Database<TheDbContext>> LocalDb(
+        string suffix = null,
+        [CallerMemberName] string memberName = null)
+    {
+        return instance.Build(this, suffix, memberName);
+    }
 }
 
 public class Tests:
     TestBase
-{
-    [Fact]
-    public async Task Test()
-    {
-        var localDb = await LocalDb<TheDbContext>.Build(this);
-        using (var dbContext = localDb.NewDbContext())
-        {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
-
-        using (var dbContext = localDb.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
-        }
-    }
-}
-```
-<sup>[snippet source](/src/Snippets/TestBaseUsage.cs#L7-L49)</sup>
-<!-- endsnippet -->
-
-
-#### Module initializer
-
-An alternative to the above "test base" scenario is to use a module intializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
-
-<!-- snippet: ModuleInitializer -->
-```cs
-static class ModuleInitializer
-{
-    public static void Initialize()
-    {
-        LocalDb<TheDbContext>.Register(
-            (connection, optionsBuilder) =>
-            {
-                using (var dbContext = new TheDbContext(optionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            builder => new TheDbContext(builder.Options));
-    }
-}
-```
-<sup>[snippet source](/src/Snippets/ModuleInitializer.cs#L5-L22)</sup>
-<!-- endsnippet -->
-
-Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
-
-
-### LocalDbTestBase
-
-There is a helper class `LocalDbTestBase`:
-
-<!-- snippet: LocalDbTestBase.cs -->
-```cs
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-
-namespace EFLocalDb
-{
-    public abstract class LocalDbTestBase<T>
-        where T : DbContext
-    {
-        /// <summary>
-        ///   Build DB with a name based on the calling Method
-        /// </summary>
-        /// <param name="suffix">Text based on the inline data to make the db name unique.
-        /// Used for parameterized tests that need to run in parallel (eg xUnit [Theory] or XUnit [TestCase]).
-        /// </param>
-        /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-        public Task<LocalDb<T>> LocalDb(
-            string suffix = null,
-            [CallerMemberName] string memberName = null)
-        {
-            return LocalDb<T>.Build(this, suffix, memberName);
-        }
-    }
-}
-```
-<sup>[snippet source](/src/EfLocalDb/LocalDbTestBase.cs#L1-L24)</sup>
-<!-- endsnippet -->
-
-`LocalDbTestBase` simplifies the construction of the LocalDb instance.
-
-It can be used in combination with any of the above initialization methods. For example using a Static constructor in test base:
-
-<!-- snippet: LocalDbTestBaseUsage -->
-```cs
-public class MyTestBase:
-    LocalDbTestBase<TheDbContext>
-{
-    static MyTestBase()
-    {
-        LocalDb<TheDbContext>.Register(
-            (connection, optionsBuilder) =>
-            {
-                using (var dbContext = new TheDbContext(optionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            builder => new TheDbContext(builder.Options));
-    }
-}
-
-public class Tests:
-    MyTestBase
 {
     [Fact]
     public async Task Test()
@@ -385,8 +281,36 @@ public class Tests:
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/LocalDbTestBaseUsage.cs#L7-L50)</sup>
+<sup>[snippet source](/src/Snippets/TestBaseUsage.cs#L8-L59)</sup>
 <!-- endsnippet -->
+
+
+#### Module initializer
+
+An alternative to the above "test base" scenario is to use a module intializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
+
+<!-- snippet: ModuleInitializer -->
+```cs
+static class ModuleInitializer
+{
+    public static void Initialize()
+    {
+        StaticInstance<TheDbContext>.Register(
+            (connection, optionsBuilder) =>
+            {
+                using (var dbContext = new TheDbContext(optionsBuilder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            builder => new TheDbContext(builder.Options));
+    }
+}
+```
+<sup>[snippet source](/src/Snippets/ModuleInitializer.cs#L5-L22)</sup>
+<!-- endsnippet -->
+
+Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
 
 
 ## Directory and Instance Name Resolution
@@ -402,7 +326,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/LocalDb.cs#L75-L84)</sup>
+<sup>[snippet source](/src/EfLocalDb/Instance.cs#L80-L89)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -415,7 +339,7 @@ There is an explicit registration override that takes an instance name and a dir
 
 <!-- snippet: RegisterExplcit -->
 ```cs
-LocalDb<TheDbContext>.Register(
+StaticInstance<TheDbContext>.Register(
     (connection, optionsBuilder) =>
     {
         using (var dbContext = new TheDbContext(optionsBuilder.Options))

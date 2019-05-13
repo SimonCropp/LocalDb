@@ -5,7 +5,7 @@ public class SecondaryDbContext :
 {
     public DbSet<TestEntity> TestEntities { get; set; }
 
-    public SecondaryDbContext(DbContextOptions options) : 
+    public SecondaryDbContext(DbContextOptions options) :
         base(options)
     {
     }

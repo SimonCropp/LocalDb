@@ -8,7 +8,7 @@ namespace Snippet
     {
         public static void Initialize()
         {
-            LocalDb<TheDbContext>.Register(
+            StaticInstance<TheDbContext>.Register(
                 (connection, optionsBuilder) =>
                 {
                     using (var dbContext = new TheDbContext(optionsBuilder.Options))
