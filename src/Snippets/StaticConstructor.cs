@@ -24,7 +24,7 @@ namespace StaticConstructor
         [Fact]
         public async Task Test()
         {
-            var localDb = await LocalDb<TheDbContext>.Build(this);
+            var localDb = await LocalDb<TheDbContext>.Build();
             using (var dbContext = localDb.NewDbContext())
             {
                 var entity = new TestEntity

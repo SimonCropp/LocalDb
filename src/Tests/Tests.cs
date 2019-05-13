@@ -20,7 +20,7 @@ public class Tests
             builder => new ScopedDbContext(builder.Options),
             instanceSuffix: "theSuffix");
 
-        var localDb = await instance.Build(this);
+        var localDb = await instance.Build();
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -49,7 +49,7 @@ public class Tests
                 }
             },
             builder => new SecondaryDbContext(builder.Options));
-        var localDb = await instance.Build(this);
+        var localDb = await instance.Build();
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -99,7 +99,7 @@ public class Tests
                 }
             },
             builder => new TestDbContext(builder.Options));
-        var localDb = await instance.Build(this);
+        var localDb = await instance.Build();
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity

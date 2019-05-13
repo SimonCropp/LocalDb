@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -104,28 +105,21 @@ To cleanup perform the following actions:
         /// <summary>
         ///   Build DB with a name based on the calling Method.
         /// </summary>
-        /// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
+        /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
         public Task<SqlDatabase<TDbContext>> Build(
-            object caller,
+            [CallerFilePath] string testFile = null,
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
-
             #endregion
-
-            Guard.AgainstNull(nameof(caller), caller);
-            Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
-
-            return Build(caller.GetType().Name, databaseSuffix, memberName);
-        }
-
-        public Task<SqlDatabase<TDbContext>> Build(string testClass, string databaseSuffix, string memberName)
-        {
-            Guard.AgainstNullWhiteSpace(nameof(testClass), testClass);
+            Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
             Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
+
+            var testClass = Path.GetFileNameWithoutExtension(testFile);
+
             #region DeriveName
 
             var dbName = $"{testClass}_{memberName}";

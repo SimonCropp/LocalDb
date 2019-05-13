@@ -28,7 +28,7 @@ namespace TestBase
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
-            return instance.Build(this, databaseSuffix, memberName);
+            return instance.Build(GetType().Name, databaseSuffix, memberName);
         }
     }
 

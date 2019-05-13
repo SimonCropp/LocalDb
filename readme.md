@@ -80,7 +80,7 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-var localDb = await LocalDb<MyDbContext>.Build(this);
+var localDb = await LocalDb<MyDbContext>.Build();
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
@@ -92,30 +92,29 @@ The signature is as follows:
 /// <summary>
 ///   Build DB with a name based on the calling Method.
 /// </summary>
-/// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
+/// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 public Task<SqlDatabase<TDbContext>> Build(
-    object caller,
+    [CallerFilePath] string testFile = null,
     string databaseSuffix = null,
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L102-L116)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L103-L116)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
 
 <!-- snippet: DeriveName -->
 ```cs
-var type = caller.GetType();
-var dbName = $"{type.Name}_{memberName}";
+var dbName = $"{testClass}_{memberName}";
 if (databaseSuffix != null)
 {
     dbName = $"{dbName}_{databaseSuffix}";
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L122-L131)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L123-L131)</sup>
 <!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
@@ -149,7 +148,7 @@ The above are combined in a full test:
 public async Task TheTest()
 {
 
-    var localDb = await LocalDb<MyDbContext>.Build(this);
+    var localDb = await LocalDb<MyDbContext>.Build();
 
     using (var dbContext = localDb.NewDbContext())
     {
@@ -204,7 +203,7 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var localDb = await LocalDb<TheDbContext>.Build(this);
+        var localDb = await LocalDb<TheDbContext>.Build();
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -253,7 +252,7 @@ public class TestBase
         string databaseSuffix = null,
         [CallerMemberName] string memberName = null)
     {
-        return instance.Build(this, databaseSuffix, memberName);
+        return instance.Build(GetType().Name, databaseSuffix, memberName);
     }
 }
 
@@ -326,7 +325,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L80-L89)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L81-L90)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
