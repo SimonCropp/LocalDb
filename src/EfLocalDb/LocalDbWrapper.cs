@@ -40,8 +40,15 @@ set @command = ''
 
 select @command = @command
 + '
-alter database [' + [name] + '] set single_user with rollback immediate;
+
+begin try
+  alter database [' + [name] + '] set single_user with rollback immediate;
+end try
+begin catch
+end catch;
+
 drop database [' + [name] + '];
+
 '
 from [master].[sys].[databases]
 where [name] not in ('master', 'model', 'msdb', 'tempdb');
