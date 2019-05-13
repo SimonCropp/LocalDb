@@ -25,10 +25,10 @@ namespace TestBase
         }
 
         public Task<Database<TheDbContext>> LocalDb(
-            string suffix = null,
+            string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
-            return instance.Build(this, suffix, memberName);
+            return instance.Build(this, databaseSuffix, memberName);
         }
     }
 
