@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using ApprovalTests;
 using EFLocalDb;
 using Xunit;
 
@@ -62,6 +64,27 @@ public class Tests
         {
             Assert.Single(dbContext.TestEntities);
         }
+    }
+
+    [Fact]
+    public void DuplicateDbContext()
+    {
+        Register();
+        var exception = Assert.Throws<Exception>(Register);
+        Approvals.Verify(exception.Message);
+    }
+
+    static void Register()
+    {
+        LocalDb<DuplicateDbContext>.Register(
+            (connection, optionsBuilder) =>
+            {
+                using (var dbContext = new DuplicateDbContext(optionsBuilder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            builder => new DuplicateDbContext(builder.Options));
     }
 
     [Fact]

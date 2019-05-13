@@ -1,23 +1,20 @@
 ﻿using EFLocalDb;
 
-namespace Snippet
-{
-    #region ModuleInitializer
+#region ModuleInitializer
 
-    static class ModuleInitializer
+static class ModuleInitializer
+{
+    public static void Initialize()
     {
-        public static void Initialize()
-        {
-            LocalDb<TheDbContext>.Register(
-                (connection, optionsBuilder) =>
+        LocalDb<MyDbContext>.Register(
+            (connection, optionsBuilder) =>
+            {
+                using (var dbContext = new MyDbContext(optionsBuilder.Options))
                 {
-                    using (var dbContext = new TheDbContext(optionsBuilder.Options))
-                    {
-                        dbContext.Database.EnsureCreated();
-                    }
-                },
-                builder => new TheDbContext(builder.Options));
-        }
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            builder => new MyDbContext(builder.Options));
     }
-    #endregion
 }
+#endregion

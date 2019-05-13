@@ -11,7 +11,7 @@ public class Tests
     {
         #region BuildLocalDbInstance
 
-        var localDb = await LocalDb<TheDbContext>.Build(this);
+        var localDb = await LocalDb<MyDbContext>.Build(this);
 
         #endregion
 
@@ -41,7 +41,7 @@ public class Tests
     {
         #region WithDbName
 
-        var localDb = await LocalDb<TheDbContext>.Build("TheTestWithDbName");
+        var localDb = await LocalDb<MyDbContext>.Build("TheTestWithDbName");
 
         #endregion
 

@@ -80,7 +80,7 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-var localDb = await LocalDb<TheDbContext>.Build(this);
+var localDb = await LocalDb<MyDbContext>.Build(this);
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
@@ -122,7 +122,7 @@ There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
 ```cs
-var localDb = await LocalDb<TheDbContext>.Build("TheTestWithDbName");
+var localDb = await LocalDb<MyDbContext>.Build("TheTestWithDbName");
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L42-L46)</sup>
 <!-- endsnippet -->
@@ -149,7 +149,7 @@ The above are combined in a full test:
 public async Task TheTest()
 {
 
-    var localDb = await LocalDb<TheDbContext>.Build(this);
+    var localDb = await LocalDb<MyDbContext>.Build(this);
 
     using (var dbContext = localDb.NewDbContext())
     {
@@ -295,19 +295,19 @@ static class ModuleInitializer
 {
     public static void Initialize()
     {
-        LocalDb<TheDbContext>.Register(
+        LocalDb<MyDbContext>.Register(
             (connection, optionsBuilder) =>
             {
-                using (var dbContext = new TheDbContext(optionsBuilder.Options))
+                using (var dbContext = new MyDbContext(optionsBuilder.Options))
                 {
                     dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new TheDbContext(builder.Options));
+            builder => new MyDbContext(builder.Options));
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/ModuleInitializer.cs#L5-L22)</sup>
+<sup>[snippet source](/src/Snippets/ModuleInitializer.cs#L3-L20)</sup>
 <!-- endsnippet -->
 
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
