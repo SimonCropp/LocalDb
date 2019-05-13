@@ -39,10 +39,12 @@ declare @command nvarchar(max)
 set @command = ''
 
 select @command = @command
-+ 'alter database [' + [name] + '] set single_user with rollback immediate;'
-+ 'drop database [' + [name] +'];'
++ '
+alter database [' + [name] + '] set single_user with rollback immediate;
+drop database [' + [name] + '];
+'
 from [master].[sys].[databases]
- where [name] not in ( 'master', 'model', 'msdb', 'tempdb');
+where [name] not in ('master', 'model', 'msdb', 'tempdb');
 execute sp_executesql @command";
             command.ExecuteNonQuery();
         }
