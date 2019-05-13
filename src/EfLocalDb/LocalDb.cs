@@ -52,7 +52,7 @@ To register different configurations for the same DbContext type use the instanc
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
-            return instance.Build(caller, databaseSuffix, memberName);
+            return instance.Build(caller.GetType().Name, databaseSuffix, memberName);
         }
 
         public static Task<SqlDatabase<TDbContext>> Build(string dbName)

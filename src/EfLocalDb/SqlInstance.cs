@@ -117,12 +117,18 @@ To cleanup perform the following actions:
 
             Guard.AgainstNull(nameof(caller), caller);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
-            Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
 
+            return Build(caller.GetType().Name, databaseSuffix, memberName);
+        }
+
+        public Task<SqlDatabase<TDbContext>> Build(string testClass, string databaseSuffix, string memberName)
+        {
+            Guard.AgainstNullWhiteSpace(nameof(testClass), testClass);
+            Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
+            Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
             #region DeriveName
 
-            var type = caller.GetType();
-            var dbName = $"{type.Name}_{memberName}";
+            var dbName = $"{testClass}_{memberName}";
             if (databaseSuffix != null)
             {
                 dbName = $"{dbName}_{databaseSuffix}";
