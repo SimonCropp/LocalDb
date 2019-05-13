@@ -9,11 +9,11 @@ namespace TestBase
 
     public class TestBase
     {
-        static Instance<TheDbContext> instance;
+        static SqlInstance<TheDbContext> instance;
 
         static TestBase()
         {
-            instance = new Instance<TheDbContext>(
+            instance = new SqlInstance<TheDbContext>(
                 (connection, builder) =>
                 {
                     using (var dbContext = new TheDbContext(builder.Options))
@@ -24,7 +24,7 @@ namespace TestBase
                 builder => new TheDbContext(builder.Options));
         }
 
-        public Task<Database<TheDbContext>> LocalDb(
+        public Task<SqlDatabase<TheDbContext>> LocalDb(
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {

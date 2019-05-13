@@ -6,17 +6,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFLocalDb
 {
-    public static class StaticInstance<TDbContext>
+    public static class LocalDb<TDbContext>
         where TDbContext : DbContext
     {
-        static Instance<TDbContext> instance;
+        static SqlInstance<TDbContext> instance;
 
         public static void Register(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null)
         {
-            instance = new Instance<TDbContext>(buildTemplate, constructInstance, instanceSuffix);
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix);
         }
 
         public static void Register(
@@ -25,7 +25,7 @@ namespace EFLocalDb
             string instanceName,
             string directory)
         {
-            instance = new Instance<TDbContext>(buildTemplate, constructInstance, instanceName, directory);
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory);
         }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace EFLocalDb
         /// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-        public static Task<Database<TDbContext>> Build(
+        public static Task<SqlDatabase<TDbContext>> Build(
             object caller,
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
@@ -42,7 +42,7 @@ namespace EFLocalDb
             return instance.Build(caller, databaseSuffix, memberName);
         }
 
-        public static Task<Database<TDbContext>> Build(string dbName)
+        public static Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
             return instance.Build(dbName);
         }

@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EFLocalDb
 {
-    public class Instance<TDbContext>
+    public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
         Wrapper wrapper;
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
 
-        public Instance(
+        public SqlInstance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null)
@@ -24,7 +24,7 @@ namespace EFLocalDb
             Init(buildTemplate, constructInstance, instanceName, directory);
         }
 
-        public Instance(
+        public SqlInstance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
@@ -107,7 +107,7 @@ To cleanup perform the following actions:
         /// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-        public Task<Database<TDbContext>> Build(
+        public Task<SqlDatabase<TDbContext>> Build(
             object caller,
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
@@ -133,10 +133,10 @@ To cleanup perform the following actions:
             return Build(dbName);
         }
 
-        public async Task<Database<TDbContext>> Build(string dbName)
+        public async Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            return new Database<TDbContext>(await BuildContext(dbName), constructInstance);
+            return new SqlDatabase<TDbContext>(await BuildContext(dbName), constructInstance);
         }
     }
 }

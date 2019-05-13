@@ -7,7 +7,7 @@ public class Tests
     [Fact]
     public async Task ScopedDbContext()
     {
-        var instance = new Instance<ScopedDbContext>(
+        var instance = new SqlInstance<ScopedDbContext>(
             (connection, optionsBuilder) =>
             {
                 using (var dbContext = new ScopedDbContext(optionsBuilder.Options))
@@ -38,7 +38,7 @@ public class Tests
     [Fact]
     public async Task Secondary()
     {
-        var instance = new Instance<SecondaryDbContext>(
+        var instance = new SqlInstance<SecondaryDbContext>(
             (connection, optionsBuilder) =>
             {
                 using (var dbContext = new SecondaryDbContext(optionsBuilder.Options))
@@ -67,7 +67,7 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        var instance = new Instance<TestDbContext>(
+        var instance = new SqlInstance<TestDbContext>(
             (connection, optionsBuilder) =>
             {
                 using (var dbContext = new TestDbContext(optionsBuilder.Options))

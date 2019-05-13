@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFLocalDb
 {
-    public class Database<TDbContext>
+    public class SqlDatabase<TDbContext>
         where TDbContext : DbContext
     {
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
 
-        public Database(string connection, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance)
+        public SqlDatabase(string connection, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance)
         {
             this.constructInstance = constructInstance;
             Connection = connection;

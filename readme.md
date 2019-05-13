@@ -80,7 +80,7 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-var localDb = await StaticInstance<TheDbContext>.Build(this);
+var localDb = await LocalDb<TheDbContext>.Build(this);
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
@@ -95,13 +95,13 @@ The signature is as follows:
 /// <param name="caller">Used to make the db name unique per type. Normally pass this.</param>
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-public Task<Database<TDbContext>> Build(
+public Task<SqlDatabase<TDbContext>> Build(
     object caller,
     string databaseSuffix = null,
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/Instance.cs#L102-L116)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L102-L116)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
@@ -115,14 +115,14 @@ if (databaseSuffix != null)
     dbName = $"{dbName}_{databaseSuffix}";
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/Instance.cs#L122-L131)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L122-L131)</sup>
 <!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
 ```cs
-var localDb = await StaticInstance<TheDbContext>.Build("TheTestWithDbName");
+var localDb = await LocalDb<TheDbContext>.Build("TheTestWithDbName");
 ```
 <sup>[snippet source](/src/Snippets/Tests.cs#L42-L46)</sup>
 <!-- endsnippet -->
@@ -149,7 +149,7 @@ The above are combined in a full test:
 public async Task TheTest()
 {
 
-    var localDb = await StaticInstance<TheDbContext>.Build(this);
+    var localDb = await LocalDb<TheDbContext>.Build(this);
 
     using (var dbContext = localDb.NewDbContext())
     {
@@ -190,7 +190,7 @@ public class Tests
 {
     static Tests()
     {
-        StaticInstance<TheDbContext>.Register(
+        LocalDb<TheDbContext>.Register(
             (connection, optionsBuilder) =>
             {
                 using (var dbContext = new TheDbContext(optionsBuilder.Options))
@@ -204,7 +204,7 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var localDb = await StaticInstance<TheDbContext>.Build(this);
+        var localDb = await LocalDb<TheDbContext>.Build(this);
         using (var dbContext = localDb.NewDbContext())
         {
             var entity = new TestEntity
@@ -234,11 +234,11 @@ If multiple tests need to use the LocalDB instance, then the LocalDB instance sh
 ```cs
 public class TestBase
 {
-    static Instance<TheDbContext> instance;
+    static SqlInstance<TheDbContext> instance;
 
     static TestBase()
     {
-        instance = new Instance<TheDbContext>(
+        instance = new SqlInstance<TheDbContext>(
             (connection, builder) =>
             {
                 using (var dbContext = new TheDbContext(builder.Options))
@@ -249,11 +249,11 @@ public class TestBase
             builder => new TheDbContext(builder.Options));
     }
 
-    public Task<Database<TheDbContext>> LocalDb(
-        string suffix = null,
+    public Task<SqlDatabase<TheDbContext>> LocalDb(
+        string databaseSuffix = null,
         [CallerMemberName] string memberName = null)
     {
-        return instance.Build(this, suffix, memberName);
+        return instance.Build(this, databaseSuffix, memberName);
     }
 }
 
@@ -295,7 +295,7 @@ static class ModuleInitializer
 {
     public static void Initialize()
     {
-        StaticInstance<TheDbContext>.Register(
+        LocalDb<TheDbContext>.Register(
             (connection, optionsBuilder) =>
             {
                 using (var dbContext = new TheDbContext(optionsBuilder.Options))
@@ -326,7 +326,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/Instance.cs#L80-L89)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L80-L89)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -339,7 +339,7 @@ There is an explicit registration override that takes an instance name and a dir
 
 <!-- snippet: RegisterExplcit -->
 ```cs
-StaticInstance<TheDbContext>.Register(
+LocalDb<TheDbContext>.Register(
     (connection, optionsBuilder) =>
     {
         using (var dbContext = new TheDbContext(optionsBuilder.Options))

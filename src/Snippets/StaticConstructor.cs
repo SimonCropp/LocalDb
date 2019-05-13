@@ -10,7 +10,7 @@ namespace StaticConstructor
     {
         static Tests()
         {
-            StaticInstance<TheDbContext>.Register(
+            LocalDb<TheDbContext>.Register(
                 (connection, optionsBuilder) =>
                 {
                     using (var dbContext = new TheDbContext(optionsBuilder.Options))
@@ -24,7 +24,7 @@ namespace StaticConstructor
         [Fact]
         public async Task Test()
         {
-            var localDb = await StaticInstance<TheDbContext>.Build(this);
+            var localDb = await LocalDb<TheDbContext>.Build(this);
             using (var dbContext = localDb.NewDbContext())
             {
                 var entity = new TestEntity
