@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 static class Guard
 {
@@ -7,6 +8,14 @@ static class Guard
         if (value == null)
         {
             throw new ArgumentNullException(argumentName);
+        }
+    }
+
+    public static void DirectoryExists(string argumentName, string directory)
+    {
+        if (!Directory.Exists(directory))
+        {
+            throw new Exception($"Path to {argumentName} does not exist: {directory}");
         }
     }
 
