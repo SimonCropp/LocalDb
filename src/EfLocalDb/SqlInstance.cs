@@ -30,8 +30,8 @@ namespace EFLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
-            string directory, 
-            Func<TDbContext,bool> requiresRebuild = null)
+            string directory,
+            Func<TDbContext, bool> requiresRebuild = null)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(instanceName), instanceName);

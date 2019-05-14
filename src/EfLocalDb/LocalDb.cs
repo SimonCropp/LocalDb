@@ -14,20 +14,22 @@ namespace EFLocalDb
         public static void Register(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceSuffix = null)
+            string instanceSuffix = null,
+            Func<TDbContext, bool> requiresRebuild = null)
         {
             AssertInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix);
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix, requiresRebuild);
         }
 
         public static void Register(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
-            string directory)
+            string directory,
+            Func<TDbContext, bool> requiresRebuild = null)
         {
             AssertInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory);
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
         }
 
         static void AssertInstanceNotNull()
@@ -36,6 +38,7 @@ namespace EFLocalDb
             {
                 return;
             }
+
             throw new Exception($@"There is already an instance registered for {typeof(TDbContext).Name}.
 When using that static registration API, only one registration is allowed per DBContext type.
 To register different configurations for the same DbContext type use the instance based api via {typeof(SqlInstance<>).Name}");
