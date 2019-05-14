@@ -17,35 +17,65 @@ namespace EFLocalDb
         public SqlInstance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceSuffix = null)
+            string instanceSuffix = null, 
+            Func<TDbContext,bool> requiresRebuild = null)
         {
             Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
-            Init(buildTemplate, constructInstance, instanceName, directory);
+            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
         }
 
         public SqlInstance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
-            string directory)
+            string directory, 
+            Func<TDbContext,bool> requiresRebuild = null)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(instanceName), instanceName);
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
-            Init(buildTemplate, constructInstance, instanceName, directory);
+            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
         }
 
-        void Init(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance, string instanceName, string directory)
+        void Init(
+            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            string instanceName, 
+            string directory,
+            Func<TDbContext, bool> requiresRebuild)
         {
             try
             {
                 wrapper = new Wrapper(instanceName, directory);
 
                 this.constructInstance = constructInstance;
+
                 wrapper.Start();
+
+                if (requiresRebuild != null)
+                {
+                    if (wrapper.DatabaseFileExists("template"))
+                    {
+                        var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
+                        
+                        var builder = new DbContextOptionsBuilder<TDbContext>();
+                        builder.UseSqlServer(connection);
+                        using (var dbContext = constructInstance(builder))
+                        {
+                            if (!requiresRebuild(dbContext))
+                            {
+                                wrapper.Detach("template");
+                                wrapper.Purge();
+                                wrapper.DeleteFiles(exclude: "template");
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 wrapper.Purge();
                 wrapper.DeleteFiles();
 

@@ -88,12 +88,25 @@ execute sp_executesql @command";
             }
     }
 
-    public async Task<string> CreateDatabaseFromTemplate(string name, string templateName)
+    public Task<string> CreateDatabaseFromTemplate(string name, string templateName)
     {
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         var templateDataFile = Path.Combine(directory, templateName + ".mdf");
 
         File.Copy(templateDataFile, dataFile);
+
+        return CreateDatabaseFromFile(name);
+    }
+
+    public bool DatabaseFileExists(string name)
+    {
+        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        return File.Exists(dataFile);
+    }
+
+    public async Task<string> CreateDatabaseFromFile(string name)
+    {
+        var dataFile = Path.Combine(directory, $"{name}.mdf");
         var commandText = $@"
 create database [{name}] on
 (
@@ -124,9 +137,7 @@ for attach;
 {nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
 {nameof(name)}: {name}
-{nameof(templateName)}: {templateName}
 {nameof(dataFile)}: {dataFile}
-{nameof(templateDataFile)}: {templateDataFile}
 {nameof(commandText)}: {commandText}
 ");
         }
@@ -187,10 +198,17 @@ create database [{name}] on
         DeleteFiles();
     }
 
-    public void DeleteFiles()
+    public void DeleteFiles(string exclude = null)
     {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
+            if (exclude != null)
+            {
+                if (Path.GetFileNameWithoutExtension(file) == exclude)
+                {
+                    continue;
+                }
+            }
             File.Delete(file);
         }
     }

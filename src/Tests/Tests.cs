@@ -38,6 +38,54 @@ public class Tests
     }
 
     [Fact]
+    public async Task WithRebuildDbContext()
+    {
+        var instance1 = new SqlInstance<WithRebuildDbContext>(
+            buildTemplate: (connection, optionsBuilder) =>
+            {
+                using (var dbContext = new WithRebuildDbContext(optionsBuilder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            constructInstance: builder => new WithRebuildDbContext(builder.Options),
+            requiresRebuild: dbContext => true);
+        var database1 = await instance1.Build();
+        using (var dbContext = database1.NewDbContext())
+        {
+            var entity = new TestEntity
+            {
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
+
+        using (var dbContext = database1.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
+        var instance2 = new SqlInstance<WithRebuildDbContext>(
+            buildTemplate: (connection, optionsBuilder) => throw new Exception(),
+            constructInstance: builder => new WithRebuildDbContext(builder.Options),
+            requiresRebuild: dbContext => false);
+        var database2 = await instance2.Build();
+        using (var dbContext = database2.NewDbContext())
+        {
+            var entity = new TestEntity
+            {
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
+
+        using (var dbContext = database2.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
+    }
+    [Fact]
     public async Task Secondary()
     {
         var instance = new SqlInstance<SecondaryDbContext>(
