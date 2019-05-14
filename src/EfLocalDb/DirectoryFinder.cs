@@ -13,7 +13,7 @@ static class DirectoryFinder
 
         return Path.Combine(dataRoot, instanceName);
     }
-    
+
     static string FindDataRoot()
     {
         var localDbEnv = Environment.GetEnvironmentVariable("LocalDBData");

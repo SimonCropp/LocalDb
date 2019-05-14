@@ -103,10 +103,7 @@ for attach;
     public string CreateDatabase(string name)
     {
         var dataFile = Path.Combine(directory, name + ".mdf");
-        using (var connection = new SqlConnection(masterConnection))
-        using (var command = connection.CreateCommand())
-        {
-            command.CommandText = $@"
+        var commandText = $@"
 create database [{name}] on
 (
     name = [{name}],
@@ -116,9 +113,26 @@ create database [{name}] on
     fileGrowth = 5MB
 );
 ";
-            connection.Open();
-            command.ExecuteNonQuery();
+        try
+        {
+            using (var connection = new SqlConnection(masterConnection))
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = commandText;
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
         }
+        catch (Exception exception)
+        {
+            throw new Exception($@"Failed to {nameof(CreateDatabase)}
+{nameof(directory)}: {directory}
+{nameof(name)}: {name}
+{nameof(dataFile)}: {dataFile}
+{nameof(commandText)}: {commandText}
+", exception);
+        }
+
         return $"Data Source=(LocalDb)\\{instance};Database=template; Integrated Security=True";
     }
 

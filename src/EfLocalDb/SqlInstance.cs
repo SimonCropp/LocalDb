@@ -66,7 +66,10 @@ namespace EFLocalDb
             }
             catch (Exception exception)
             {
-                var message = $@"Failed to setup a LocalDB instance named {instanceName}.
+                var message = $@"Failed to setup a LocalDB instance.
+{nameof(instanceName)}: {instanceName}
+{nameof(directory)}: {directory}:
+
 To cleanup perform the following actions:
  * Execute 'sqllocaldb stop {instanceName}'
  * Execute 'sqllocaldb delete {instanceName}'
