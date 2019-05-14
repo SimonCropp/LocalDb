@@ -60,18 +60,21 @@ namespace EFLocalDb
                     if (wrapper.DatabaseFileExists("template"))
                     {
                         var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
-                        
+
                         var builder = new DbContextOptionsBuilder<TDbContext>();
                         builder.UseSqlServer(connection);
+                        bool rebuild;
                         using (var dbContext = constructInstance(builder))
                         {
-                            if (!requiresRebuild(dbContext))
-                            {
-                                wrapper.Detach("template");
-                                wrapper.Purge();
-                                wrapper.DeleteFiles(exclude: "template");
-                                return;
-                            }
+                            rebuild = requiresRebuild(dbContext);
+                        }
+
+                        if (!rebuild)
+                        {
+                            wrapper.Detach("template");
+                            wrapper.Purge();
+                            wrapper.DeleteFiles(exclude: "template");
+                            return;
                         }
                     }
                 }
