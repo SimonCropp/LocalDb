@@ -20,22 +20,33 @@ class Wrapper
 
     public void Detach(string name)
     {
-        using (var connection = new SqlConnection(masterConnection))
-        using (var command = connection.CreateCommand())
+        var commandText = $"EXEC sp_detach_db '{name}', 'true';";
+        try
         {
-            connection.Open();
-            command.CommandText = $"EXEC sp_detach_db '{name}', 'true';";
-            command.ExecuteNonQuery();
+            using (var connection = new SqlConnection(masterConnection))
+            using (var command = connection.CreateCommand())
+            {
+                connection.Open();
+                command.CommandText = commandText;
+                command.ExecuteNonQuery();
+            }
+        }
+        catch (Exception exception)
+        {
+            throw new Exception(
+                innerException: exception,
+                message: $@"Failed to {nameof(Detach)}
+{nameof(directory)}: {directory}
+{nameof(masterConnection)}: {masterConnection}
+{nameof(instance)}: {instance}
+{nameof(commandText)}: {commandText}
+");
         }
     }
 
     public void Purge()
     {
-        using (var connection = new SqlConnection(masterConnection))
-        using (var command = connection.CreateCommand())
-        {
-            connection.Open();
-            command.CommandText = @"
+            var commandText = @"
 declare @command nvarchar(max)
 set @command = ''
 
@@ -54,8 +65,27 @@ drop database [' + [name] + '];
 from [master].[sys].[databases]
 where [name] not in ('master', 'model', 'msdb', 'tempdb');
 execute sp_executesql @command";
-            command.ExecuteNonQuery();
-        }
+            try
+            {
+                using (var connection = new SqlConnection(masterConnection))
+                using (var command = connection.CreateCommand())
+                {
+                    connection.Open();
+                    command.CommandText = commandText;
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(
+                    innerException: exception,
+                    message: $@"Failed to {nameof(Purge)}
+{nameof(directory)}: {directory}
+{nameof(masterConnection)}: {masterConnection}
+{nameof(instance)}: {instance}
+{nameof(commandText)}: {commandText}
+");
+            }
     }
 
     public async Task<string> CreateDatabaseFromTemplate(string name, string templateName)
@@ -87,14 +117,18 @@ for attach;
         }
         catch (Exception exception)
         {
-            throw new Exception($@"Failed to {nameof(CreateDatabaseFromTemplate)}
+            throw new Exception(
+                innerException: exception,
+                message: $@"Failed to {nameof(CreateDatabaseFromTemplate)}
 {nameof(directory)}: {directory}
+{nameof(masterConnection)}: {masterConnection}
+{nameof(instance)}: {instance}
 {nameof(name)}: {name}
 {nameof(templateName)}: {templateName}
 {nameof(dataFile)}: {dataFile}
 {nameof(templateDataFile)}: {templateDataFile}
 {nameof(commandText)}: {commandText}
-", exception);
+");
         }
 
         return $"Data Source=(LocalDb)\\{instance};Database={name}; Integrated Security=True";
@@ -125,12 +159,16 @@ create database [{name}] on
         }
         catch (Exception exception)
         {
-            throw new Exception($@"Failed to {nameof(CreateDatabase)}
+            throw new Exception(
+                innerException: exception,
+                message: $@"Failed to {nameof(CreateDatabase)}
 {nameof(directory)}: {directory}
+{nameof(masterConnection)}: {masterConnection}
+{nameof(instance)}: {instance}
 {nameof(name)}: {name}
 {nameof(dataFile)}: {dataFile}
 {nameof(commandText)}: {commandText}
-", exception);
+");
         }
 
         return $"Data Source=(LocalDb)\\{instance};Database=template; Integrated Security=True";
@@ -157,11 +195,25 @@ create database [{name}] on
         }
     }
 
-    static void RunLocalDbCommand(string command)
+    void RunLocalDbCommand(string command)
     {
-        using (var start = Process.Start("sqllocaldb", command))
+        try
         {
-            start.WaitForExit();
+            using (var start = Process.Start("sqllocaldb", command))
+            {
+                start.WaitForExit();
+            }
+        }
+        catch (Exception exception)
+        {
+            throw new Exception(
+                innerException: exception,
+                message: $@"Failed to {nameof(RunLocalDbCommand)}
+{nameof(directory)}: {directory}
+{nameof(masterConnection)}: {masterConnection}
+{nameof(instance)}: {instance}
+{nameof(command)}: sqllocaldb {command}
+");
         }
     }
 }
