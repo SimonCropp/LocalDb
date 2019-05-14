@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -63,11 +64,7 @@ execute sp_executesql @command";
         var templateDataFile = Path.Combine(directory, templateName + ".mdf");
 
         File.Copy(templateDataFile, dataFile);
-
-        using (var connection = new SqlConnection(masterConnection))
-        using (var command = connection.CreateCommand())
-        {
-            command.CommandText = $@"
+        var commandText = $@"
 create database [{name}] on
 (
     name = [{name}],
@@ -78,8 +75,26 @@ create database [{name}] on
 )
 for attach;
 ";
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+        try
+        {
+            using (var connection = new SqlConnection(masterConnection))
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = commandText;
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+            }
+        }
+        catch (Exception exception)
+        {
+            throw new Exception($@"Failed to {nameof(CreateDatabaseFromTemplate)}
+{nameof(directory)}: {directory}
+{nameof(name)}: {name}
+{nameof(templateName)}: {templateName}
+{nameof(dataFile)}: {dataFile}
+{nameof(templateDataFile)}: {templateDataFile}
+{nameof(commandText)}: {commandText}
+", exception);
         }
 
         return $"Data Source=(LocalDb)\\{instance};Database={name}; Integrated Security=True";
