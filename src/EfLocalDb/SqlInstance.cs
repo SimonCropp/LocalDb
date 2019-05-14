@@ -17,7 +17,7 @@ namespace EFLocalDb
         public SqlInstance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceSuffix = null, 
+            string instanceSuffix = null,
             Func<TDbContext,bool> requiresRebuild = null)
         {
             Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
@@ -43,7 +43,7 @@ namespace EFLocalDb
         void Init(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceName, 
+            string instanceName,
             string directory,
             Func<TDbContext, bool> requiresRebuild)
         {
@@ -61,6 +61,7 @@ namespace EFLocalDb
                     {
                         var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
 
+                        connection = NonPooled(connection);
                         var builder = new DbContextOptionsBuilder<TDbContext>();
                         builder.UseSqlServer(connection);
                         bool rebuild;
@@ -83,8 +84,7 @@ namespace EFLocalDb
                 wrapper.DeleteFiles();
 
                 var connectionString = wrapper.CreateDatabase("template");
-                // needs to be pooling=false so that we can immediately detach and use the files
-                connectionString += ";Pooling=false";
+                connectionString = NonPooled(connectionString);
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
@@ -110,6 +110,13 @@ To cleanup perform the following actions:
 ";
                 throw new Exception(message, exception);
             }
+        }
+
+        static string NonPooled(string connectionString)
+        {
+            // needs to be pooling=false so that we can immediately detach and use the files
+            connectionString += ";Pooling=false";
+            return connectionString;
         }
 
         static string GetInstanceName(string scopeSuffix)
