@@ -15,7 +15,7 @@ namespace EFLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null,
-            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null)
         {
             AssertInstanceNotNull();
             instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix, requiresRebuild);
@@ -26,7 +26,7 @@ namespace EFLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
             string directory,
-            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null)
         {
             AssertInstanceNotNull();
             instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);

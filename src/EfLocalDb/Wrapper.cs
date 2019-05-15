@@ -200,18 +200,11 @@ create database [{name}] on
 
     public void DeleteFiles(string exclude = null)
     {
-        var logExclude = exclude+"_log";
         foreach (var file in Directory.EnumerateFiles(directory))
         {
             if (exclude != null)
             {
-                var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-                if (fileNameWithoutExtension == exclude)
-                {
-                    continue;
-                }
-
-                if (fileNameWithoutExtension == logExclude)
+                if (Path.GetFileNameWithoutExtension(file) == exclude)
                 {
                     continue;
                 }

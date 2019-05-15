@@ -49,7 +49,7 @@ public class Tests
                 }
             },
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
-            requiresRebuild: (connection, optionsBuilder) => true);
+            requiresRebuild: dbContext => true);
         var database1 = await instance1.Build();
         using (var dbContext = database1.NewDbContext())
         {
@@ -68,7 +68,7 @@ public class Tests
         var instance2 = new SqlInstance<WithRebuildDbContext>(
             buildTemplate: (connection, optionsBuilder) => throw new Exception(),
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
-            requiresRebuild: (connection, optionsBuilder) => false);
+            requiresRebuild: dbContext => false);
         var database2 = await instance2.Build();
         using (var dbContext = database2.NewDbContext())
         {
