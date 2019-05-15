@@ -19,21 +19,15 @@ static class DirectoryFinder
         var localDbEnv = Environment.GetEnvironmentVariable("LocalDBData");
         if (localDbEnv != null)
         {
-            Guard.DirectoryExists("LocalDBData", localDbEnv);
             return localDbEnv;
         }
 
         var tfsAgentDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
         if (tfsAgentDirectory != null)
         {
-            Guard.DirectoryExists("AGENT_TEMPDIRECTORY", tfsAgentDirectory);
-            var agentTemp = Path.Combine(tfsAgentDirectory, "EfLocalDb");
-            Directory.CreateDirectory(agentTemp);
-            return agentTemp;
+            return Path.Combine(tfsAgentDirectory, "EfLocalDb");
         }
 
-        var tempRoot = Path.Combine(Path.GetTempPath(), "EfLocalDb");
-        Directory.CreateDirectory(tempRoot);
-        return tempRoot;
+        return Path.Combine(Path.GetTempPath(), "EfLocalDb");
     }
 }
