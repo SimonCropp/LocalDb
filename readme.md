@@ -101,7 +101,7 @@ public Task<SqlDatabase<TDbContext>> Build(
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L139-L152)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L156-L169)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
@@ -114,7 +114,7 @@ if (databaseSuffix != null)
     dbName = $"{dbName}_{databaseSuffix}";
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L159-L167)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L176-L184)</sup>
 <!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
@@ -325,7 +325,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L117-L126)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L134-L143)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:

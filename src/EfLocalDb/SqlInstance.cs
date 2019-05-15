@@ -18,7 +18,7 @@ namespace EFLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null,
-            Func<TDbContext,bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null)
         {
             Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
             var instanceName = GetInstanceName(instanceSuffix);
@@ -55,29 +55,9 @@ namespace EFLocalDb
 
                 wrapper.Start();
 
-                if (requiresRebuild != null)
+                if (!CheckRequiresRebuild(requiresRebuild))
                 {
-                    if (wrapper.DatabaseFileExists("template"))
-                    {
-                        var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
-
-                        connection = NonPooled(connection);
-                        var builder = new DbContextOptionsBuilder<TDbContext>();
-                        builder.UseSqlServer(connection);
-                        bool rebuild;
-                        using (var dbContext = constructInstance(builder))
-                        {
-                            rebuild = requiresRebuild(dbContext);
-                        }
-
-                        if (!rebuild)
-                        {
-                            wrapper.Detach("template");
-                            wrapper.Purge();
-                            wrapper.DeleteFiles(exclude: "template");
-                            return;
-                        }
-                    }
+                    return;
                 }
 
                 wrapper.Purge();
@@ -112,11 +92,43 @@ To cleanup perform the following actions:
             }
         }
 
+        bool CheckRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
+        {
+            if (requiresRebuild == null)
+            {
+                return true;
+            }
+
+            if (!wrapper.DatabaseFileExists("template"))
+            {
+                return true;
+            }
+
+            var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
+            connection = NonPooled(connection);
+            var builder = new DbContextOptionsBuilder<TDbContext>();
+            builder.UseSqlServer(connection);
+            bool rebuild;
+            using (var dbContext = constructInstance(builder))
+            {
+                rebuild = requiresRebuild(dbContext);
+            }
+
+            if (rebuild)
+            {
+                return true;
+            }
+
+            wrapper.Detach("template");
+            wrapper.Purge();
+            wrapper.DeleteFiles(exclude: "template");
+            return false;
+        }
+
         static string NonPooled(string connectionString)
         {
             // needs to be pooling=false so that we can immediately detach and use the files
-            connectionString += ";Pooling=false";
-            return connectionString;
+            return connectionString + ";Pooling=false";
         }
 
         static string GetInstanceName(string scopeSuffix)
@@ -156,7 +168,9 @@ To cleanup perform the following actions:
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
+
             #endregion
+
             Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
             Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
