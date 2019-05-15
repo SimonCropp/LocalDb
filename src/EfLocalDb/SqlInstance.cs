@@ -18,7 +18,7 @@ namespace EFLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null,
-            Func<TDbContext,bool> requiresRebuild = null)
+            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>,bool> requiresRebuild = null)
         {
             Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
             var instanceName = GetInstanceName(instanceSuffix);
@@ -31,7 +31,7 @@ namespace EFLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
             string directory,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, bool> requiresRebuild = null)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(instanceName), instanceName);
@@ -45,7 +45,7 @@ namespace EFLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
             string directory,
-            Func<TDbContext, bool> requiresRebuild)
+            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, bool> requiresRebuild)
         {
             try
             {
@@ -55,29 +55,9 @@ namespace EFLocalDb
 
                 wrapper.Start();
 
-                if (requiresRebuild != null)
+                if (!CheckIfRebuildRequired(requiresRebuild))
                 {
-                    if (wrapper.DatabaseFileExists("template"))
-                    {
-                        var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
-
-                        connection = NonPooled(connection);
-                        var builder = new DbContextOptionsBuilder<TDbContext>();
-                        builder.UseSqlServer(connection);
-                        bool rebuild;
-                        using (var dbContext = constructInstance(builder))
-                        {
-                            rebuild = requiresRebuild(dbContext);
-                        }
-
-                        if (!rebuild)
-                        {
-                            wrapper.Detach("template");
-                            wrapper.Purge();
-                            wrapper.DeleteFiles(exclude: "template");
-                            return;
-                        }
-                    }
+                    return;
                 }
 
                 wrapper.Purge();
@@ -110,6 +90,39 @@ To cleanup perform the following actions:
 ";
                 throw new Exception(message, exception);
             }
+        }
+
+        private bool CheckIfRebuildRequired(Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, bool> requiresRebuild)
+        {
+            if (requiresRebuild == null)
+            {
+                return true;
+            }
+
+            if (!wrapper.DatabaseFileExists("template"))
+            {
+                return true;
+            }
+            var connectionString3 = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
+
+            connectionString3 = NonPooled(connectionString3);
+            bool rebuild;
+            using (var connection = new SqlConnection(connectionString3))
+            {
+                connection.Open();
+                var builder = new DbContextOptionsBuilder<TDbContext>();
+                builder.UseSqlServer(connection);
+                rebuild = requiresRebuild(connection, builder);
+            }
+
+            if (rebuild)
+            {
+                return true;
+            }
+            wrapper.Detach("template");
+            wrapper.Purge();
+            wrapper.DeleteFiles(exclude: "template");
+            return false;
         }
 
         static string NonPooled(string connectionString)
