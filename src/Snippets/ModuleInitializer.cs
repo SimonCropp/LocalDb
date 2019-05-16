@@ -7,14 +7,14 @@ static class ModuleInitializer
     public static void Initialize()
     {
         LocalDb<MyDbContext>.Register(
-            (connection, optionsBuilder) =>
+            buildTemplate: (connection, builder) =>
             {
-                using (var dbContext = new MyDbContext(optionsBuilder.Options))
+                using (var dbContext = new MyDbContext(builder.Options))
                 {
                     dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new MyDbContext(builder.Options));
+            constructInstance: builder => new MyDbContext(builder.Options));
     }
 }
 #endregion

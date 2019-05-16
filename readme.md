@@ -5,7 +5,7 @@ To change this file edit the source file and then re-run the generation using ei
 -->
 # EfLocalDb
 
-Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests that require [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
+Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
 
 ## Why
@@ -23,9 +23,15 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ### Why not SQL Express or full SQL Server
 
  * Control over file location. LocalDB connections support AttachDbFileName property, which allows developers to specify a database file location. LocalDB will attach the specified database file and the connection will be made to it. This allows database files to be stored in a temporary location, and cleaned up, as required by tests.
- * No installed service is required.  Processes are started and stopped automatically when needed.
+ * No installed service is required. Processes are started and stopped automatically when needed.
  * Automatic cleanup. A few minutes after the last connection to this process is closed the process shuts down.
  * Full control of instances using the [Command-Line Management Tool: SqlLocalDB.exe](https://docs.microsoft.com/en-us/sql/relational-databases/express-localdb-instance-apis/command-line-management-tool-sqllocaldb-exe?view=sql-server-2017).
+
+
+### Why not SQLite
+
+ * SQLite and SQL Server do not have compatible feature sets and there are incompatibilities between their query languages.
+
 
 References:
 
@@ -40,35 +46,178 @@ https://nuget.org/packages/EfLocalDb/
     PM> Install-Package EfLocalDb
 
 
+## Design
+
+There is a tiered approach to the API.
+
+SqlInstance > SqlDatabase > EfContext
+
+SqlInstance represents a [SQL Sever instance](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/database-engine-instances-sql-server?#instances) (in this case hosted in LocalDB) and SqlDatabase represents a [SQL Sever Database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/databases?view=sql-server-2017) running inside that SqlInstance.
+
+From a API perspective:
+
+`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`
+
+Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContext can be created to talk to a SqlDatabase.
+
+On the file system, each SqlInstance has corresponding directory and each SqlDatabase has a uniquely named mdf file within that directory.
+
+When a SqlInstance is defined, a template database is created. All subsequent SqlDatabases created from that SqlInstance will be based on this template. The template allows initially configuration and data to be added once, instead of every time a SqlDatabase is required. This results in significant performance improvement by not requiring to re-create/re-migrate the SqlDatabase schema/data on each use.
+
+The usual approach for consuming the API in a test project is as follows.
+
+ * Single SqlInstance per test project.
+ * Single SqlDatabase per test (or instance of a parameterized test).
+ * One or more DbContexts used within a test.
+
+This assumes that there is only a single DbContext type being used in tests, and that all usages of that DbContext use the same default data and configuration. If those caveats are not correct then multiple SqlInstances can be used.
+
+As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. `EFLocalDb.LocalDb<TDbContext>`allows for a single configuration per `DbContext` type, without the need to instantiate a SqlInstance.
+
+
 ## Usage
 
 
-### DbContext
+### Initialize SqlInstance
 
-Given a [DbContext](https://www.learnentityframeworkcore.com/dbcontext) as follows:
+Once per implementation of DbContext, a SqlInstance needs to be initialized.
 
-<!-- snippet: TheDbContext.cs -->
+To ensure this happens only once there are several approaches that can be used:
+
+
+#### Static constructor
+
+In the static constructor of a test.
+
+If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
+
+<!-- snippet: StaticConstructor -->
 ```cs
-using Microsoft.EntityFrameworkCore;
-
-public class TheDbContext :
-    DbContext
+public class Tests
 {
-    public DbSet<TestEntity> TestEntities { get; set; }
-
-    public TheDbContext(DbContextOptions options) :
-        base(options)
+    static Tests()
     {
+        LocalDb<TheDbContext>.Register(
+            buildTemplate: (connection, builder) =>
+            {
+                using (var dbContext = new TheDbContext(builder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            constructInstance: builder => new TheDbContext(builder.Options));
     }
 
-    protected override void OnModelCreating(ModelBuilder model)
+    [Fact]
+    public async Task Test()
     {
-        model.Entity<TestEntity>();
+        var localDb = await LocalDb<TheDbContext>.Build();
+        using (var dbContext = localDb.NewDbContext())
+        {
+            var entity = new TestEntity
+            {
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
+
+        using (var dbContext = localDb.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/TheDbContext.cs#L1-L17)</sup>
+<sup>[snippet source](/src/Snippets/StaticConstructor.cs#L7-L45)</sup>
 <!-- endsnippet -->
+
+
+#### Static constructor in test base
+
+If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
+
+<!-- snippet: TestBase -->
+```cs
+public class TestBase
+{
+    static SqlInstance<TheDbContext> instance;
+
+    static TestBase()
+    {
+        instance = new SqlInstance<TheDbContext>(
+            buildTemplate: (connection, builder) =>
+            {
+                using (var dbContext = new TheDbContext(builder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            constructInstance: builder => new TheDbContext(builder.Options));
+    }
+
+    public Task<SqlDatabase<TheDbContext>> LocalDb(
+        string databaseSuffix = null,
+        [CallerMemberName] string memberName = null)
+    {
+        return instance.Build(GetType().Name, databaseSuffix, memberName);
+    }
+}
+
+public class Tests:
+    TestBase
+{
+    [Fact]
+    public async Task Test()
+    {
+        var localDb = await LocalDb();
+        using (var dbContext = localDb.NewDbContext())
+        {
+            var entity = new TestEntity
+            {
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
+
+        using (var dbContext = localDb.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
+    }
+}
+```
+<sup>[snippet source](/src/Snippets/TestBaseUsage.cs#L8-L59)</sup>
+<!-- endsnippet -->
+
+
+#### Module initializer
+
+An alternative to the above "test base" scenario is to use a module intializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
+
+<!-- snippet: ModuleInitializer -->
+```cs
+static class ModuleInitializer
+{
+    public static void Initialize()
+    {
+        LocalDb<MyDbContext>.Register(
+            buildTemplate: (connection, builder) =>
+            {
+                using (var dbContext = new MyDbContext(builder.Options))
+                {
+                    dbContext.Database.EnsureCreated();
+                }
+            },
+            constructInstance: builder => new MyDbContext(builder.Options));
+    }
+}
+```
+<sup>[snippet source](/src/Snippets/ModuleInitializer.cs#L3-L20)</sup>
+<!-- endsnippet -->
+
+Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
 
 
 ### Usage in a Test
@@ -101,7 +250,7 @@ public Task<SqlDatabase<TDbContext>> Build(
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L156-L169)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L164-L178)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
@@ -114,7 +263,7 @@ if (databaseSuffix != null)
     dbName = $"{dbName}_{databaseSuffix}";
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L176-L184)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L186-L194)</sup>
 <!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
@@ -170,148 +319,6 @@ public async Task TheTest()
 <!-- endsnippet -->
 
 
-### Initialize LocalDB
-
-Once per implementation of DbContext, a LocalDB instance needs to be initialized.
-
-To ensure this happens only once there are several approaches that can be used:
-
-
-#### Static constructor
-
-In the static constructor of a test.
-
-If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
-
-<!-- snippet: StaticConstructor -->
-```cs
-public class Tests
-{
-    static Tests()
-    {
-        LocalDb<TheDbContext>.Register(
-            (connection, optionsBuilder) =>
-            {
-                using (var dbContext = new TheDbContext(optionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            builder => new TheDbContext(builder.Options));
-    }
-
-    [Fact]
-    public async Task Test()
-    {
-        var localDb = await LocalDb<TheDbContext>.Build();
-        using (var dbContext = localDb.NewDbContext())
-        {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
-
-        using (var dbContext = localDb.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
-        }
-    }
-}
-```
-<sup>[snippet source](/src/Snippets/StaticConstructor.cs#L7-L45)</sup>
-<!-- endsnippet -->
-
-
-#### Static constructor in test base
-
-If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
-
-<!-- snippet: TestBase -->
-```cs
-public class TestBase
-{
-    static SqlInstance<TheDbContext> instance;
-
-    static TestBase()
-    {
-        instance = new SqlInstance<TheDbContext>(
-            (connection, builder) =>
-            {
-                using (var dbContext = new TheDbContext(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            builder => new TheDbContext(builder.Options));
-    }
-
-    public Task<SqlDatabase<TheDbContext>> LocalDb(
-        string databaseSuffix = null,
-        [CallerMemberName] string memberName = null)
-    {
-        return instance.Build(GetType().Name, databaseSuffix, memberName);
-    }
-}
-
-public class Tests:
-    TestBase
-{
-    [Fact]
-    public async Task Test()
-    {
-        var localDb = await LocalDb();
-        using (var dbContext = localDb.NewDbContext())
-        {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
-
-        using (var dbContext = localDb.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
-        }
-    }
-}
-```
-<sup>[snippet source](/src/Snippets/TestBaseUsage.cs#L8-L59)</sup>
-<!-- endsnippet -->
-
-
-#### Module initializer
-
-An alternative to the above "test base" scenario is to use a module intializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
-
-<!-- snippet: ModuleInitializer -->
-```cs
-static class ModuleInitializer
-{
-    public static void Initialize()
-    {
-        LocalDb<MyDbContext>.Register(
-            (connection, optionsBuilder) =>
-            {
-                using (var dbContext = new MyDbContext(optionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            builder => new MyDbContext(builder.Options));
-    }
-}
-```
-<sup>[snippet source](/src/Snippets/ModuleInitializer.cs#L3-L20)</sup>
-<!-- endsnippet -->
-
-Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
-
-
 ## Directory and Instance Name Resolution
 
 The instance name is defined as: 
@@ -325,7 +332,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L134-L143)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L142-L151)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -339,20 +346,40 @@ There is an explicit registration override that takes an instance name and a dir
 <!-- snippet: RegisterExplcit -->
 ```cs
 LocalDb<TheDbContext>.Register(
-    (connection, optionsBuilder) =>
+    buildTemplate: (connection, builder) =>
     {
-        using (var dbContext = new TheDbContext(optionsBuilder.Options))
+        using (var dbContext = new TheDbContext(builder.Options))
         {
             dbContext.Database.EnsureCreated();
         }
     },
-    builder => new TheDbContext(builder.Options),
+    constructInstance: builder => new TheDbContext(builder.Options),
     instanceName: "theInstanceName",
     directory: @"C:\EfLocalDb\theInstance"
 );
 ```
 <sup>[snippet source](/src/Snippets/Snippets.cs#L7-L22)</sup>
 <!-- endsnippet -->
+
+
+## Debugging
+
+To connect to a LocalDB instance using [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) use a server name with the following convention `(LocalDb)\DBCONTEXT`. So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if `instanceSuffix` or `instanceName` have been used when defining the SqlInstance.
+
+The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed problematically from `LocalDb<TDbContext>.ServerName` or `SqlInstance<TDbContext>.ServerName`.
+
+
+## SqlLocalDb
+
+The [SqlLocalDb Utility (SqlLocalDB.exe)](https://docs.microsoft.com/en-us/sql/tools/sqllocaldb-utility) utility (SqlLocalDB.exe) is a simple command line tool to enable users and developers to create and manage an instance of LocalDB.
+
+Useful commands:
+
+ * `sqllocaldb info`: list all instances
+ * `sqllocaldb create InstanceName`: create a new instance
+ * `sqllocaldb start InstanceName`: start an instance
+ * `sqllocaldb stop InstanceName`: stop an instance
+ * `sqllocaldb delete InstanceName`: delete an instance (this does not delete the file system data for the instance)
 
 
 ## Icon

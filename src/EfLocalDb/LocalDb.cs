@@ -11,6 +11,15 @@ namespace EFLocalDb
     {
         static SqlInstance<TDbContext> instance;
 
+        public static string ServerName
+        {
+            get
+            {
+                AssertInstanceNotNull();
+                return instance.ServerName;
+            }
+        }
+
         public static void Register(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,

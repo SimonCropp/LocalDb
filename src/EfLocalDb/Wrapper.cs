@@ -13,10 +13,14 @@ class Wrapper
     public Wrapper(string instance, string directory)
     {
         this.instance = instance;
-        masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master; Integrated Security=True";
+        masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master";
         this.directory = directory;
         Directory.CreateDirectory(directory);
+
+        ServerName = $@"(LocalDb)\{instance}";
     }
+
+    public readonly string ServerName;
 
     public void Detach(string name)
     {
@@ -142,7 +146,7 @@ for attach;
 ");
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database={name}; Integrated Security=True";
+        return $"Data Source=(LocalDb)\\{instance};Database={name}";
     }
 
     public string CreateDatabase(string name)
@@ -182,7 +186,7 @@ create database [{name}] on
 ");
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database=template; Integrated Security=True";
+        return $"Data Source=(LocalDb)\\{instance};Database=template";
     }
 
     public void Start()

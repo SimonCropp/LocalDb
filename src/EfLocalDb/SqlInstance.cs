@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace EFLocalDb
     {
         Wrapper wrapper;
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        
+        public string ServerName => wrapper.ServerName;
 
         public SqlInstance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
@@ -50,6 +53,9 @@ namespace EFLocalDb
             try
             {
                 wrapper = new Wrapper(instanceName, directory);
+                
+                Trace.WriteLine($@"Creating LocalDb instance.
+Server Name: {ServerName}");
 
                 this.constructInstance = constructInstance;
 

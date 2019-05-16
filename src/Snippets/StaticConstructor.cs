@@ -11,14 +11,14 @@ namespace StaticConstructor
         static Tests()
         {
             LocalDb<TheDbContext>.Register(
-                (connection, optionsBuilder) =>
+                buildTemplate: (connection, builder) =>
                 {
-                    using (var dbContext = new TheDbContext(optionsBuilder.Options))
+                    using (var dbContext = new TheDbContext(builder.Options))
                     {
                         dbContext.Database.EnsureCreated();
                     }
                 },
-                builder => new TheDbContext(builder.Options));
+                constructInstance: builder => new TheDbContext(builder.Options));
         }
 
         [Fact]

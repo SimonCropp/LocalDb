@@ -3,21 +3,23 @@ using System.Threading.Tasks;
 using ApprovalTests;
 using EFLocalDb;
 using Xunit;
+using Xunit.Abstractions;
 
-public class Tests
+public class Tests:
+    XunitLoggingBase
 {
     [Fact]
     public async Task ScopedDbContext()
     {
         var instance = new SqlInstance<ScopedDbContext>(
-            (connection, optionsBuilder) =>
+            buildTemplate: (connection, builder) =>
             {
-                using (var dbContext = new ScopedDbContext(optionsBuilder.Options))
+                using (var dbContext = new ScopedDbContext(builder.Options))
                 {
                     dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new ScopedDbContext(builder.Options),
+            constructInstance: builder => new ScopedDbContext(builder.Options),
             instanceSuffix: "theSuffix");
 
         var localDb = await instance.Build();
@@ -89,14 +91,14 @@ public class Tests
     public async Task Secondary()
     {
         var instance = new SqlInstance<SecondaryDbContext>(
-            (connection, optionsBuilder) =>
+            buildTemplate: (connection, builder) =>
             {
-                using (var dbContext = new SecondaryDbContext(optionsBuilder.Options))
+                using (var dbContext = new SecondaryDbContext(builder.Options))
                 {
                     dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new SecondaryDbContext(builder.Options));
+            constructInstance: builder => new SecondaryDbContext(builder.Options));
         var localDb = await instance.Build();
         using (var dbContext = localDb.NewDbContext())
         {
@@ -125,14 +127,14 @@ public class Tests
     static void Register()
     {
         LocalDb<DuplicateDbContext>.Register(
-            (connection, optionsBuilder) =>
+            buildTemplate: (connection, builder) =>
             {
-                using (var dbContext = new DuplicateDbContext(optionsBuilder.Options))
+                using (var dbContext = new DuplicateDbContext(builder.Options))
                 {
                     dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new DuplicateDbContext(builder.Options));
+            constructInstance: builder => new DuplicateDbContext(builder.Options));
     }
 
     [Fact]
@@ -162,5 +164,10 @@ public class Tests
         {
             Assert.Single(dbContext.TestEntities);
         }
+    }
+
+    public Tests(ITestOutputHelper output) :
+        base(output)
+    {
     }
 }

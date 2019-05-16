@@ -14,14 +14,14 @@ namespace TestBase
         static TestBase()
         {
             instance = new SqlInstance<TheDbContext>(
-                (connection, builder) =>
+                buildTemplate: (connection, builder) =>
                 {
                     using (var dbContext = new TheDbContext(builder.Options))
                     {
                         dbContext.Database.EnsureCreated();
                     }
                 },
-                builder => new TheDbContext(builder.Options));
+                constructInstance: builder => new TheDbContext(builder.Options));
         }
 
         public Task<SqlDatabase<TheDbContext>> LocalDb(

@@ -7,14 +7,14 @@ class Snippets
         #region RegisterExplcit
 
         LocalDb<TheDbContext>.Register(
-            (connection, optionsBuilder) =>
+            buildTemplate: (connection, builder) =>
             {
-                using (var dbContext = new TheDbContext(optionsBuilder.Options))
+                using (var dbContext = new TheDbContext(builder.Options))
                 {
                     dbContext.Database.EnsureCreated();
                 }
             },
-            builder => new TheDbContext(builder.Options),
+            constructInstance: builder => new TheDbContext(builder.Options),
             instanceName: "theInstanceName",
             directory: @"C:\EfLocalDb\theInstance"
         );
