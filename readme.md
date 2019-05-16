@@ -14,7 +14,7 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ### Goals:
 
  * Have a isolated SQL Server Database for each unit test method.
- * Does not overly impact performance.
+ * Does not overly impact performance. 
  * Results in a running SQL Server Database that can be accessed via [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) (or other tooling) to diagnose issues when a test fails.
 
 
@@ -65,11 +65,11 @@ From a API perspective:
 
 `SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`
 
-Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContext can be created to talk to a SqlDatabase.
+Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContexts can be created to talk to a SqlDatabase.
 
 On the file system, each SqlInstance has corresponding directory and each SqlDatabase has a uniquely named mdf file within that directory.
 
-When a SqlInstance is defined, a template database is created. All subsequent SqlDatabases created from that SqlInstance will be based on this template. The template allows initially configuration and data to be added once, instead of every time a SqlDatabase is required. This results in significant performance improvement by not requiring to re-create/re-migrate the SqlDatabase schema/data on each use.
+When a SqlInstance is defined, a template database is created. All subsequent SqlDatabases created from that SqlInstance will be based on this template. The template allows schema and data to be created once, instead of every time a SqlDatabase is required. This results in significant performance improvement by not requiring to re-create/re-migrate the SqlDatabase schema/data on each use.
 
 The usual approach for consuming the API in a test project is as follows.
 
@@ -77,7 +77,7 @@ The usual approach for consuming the API in a test project is as follows.
  * Single SqlDatabase per test (or instance of a parameterized test).
  * One or more DbContexts used within a test.
 
-This assumes that there is only a single DbContext type being used in tests, and that all usages of that DbContext use the same default data and configuration. If those caveats are not correct then multiple SqlInstances can be used.
+This assumes that there is only a single DbContext type being used in tests, and that all usages of that DbContext use the same default data and schema. If those caveats are not correct then multiple SqlInstances can be used.
 
 As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. `EFLocalDb.LocalDb<TDbContext>`allows for a single configuration per `DbContext` type, without the need to instantiate a SqlInstance.
 
@@ -201,7 +201,7 @@ public class Tests:
 
 #### Module initializer
 
-An alternative to the above "test base" scenario is to use a module intializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
+An alternative to the above "test base" scenario is to use a module initializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
 
 <!-- snippet: ModuleInitializer -->
 ```cs
@@ -258,20 +258,6 @@ public Task<SqlDatabase<TDbContext>> Build(
 {
 ```
 <sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L158-L172)</sup>
-```cs
-/// <summary>
-///   Build DB with a name based on the calling Method.
-/// </summary>
-/// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
-/// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
-/// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-public Task<SqlDatabase> Build(
-    [CallerFilePath] string testFile = null,
-    string databaseSuffix = null,
-    [CallerMemberName] string memberName = null)
-{
-```
-<sup>[snippet source](/src/LocalDb/SqlInstance.cs#L139-L153)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:

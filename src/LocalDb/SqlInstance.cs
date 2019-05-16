@@ -136,8 +136,6 @@ To cleanup perform the following actions:
             return wrapper.CreateDatabaseFromTemplate(dbName, "template");
         }
 
-        #region BuildLocalDbSignature
-
         /// <summary>
         ///   Build DB with a name based on the calling Method.
         /// </summary>
@@ -149,9 +147,6 @@ To cleanup perform the following actions:
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
-
-            #endregion
-
             Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
             Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
@@ -162,7 +157,6 @@ To cleanup perform the following actions:
 
             return Build(dbName);
         }
-
 
         public async Task<SqlDatabase> Build(string dbName)
         {
