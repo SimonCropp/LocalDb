@@ -19,6 +19,12 @@ class Wrapper
 
         ServerName = $@"(LocalDb)\{instance}";
     }
+    
+    public static string NonPooled(string connectionString)
+    {
+        // needs to be pooling=false so that we can immediately detach and use the files
+        return connectionString + ";Pooling=false";
+    }
 
     public readonly string ServerName;
 

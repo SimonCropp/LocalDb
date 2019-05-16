@@ -1,23 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
+    <Description>Provides a wrapper around the LocalDB to simplify running tests.</Description>
     <GeneratePackageOnBuild Condition="$(Configuration) == 'Release'">true</GeneratePackageOnBuild>
     <GenerateDocumentationFile Condition="$(Configuration) == 'Release'">true</GenerateDocumentationFile>
-    <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB, Testing</PackageTags>
+    <PackageTags>LocalDB, Testing</PackageTags>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\LocalDb\DbNamer.cs" Link="DbNamer.cs" />
-    <Compile Include="..\LocalDb\DirectoryFinder.cs" Link="DirectoryFinder.cs" />
-    <Compile Include="..\LocalDb\Wrapper.cs" Link="Wrapper.cs" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ConfigureAwait.Fody" Version="3.1.0" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="5.0.6" PrivateAssets="All" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
     <PackageReference Condition="$(Configuration) == 'Release'" Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
   </ItemGroup>
 </Project>

@@ -7,7 +7,6 @@
     <Version>0.6.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright $([System.DateTime]::UtcNow.ToString(yyyy)). All rights reserved</Copyright>
-    <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/SimonCropp/EfLocalDb/master/src/icon.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/SimonCropp/EfLocalDb</PackageProjectUrl>
     <PackageOutputPath>..\..\nugets</PackageOutputPath>

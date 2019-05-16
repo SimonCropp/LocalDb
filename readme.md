@@ -257,7 +257,21 @@ public Task<SqlDatabase<TDbContext>> Build(
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L164-L178)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L158-L172)</sup>
+```cs
+/// <summary>
+///   Build DB with a name based on the calling Method.
+/// </summary>
+/// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
+/// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
+/// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
+public Task<SqlDatabase> Build(
+    [CallerFilePath] string testFile = null,
+    string databaseSuffix = null,
+    [CallerMemberName] string memberName = null)
+{
+```
+<sup>[snippet source](/src/LocalDb/SqlInstance.cs#L139-L153)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
@@ -270,7 +284,7 @@ if (databaseSuffix != null)
     dbName = $"{dbName}_{databaseSuffix}";
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L186-L194)</sup>
+<sup>[snippet source](/src/LocalDb/DbNamer.cs#L5-L13)</sup>
 <!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
@@ -339,7 +353,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L142-L151)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L136-L145)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
