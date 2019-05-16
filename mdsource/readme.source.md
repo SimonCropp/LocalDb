@@ -5,7 +5,8 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 
 ## Why
 
-Goals:
+
+### Goals:
 
  * Have a isolated SQL Server Database for each unit test method.
  * Does overly impact performance.
