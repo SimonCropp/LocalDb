@@ -14,7 +14,7 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ### Goals:
 
  * Have a isolated SQL Server Database for each unit test method.
- * Does overly impact performance.
+ * Does not overly impact performance.
  * Results in a running SQL Server Database that can be accessed via [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) (or other tooling) to diagnose issues when a test fails.
 
 
