@@ -11,7 +11,7 @@ namespace LocalDb
     {
         Wrapper wrapper;
         Func<SqlConnection, Task> constructInstance;
-        
+
         public string ServerName => wrapper.ServerName;
 
         public SqlInstance(
@@ -47,7 +47,7 @@ namespace LocalDb
             try
             {
                 wrapper = new Wrapper(name, directory);
-                
+
                 Trace.WriteLine($@"Creating LocalDb instance.
 Server Name: {ServerName}");
 
@@ -125,7 +125,7 @@ To cleanup perform the following actions:
             wrapper.DeleteFiles(exclude: "template");
             return false;
         }
-        
+
         public void Cleanup()
         {
             wrapper.DeleteInstance();

@@ -19,7 +19,7 @@ public class Tests:
         {
             await AddData(connection);
         }
-        
+
         using (var connection = await localDb.OpenConnection())
         {
             Assert.Single(await GetData(connection));
@@ -31,7 +31,7 @@ public class Tests:
     {
         var instance1 = new SqlInstance(
             buildTemplate: CreateTable,
-            requiresRebuild: dbContext => true, 
+            requiresRebuild: dbContext => true,
             name: "rebuild");
         var database1 = await instance1.Build();
         using (var connection = await database1.OpenConnection())
@@ -48,35 +48,35 @@ public class Tests:
         {
             await AddData(connection);
         }
-        
+
         using (var connection = await database2.OpenConnection())
         {
             var data = await GetData(connection);
             Assert.Single(data);
         }
     }
-    
+
     public Tests(ITestOutputHelper output) :
         base(output)
     {
     }
-    
+
     static void CreateTable(SqlConnection connection)
     {
         using (var command = connection.CreateCommand())
         {
-            command.CommandText = "create table MyTable (Value int);"; 
+            command.CommandText = "create table MyTable (Value int);";
             command.ExecuteNonQuery();
         }
     }
-    
+
     static async Task AddData(SqlConnection connection)
     {
         using (var command = connection.CreateCommand())
         {
             command.CommandText = @"
 insert into MyTable (Value)
-values (1);"; 
+values (1);";
             await command.ExecuteNonQueryAsync();
         }
     }

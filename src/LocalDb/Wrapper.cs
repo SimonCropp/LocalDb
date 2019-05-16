@@ -19,7 +19,7 @@ class Wrapper
 
         ServerName = $@"(LocalDb)\{instance}";
     }
-    
+
     public static string NonPooled(string connectionString)
     {
         // needs to be pooling=false so that we can immediately detach and use the files
@@ -100,7 +100,16 @@ execute sp_executesql @command";
 
     public Task<string> CreateDatabaseFromTemplate(string name, string templateName)
     {
+        if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new Exception("The database name 'template' is reserved.");
+        }
         var dataFile = Path.Combine(directory, $"{name}.mdf");
+        if (File.Exists(dataFile))
+        {
+            throw new Exception($"The database name '{name}' has already been used.");
+        }
+
         var templateDataFile = Path.Combine(directory, templateName + ".mdf");
 
         File.Copy(templateDataFile, dataFile);

@@ -5,7 +5,7 @@ using EFLocalDb;
 using Xunit;
 using Xunit.Abstractions;
 
-public class Tests:
+public class Tests :
     XunitLoggingBase
 {
     [Fact]
@@ -67,6 +67,7 @@ public class Tests:
         {
             Assert.Single(dbContext.TestEntities);
         }
+
         var instance2 = new SqlInstance<WithRebuildDbContext>(
             buildTemplate: (connection, optionsBuilder) => throw new Exception(),
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
@@ -87,6 +88,7 @@ public class Tests:
             Assert.Single(dbContext.TestEntities);
         }
     }
+
     [Fact]
     public async Task Secondary()
     {

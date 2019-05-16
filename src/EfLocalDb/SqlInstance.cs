@@ -14,7 +14,7 @@ namespace EFLocalDb
     {
         Wrapper wrapper;
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
-        
+
         public string ServerName => wrapper.ServerName;
 
         public SqlInstance(
@@ -53,7 +53,7 @@ namespace EFLocalDb
             try
             {
                 wrapper = new Wrapper(instanceName, directory);
-                
+
                 Trace.WriteLine($@"Creating LocalDb instance.
 Server Name: {ServerName}");
 
@@ -176,7 +176,7 @@ To cleanup perform the following actions:
             Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
 
             var testClass = Path.GetFileNameWithoutExtension(testFile);
-            
+
             var dbName = DbNamer.DeriveDbName(databaseSuffix, memberName, testClass);
             return Build(dbName);
         }
