@@ -40,7 +40,7 @@ public class Tests:
         }
 
         var instance2 = new SqlInstance(
-            buildTemplate: (connection) => throw new Exception(),
+            buildTemplate: connection => throw new Exception(),
             requiresRebuild: dbContext => false,
             name: "rebuild");
         var database2 = await instance2.Build();
@@ -52,7 +52,7 @@ public class Tests:
         using (var connection = await database2.OpenConnection())
         {
             var data = await GetData(connection);
-            Assert.Equal(2, data.Count);
+            Assert.Single(data);
         }
     }
     
@@ -86,8 +86,7 @@ values (1);";
         var values = new List<int>();
         using (var command = connection.CreateCommand())
         {
-            command.CommandText = @"
-select Value from MyTable";
+            command.CommandText = "select Value from MyTable";
             var reader = await command.ExecuteReaderAsync();
             while (reader.Read())
             {
