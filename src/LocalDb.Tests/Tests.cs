@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using EFLocalDb;
+using LocalDb;
 using Xunit;
 using Xunit.Abstractions;
 
