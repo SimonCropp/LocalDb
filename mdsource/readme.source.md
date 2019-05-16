@@ -25,7 +25,7 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 
 ### Why not SQLite
 
- * SQLite and SQL Server do not have compatible feature sets and there are incompatibilities between their query languages.
+ * SQLite and SQL Server do not have compatible feature sets and there are [incompatibilities between their query languages](https://www.mssqltips.com/sqlservertip/4777/comparing-some-differences-of-sql-server-to-sqlite/).
 
 
 References:
