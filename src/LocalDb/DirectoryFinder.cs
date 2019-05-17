@@ -25,9 +25,9 @@ static class DirectoryFinder
         var tfsAgentDirectory = Environment.GetEnvironmentVariable("AGENT_TEMPDIRECTORY");
         if (tfsAgentDirectory != null)
         {
-            return Path.Combine(tfsAgentDirectory, "EfLocalDb");
+            return Path.Combine(tfsAgentDirectory, "LocalDb");
         }
 
-        return Path.Combine(Path.GetTempPath(), "EfLocalDb");
+        return Path.Combine(Path.GetTempPath(), "LocalDb");
     }
 }

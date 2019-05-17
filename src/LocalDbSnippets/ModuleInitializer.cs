@@ -1,4 +1,4 @@
-﻿using EFLocalDb;
+﻿using LocalDb;
 
 #region ModuleInitializer
 
@@ -6,7 +6,7 @@ static class ModuleInitializer
 {
     public static void Initialize()
     {
-        LocalDb<MyDbContext>.Register(
+        SqlInstanceService.Register(
             buildTemplate: (connection, builder) =>
             {
                 using (var dbContext = new MyDbContext(builder.Options))

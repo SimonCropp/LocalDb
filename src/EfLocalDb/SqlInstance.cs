@@ -5,7 +5,6 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace EFLocalDb
 {
@@ -32,27 +31,27 @@ namespace EFLocalDb
         public SqlInstance(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceName,
+            string name,
             string directory,
             Func<TDbContext, bool> requiresRebuild = null)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
-            Guard.AgainstNullWhiteSpace(nameof(instanceName), instanceName);
+            Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
-            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
+            Init(buildTemplate, constructInstance, name, directory, requiresRebuild);
         }
 
         void Init(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceName,
+            string name,
             string directory,
             Func<TDbContext, bool> requiresRebuild)
         {
             try
             {
-                wrapper = new Wrapper(instanceName, directory);
+                wrapper = new Wrapper(name, directory);
 
                 Trace.WriteLine($@"Creating LocalDb instance.
 Server Name: {ServerName}");
@@ -70,13 +69,12 @@ Server Name: {ServerName}");
                 wrapper.DeleteFiles();
 
                 var connectionString = wrapper.CreateDatabase("template");
-                connectionString =Wrapper.NonPooled(connectionString);
+                connectionString = Wrapper.NonPooled(connectionString);
                 using (var connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 
-                    var builder = new DbContextOptionsBuilder<TDbContext>();
-                    builder.ConfigureWarnings(warnings => warnings.Throw(CoreEventId.IncludeIgnoredWarning));
+                    var builder = DefaultOptionsBuilder.Build<TDbContext>();
                     builder.UseSqlServer(connection);
                     buildTemplate(connection, builder);
                 }
@@ -86,12 +84,12 @@ Server Name: {ServerName}");
             catch (Exception exception)
             {
                 var message = $@"Failed to setup a LocalDB instance.
-{nameof(instanceName)}: {instanceName}
+{nameof(name)}: {name}
 {nameof(directory)}: {directory}:
 
 To cleanup perform the following actions:
- * Execute 'sqllocaldb stop {instanceName}'
- * Execute 'sqllocaldb delete {instanceName}'
+ * Execute 'sqllocaldb stop {name}'
+ * Execute 'sqllocaldb delete {name}'
  * Delete the directory {directory}'
 ";
                 throw new Exception(message, exception);

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using EFLocalDb;
+using LocalDb;
 using Xunit;
 
 namespace StaticConstructor
@@ -10,7 +10,7 @@ namespace StaticConstructor
     {
         static Tests()
         {
-            LocalDb<TheDbContext>.Register(
+            SqlInstanceService.Register(
                 buildTemplate: (connection, builder) =>
                 {
                     using (var dbContext = new TheDbContext(builder.Options))
@@ -24,7 +24,7 @@ namespace StaticConstructor
         [Fact]
         public async Task Test()
         {
-            var localDb = await LocalDb<TheDbContext>.Build();
+            var localDb = await SqlInstanceService.Build();
             using (var dbContext = localDb.NewDbContext())
             {
                 var entity = new TestEntity

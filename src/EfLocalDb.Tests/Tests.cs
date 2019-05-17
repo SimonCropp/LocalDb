@@ -128,7 +128,7 @@ public class Tests :
 
     static void Register()
     {
-        LocalDb<DuplicateDbContext>.Register(
+        SqlInstanceService<DuplicateDbContext>.Register(
             buildTemplate: (connection, builder) =>
             {
                 using (var dbContext = new DuplicateDbContext(builder.Options))

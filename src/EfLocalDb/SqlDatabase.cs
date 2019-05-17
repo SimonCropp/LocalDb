@@ -28,7 +28,7 @@ namespace EFLocalDb
 
         public TDbContext NewDbContext()
         {
-            var builder = new DbContextOptionsBuilder<TDbContext>();
+            var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection);
             return constructInstance(builder);
         }

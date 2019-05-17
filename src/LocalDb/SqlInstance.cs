@@ -15,35 +15,20 @@ namespace LocalDb
         public string ServerName => wrapper.ServerName;
 
         public SqlInstance(
+            string name,
             Action<SqlConnection> buildTemplate,
-            string name,
+            string directory = null,
             Func<SqlConnection, Task> constructInstance = null,
             Func<SqlConnection, bool> requiresRebuild = null)
         {
-            Guard.AgainstWhiteSpace(nameof(name), name);
-            var directory = DirectoryFinder.Find(name);
-            Init(buildTemplate, constructInstance, name, directory, requiresRebuild);
-        }
-
-        public SqlInstance(Action<SqlConnection> buildTemplate,
-            string name,
-            string directory,
-            Func<SqlConnection, Task> constructInstance = null,
-            Func<SqlConnection, bool> requiresRebuild = null)
-        {
-            Guard.AgainstNullWhiteSpace(nameof(directory), directory);
+            Guard.AgainstWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
-            Init(buildTemplate, constructInstance, name, directory, requiresRebuild);
-        }
+            if (directory == null)
+            {
+                directory = DirectoryFinder.Find(name);
+            }
 
-        void Init(
-            Action<SqlConnection> buildTemplate,
-            Func<SqlConnection, Task> constructInstance,
-            string name,
-            string directory,
-            Func<SqlConnection, bool> requiresRebuild)
-        {
             try
             {
                 wrapper = new Wrapper(name, directory);

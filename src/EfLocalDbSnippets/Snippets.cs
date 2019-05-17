@@ -6,7 +6,7 @@ class Snippets
     {
         #region RegisterExplcit
 
-        LocalDb<TheDbContext>.Register(
+        SqlInstanceService<TheDbContext>.Register(
             buildTemplate: (connection, builder) =>
             {
                 using (var dbContext = new TheDbContext(builder.Options))

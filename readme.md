@@ -3,9 +3,9 @@ This file was generate by MarkdownSnippets.
 Source File: /mdsource/readme.source.md
 To change this file edit the source file and then re-run the generation using either the dotnet global tool (https://github.com/SimonCropp/MarkdownSnippets#markdownsnippetstool) or using the api (https://github.com/SimonCropp/MarkdownSnippets#running-as-a-unit-test).
 -->
-# EfLocalDb
+# LocalDb
 
-Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
+Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
 
 ## Why
@@ -14,17 +14,13 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ### Goals:
 
  * Have a isolated SQL Server Database for each unit test method.
- * Does not overly impact performance. 
+ * Does not overly impact performance.
  * Results in a running SQL Server Database that can be accessed via [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) (or other tooling) to diagnose issues when a test fails.
 
 
-### Why not [InMemory](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
+### Why not SQLite
 
- * Difficult to debug the state. When debugging a test, or looking at the resultant state, it is helpful to be able to interrogate the Database using tooling
- * InMemory is implemented with shared mutable state between instance. This results in strange behaviors when running tests in parallel, for example when [creating keys](https://github.com/aspnet/EntityFrameworkCore/issues/6872).
- * InMemory is not intended to be an alternative to SqlServer, and as such it does not support the full suite of SqlServer features. For example:
-    * Does not support [Timestamp/row version](https://docs.microsoft.com/en-us/ef/core/modeling/concurrency#timestamprow-version).
-    * [Does not validate constraints](https://github.com/aspnet/EntityFrameworkCore/issues/2166).
+ * SQLite and SQL Server do not have compatible feature sets and there are [incompatibilities between their query languages](https://www.mssqltips.com/sqlservertip/4777/comparing-some-differences-of-sql-server-to-sqlite/).
 
 
 ### Why not SQL Express or full SQL Server
@@ -35,37 +31,64 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
  * Full control of instances using the [Command-Line Management Tool: SqlLocalDB.exe](https://docs.microsoft.com/en-us/sql/relational-databases/express-localdb-instance-apis/command-line-management-tool-sqllocaldb-exe?view=sql-server-2017).
 
 
-### Why not SQLite
+### Why not [EF InMemory](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
 
- * SQLite and SQL Server do not have compatible feature sets and there are [incompatibilities between their query languages](https://www.mssqltips.com/sqlservertip/4777/comparing-some-differences-of-sql-server-to-sqlite/).
+ * Difficult to debug the state. When debugging a test, or looking at the resultant state, it is helpful to be able to interrogate the Database using tooling
+ * InMemory is implemented with shared mutable state between instance. This results in strange behaviors when running tests in parallel, for example when [creating keys](https://github.com/aspnet/EntityFrameworkCore/issues/6872).
+ * InMemory is not intended to be an alternative to SqlServer, and as such it does not support the full suite of SqlServer features. For example:
+    * Does not support [Timestamp/row version](https://docs.microsoft.com/en-us/ef/core/modeling/concurrency#timestamprow-version).
+    * [Does not validate constraints](https://github.com/aspnet/EntityFrameworkCore/issues/2166).
 
 
-References:
+## References:
 
  * [Which Edition of SQL Server is Best for Development Work?](https://www.red-gate.com/simple-talk/sql/sql-development/edition-sql-server-best-development-work/#8)
  * [Introducing LocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
 
 
-## The NuGet package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+## The NuGet packages
+
+
+### EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
 
 https://nuget.org/packages/EfLocalDb/
 
     PM> Install-Package EfLocalDb
 
 
+### LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg?style=flat)](https://www.nuget.org/packages/LocalDb/)
+
+https://nuget.org/packages/LocalDb/
+
+    PM> Install-Package LocalDb
+
+
 ## Design
 
 There is a tiered approach to the API.
 
+For EF:
+
 SqlInstance > SqlDatabase > EfContext
+
+For Raw SQL:
+
+SqlInstance > SqlDatabase > Connection
 
 SqlInstance represents a [SQL Sever instance](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/database-engine-instances-sql-server?#instances) (in this case hosted in LocalDB) and SqlDatabase represents a [SQL Sever Database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/databases?view=sql-server-2017) running inside that SqlInstance.
 
 From a API perspective:
 
+For EF:
+
 `SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`
 
-Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContexts can be created to talk to a SqlDatabase.
+For Raw SQL:
+
+`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `SqlConnection`
+
+
+Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContexts/SqlConnections can be created to talk to a SqlDatabase.
 
 On the file system, each SqlInstance has corresponding directory and each SqlDatabase has a uniquely named mdf file within that directory.
 
@@ -75,11 +98,11 @@ The usual approach for consuming the API in a test project is as follows.
 
  * Single SqlInstance per test project.
  * Single SqlDatabase per test (or instance of a parameterized test).
- * One or more DbContexts used within a test.
+ * One or more DbContexts/SqlConnections used within a test.
 
-This assumes that there is only a single DbContext type being used in tests, and that all usages of that DbContext use the same default data and schema. If those caveats are not correct then multiple SqlInstances can be used.
+This assumes that there is a schema and data (and DbContext in the EF context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
 
-As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. `EFLocalDb.LocalDb<TDbContext>`allows for a single configuration per `DbContext` type, without the need to instantiate a SqlInstance.
+As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. To take this approach use `EFLocalDb.LocalDb<TDbContext>` or `LocalDb.LocalDb`.
 
 
 ## Usage
@@ -257,7 +280,7 @@ public Task<SqlDatabase<TDbContext>> Build(
     [CallerMemberName] string memberName = null)
 {
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L158-L172)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L156-L170)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
@@ -326,9 +349,39 @@ public async Task TheTest()
 <!-- endsnippet -->
 
 
+## DefaultOptionsBuilder
+
+When building a `DbContextOptionsBuilder` the default configuration is as follows:
+
+<!-- snippet: DefaultOptionsBuilder.cs -->
+```cs
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
+static class DefaultOptionsBuilder
+{
+    public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
+        where TDbContext : DbContext
+    {
+        var builder = new DbContextOptionsBuilder<TDbContext>();
+        builder.EnableSensitiveDataLogging();
+        builder.EnableDetailedErrors();
+        builder.ConfigureWarnings(warnings =>
+        {
+            warnings.Throw(CoreEventId.IncludeIgnoredWarning);
+            warnings.Throw(RelationalEventId.QueryClientEvaluationWarning);
+        });
+        return builder;
+    }
+}
+```
+<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19)</sup>
+<!-- endsnippet -->
+
+
 ## Directory and Instance Name Resolution
 
-The instance name is defined as: 
+The instance name is defined as:
 
 <!-- snippet: GetInstanceName -->
 ```cs
@@ -339,14 +392,14 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L136-L145)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L134-L143)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
 
  * If `LocalDBData` environment variable exists then use `LocalDBData\InstanceName`.
- * If `AGENT_TEMPDIRECTORY` environment variable exists then use `AGENT_TEMPDIRECTORY\EfLocalDb\InstanceName`.
- * Use `%TempDir%\EfLocalDb\InstanceName`
+ * If `AGENT_TEMPDIRECTORY` environment variable exists then use `AGENT_TEMPDIRECTORY\LocalDb\InstanceName`.
+ * Use `%TempDir%\LocalDb\InstanceName`
 
 There is an explicit registration override that takes an instance name and a directory for that instance:
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFLocalDb
 {
-    public static class LocalDb<TDbContext>
+    public static class SqlInstanceService<TDbContext>
         where TDbContext : DbContext
     {
         static SqlInstance<TDbContext> instance;
