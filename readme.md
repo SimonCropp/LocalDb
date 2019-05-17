@@ -48,15 +48,21 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 
 ## The NuGet packages
 
+This project currently supports two approaches.
 
-### LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg?style=flat)](https://www.nuget.org/packages/LocalDb/)
+
+### 1. LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg?style=flat)](https://www.nuget.org/packages/LocalDb/)
+
+Interactions with LocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
 
 https://nuget.org/packages/LocalDb/
 
     PM> Install-Package LocalDb
 
 
-### EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+### 2. EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+
+Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
 https://nuget.org/packages/EfLocalDb/
 
