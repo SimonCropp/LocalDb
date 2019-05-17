@@ -108,6 +108,56 @@ As the most common usage scenario is "Single SqlInstance per test project" there
 ## Usage
 
 
+### Schema and data used in snippets
+
+
+#### SQL
+
+The SQL snippets use the following helper class for 
+
+<!-- snippet: TestDbBuilder.db -->
+** Could not find snippet 'TestDbBuilder.db' **
+
+
+#### EF
+
+The EF snippets use a DbContext of the following form
+
+<!-- snippet: TheDbContext.cs -->
+```cs
+using Microsoft.EntityFrameworkCore;
+
+public class TheDbContext :
+    DbContext
+{
+    public DbSet<TheEntity> TestEntities { get; set; }
+
+    public TheDbContext(DbContextOptions options) :
+        base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder model)
+    {
+        model.Entity<TheEntity>();
+    }
+}
+```
+<sup>[snippet source](/src/EfLocalDbSnippets/TheDbContext.cs#L1-L17)</sup>
+<!-- endsnippet -->
+
+<!-- snippet: TheEntity.cs -->
+```cs
+public class TheEntity
+{
+    public int Id { get; set; }
+    public string Property { get; set; }
+}
+```
+<sup>[snippet source](/src/EfLocalDbSnippets/TheEntity.cs#L1-L5)</sup>
+<!-- endsnippet -->
+
+
 ### Initialize SqlInstance
 
 SqlInstance needs to be initialized once.
@@ -184,7 +234,7 @@ public class Tests
         var database = await sqlInstance.Build();
         using (var dbContext = database.NewDbContext())
         {
-            var entity = new TestEntity
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -292,7 +342,7 @@ public class Tests:
         var database = await LocalDb();
         using (var dbContext = database.NewDbContext())
         {
-            var entity = new TestEntity
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -504,7 +554,7 @@ public async Task TheTest()
 
     using (var dbContext = database.NewDbContext())
     {
-        var entity = new TestEntity
+        var entity = new TheEntity
         {
             Property = "prop"
         };

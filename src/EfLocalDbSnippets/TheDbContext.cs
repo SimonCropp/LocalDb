@@ -3,7 +3,7 @@
 public class TheDbContext :
     DbContext
 {
-    public DbSet<TestEntity> TestEntities { get; set; }
+    public DbSet<TheEntity> TestEntities { get; set; }
 
     public TheDbContext(DbContextOptions options) :
         base(options)
@@ -12,6 +12,6 @@ public class TheDbContext :
 
     protected override void OnModelCreating(ModelBuilder model)
     {
-        model.Entity<TestEntity>();
+        model.Entity<TheEntity>();
     }
 }

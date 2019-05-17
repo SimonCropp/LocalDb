@@ -103,6 +103,25 @@ As the most common usage scenario is "Single SqlInstance per test project" there
 ## Usage
 
 
+### Schema and data used in snippets
+
+
+#### SQL
+
+The SQL snippets use the following helper class for 
+
+snippet: TestDbBuilder.db
+
+
+#### EF
+
+The EF snippets use a DbContext of the following form
+
+snippet: TheDbContext.cs
+
+snippet: TheEntity.cs
+
+
 ### Initialize SqlInstance
 
 SqlInstance needs to be initialized once.

@@ -29,7 +29,7 @@ namespace StaticConstructor
             var database = await sqlInstance.Build();
             using (var dbContext = database.NewDbContext())
             {
-                var entity = new TestEntity
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };

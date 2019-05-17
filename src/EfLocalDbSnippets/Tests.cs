@@ -18,7 +18,7 @@ public class Tests
         using (var dbContext = database.NewDbContext())
         {
             #endregion
-            var entity = new TestEntity
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -43,7 +43,7 @@ public class Tests
 
         using (var dbContext = database.NewDbContext())
         {
-            var entity = new TestEntity
+            var entity = new TheEntity
             {
                 Property = "prop"
             };

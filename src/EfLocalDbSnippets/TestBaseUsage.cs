@@ -41,7 +41,7 @@ namespace TestBase
             var database = await LocalDb();
             using (var dbContext = database.NewDbContext())
             {
-                var entity = new TestEntity
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };
