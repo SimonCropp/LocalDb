@@ -10,9 +10,7 @@ public class Tests
     public async Task TheTest()
     {
         #region EfBuildLocalDbInstance
-
         var database = await SqlInstanceService<MyDbContext>.Build();
-
         #endregion
 
         #region EfBuildContext
@@ -40,9 +38,7 @@ public class Tests
     public async Task TheTestWithDbName()
     {
         #region EfWithDbName
-
         var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
-
         #endregion
 
         using (var dbContext = database.NewDbContext())

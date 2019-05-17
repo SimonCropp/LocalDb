@@ -10,13 +10,10 @@ public class Tests
     public async Task TheTest()
     {
         #region BuildLocalDbInstance
-
         var database = await SqlInstanceService.Build();
-
         #endregion
 
         #region BuildContext
-
         using (var connection = await database.OpenConnection())
         {
             #endregion
@@ -35,9 +32,7 @@ public class Tests
     public async Task TheTestWithDbName()
     {
         #region WithDbName
-
         var database = await SqlInstanceService.Build("TheTestWithDbName");
-
         #endregion
         
         using (var connection = await database.OpenConnection())

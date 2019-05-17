@@ -368,7 +368,7 @@ Usage inside a test consists of two parts:
 ```cs
 var database = await SqlInstanceService.Build();
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L16)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L14)</sup>
 <!-- endsnippet -->
 
 
@@ -378,7 +378,7 @@ var database = await SqlInstanceService.Build();
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build();
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L12-L16)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L12-L14)</sup>
 <!-- endsnippet -->
 
 
@@ -424,7 +424,7 @@ There is also an override that takes an explicit dbName:
 ```cs
 var database = await SqlInstanceService.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L37-L41)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L34-L36)</sup>
 <!-- endsnippet -->
 
 
@@ -434,7 +434,7 @@ var database = await SqlInstanceService.Build("TheTestWithDbName");
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L42-L46)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L40-L42)</sup>
 <!-- endsnippet -->
 
 
@@ -448,7 +448,7 @@ var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 using (var connection = await database.OpenConnection())
 {
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L18-L22)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L16-L19)</sup>
 <!-- endsnippet -->
 
 
@@ -459,7 +459,7 @@ using (var connection = await database.OpenConnection())
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L18-L22)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L16-L20)</sup>
 <!-- endsnippet -->
 
 
@@ -476,7 +476,6 @@ The above are combined in a full test:
 [Fact]
 public async Task TheTest()
 {
-
     var database = await SqlInstanceService.Build();
 
     using (var connection = await database.OpenConnection())
@@ -490,7 +489,7 @@ public async Task TheTest()
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L32)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L29)</sup>
 <!-- endsnippet -->
 
 
@@ -501,7 +500,6 @@ public async Task TheTest()
 [Fact]
 public async Task TheTest()
 {
-
     var database = await SqlInstanceService<MyDbContext>.Build();
 
     using (var dbContext = database.NewDbContext())
@@ -520,7 +518,7 @@ public async Task TheTest()
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L7-L37)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L7-L35)</sup>
 <!-- endsnippet -->
 
 
