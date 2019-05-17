@@ -7,8 +7,8 @@
     <Version>0.8.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright $([System.DateTime]::UtcNow.ToString(yyyy)). All rights reserved</Copyright>
-    <PackageIconUrl>https://raw.githubusercontent.com/SimonCropp/EfLocalDb/master/src/icon.png</PackageIconUrl>
-    <PackageProjectUrl>https://github.com/SimonCropp/EfLocalDb</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/SimonCropp/LocalDb/master/src/icon.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/SimonCropp/LocalDb</PackageProjectUrl>
     <PackageOutputPath>..\..\nugets</PackageOutputPath>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <DebugType>embedded</DebugType>
