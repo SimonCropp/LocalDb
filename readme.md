@@ -121,7 +121,8 @@ In the static constructor of a test.
 
 If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
 
-For SQL:
+
+##### For SQL:
 
 <!-- snippet: StaticConstructor -->
 ```cs
@@ -155,7 +156,8 @@ public class Tests
 <sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L36)</sup>
 <!-- endsnippet -->
 
-For EF
+
+##### For EF:
 
 <!-- snippet: EfStaticConstructor -->
 ```cs
@@ -205,7 +207,8 @@ public class Tests
 
 If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
 
-For SQL:
+
+##### For SQL:
 
 <!-- snippet: TestBase -->
 ```cs
@@ -250,7 +253,8 @@ public class Tests:
 <sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L48)</sup>
 <!-- endsnippet -->
 
-For EF:
+
+##### For EF:
 
 <!-- snippet: EfTestBase -->
 ```cs
@@ -311,7 +315,8 @@ public class Tests:
 
 An alternative to the above "test base" scenario is to use a module initializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
 
-For SQL:
+
+##### For SQL:
 
 <!-- snippet: ModuleInitializer -->
 ```cs
@@ -328,7 +333,8 @@ static class ModuleInitializer
 <sup>[snippet source](/src/LocalDbSnippets/ModuleInitializer.cs#L3-L14)</sup>
 <!-- endsnippet -->
 
-For EF:
+
+##### For EF:
 
 <!-- snippet: ModuleInitializer -->
 ```cs
@@ -355,7 +361,8 @@ Usage inside a test consists of two parts:
 
 #### Build LocalDb Instance
 
-For SQL:
+
+##### For SQL:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
@@ -364,7 +371,8 @@ var database = await SqlInstanceService.Build();
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
 
-For EF:
+
+##### For EF:
 
 <!-- snippet: EfBuildLocalDbInstance -->
 ```cs
@@ -372,6 +380,9 @@ var database = await SqlInstanceService<MyDbContext>.Build();
 ```
 <sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
+
+
+#### BuildLocalDbSignature Signature
 
 The signature is as follows:
 
@@ -387,22 +398,18 @@ The signature is as follows:
 <sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L156-L164)</sup>
 <!-- endsnippet -->
 
+
+#### Database Name
+
 The database name is the derived as follows:
 
-<!-- snippet: DeriveName -->
-```cs
-var dbName = $"{testClass}_{memberName}";
-if (databaseSuffix != null)
-{
-    dbName = $"{dbName}_{databaseSuffix}";
-}
-```
-<sup>[snippet source](/src/LocalDb/DbNamer.cs#L5-L13)</sup>
-<!-- endsnippet -->
+
+##### snippet: DeriveName
 
 There is also an override that takes an explicit dbName:
 
-For SQL:
+
+##### For SQL:
 
 <!-- snippet: WithDbName -->
 ```cs
@@ -411,7 +418,8 @@ var database = await SqlInstanceService.Build("TheTestWithDbName");
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L37-L41)</sup>
 <!-- endsnippet -->
 
-For EF:
+
+##### For EF:
 
 <!-- snippet: EfWithDbName -->
 ```cs
@@ -421,9 +429,10 @@ var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 <!-- endsnippet -->
 
 
-#### Building and using DbContexts
+#### Building and using DbContexts/SQLConnection
 
-For SQL:
+
+##### For SQL:
 
 <!-- snippet: BuildContext -->
 ```cs
@@ -433,7 +442,8 @@ using (var connection = await database.OpenConnection())
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L18-L22)</sup>
 <!-- endsnippet -->
 
-For EF:
+
+##### For EF:
 
 <!-- snippet: EfBuildContext -->
 ```cs
@@ -449,7 +459,8 @@ using (var dbContext = database.NewDbContext())
 
 The above are combined in a full test:
 
-For SQL:
+
+##### For SQL:
 
 <!-- snippet: Test -->
 ```cs
@@ -473,7 +484,8 @@ public async Task TheTest()
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L32)</sup>
 <!-- endsnippet -->
 
-For EF:
+
+##### For EF:
 
 <!-- snippet: EfTest -->
 ```cs
@@ -503,7 +515,7 @@ public async Task TheTest()
 <!-- endsnippet -->
 
 
-## EF DefaultOptionsBuilder
+### EF DefaultOptionsBuilder
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
@@ -557,7 +569,8 @@ That InstanceName is then used to derive the data directory. In order:
 
 There is an explicit registration override that takes an instance name and a directory for that instance:
 
-For SQL:
+
+### For SQL:
 
 <!-- snippet: RegisterExplcit -->
 ```cs
@@ -570,7 +583,8 @@ SqlInstanceService.Register(
 <sup>[snippet source](/src/LocalDbSnippets/Snippets.cs#L7-L15)</sup>
 <!-- endsnippet -->
 
-For EF:
+
+### For EF:
 
 <!-- snippet: EfRegisterExplcit -->
 ```cs

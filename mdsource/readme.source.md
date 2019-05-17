@@ -116,11 +116,13 @@ In the static constructor of a test.
 
 If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
 
-For SQL:
+
+##### For SQL:
 
 snippet: StaticConstructor
 
-For EF
+
+##### For EF:
 
 snippet: EfStaticConstructor
 
@@ -129,11 +131,13 @@ snippet: EfStaticConstructor
 
 If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
 
-For SQL:
+
+##### For SQL:
 
 snippet: TestBase
 
-For EF:
+
+##### For EF:
 
 snippet: EfTestBase
 
@@ -142,11 +146,13 @@ snippet: EfTestBase
 
 An alternative to the above "test base" scenario is to use a module initializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
 
-For SQL:
+
+##### For SQL:
 
 snippet: ModuleInitializer
 
-For EF:
+
+##### For EF:
 
 snippet: ModuleInitializer
 
@@ -160,40 +166,53 @@ Usage inside a test consists of two parts:
 
 #### Build LocalDb Instance
 
-For SQL:
+
+##### For SQL:
 
 snippet: BuildLocalDbInstance
 
-For EF:
+
+##### For EF:
 
 snippet: EfBuildLocalDbInstance
+
+
+#### BuildLocalDbSignature Signature
 
 The signature is as follows:
 
 snippet: BuildLocalDbSignature
 
+
+#### Database Name
+
 The database name is the derived as follows:
 
-snippet: DeriveName
+
+##### snippet: DeriveName
 
 There is also an override that takes an explicit dbName:
 
-For SQL:
+
+##### For SQL:
 
 snippet: WithDbName
 
-For EF:
+
+##### For EF:
 
 snippet: EfWithDbName
 
 
-#### Building and using DbContexts
+#### Building and using DbContexts/SQLConnection
 
-For SQL:
+
+##### For SQL:
 
 snippet: BuildContext
 
-For EF:
+
+##### For EF:
 
 snippet: EfBuildContext
 
@@ -203,16 +222,18 @@ snippet: EfBuildContext
 
 The above are combined in a full test:
 
-For SQL:
+
+##### For SQL:
 
 snippet: Test
 
-For EF:
+
+##### For EF:
 
 snippet: EfTest
 
 
-## EF DefaultOptionsBuilder
+### EF DefaultOptionsBuilder
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
@@ -233,11 +254,13 @@ That InstanceName is then used to derive the data directory. In order:
 
 There is an explicit registration override that takes an instance name and a directory for that instance:
 
-For SQL:
+
+### For SQL:
 
 snippet: RegisterExplcit
 
-For EF:
+
+### For EF:
 
 snippet: EfRegisterExplcit
 
