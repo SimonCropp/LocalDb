@@ -110,7 +110,7 @@ As the most common usage scenario is "Single SqlInstance per test project" there
 
 The SQL snippets use the following helper class for 
 
-snippet: TestDbBuilder.db
+snippet: TestDbBuilder.cs
 
 
 #### EF
