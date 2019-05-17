@@ -404,7 +404,16 @@ The signature is as follows:
 The database name is the derived as follows:
 
 
-##### snippet: DeriveName
+<!-- snippet: DeriveName -->
+```cs
+var dbName = $"{testClass}_{memberName}";
+if (databaseSuffix != null)
+{
+    dbName = $"{dbName}_{databaseSuffix}";
+}
+```
+<sup>[snippet source](/src/LocalDb/DbNamer.cs#L5-L13)</sup>
+<!-- endsnippet -->
 
 There is also an override that takes an explicit dbName:
 

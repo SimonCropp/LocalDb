@@ -189,7 +189,7 @@ snippet: BuildLocalDbSignature
 The database name is the derived as follows:
 
 
-##### snippet: DeriveName
+snippet: DeriveName
 
 There is also an override that takes an explicit dbName:
 
