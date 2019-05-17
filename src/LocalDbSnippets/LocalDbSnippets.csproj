@@ -4,6 +4,9 @@
     <Optimize>false</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\LocalDb.Tests\TestDbBuilder.cs" Link="TestDbBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="ApprovalTests" Version="3.0.22" />
     <PackageReference Include="ObjectApproval" Version="9.1.0" />
     <PackageReference Include="ModuleInit.Fody" Version="2.0.0" />

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ApprovalTests;
-using EFLocalDb;
+using EfLocalDb;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,8 +22,8 @@ public class Tests :
             constructInstance: builder => new ScopedDbContext(builder.Options),
             instanceSuffix: "theSuffix");
 
-        var localDb = await instance.Build();
-        using (var dbContext = localDb.NewDbContext())
+        var database = await instance.Build();
+        using (var dbContext = database.NewDbContext())
         {
             var entity = new TestEntity
             {
@@ -33,7 +33,7 @@ public class Tests :
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
@@ -101,8 +101,8 @@ public class Tests :
                 }
             },
             constructInstance: builder => new SecondaryDbContext(builder.Options));
-        var localDb = await instance.Build();
-        using (var dbContext = localDb.NewDbContext())
+        var database = await instance.Build();
+        using (var dbContext = database.NewDbContext())
         {
             var entity = new TestEntity
             {
@@ -112,7 +112,7 @@ public class Tests :
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
@@ -151,8 +151,8 @@ public class Tests :
                 }
             },
             builder => new TestDbContext(builder.Options));
-        var localDb = await instance.Build();
-        using (var dbContext = localDb.NewDbContext())
+        var database = await instance.Build();
+        using (var dbContext = database.NewDbContext())
         {
             var entity = new TestEntity
             {
@@ -162,7 +162,7 @@ public class Tests :
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }

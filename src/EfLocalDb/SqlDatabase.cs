@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFLocalDb
+namespace EfLocalDb
 {
     public class SqlDatabase<TDbContext>
         where TDbContext : DbContext

@@ -1,23 +1,23 @@
 ﻿using System.Threading.Tasks;
-using EFLocalDb;
+using EfLocalDb;
 using Xunit;
 
 public class Tests
 {
-    #region Test
+    #region EfTest
 
     [Fact]
     public async Task TheTest()
     {
-        #region BuildLocalDbInstance
+        #region EfBuildLocalDbInstance
 
-        var localDb = await SqlInstanceService<MyDbContext>.Build();
+        var database = await SqlInstanceService<MyDbContext>.Build();
 
         #endregion
 
-        #region BuildDbContext
+        #region EfBuildContext
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             #endregion
             var entity = new TestEntity
@@ -28,7 +28,7 @@ public class Tests
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
@@ -39,13 +39,13 @@ public class Tests
     [Fact]
     public async Task TheTestWithDbName()
     {
-        #region WithDbName
+        #region EfWithDbName
 
-        var localDb = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
+        var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 
         #endregion
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             var entity = new TestEntity
             {
@@ -55,7 +55,7 @@ public class Tests
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }

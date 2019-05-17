@@ -1,10 +1,10 @@
-﻿using EFLocalDb;
+﻿using EfLocalDb;
 
 class Snippets
 {
     Snippets()
     {
-        #region RegisterExplcit
+        #region EfRegisterExplcit
 
         SqlInstanceService<TheDbContext>.Register(
             buildTemplate: (connection, builder) =>

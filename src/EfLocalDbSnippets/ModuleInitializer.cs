@@ -1,6 +1,6 @@
-﻿using EFLocalDb;
+﻿using EfLocalDb;
 
-#region ModuleInitializer
+#region EfModuleInitializer
 
 static class ModuleInitializer
 {

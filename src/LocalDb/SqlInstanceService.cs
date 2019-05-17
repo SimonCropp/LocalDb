@@ -22,11 +22,10 @@ namespace LocalDb
             string name,
             Action<SqlConnection> buildTemplate,
             string directory = null,
-            Func<SqlConnection, Task> constructInstance = null,
             Func<SqlConnection, bool> requiresRebuild = null)
         {
             AssertInstanceNotNull();
-            instance = new SqlInstance(name, buildTemplate, directory, constructInstance, requiresRebuild);
+            instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild);
         }
 
         static void AssertInstanceNotNull()

@@ -49,13 +49,6 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ## The NuGet packages
 
 
-### EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
-
-https://nuget.org/packages/EfLocalDb/
-
-    PM> Install-Package EfLocalDb
-
-
 ### LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg?style=flat)](https://www.nuget.org/packages/LocalDb/)
 
 https://nuget.org/packages/LocalDb/
@@ -63,29 +56,36 @@ https://nuget.org/packages/LocalDb/
     PM> Install-Package LocalDb
 
 
+### EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+
+https://nuget.org/packages/EfLocalDb/
+
+    PM> Install-Package EfLocalDb
+
+
 ## Design
 
 There is a tiered approach to the API.
+
+For SQL:
+
+SqlInstance > SqlDatabase > Connection
 
 For EF:
 
 SqlInstance > SqlDatabase > EfContext
 
-For Raw SQL:
-
-SqlInstance > SqlDatabase > Connection
-
 SqlInstance represents a [SQL Sever instance](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/database-engine-instances-sql-server?#instances) (in this case hosted in LocalDB) and SqlDatabase represents a [SQL Sever Database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/databases?view=sql-server-2017) running inside that SqlInstance.
 
 From a API perspective:
 
+For SQL:
+
+`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `SqlConnection`
+
 For EF:
 
 `SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`
-
-For Raw SQL:
-
-`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `SqlConnection`
 
 
 Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContexts/SqlConnections can be created to talk to a SqlDatabase.
@@ -110,7 +110,7 @@ As the most common usage scenario is "Single SqlInstance per test project" there
 
 ### Initialize SqlInstance
 
-Once per implementation of DbContext, a SqlInstance needs to be initialized.
+SqlInstance needs to be initialized once.
 
 To ensure this happens only once there are several approaches that can be used:
 
@@ -121,13 +121,51 @@ In the static constructor of a test.
 
 If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
 
+For SQL:
+
 <!-- snippet: StaticConstructor -->
 ```cs
 public class Tests
 {
+    static SqlInstance sqlInstance;
+
     static Tests()
     {
-        LocalDb<TheDbContext>.Register(
+        sqlInstance = new SqlInstance(
+            name: "StaticConstructorInstance",
+            buildTemplate: TestDbBuilder.CreateTable);
+    }
+
+    [Fact]
+    public async Task Test()
+    {
+        var database = await sqlInstance.Build();
+        using (var connection = await database.OpenConnection())
+        {
+            await TestDbBuilder.AddData(connection);
+        }
+
+        using (var connection = await database.OpenConnection())
+        {
+            Assert.Single(await TestDbBuilder.GetData(connection));
+        }
+    }
+}
+```
+<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L36)</sup>
+<!-- endsnippet -->
+
+For EF
+
+<!-- snippet: EfStaticConstructor -->
+```cs
+public class Tests
+{
+    static SqlInstance<TheDbContext> sqlInstance;
+
+    static Tests()
+    {
+        sqlInstance = new SqlInstance<TheDbContext>(
             buildTemplate: (connection, builder) =>
             {
                 using (var dbContext = new TheDbContext(builder.Options))
@@ -141,8 +179,8 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var localDb = await LocalDb<TheDbContext>.Build();
-        using (var dbContext = localDb.NewDbContext())
+        var database = await sqlInstance.Build();
+        using (var dbContext = database.NewDbContext())
         {
             var entity = new TestEntity
             {
@@ -152,14 +190,14 @@ public class Tests
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/StaticConstructor.cs#L7-L45)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L7-L47)</sup>
 <!-- endsnippet -->
 
 
@@ -167,7 +205,54 @@ public class Tests
 
 If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
 
+For SQL:
+
 <!-- snippet: TestBase -->
+```cs
+public class TestBase
+{
+    static SqlInstance instance;
+
+    static TestBase()
+    {
+        instance = new SqlInstance(
+            name:"TestBaseUsage",
+            buildTemplate: TestDbBuilder.CreateTable);
+    }
+
+    public Task<SqlDatabase> LocalDb(
+        string databaseSuffix = null,
+        [CallerMemberName] string memberName = null)
+    {
+        return instance.Build(GetType().Name, databaseSuffix, memberName);
+    }
+}
+
+public class Tests:
+    TestBase
+{
+    [Fact]
+    public async Task Test()
+    {
+        var database = await LocalDb();
+        using (var connection = await database.OpenConnection())
+        {
+            await TestDbBuilder.AddData(connection);
+        }
+        
+        using (var connection = await database.OpenConnection())
+        {
+            Assert.Single(await TestDbBuilder.GetData(connection));
+        }
+    }
+}
+```
+<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L48)</sup>
+<!-- endsnippet -->
+
+For EF:
+
+<!-- snippet: EfTestBase -->
 ```cs
 public class TestBase
 {
@@ -200,8 +285,8 @@ public class Tests:
     [Fact]
     public async Task Test()
     {
-        var localDb = await LocalDb();
-        using (var dbContext = localDb.NewDbContext())
+        var database = await LocalDb();
+        using (var dbContext = database.NewDbContext())
         {
             var entity = new TestEntity
             {
@@ -211,14 +296,14 @@ public class Tests:
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/TestBaseUsage.cs#L8-L59)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L59)</sup>
 <!-- endsnippet -->
 
 
@@ -226,25 +311,38 @@ public class Tests:
 
 An alternative to the above "test base" scenario is to use a module initializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
 
+For SQL:
+
 <!-- snippet: ModuleInitializer -->
 ```cs
 static class ModuleInitializer
 {
     public static void Initialize()
     {
-        LocalDb<MyDbContext>.Register(
-            buildTemplate: (connection, builder) =>
-            {
-                using (var dbContext = new MyDbContext(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            constructInstance: builder => new MyDbContext(builder.Options));
+        SqlInstanceService.Register(
+            name: "MySqlInstance",
+            buildTemplate: TestDbBuilder.CreateTable);
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/ModuleInitializer.cs#L3-L20)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/ModuleInitializer.cs#L3-L14)</sup>
+<!-- endsnippet -->
+
+For EF:
+
+<!-- snippet: ModuleInitializer -->
+```cs
+static class ModuleInitializer
+{
+    public static void Initialize()
+    {
+        SqlInstanceService.Register(
+            name: "MySqlInstance",
+            buildTemplate: TestDbBuilder.CreateTable);
+    }
+}
+```
+<sup>[snippet source](/src/LocalDbSnippets/ModuleInitializer.cs#L3-L14)</sup>
 <!-- endsnippet -->
 
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
@@ -257,11 +355,22 @@ Usage inside a test consists of two parts:
 
 #### Build LocalDb Instance
 
+For SQL:
+
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-var localDb = await LocalDb<MyDbContext>.Build();
+var database = await SqlInstanceService.Build();
 ```
-<sup>[snippet source](/src/Snippets/Tests.cs#L12-L16)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L16)</sup>
+<!-- endsnippet -->
+
+For EF:
+
+<!-- snippet: EfBuildLocalDbInstance -->
+```cs
+var database = await SqlInstanceService<MyDbContext>.Build();
+```
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L12-L16)</sup>
 <!-- endsnippet -->
 
 The signature is as follows:
@@ -274,13 +383,8 @@ The signature is as follows:
 /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-public Task<SqlDatabase<TDbContext>> Build(
-    [CallerFilePath] string testFile = null,
-    string databaseSuffix = null,
-    [CallerMemberName] string memberName = null)
-{
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L156-L170)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L156-L164)</sup>
 <!-- endsnippet -->
 
 The database name is the derived as follows:
@@ -298,28 +402,54 @@ if (databaseSuffix != null)
 
 There is also an override that takes an explicit dbName:
 
+For SQL:
+
 <!-- snippet: WithDbName -->
 ```cs
-var localDb = await LocalDb<MyDbContext>.Build("TheTestWithDbName");
+var database = await SqlInstanceService.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/Snippets/Tests.cs#L42-L46)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L37-L41)</sup>
+<!-- endsnippet -->
+
+For EF:
+
+<!-- snippet: EfWithDbName -->
+```cs
+var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
+```
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L42-L46)</sup>
 <!-- endsnippet -->
 
 
 #### Building and using DbContexts
 
-<!-- snippet: BuildDbContext -->
+For SQL:
+
+<!-- snippet: BuildContext -->
 ```cs
-using (var dbContext = localDb.NewDbContext())
+using (var connection = await database.OpenConnection())
 {
 ```
-<sup>[snippet source](/src/Snippets/Tests.cs#L18-L22)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L18-L22)</sup>
 <!-- endsnippet -->
+
+For EF:
+
+<!-- snippet: EfBuildContext -->
+```cs
+using (var dbContext = database.NewDbContext())
+{
+```
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L18-L22)</sup>
+<!-- endsnippet -->
+
 
 
 #### Full Test
 
 The above are combined in a full test:
+
+For SQL:
 
 <!-- snippet: Test -->
 ```cs
@@ -327,9 +457,33 @@ The above are combined in a full test:
 public async Task TheTest()
 {
 
-    var localDb = await LocalDb<MyDbContext>.Build();
+    var database = await SqlInstanceService.Build();
 
-    using (var dbContext = localDb.NewDbContext())
+    using (var connection = await database.OpenConnection())
+    {
+        await TestDbBuilder.AddData(connection);
+    }
+    
+    using (var connection = await database.OpenConnection())
+    {
+        Assert.Single(await TestDbBuilder.GetData(connection));
+    }
+}
+```
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L32)</sup>
+<!-- endsnippet -->
+
+For EF:
+
+<!-- snippet: EfTest -->
+```cs
+[Fact]
+public async Task TheTest()
+{
+
+    var database = await SqlInstanceService<MyDbContext>.Build();
+
+    using (var dbContext = database.NewDbContext())
     {
         var entity = new TestEntity
         {
@@ -339,17 +493,17 @@ public async Task TheTest()
         dbContext.SaveChanges();
     }
 
-    using (var dbContext = localDb.NewDbContext())
+    using (var dbContext = database.NewDbContext())
     {
         Assert.Single(dbContext.TestEntities);
     }
 }
 ```
-<sup>[snippet source](/src/Snippets/Tests.cs#L7-L37)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L7-L37)</sup>
 <!-- endsnippet -->
 
 
-## DefaultOptionsBuilder
+## EF DefaultOptionsBuilder
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
@@ -399,13 +553,28 @@ That InstanceName is then used to derive the data directory. In order:
 
  * If `LocalDBData` environment variable exists then use `LocalDBData\InstanceName`.
  * If `AGENT_TEMPDIRECTORY` environment variable exists then use `AGENT_TEMPDIRECTORY\LocalDb\InstanceName`.
- * Use `%TempDir%\LocalDb\InstanceName`
+ * Use `%TempDir%\LocalDb\InstanceName`.
 
 There is an explicit registration override that takes an instance name and a directory for that instance:
 
+For SQL:
+
 <!-- snippet: RegisterExplcit -->
 ```cs
-LocalDb<TheDbContext>.Register(
+SqlInstanceService.Register(
+    name: "theInstanceName",
+    buildTemplate: TestDbBuilder.CreateTable,
+    directory: @"C:\EfLocalDb\theInstance"
+);
+```
+<sup>[snippet source](/src/LocalDbSnippets/Snippets.cs#L7-L15)</sup>
+<!-- endsnippet -->
+
+For EF:
+
+<!-- snippet: EfRegisterExplcit -->
+```cs
+SqlInstanceService<TheDbContext>.Register(
     buildTemplate: (connection, builder) =>
     {
         using (var dbContext = new TheDbContext(builder.Options))
@@ -418,15 +587,17 @@ LocalDb<TheDbContext>.Register(
     directory: @"C:\EfLocalDb\theInstance"
 );
 ```
-<sup>[snippet source](/src/Snippets/Snippets.cs#L7-L22)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Snippets.cs#L7-L22)</sup>
 <!-- endsnippet -->
 
 
 ## Debugging
 
-To connect to a LocalDB instance using [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) use a server name with the following convention `(LocalDb)\DBCONTEXT`. So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if `instanceSuffix` or `instanceName` have been used when defining the SqlInstance.
+To connect to a LocalDB instance using [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) use a server name with the following convention `(LocalDb)\INSTANCENAME`.
 
-The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed problematically from `LocalDb<TDbContext>.ServerName` or `SqlInstance<TDbContext>.ServerName`.
+So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if a `name` or `instanceSuffix` have been defined for SqlInstance.
+
+The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed problematically from `LocalDb.ServerName` or `SqlInstance.ServerName`.
 
 
 ## SqlLocalDb

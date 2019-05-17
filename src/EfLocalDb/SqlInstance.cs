@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFLocalDb
+namespace EfLocalDb
 {
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
@@ -161,14 +161,12 @@ To cleanup perform the following actions:
         /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
+        #endregion
         public Task<SqlDatabase<TDbContext>> Build(
             [CallerFilePath] string testFile = null,
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
-
-            #endregion
-
             Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
             Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);

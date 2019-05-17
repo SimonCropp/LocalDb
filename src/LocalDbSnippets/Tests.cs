@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using EFLocalDb;
+using LocalDb;
 using Xunit;
 
 public class Tests
@@ -11,26 +11,21 @@ public class Tests
     {
         #region BuildLocalDbInstance
 
-        var localDb = await LocalDb<MyDbContext>.Build();
+        var database = await SqlInstanceService.Build();
 
         #endregion
 
-        #region BuildDbContext
+        #region BuildContext
 
-        using (var dbContext = localDb.NewDbContext())
+        using (var connection = await database.OpenConnection())
         {
             #endregion
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await TestDbBuilder.AddData(connection);
         }
-
-        using (var dbContext = localDb.NewDbContext())
+        
+        using (var connection = await database.OpenConnection())
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }
 
@@ -41,23 +36,18 @@ public class Tests
     {
         #region WithDbName
 
-        var localDb = await LocalDb<MyDbContext>.Build("TheTestWithDbName");
+        var database = await SqlInstanceService.Build("TheTestWithDbName");
 
         #endregion
-
-        using (var dbContext = localDb.NewDbContext())
+        
+        using (var connection = await database.OpenConnection())
         {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await TestDbBuilder.AddData(connection);
         }
-
-        using (var dbContext = localDb.NewDbContext())
+        
+        using (var connection = await database.OpenConnection())
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using EFLocalDb;
+using LocalDb;
 using Xunit;
 
 namespace TestBase
@@ -9,22 +9,16 @@ namespace TestBase
 
     public class TestBase
     {
-        static SqlInstance<TheDbContext> instance;
+        static SqlInstance instance;
 
         static TestBase()
         {
-            instance = new SqlInstance<TheDbContext>(
-                buildTemplate: (connection, builder) =>
-                {
-                    using (var dbContext = new TheDbContext(builder.Options))
-                    {
-                        dbContext.Database.EnsureCreated();
-                    }
-                },
-                constructInstance: builder => new TheDbContext(builder.Options));
+            instance = new SqlInstance(
+                name:"TestBaseUsage",
+                buildTemplate: TestDbBuilder.CreateTable);
         }
 
-        public Task<SqlDatabase<TheDbContext>> LocalDb(
+        public Task<SqlDatabase> LocalDb(
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
@@ -38,20 +32,15 @@ namespace TestBase
         [Fact]
         public async Task Test()
         {
-            var localDb = await LocalDb();
-            using (var dbContext = localDb.NewDbContext())
+            var database = await LocalDb();
+            using (var connection = await database.OpenConnection())
             {
-                var entity = new TestEntity
-                {
-                    Property = "prop"
-                };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
+                await TestDbBuilder.AddData(connection);
             }
-
-            using (var dbContext = localDb.NewDbContext())
+            
+            using (var connection = await database.OpenConnection())
             {
-                Assert.Single(dbContext.TestEntities);
+                Assert.Single(await TestDbBuilder.GetData(connection));
             }
         }
     }

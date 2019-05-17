@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFLocalDb
+namespace EfLocalDb
 {
     public static class SqlInstanceService<TDbContext>
         where TDbContext : DbContext

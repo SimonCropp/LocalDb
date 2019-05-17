@@ -8,36 +8,27 @@ namespace StaticConstructor
 
     public class Tests
     {
+        static SqlInstance sqlInstance;
+
         static Tests()
         {
-            SqlInstanceService.Register(
-                buildTemplate: (connection, builder) =>
-                {
-                    using (var dbContext = new TheDbContext(builder.Options))
-                    {
-                        dbContext.Database.EnsureCreated();
-                    }
-                },
-                constructInstance: builder => new TheDbContext(builder.Options));
+            sqlInstance = new SqlInstance(
+                name: "StaticConstructorInstance",
+                buildTemplate: TestDbBuilder.CreateTable);
         }
 
         [Fact]
         public async Task Test()
         {
-            var localDb = await SqlInstanceService.Build();
-            using (var dbContext = localDb.NewDbContext())
+            var database = await sqlInstance.Build();
+            using (var connection = await database.OpenConnection())
             {
-                var entity = new TestEntity
-                {
-                    Property = "prop"
-                };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
+                await TestDbBuilder.AddData(connection);
             }
 
-            using (var dbContext = localDb.NewDbContext())
+            using (var connection = await database.OpenConnection())
             {
-                Assert.Single(dbContext.TestEntities);
+                Assert.Single(await TestDbBuilder.GetData(connection));
             }
         }
     }

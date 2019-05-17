@@ -10,7 +10,6 @@ namespace LocalDb
     public class SqlInstance
     {
         Wrapper wrapper;
-        Func<SqlConnection, Task> constructInstance;
 
         public string ServerName => wrapper.ServerName;
 
@@ -18,7 +17,6 @@ namespace LocalDb
             string name,
             Action<SqlConnection> buildTemplate,
             string directory = null,
-            Func<SqlConnection, Task> constructInstance = null,
             Func<SqlConnection, bool> requiresRebuild = null)
         {
             Guard.AgainstWhiteSpace(nameof(directory), directory);
@@ -35,15 +33,6 @@ namespace LocalDb
 
                 Trace.WriteLine($@"Creating LocalDb instance.
 Server Name: {ServerName}");
-
-                if (constructInstance == null)
-                {
-                    this.constructInstance = connection => Task.CompletedTask;
-                }
-                else
-                {
-                    this.constructInstance = constructInstance;
-                }
 
                 wrapper.Start();
 
@@ -146,14 +135,7 @@ To cleanup perform the following actions:
         public async Task<SqlDatabase> Build(string dbName)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            var sqlDatabase = new SqlDatabase(await BuildContext(dbName));
-            using (var sqlConnection = new SqlConnection(sqlDatabase.Connection))
-            {
-                await sqlConnection.OpenAsync();
-                await constructInstance(sqlConnection);
-            }
-
-            return sqlDatabase;
+            return new SqlDatabase(await BuildContext(dbName));
         }
     }
 }

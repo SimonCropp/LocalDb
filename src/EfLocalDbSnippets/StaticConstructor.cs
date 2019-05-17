@@ -1,16 +1,18 @@
 ﻿using System.Threading.Tasks;
-using EFLocalDb;
+using EfLocalDb;
 using Xunit;
 
 namespace StaticConstructor
 {
-    #region StaticConstructor
+    #region EfStaticConstructor
 
     public class Tests
     {
+        static SqlInstance<TheDbContext> sqlInstance;
+
         static Tests()
         {
-            SqlInstanceService<TheDbContext>.Register(
+            sqlInstance = new SqlInstance<TheDbContext>(
                 buildTemplate: (connection, builder) =>
                 {
                     using (var dbContext = new TheDbContext(builder.Options))
@@ -24,8 +26,8 @@ namespace StaticConstructor
         [Fact]
         public async Task Test()
         {
-            var localDb = await SqlInstanceService<TheDbContext>.Build();
-            using (var dbContext = localDb.NewDbContext())
+            var database = await sqlInstance.Build();
+            using (var dbContext = database.NewDbContext())
             {
                 var entity = new TestEntity
                 {
@@ -35,7 +37,7 @@ namespace StaticConstructor
                 dbContext.SaveChanges();
             }
 
-            using (var dbContext = localDb.NewDbContext())
+            using (var dbContext = database.NewDbContext())
             {
                 Assert.Single(dbContext.TestEntities);
             }

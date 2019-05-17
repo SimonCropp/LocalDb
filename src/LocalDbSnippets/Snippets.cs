@@ -7,15 +7,8 @@ class Snippets
         #region RegisterExplcit
 
         SqlInstanceService.Register(
-            buildTemplate: (connection, builder) =>
-            {
-                using (var dbContext = new TheDbContext(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            constructInstance: builder => new TheDbContext(builder.Options),
-            instanceName: "theInstanceName",
+            name: "theInstanceName",
+            buildTemplate: TestDbBuilder.CreateTable,
             directory: @"C:\EfLocalDb\theInstance"
         );
 

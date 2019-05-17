@@ -1,11 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using EFLocalDb;
+using EfLocalDb;
 using Xunit;
 
 namespace TestBase
 {
-    #region TestBase
+    #region EfTestBase
 
     public class TestBase
     {
@@ -38,8 +38,8 @@ namespace TestBase
         [Fact]
         public async Task Test()
         {
-            var localDb = await LocalDb();
-            using (var dbContext = localDb.NewDbContext())
+            var database = await LocalDb();
+            using (var dbContext = database.NewDbContext())
             {
                 var entity = new TestEntity
                 {
@@ -49,7 +49,7 @@ namespace TestBase
                 dbContext.SaveChanges();
             }
 
-            using (var dbContext = localDb.NewDbContext())
+            using (var dbContext = database.NewDbContext())
             {
                 Assert.Single(dbContext.TestEntities);
             }

@@ -44,13 +44,6 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ## The NuGet packages
 
 
-### EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
-
-https://nuget.org/packages/EfLocalDb/
-
-    PM> Install-Package EfLocalDb
-
-
 ### LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg?style=flat)](https://www.nuget.org/packages/LocalDb/)
 
 https://nuget.org/packages/LocalDb/
@@ -58,29 +51,36 @@ https://nuget.org/packages/LocalDb/
     PM> Install-Package LocalDb
 
 
+### EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+
+https://nuget.org/packages/EfLocalDb/
+
+    PM> Install-Package EfLocalDb
+
+
 ## Design
 
 There is a tiered approach to the API.
+
+For SQL:
+
+SqlInstance > SqlDatabase > Connection
 
 For EF:
 
 SqlInstance > SqlDatabase > EfContext
 
-For Raw SQL:
-
-SqlInstance > SqlDatabase > Connection
-
 SqlInstance represents a [SQL Sever instance](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/database-engine-instances-sql-server?#instances) (in this case hosted in LocalDB) and SqlDatabase represents a [SQL Sever Database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/databases?view=sql-server-2017) running inside that SqlInstance.
 
 From a API perspective:
 
+For SQL:
+
+`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `SqlConnection`
+
 For EF:
 
 `SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`
-
-For Raw SQL:
-
-`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `SqlConnection`
 
 
 Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContexts/SqlConnections can be created to talk to a SqlDatabase.
@@ -116,19 +116,37 @@ In the static constructor of a test.
 
 If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
 
+For SQL:
+
 snippet: StaticConstructor
+
+For EF
+
+snippet: EfStaticConstructor
 
 
 #### Static constructor in test base
 
 If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
 
+For SQL:
+
 snippet: TestBase
+
+For EF:
+
+snippet: EfTestBase
 
 
 #### Module initializer
 
 An alternative to the above "test base" scenario is to use a module initializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
+
+For SQL:
+
+snippet: ModuleInitializer
+
+For EF:
 
 snippet: ModuleInitializer
 
@@ -142,7 +160,13 @@ Usage inside a test consists of two parts:
 
 #### Build LocalDb Instance
 
+For SQL:
+
 snippet: BuildLocalDbInstance
+
+For EF:
+
+snippet: EfBuildLocalDbInstance
 
 The signature is as follows:
 
@@ -154,22 +178,41 @@ snippet: DeriveName
 
 There is also an override that takes an explicit dbName:
 
+For SQL:
+
 snippet: WithDbName
+
+For EF:
+
+snippet: EfWithDbName
 
 
 #### Building and using DbContexts
 
-snippet: BuildDbContext
+For SQL:
+
+snippet: BuildContext
+
+For EF:
+
+snippet: EfBuildContext
+
 
 
 #### Full Test
 
 The above are combined in a full test:
 
+For SQL:
+
 snippet: Test
 
+For EF:
 
-## DefaultOptionsBuilder
+snippet: EfTest
+
+
+## EF DefaultOptionsBuilder
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
@@ -186,11 +229,17 @@ That InstanceName is then used to derive the data directory. In order:
 
  * If `LocalDBData` environment variable exists then use `LocalDBData\InstanceName`.
  * If `AGENT_TEMPDIRECTORY` environment variable exists then use `AGENT_TEMPDIRECTORY\LocalDb\InstanceName`.
- * Use `%TempDir%\LocalDb\InstanceName`
+ * Use `%TempDir%\LocalDb\InstanceName`.
 
 There is an explicit registration override that takes an instance name and a directory for that instance:
 
+For SQL:
+
 snippet: RegisterExplcit
+
+For EF:
+
+snippet: EfRegisterExplcit
 
 
 ## Debugging
