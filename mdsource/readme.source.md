@@ -76,7 +76,7 @@ From a API perspective:
 
 For SQL:
 
-`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `SqlConnection`
+`SqlInstance` > `SqlDatabase` > `SqlConnection`
 
 For EF:
 
