@@ -7,8 +7,6 @@
     <Compile Include="..\LocalDb.Tests\TestDbBuilder.cs" Link="TestDbBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ApprovalTests" Version="3.0.22" />
-    <PackageReference Include="ObjectApproval" Version="9.1.0" />
     <PackageReference Include="ModuleInit.Fody" Version="2.0.0" />
     <PackageReference Include="Fody" Version="5.0.6" />
     <PackageReference Include="Xunit" Version="2.4.1" />
