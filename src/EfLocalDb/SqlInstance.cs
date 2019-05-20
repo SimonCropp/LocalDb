@@ -148,7 +148,7 @@ To cleanup perform the following actions:
             wrapper.DeleteInstance();
         }
 
-        Task<string> BuildContext(string dbName)
+        Task<string> BuildDatabase(string dbName)
         {
             return wrapper.CreateDatabaseFromTemplate(dbName, "template");
         }
@@ -180,7 +180,8 @@ To cleanup perform the following actions:
         public async Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            return new SqlDatabase<TDbContext>(await BuildContext(dbName), constructInstance);
+            var connection = await BuildDatabase(dbName);
+            return new SqlDatabase<TDbContext>(connection, constructInstance);
         }
     }
 }

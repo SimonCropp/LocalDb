@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ApprovalTests;
 using EfLocalDb;
@@ -156,15 +157,20 @@ public class Tests :
         {
             var entity = new TestEntity
             {
-                Property = "prop"
+                Property = "Item1"
             };
             dbContext.Add(entity);
             dbContext.SaveChanges();
         }
 
+        await database.AddData(new TestEntity
+        {
+            Property = "Item2"
+        });
+
         using (var dbContext = database.NewDbContext())
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Equal(2, dbContext.TestEntities.Count());
         }
     }
 
