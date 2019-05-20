@@ -18,7 +18,7 @@ namespace EfLocalDb
 
         public string Connection { get; }
 
-        public async Task AddRange(params object[] entities)
+        public async Task AddData(params object[] entities)
         {
             Guard.AgainstNull(nameof(entities), entities);
             using (var sqlConnection = new SqlConnection(Connection))
