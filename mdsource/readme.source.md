@@ -114,14 +114,14 @@ As the most common usage scenario is "Single SqlInstance per test project" there
 
 #### SQL
 
-The SQL snippets use the following helper class for 
+The SQL snippets use the following helper class:
 
 snippet: TestDbBuilder.cs
 
 
 #### EF
 
-The EF snippets use a DbContext of the following form
+The EF snippets use a DbContext of the following form:
 
 snippet: TheDbContext.cs
 
@@ -139,7 +139,7 @@ To ensure this happens only once there are several approaches that can be used:
 
 In the static constructor of a test.
 
-If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
+If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 
 ##### For SQL:
@@ -154,7 +154,7 @@ snippet: EfStaticConstructor
 
 #### Static constructor in test base
 
-If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
+If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 
 ##### For SQL:
@@ -189,7 +189,7 @@ Or, alternatively, the module initializer can be injected with [PostSharp](https
 Usage inside a test consists of two parts:
 
 
-#### Build LocalDb Instance
+#### Build a SqlInstance
 
 
 ##### For SQL:

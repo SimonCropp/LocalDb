@@ -16,7 +16,7 @@ class Snippets
             },
             constructInstance: builder => new TheDbContext(builder.Options),
             instanceName: "theInstanceName",
-            directory: @"C:\EfLocalDb\theInstance"
+            directory: @"C:\LocalDb\theInstance"
         );
 
         #endregion

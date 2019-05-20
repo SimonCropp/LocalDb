@@ -9,7 +9,7 @@ class Snippets
         SqlInstanceService.Register(
             name: "theInstanceName",
             buildTemplate: TestDbBuilder.CreateTable,
-            directory: @"C:\EfLocalDb\theInstance"
+            directory: @"C:\LocalDb\theInstance"
         );
 
         #endregion

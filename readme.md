@@ -51,7 +51,7 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 This project currently supports two approaches.
 
 
-### 1. LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg?style=flat)](https://www.nuget.org/packages/LocalDb/)
+### 1. LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg)](https://www.nuget.org/packages/LocalDb/)
 
 Interactions with LocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
 
@@ -60,7 +60,7 @@ https://nuget.org/packages/LocalDb/
     PM> Install-Package LocalDb
 
 
-### 2. EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+### 2. EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)
 
 Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
@@ -108,7 +108,7 @@ The usual approach for consuming the API in a test project is as follows.
 
 This assumes that there is a schema and data (and DbContext in the EF context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
 
-As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. To take this approach use `EFLocalDb.LocalDb<TDbContext>` or `LocalDb.LocalDb`.
+As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. To take this approach use `EFLocalDb.SqlInstanceService<TDbContext>` or `LocalDb.SqlInstanceService`.
 
 
 ## Usage
@@ -119,7 +119,7 @@ As the most common usage scenario is "Single SqlInstance per test project" there
 
 #### SQL
 
-The SQL snippets use the following helper class for 
+The SQL snippets use the following helper class:
 
 <!-- snippet: TestDbBuilder.cs -->
 ```cs
@@ -171,7 +171,7 @@ values (1);";
 
 #### EF
 
-The EF snippets use a DbContext of the following form
+The EF snippets use a DbContext of the following form:
 
 <!-- snippet: TheDbContext.cs -->
 ```cs
@@ -219,7 +219,7 @@ To ensure this happens only once there are several approaches that can be used:
 
 In the static constructor of a test.
 
-If all tests that need to use the LocalDB instance existing in the same test class, then the LocalDB instance can be initialized in the static constructor of that test class.
+If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 
 ##### For SQL:
@@ -305,7 +305,7 @@ public class Tests
 
 #### Static constructor in test base
 
-If multiple tests need to use the LocalDB instance, then the LocalDB instance should be initialized in the static constructor of test base class.
+If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 
 ##### For SQL:
@@ -459,7 +459,7 @@ Or, alternatively, the module initializer can be injected with [PostSharp](https
 Usage inside a test consists of two parts:
 
 
-#### Build LocalDb Instance
+#### Build a SqlInstance
 
 
 ##### For SQL:
@@ -684,7 +684,7 @@ There is an explicit registration override that takes an instance name and a dir
 SqlInstanceService.Register(
     name: "theInstanceName",
     buildTemplate: TestDbBuilder.CreateTable,
-    directory: @"C:\EfLocalDb\theInstance"
+    directory: @"C:\LocalDb\theInstance"
 );
 ```
 <sup>[snippet source](/src/LocalDbSnippets/Snippets.cs#L7-L15)</sup>
@@ -705,7 +705,7 @@ SqlInstanceService<TheDbContext>.Register(
     },
     constructInstance: builder => new TheDbContext(builder.Options),
     instanceName: "theInstanceName",
-    directory: @"C:\EfLocalDb\theInstance"
+    directory: @"C:\LocalDb\theInstance"
 );
 ```
 <sup>[snippet source](/src/EfLocalDbSnippets/Snippets.cs#L7-L22)</sup>
@@ -718,7 +718,7 @@ To connect to a LocalDB instance using [SQL Server Management Studio ](https://d
 
 So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if a `name` or `instanceSuffix` have been defined for SqlInstance.
 
-The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed problematically from `LocalDb.ServerName` or `SqlInstance.ServerName`.
+The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed programmatically from `SqlInstanceService.ServerName` or `SqlInstance.ServerName`.
 
 
 ## SqlLocalDb
