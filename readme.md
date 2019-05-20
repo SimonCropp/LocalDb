@@ -263,19 +263,19 @@ public class Tests
 ```cs
 public class Tests
 {
-    static SqlInstance<TheDbContext> sqlInstance;
+    static SqlInstance<TheDbContextUsedInStatic> sqlInstance;
 
     static Tests()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
+        sqlInstance = new SqlInstance<TheDbContextUsedInStatic>(
             buildTemplate: (connection, builder) =>
             {
-                using (var dbContext = new TheDbContext(builder.Options))
+                using (var dbContext = new TheDbContextUsedInStatic(builder.Options))
                 {
                     dbContext.Database.EnsureCreated();
                 }
             },
-            constructInstance: builder => new TheDbContext(builder.Options));
+            constructInstance: builder => new TheDbContextUsedInStatic(builder.Options));
     }
 
     [Fact]
