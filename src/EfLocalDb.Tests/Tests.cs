@@ -163,7 +163,7 @@ public class Tests :
             dbContext.SaveChanges();
         }
 
-        await database.AddSeed(new TestEntity
+        await database.AddRange(new TestEntity
         {
             Property = "Item2"
         });
