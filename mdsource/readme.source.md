@@ -301,7 +301,7 @@ The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/
 
 ## SqlLocalDb
 
-The [SqlLocalDb Utility (SqlLocalDB.exe)](https://docs.microsoft.com/en-us/sql/tools/sqllocaldb-utility) utility (SqlLocalDB.exe) is a simple command line tool to enable users and developers to create and manage an instance of LocalDB.
+The [SqlLocalDb Utility (SqlLocalDB.exe)](https://docs.microsoft.com/en-us/sql/tools/sqllocaldb-utility) utility is a simple command line tool to enable users and developers to create and manage an instance of LocalDB.
 
 Useful commands:
 
