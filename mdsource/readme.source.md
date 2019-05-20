@@ -46,7 +46,7 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 This project currently supports two approaches.
 
 
-### 1. LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg?style=flat)](https://www.nuget.org/packages/LocalDb/)
+### 1. LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg)](https://www.nuget.org/packages/LocalDb/)
 
 Interactions with LocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
 
@@ -55,7 +55,7 @@ https://nuget.org/packages/LocalDb/
     PM> Install-Package LocalDb
 
 
-### 2. EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg?style=flat)](https://www.nuget.org/packages/EfLocalDb/)
+### 2. EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)
 
 Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
@@ -103,7 +103,7 @@ The usual approach for consuming the API in a test project is as follows.
 
 This assumes that there is a schema and data (and DbContext in the EF context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
 
-As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. To take this approach use `EFLocalDb.LocalDb<TDbContext>` or `LocalDb.LocalDb`.
+As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. To take this approach use `EFLocalDb.SqlInstanceService<TDbContext>` or `LocalDb.SqlInstanceService`.
 
 
 ## Usage
@@ -296,7 +296,7 @@ To connect to a LocalDB instance using [SQL Server Management Studio ](https://d
 
 So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if a `name` or `instanceSuffix` have been defined for SqlInstance.
 
-The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed problematically from `LocalDb.ServerName` or `SqlInstance.ServerName`.
+The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed programmatically from `SqlInstanceService.ServerName` or `SqlInstance.ServerName`.
 
 
 ## SqlLocalDb
