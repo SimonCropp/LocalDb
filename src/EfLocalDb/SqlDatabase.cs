@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,10 +20,18 @@ namespace EfLocalDb
 
         public async Task AddSeed(params object[] entities)
         {
-            using (var dbContext = NewDbContext())
+            Guard.AgainstNull(nameof(entities), entities);
+            using (var sqlConnection = new SqlConnection(Connection))
             {
-                dbContext.AddRange(entities);
-                await dbContext.SaveChangesAsync();
+                var openAsync = sqlConnection.OpenAsync();
+                var builder = DefaultOptionsBuilder.Build<TDbContext>();
+                builder.UseSqlServer(sqlConnection);
+                using (var dbContext = constructInstance(builder))
+                {
+                    dbContext.AddRange(entities);
+                    await openAsync;
+                    await dbContext.SaveChangesAsync();
+                }
             }
         }
 
