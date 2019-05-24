@@ -98,7 +98,7 @@ Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContexts/Sql
 
 On the file system, each SqlInstance has corresponding directory and each SqlDatabase has a uniquely named mdf file within that directory.
 
-When a SqlInstance is defined, a template database is created. All subsequent SqlDatabases created from that SqlInstance will be based on this template. The template allows schema and data to be created once, instead of every time a SqlDatabase is required. This results in significant performance improvement by not requiring to re-create/re-migrate the SqlDatabase schema/data on each use.
+When a SqlInstance is defined, a template database is created. All subsequent SqlDatabases created from that SqlInstance will be based on this template. The template allows schema and data to be created once, instead of every time a SqlDatabase is required. This results in improved performance by not requiring to re-create/re-migrate the SqlDatabase schema/data on each use.
 
 The usual approach for consuming the API in a test project is as follows.
 
