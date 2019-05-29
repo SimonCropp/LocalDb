@@ -15,7 +15,7 @@ namespace EfLocalDb
         {
             get
             {
-                AssertInstanceNotNull();
+                ThrowIfInstanceNull();
                 return instance.ServerName;
             }
         }
@@ -26,7 +26,7 @@ namespace EfLocalDb
             string instanceSuffix = null,
             Func<TDbContext, bool> requiresRebuild = null)
         {
-            AssertInstanceNotNull();
+            ThrowIfInstanceNotNull();
             instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix, requiresRebuild);
         }
 
@@ -37,20 +37,27 @@ namespace EfLocalDb
             string directory,
             Func<TDbContext, bool> requiresRebuild = null)
         {
-            AssertInstanceNotNull();
+            ThrowIfInstanceNotNull();
             instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
         }
 
-        static void AssertInstanceNotNull()
+        static void ThrowIfInstanceNull()
         {
             if (instance == null)
             {
-                return;
+                throw new Exception($@"There is no instance registered.
+Ensure that `SqlInstanceService.Register` has been called.");
             }
+        }
 
-            throw new Exception($@"There is already an instance registered for {typeof(TDbContext).Name}.
+        static void ThrowIfInstanceNotNull()
+        {
+            if (instance != null)
+            {
+                throw new Exception($@"There is already an instance registered for `TDbContext`.
 When using that static registration API, only one registration is allowed per DBContext type.
-To register different configurations for the same DbContext type use the instance based api via {typeof(SqlInstance<>).Name}");
+To register different configurations for the same DbContext type use the instance based api via `SqlInstance<TDbContext>)`.");
+            }
         }
 
         /// <summary>
@@ -64,11 +71,13 @@ To register different configurations for the same DbContext type use the instanc
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
         {
+            ThrowIfInstanceNull();
             return instance.Build(testFile, databaseSuffix, memberName);
         }
 
         public static Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
+            ThrowIfInstanceNull();
             return instance.Build(dbName);
         }
     }

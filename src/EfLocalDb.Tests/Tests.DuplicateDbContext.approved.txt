@@ -1,3 +1,3 @@
-﻿There is already an instance registered for DuplicateDbContext.
+﻿There is already an instance registered for `TDbContext`.
 When using that static registration API, only one registration is allowed per DBContext type.
-To register different configurations for the same DbContext type use the instance based api via SqlInstance`1
+To register different configurations for the same DbContext type use the instance based api via `SqlInstance<TDbContext>)`.
