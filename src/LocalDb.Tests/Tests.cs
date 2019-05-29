@@ -44,7 +44,7 @@ public class Tests:
     {
         var instance1 = new SqlInstance(
             name: "rebuild",
-            buildTemplate: TestDbBuilder.CreateTable, 
+            buildTemplate: TestDbBuilder.CreateTable,
             requiresRebuild: dbContext => true);
         var database1 = await instance1.Build();
         using (var connection = await database1.OpenConnection())
@@ -53,8 +53,8 @@ public class Tests:
         }
 
         var instance2 = new SqlInstance(
-            name: "rebuild", 
-            buildTemplate: connection => throw new Exception(), 
+            name: "rebuild",
+            buildTemplate: (string connection) => throw new Exception(),
             requiresRebuild: dbContext => false);
         var database2 = await instance2.Build();
         using (var connection = await database2.OpenConnection())

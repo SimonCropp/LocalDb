@@ -15,13 +15,39 @@ namespace LocalDb
 
         public SqlInstance(
             string name,
+            Action<string> buildTemplate,
+            string directory = null,
+            Func<SqlConnection, bool> requiresRebuild = null)
+        {
+            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
+            Init(name, buildTemplate, directory, requiresRebuild);
+        }
+
+        public SqlInstance(
+            string name,
             Action<SqlConnection> buildTemplate,
             string directory = null,
             Func<SqlConnection, bool> requiresRebuild = null)
         {
+            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
+            Init(
+                name,
+                connectionString =>
+                {
+                    using (var connection = new SqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        buildTemplate(connection);
+                    }
+                },
+                directory,
+                requiresRebuild);
+        }
+
+        void Init(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild)
+        {
             Guard.AgainstWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
-            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             if (directory == null)
             {
                 directory = DirectoryFinder.Find(name);
@@ -46,27 +72,28 @@ Server Name: {ServerName}");
 
                 var connectionString = wrapper.CreateDatabase("template");
                 connectionString = Wrapper.NonPooled(connectionString);
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    buildTemplate(connection);
-                }
+                buildTemplate(connectionString);
 
                 wrapper.Detach("template");
             }
             catch (Exception exception)
             {
-                var message = $@"Failed to setup a LocalDB instance.
-{nameof(name)}: {name}
-{nameof(directory)}: {directory}:
+                WrapAndThrow(name, directory, exception);
+            }
+        }
+
+        static void WrapAndThrow(string name, string directory, Exception exception)
+        {
+            var message = $@"Failed to setup a LocalDB instance.
+Name: {name}
+Directory: {directory}:
 
 To cleanup perform the following actions:
  * Execute 'sqllocaldb stop {name}'
  * Execute 'sqllocaldb delete {name}'
  * Delete the directory {directory}'
 ";
-                throw new Exception(message, exception);
-            }
+            throw new Exception(message, exception);
         }
 
         bool CheckRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)

@@ -27,6 +27,15 @@ namespace LocalDb
             ThrowIfInstanceNotNull();
             instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild);
         }
+        public static void Register(
+            string name,
+            Action<string> buildTemplate,
+            string directory = null,
+            Func<SqlConnection, bool> requiresRebuild = null)
+        {
+            ThrowIfInstanceNotNull();
+            instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild);
+        }
 
         static void ThrowIfInstanceNull()
         {
