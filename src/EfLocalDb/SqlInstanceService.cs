@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,27 @@ namespace EfLocalDb
                 ThrowIfInstanceNull();
                 return instance.ServerName;
             }
+        }
+
+        public static void Register(
+            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            string instanceSuffix = null,
+            Func<TDbContext, bool> requiresRebuild = null)
+        {
+            ThrowIfInstanceNotNull();
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix, requiresRebuild);
+        }
+
+        public static void Register(
+            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            string instanceName,
+            string directory,
+            Func<TDbContext, bool> requiresRebuild = null)
+        {
+            ThrowIfInstanceNotNull();
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
         }
 
         public static void Register(

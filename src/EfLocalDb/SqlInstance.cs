@@ -22,11 +22,15 @@ namespace EfLocalDb
             string instanceSuffix = null,
             Func<TDbContext, bool> requiresRebuild = null)
         {
-            Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
-            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
+
+            Init(
+                ConvertBuildTemplate(constructInstance, buildTemplate),
+                constructInstance,
+                instanceName,
+                directory,
+                requiresRebuild);
         }
 
         public SqlInstance(
@@ -36,19 +40,65 @@ namespace EfLocalDb
             Action<TDbContext> buildTemplate = null,
             Func<TDbContext, bool> requiresRebuild = null)
         {
-            Guard.AgainstNullWhiteSpace(nameof(directory), directory);
-            Guard.AgainstNullWhiteSpace(nameof(name), name);
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
+            Init(
+                ConvertBuildTemplate(constructInstance, buildTemplate),
+                constructInstance,
+                name,
+                directory,
+                requiresRebuild);
+        }
+
+        static Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> ConvertBuildTemplate(
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            Action<TDbContext> buildTemplate)
+        {
+            return (connection, builder) =>
+            {
+                using (var dbContext = constructInstance(builder))
+                {
+                    if (buildTemplate == null)
+                    {
+                        dbContext.Database.EnsureCreated();
+                    }
+                    else
+                    {
+                        buildTemplate(dbContext);
+                    }
+                }
+            };
+        }
+
+        public SqlInstance(
+            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            string instanceSuffix = null,
+            Func<TDbContext, bool> requiresRebuild = null)
+        {
+            var instanceName = GetInstanceName(instanceSuffix);
+            var directory = DirectoryFinder.Find(instanceName);
+            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
+        }
+
+        public SqlInstance(
+            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            string name,
+            string directory,
+            Func<TDbContext, bool> requiresRebuild = null)
+        {
             Init(buildTemplate, constructInstance, name, directory, requiresRebuild);
         }
 
         void Init(
-            Action<TDbContext> buildTemplate,
+            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
             Func<TDbContext, bool> requiresRebuild)
         {
+            Guard.AgainstNullWhiteSpace(nameof(directory), directory);
+            Guard.AgainstNullWhiteSpace(nameof(name), name);
+            Guard.AgainstNull(nameof(constructInstance), constructInstance);
             try
             {
                 wrapper = new Wrapper(name, directory);
@@ -76,17 +126,7 @@ Server Name: {ServerName}");
 
                     var builder = DefaultOptionsBuilder.Build<TDbContext>();
                     builder.UseSqlServer(connection);
-                    using (var dbContext = constructInstance(builder))
-                    {
-                        if (buildTemplate == null)
-                        {
-                            dbContext.Database.EnsureCreated();
-                        }
-                        else
-                        {
-                            buildTemplate(dbContext);
-                        }
-                    }
+                    buildTemplate(connection, builder);
                 }
 
                 wrapper.Detach("template");
@@ -141,6 +181,7 @@ To cleanup perform the following actions:
 
         static string GetInstanceName(string scopeSuffix)
         {
+            Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
             #region GetInstanceName
 
             if (scopeSuffix == null)
