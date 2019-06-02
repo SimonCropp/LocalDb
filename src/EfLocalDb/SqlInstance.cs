@@ -17,33 +17,33 @@ namespace EfLocalDb
         public string ServerName => wrapper.ServerName;
 
         public SqlInstance(
-            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            Action<TDbContext> buildTemplate = null,
             string instanceSuffix = null,
             Func<TDbContext, bool> requiresRebuild = null)
         {
             Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
+            Guard.AgainstNull(nameof(constructInstance), constructInstance);
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
             Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
         }
 
         public SqlInstance(
-            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
+            Action<TDbContext> buildTemplate = null,
             Func<TDbContext, bool> requiresRebuild = null)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
-            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             Init(buildTemplate, constructInstance, name, directory, requiresRebuild);
         }
 
         void Init(
-            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
+            Action<TDbContext> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
@@ -76,7 +76,17 @@ Server Name: {ServerName}");
 
                     var builder = DefaultOptionsBuilder.Build<TDbContext>();
                     builder.UseSqlServer(connection);
-                    buildTemplate(connection, builder);
+                    using (var dbContext = constructInstance(builder))
+                    {
+                        if (buildTemplate == null)
+                        {
+                            dbContext.Database.EnsureCreated();
+                        }
+                        else
+                        {
+                            buildTemplate(dbContext);
+                        }
+                    }
                 }
 
                 wrapper.Detach("template");

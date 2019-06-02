@@ -14,13 +14,6 @@ namespace TestBase
         static TestBase()
         {
             instance = new SqlInstance<TheDbContext>(
-                buildTemplate: (connection, builder) =>
-                {
-                    using (var dbContext = new TheDbContext(builder.Options))
-                    {
-                        dbContext.Database.EnsureCreated();
-                    }
-                },
                 constructInstance: builder => new TheDbContext(builder.Options));
         }
 

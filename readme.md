@@ -268,14 +268,7 @@ public class Tests
     static Tests()
     {
         sqlInstance = new SqlInstance<DbContextUsedInStatic>(
-            buildTemplate: (connection, builder) =>
-            {
-                using (var dbContext = new DbContextUsedInStatic(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            constructInstance: builder => new DbContextUsedInStatic(builder.Options));
+            builder => new DbContextUsedInStatic(builder.Options));
     }
 
     [Fact]
@@ -299,7 +292,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L7-L47)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L7-L40)</sup>
 <!-- endsnippet -->
 
 
@@ -365,13 +358,6 @@ public class TestBase
     static TestBase()
     {
         instance = new SqlInstance<TheDbContext>(
-            buildTemplate: (connection, builder) =>
-            {
-                using (var dbContext = new TheDbContext(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
             constructInstance: builder => new TheDbContext(builder.Options));
     }
 
@@ -407,7 +393,7 @@ public class Tests:
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L59)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L52)</sup>
 <!-- endsnippet -->
 
 
@@ -495,7 +481,7 @@ The signature is as follows:
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L156-L164)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L166-L174)</sup>
 <!-- endsnippet -->
 
 
@@ -665,7 +651,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L134-L143)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L144-L153)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -696,19 +682,11 @@ SqlInstanceService.Register(
 <!-- snippet: EfRegisterExplcit -->
 ```cs
 SqlInstanceService<TheDbContext>.Register(
-    buildTemplate: (connection, builder) =>
-    {
-        using (var dbContext = new TheDbContext(builder.Options))
-        {
-            dbContext.Database.EnsureCreated();
-        }
-    },
     constructInstance: builder => new TheDbContext(builder.Options),
     instanceName: "theInstanceName",
-    directory: @"C:\LocalDb\theInstance"
-);
+    directory: @"C:\LocalDb\theInstance");
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Snippets.cs#L7-L22)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Snippets.cs#L7-L14)</sup>
 <!-- endsnippet -->
 
 

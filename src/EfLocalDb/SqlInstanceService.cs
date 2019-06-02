@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -21,24 +20,24 @@ namespace EfLocalDb
         }
 
         public static void Register(
-            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            Action<TDbContext> buildTemplate = null,
             string instanceSuffix = null,
             Func<TDbContext, bool> requiresRebuild = null)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix, requiresRebuild);
+            instance = new SqlInstance<TDbContext>(constructInstance, buildTemplate, instanceSuffix, requiresRebuild);
         }
 
         public static void Register(
-            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
             string directory,
+            Action<TDbContext> buildTemplate = null,
             Func<TDbContext, bool> requiresRebuild = null)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
+            instance = new SqlInstance<TDbContext>(constructInstance, instanceName, directory, buildTemplate, requiresRebuild);
         }
 
         static void ThrowIfInstanceNull()

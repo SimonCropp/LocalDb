@@ -13,14 +13,7 @@ namespace StaticConstructor
         static Tests()
         {
             sqlInstance = new SqlInstance<DbContextUsedInStatic>(
-                buildTemplate: (connection, builder) =>
-                {
-                    using (var dbContext = new DbContextUsedInStatic(builder.Options))
-                    {
-                        dbContext.Database.EnsureCreated();
-                    }
-                },
-                constructInstance: builder => new DbContextUsedInStatic(builder.Options));
+                builder => new DbContextUsedInStatic(builder.Options));
         }
 
         [Fact]

@@ -13,13 +13,6 @@ public class Tests :
     public async Task ScopedDbContext()
     {
         var instance = new SqlInstance<ScopedDbContext>(
-            buildTemplate: (connection, builder) =>
-            {
-                using (var dbContext = new ScopedDbContext(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
             constructInstance: builder => new ScopedDbContext(builder.Options),
             instanceSuffix: "theSuffix");
 
@@ -44,13 +37,6 @@ public class Tests :
     public async Task WithRebuildDbContext()
     {
         var instance1 = new SqlInstance<WithRebuildDbContext>(
-            buildTemplate: (connection, optionsBuilder) =>
-            {
-                using (var dbContext = new WithRebuildDbContext(optionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
             requiresRebuild: dbContext => true);
         var database1 = await instance1.Build();
@@ -69,10 +55,8 @@ public class Tests :
             Assert.Single(dbContext.TestEntities);
         }
 
-        var instance2 = new SqlInstance<WithRebuildDbContext>(
-            buildTemplate: (connection, optionsBuilder) => throw new Exception(),
-            constructInstance: builder => new WithRebuildDbContext(builder.Options),
-            requiresRebuild: dbContext => false);
+        var instance2 = new SqlInstance<WithRebuildDbContext>(constructInstance: builder => new WithRebuildDbContext(builder.Options),
+            buildTemplate: x => throw new Exception(), requiresRebuild: dbContext => false);
         var database2 = await instance2.Build();
         using (var dbContext = database2.NewDbContext())
         {
@@ -94,14 +78,7 @@ public class Tests :
     public async Task Secondary()
     {
         var instance = new SqlInstance<SecondaryDbContext>(
-            buildTemplate: (connection, builder) =>
-            {
-                using (var dbContext = new SecondaryDbContext(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
-            constructInstance: builder => new SecondaryDbContext(builder.Options));
+            builder => new SecondaryDbContext(builder.Options));
         var database = await instance.Build();
         using (var dbContext = database.NewDbContext())
         {
@@ -130,13 +107,6 @@ public class Tests :
     static void Register()
     {
         SqlInstanceService<DuplicateDbContext>.Register(
-            buildTemplate: (connection, builder) =>
-            {
-                using (var dbContext = new DuplicateDbContext(builder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
             constructInstance: builder => new DuplicateDbContext(builder.Options));
     }
 
@@ -144,13 +114,6 @@ public class Tests :
     public async Task Simple()
     {
         var instance = new SqlInstance<TestDbContext>(
-            (connection, optionsBuilder) =>
-            {
-                using (var dbContext = new TestDbContext(optionsBuilder.Options))
-                {
-                    dbContext.Database.EnsureCreated();
-                }
-            },
             builder => new TestDbContext(builder.Options));
         var database = await instance.Build();
         using (var dbContext = database.NewDbContext())
