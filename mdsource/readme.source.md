@@ -34,6 +34,8 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
     * Does not support [Timestamp/row version](https://docs.microsoft.com/en-us/ef/core/modeling/concurrency#timestamprow-version).
     * [Does not validate constraints](https://github.com/aspnet/EntityFrameworkCore/issues/2166).
 
+See the official guidance: [InMemory is not a relational database](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/in-memory#inmemory-is-not-a-relational-database).
+
 
 ## References:
 
