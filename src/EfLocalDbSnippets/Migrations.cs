@@ -16,11 +16,15 @@ public class Migrations
         var sqlInstance = new SqlInstance<MyDbContext>(
             buildTemplate: (connection, optionsBuilder) =>
             {
+                #region IMigrationsSqlGenerator
                 optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
+                #endregion
+                #region Migrate
                 using (var dbContext = new MyDbContext(optionsBuilder.Options))
                 {
                     dbContext.Database.Migrate();
                 }
+                #endregion
             },
             constructInstance: builder =>
             {
@@ -28,7 +32,9 @@ public class Migrations
             },
             requiresRebuild: dbContext =>
             {
+                #region CheckForMigrations
                 return dbContext.Database.GetPendingMigrations().Any();
+                #endregion
             });
 
         #endregion
