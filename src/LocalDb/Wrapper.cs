@@ -98,12 +98,13 @@ execute sp_executesql @command";
             }
     }
 
-    public async Task<string> CreateDatabaseFromTemplate(string name, string templateName)
+    public Task<string> CreateDatabaseFromTemplate(string name, string templateName)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("The database name 'template' is reserved.");
         }
+
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         if (File.Exists(dataFile))
         {
@@ -112,9 +113,9 @@ execute sp_executesql @command";
 
         var templateDataFile = Path.Combine(directory, templateName + ".mdf");
 
-        await FileExtensions.Copy(templateDataFile, dataFile);
+        var copyTask = FileExtensions.Copy(templateDataFile, dataFile);
 
-        return await CreateDatabaseFromFile(name);
+        return CreateDatabaseFromFile(name, copyTask);
     }
 
     public bool DatabaseFileExists(string name)
@@ -123,7 +124,7 @@ execute sp_executesql @command";
         return File.Exists(dataFile);
     }
 
-    public async Task<string> CreateDatabaseFromFile(string name)
+    public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask = null)
     {
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         var commandText = $@"
@@ -144,6 +145,10 @@ for attach;
             {
                 command.CommandText = commandText;
                 await connection.OpenAsync();
+                if (fileCopyTask != null)
+                {
+                    await fileCopyTask;
+                }
                 await command.ExecuteNonQueryAsync();
             }
         }

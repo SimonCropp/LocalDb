@@ -36,7 +36,7 @@ public class Tests:
 
     static void Register()
     {
-        LocalDb.SqlInstanceService.Register("LocalDbDuplicateDbContext", TestDbBuilder.CreateTable);
+        SqlInstanceService.Register("LocalDbDuplicateDbContext", TestDbBuilder.CreateTable);
     }
 
     [Fact]
