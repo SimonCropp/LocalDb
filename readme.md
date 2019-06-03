@@ -718,10 +718,12 @@ var sqlInstance = new SqlInstance<MyDbContext>(
 <sup>[snippet source](/src/EfLocalDbSnippets/Migrations.cs#L14-L40)</sup>
 <!-- endsnippet -->
 
+The above performs the following actions:
+
 
 ### Custom Migrations Operations
 
-Optionally use a [Custom Migrations Operations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/operations).
+Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/operations).
 
 <!-- snippet: IMigrationsSqlGenerator -->
 ```cs

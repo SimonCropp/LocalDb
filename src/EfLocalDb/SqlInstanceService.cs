@@ -66,7 +66,7 @@ namespace EfLocalDb
         {
             if (instance == null)
             {
-                throw new Exception($@"There is no instance registered.
+                throw new Exception(@"There is no instance registered.
 Ensure that `SqlInstanceService.Register` has been called.");
             }
         }

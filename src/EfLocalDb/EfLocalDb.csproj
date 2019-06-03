@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Include="..\LocalDb\DbNamer.cs" Link="DbNamer.cs" />
     <Compile Include="..\LocalDb\DirectoryFinder.cs" Link="DirectoryFinder.cs" />
+    <Compile Include="..\LocalDb\FileExtensions.cs" Link="FileExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" Link="Wrapper.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -24,7 +24,7 @@ public class Tests :
                 Property = "prop"
             };
             dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         using (var dbContext = database.NewDbContext())
@@ -47,7 +47,7 @@ public class Tests :
                 Property = "prop"
             };
             dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         using (var dbContext = database1.NewDbContext())
@@ -55,7 +55,8 @@ public class Tests :
             Assert.Single(dbContext.TestEntities);
         }
 
-        var instance2 = new SqlInstance<WithRebuildDbContext>(constructInstance: builder => new WithRebuildDbContext(builder.Options),
+        var instance2 = new SqlInstance<WithRebuildDbContext>(
+            constructInstance: builder => new WithRebuildDbContext(builder.Options),
             buildTemplate: x => throw new Exception(), requiresRebuild: dbContext => false);
         var database2 = await instance2.Build();
         using (var dbContext = database2.NewDbContext())
@@ -65,7 +66,7 @@ public class Tests :
                 Property = "prop"
             };
             dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         using (var dbContext = database2.NewDbContext())
@@ -87,7 +88,7 @@ public class Tests :
                 Property = "prop"
             };
             dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         using (var dbContext = database.NewDbContext())
@@ -123,7 +124,7 @@ public class Tests :
                 Property = "Item1"
             };
             dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         await database.AddData(new TestEntity

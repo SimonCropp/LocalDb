@@ -98,7 +98,7 @@ execute sp_executesql @command";
             }
     }
 
-    public Task<string> CreateDatabaseFromTemplate(string name, string templateName)
+    public async Task<string> CreateDatabaseFromTemplate(string name, string templateName)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -112,9 +112,9 @@ execute sp_executesql @command";
 
         var templateDataFile = Path.Combine(directory, templateName + ".mdf");
 
-        File.Copy(templateDataFile, dataFile);
+        await FileExtensions.Copy(templateDataFile, dataFile);
 
-        return CreateDatabaseFromFile(name);
+        return await CreateDatabaseFromFile(name);
     }
 
     public bool DatabaseFileExists(string name)
