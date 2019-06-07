@@ -65,7 +65,7 @@ namespace LocalDb
             }
         }
 
-        bool InnerInit(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild)
+        void InnerInit(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild)
         {
             wrapper = new Wrapper(name, directory);
 
@@ -73,7 +73,7 @@ namespace LocalDb
 
             if (!CheckRequiresRebuild(requiresRebuild))
             {
-                return true;
+                return;
             }
 
             wrapper.Purge();
@@ -84,7 +84,6 @@ namespace LocalDb
             buildTemplate(connectionString);
 
             wrapper.Detach("template");
-            return false;
         }
 
         bool CheckRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
