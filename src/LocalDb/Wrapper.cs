@@ -16,8 +16,8 @@ class Wrapper
         masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master";
         this.directory = directory;
         Directory.CreateDirectory(directory);
-
         ServerName = $@"(LocalDb)\{instance}";
+        Trace.WriteLine($@"Creating LocalDb instance. Server Name: {ServerName}");
     }
 
     public static string NonPooled(string connectionString)
@@ -99,6 +99,19 @@ execute sp_executesql @command";
     }
 
     public Task<string> CreateDatabaseFromTemplate(string name, string templateName)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            return InnerCreateDatabaseFromTemplate(name, templateName);
+        }
+        finally
+        {
+            Trace.WriteLine($"LocalDB CreateDatabaseFromTemplate: {stopwatch.ElapsedMilliseconds}ms");
+        }
+    }
+
+    Task<string> InnerCreateDatabaseFromTemplate(string name, string templateName)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {

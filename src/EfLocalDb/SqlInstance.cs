@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
+
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
@@ -101,49 +102,45 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             try
             {
-                wrapper = new Wrapper(name, directory);
-
-                Trace.WriteLine($@"Creating LocalDb instance.
-Server Name: {ServerName}");
-
-                this.constructInstance = constructInstance;
-
-                wrapper.Start();
-
-                if (!CheckRequiresRebuild(requiresRebuild))
-                {
-                    return;
-                }
-
-                wrapper.Purge();
-                wrapper.DeleteFiles();
-
-                var connectionString = wrapper.CreateDatabase("template");
-                connectionString = Wrapper.NonPooled(connectionString);
-                using (var connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-
-                    var builder = DefaultOptionsBuilder.Build<TDbContext>();
-                    builder.UseSqlServer(connection);
-                    buildTemplate(connection, builder);
-                }
-
-                wrapper.Detach("template");
+                var stopwatch = Stopwatch.StartNew();
+                InnerInit(buildTemplate, constructInstance, name, directory, requiresRebuild);
+                Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
             {
-                var message = $@"Failed to setup a LocalDB instance.
-{nameof(name)}: {name}
-{nameof(directory)}: {directory}:
-
-To cleanup perform the following actions:
- * Execute 'sqllocaldb stop {name}'
- * Execute 'sqllocaldb delete {name}'
- * Delete the directory {directory}'
-";
-                throw new Exception(message, exception);
+                ExceptionBuilder.WrapAndThrowLocalDbFailure(name, directory, exception);
             }
+        }
+
+        void InnerInit(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance, string name, string directory, Func<TDbContext, bool> requiresRebuild)
+        {
+            wrapper = new Wrapper(name, directory);
+
+
+            this.constructInstance = constructInstance;
+
+            wrapper.Start();
+
+            if (!CheckRequiresRebuild(requiresRebuild))
+            {
+                return;
+            }
+
+            wrapper.Purge();
+            wrapper.DeleteFiles();
+
+            var connectionString = wrapper.CreateDatabase("template");
+            connectionString = Wrapper.NonPooled(connectionString);
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                var builder = DefaultOptionsBuilder.Build<TDbContext>();
+                builder.UseSqlServer(connection);
+                buildTemplate(connection, builder);
+            }
+
+            wrapper.Detach("template");
         }
 
         bool CheckRequiresRebuild(Func<TDbContext, bool> requiresRebuild)

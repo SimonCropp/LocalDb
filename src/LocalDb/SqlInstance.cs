@@ -55,45 +55,36 @@ namespace LocalDb
 
             try
             {
-                wrapper = new Wrapper(name, directory);
-
-                Trace.WriteLine($@"Creating LocalDb instance.
-Server Name: {ServerName}");
-
-                wrapper.Start();
-
-                if (!CheckRequiresRebuild(requiresRebuild))
-                {
-                    return;
-                }
-
-                wrapper.Purge();
-                wrapper.DeleteFiles();
-
-                var connectionString = wrapper.CreateDatabase("template");
-                connectionString = Wrapper.NonPooled(connectionString);
-                buildTemplate(connectionString);
-
-                wrapper.Detach("template");
+                var stopwatch = Stopwatch.StartNew();
+                InnerInit(name, buildTemplate, directory, requiresRebuild);
+                Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
             {
-                WrapAndThrow(name, directory, exception);
+                ExceptionBuilder.WrapAndThrowLocalDbFailure(name, directory, exception);
             }
         }
 
-        static void WrapAndThrow(string name, string directory, Exception exception)
+        bool InnerInit(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild)
         {
-            var message = $@"Failed to setup a LocalDB instance.
-Name: {name}
-Directory: {directory}:
+            wrapper = new Wrapper(name, directory);
 
-To cleanup perform the following actions:
- * Execute 'sqllocaldb stop {name}'
- * Execute 'sqllocaldb delete {name}'
- * Delete the directory {directory}'
-";
-            throw new Exception(message, exception);
+            wrapper.Start();
+
+            if (!CheckRequiresRebuild(requiresRebuild))
+            {
+                return true;
+            }
+
+            wrapper.Purge();
+            wrapper.DeleteFiles();
+
+            var connectionString = wrapper.CreateDatabase("template");
+            connectionString = Wrapper.NonPooled(connectionString);
+            buildTemplate(connectionString);
+
+            wrapper.Detach("template");
+            return false;
         }
 
         bool CheckRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
