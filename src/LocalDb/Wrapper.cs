@@ -56,7 +56,7 @@ class Wrapper
 
     public void Purge()
     {
-            var commandText = @"
+        var commandText = @"
 declare @command nvarchar(max)
 set @command = ''
 
@@ -75,27 +75,27 @@ drop database [' + [name] + '];
 from [master].[sys].[databases]
 where [name] not in ('master', 'model', 'msdb', 'tempdb');
 execute sp_executesql @command";
-            try
+        try
+        {
+            using (var connection = new SqlConnection(masterConnection))
+            using (var command = connection.CreateCommand())
             {
-                using (var connection = new SqlConnection(masterConnection))
-                using (var command = connection.CreateCommand())
-                {
-                    connection.Open();
-                    command.CommandText = commandText;
-                    command.ExecuteNonQuery();
-                }
+                connection.Open();
+                command.CommandText = commandText;
+                command.ExecuteNonQuery();
             }
-            catch (Exception exception)
-            {
-                throw new Exception(
-                    innerException: exception,
-                    message: $@"Failed to {nameof(Purge)}
+        }
+        catch (Exception exception)
+        {
+            throw new Exception(
+                innerException: exception,
+                message: $@"Failed to {nameof(Purge)}
 {nameof(directory)}: {directory}
 {nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
 {nameof(commandText)}: {commandText}
 ");
-            }
+        }
     }
 
     public Task<string> CreateDatabaseFromTemplate(string name, string templateName)
@@ -162,6 +162,7 @@ for attach;
                 {
                     await fileCopyTask;
                 }
+
                 await command.ExecuteNonQueryAsync();
             }
         }
@@ -246,17 +247,30 @@ create database [{name}] on
                     continue;
                 }
             }
+
             File.Delete(file);
         }
     }
 
     void RunLocalDbCommand(string command)
     {
+        var startInfo = new ProcessStartInfo("sqllocaldb", command)
+        {
+            CreateNoWindow = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
         try
         {
-            using (var start = Process.Start("sqllocaldb", command))
+            using (var process = Process.Start(startInfo))
             {
-                start.WaitForExit();
+                process.WaitForExit();
+                if (process.ExitCode != 0)
+                {
+                    var readToEnd = process.StandardError.ReadToEnd();
+                    throw new Exception($"ExitCode: {process.ExitCode}. Output: {readToEnd}");
+                }
             }
         }
         catch (Exception exception)
