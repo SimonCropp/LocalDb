@@ -179,7 +179,7 @@ for attach;
 ");
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database={name}";
+        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
     }
 
     public string CreateDatabase(string name)
@@ -219,7 +219,7 @@ create database [{name}] on
 ");
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database=template";
+        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True";
     }
 
     public void Start()
