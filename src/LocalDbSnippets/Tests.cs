@@ -18,10 +18,6 @@ public class Tests
         {
             #endregion
             await TestDbBuilder.AddData(connection);
-        }
-        
-        using (var connection = await database.OpenConnection())
-        {
             Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }
@@ -34,14 +30,10 @@ public class Tests
         #region WithDbName
         var database = await SqlInstanceService.Build("TheTestWithDbName");
         #endregion
-        
+
         using (var connection = await database.OpenConnection())
         {
             await TestDbBuilder.AddData(connection);
-        }
-        
-        using (var connection = await database.OpenConnection())
-        {
             Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }

@@ -36,10 +36,6 @@ namespace TestBase
             using (var connection = await database.OpenConnection())
             {
                 await TestDbBuilder.AddData(connection);
-            }
-            
-            using (var connection = await database.OpenConnection())
-            {
                 Assert.Single(await TestDbBuilder.GetData(connection));
             }
         }

@@ -19,10 +19,6 @@ public class Tests:
         using (var connection = await database.OpenConnection())
         {
             await TestDbBuilder.AddData(connection);
-        }
-
-        using (var connection = await database.OpenConnection())
-        {
             Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }
@@ -60,10 +56,6 @@ public class Tests:
         using (var connection = await database2.OpenConnection())
         {
             await TestDbBuilder.AddData(connection);
-        }
-
-        using (var connection = await database2.OpenConnection())
-        {
             var data = await TestDbBuilder.GetData(connection);
             Assert.Single(data);
         }

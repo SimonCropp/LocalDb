@@ -247,16 +247,12 @@ public class Tests
         using (var connection = await database.OpenConnection())
         {
             await TestDbBuilder.AddData(connection);
-        }
-
-        using (var connection = await database.OpenConnection())
-        {
             Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L36)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L32)</sup>
 <!-- endsnippet -->
 
 
@@ -337,16 +333,12 @@ public class Tests:
         using (var connection = await database.OpenConnection())
         {
             await TestDbBuilder.AddData(connection);
-        }
-        
-        using (var connection = await database.OpenConnection())
-        {
             Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L48)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L44)</sup>
 <!-- endsnippet -->
 
 
@@ -513,7 +505,7 @@ There is also an override that takes an explicit dbName:
 ```cs
 var database = await SqlInstanceService.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L34-L36)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L30-L32)</sup>
 <!-- endsnippet -->
 
 
@@ -570,15 +562,11 @@ public async Task TheTest()
     using (var connection = await database.OpenConnection())
     {
         await TestDbBuilder.AddData(connection);
-    }
-    
-    using (var connection = await database.OpenConnection())
-    {
         Assert.Single(await TestDbBuilder.GetData(connection));
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L29)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L25)</sup>
 <!-- endsnippet -->
 
 
