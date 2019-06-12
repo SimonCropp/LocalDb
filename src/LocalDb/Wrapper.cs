@@ -225,8 +225,8 @@ create database [{name}] on
 
     public void Start()
     {
-        RunLocalDbCommand($"create \"{instance}\"");
-        RunLocalDbCommand($"start \"{instance}\"");
+        RunLocalDbCommand($"create \"{instance}\" -s");
+        //RunLocalDbCommand($"start \"{instance}\"");
     }
 
     public void DeleteInstance()
