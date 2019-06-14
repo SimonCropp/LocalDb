@@ -64,7 +64,7 @@ end catch;
 drop database [' + [name] + '];
 
 '
-from [master].[sys].[databases]
+from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb');
 execute sp_executesql @command";
         try
@@ -129,9 +129,9 @@ execute sp_executesql @command";
     {
         var dataFile = Path.Combine(directory, "template.mdf");
         var commandText = $@"
-create database [template] on
+create database template on
 (
-    name = [template],
+    name = template,
     filename = '{dataFile}'
 )
 for attach;
@@ -195,9 +195,9 @@ alter database [{name}]
             {
                 connection.Open();
                 var commandText = $@"
-create database [template] on
+create database template on
 (
-    name = [template],
+    name = template,
     filename = '{dataFile}',
     size = 1MB,
     fileGrowth = 100KB
