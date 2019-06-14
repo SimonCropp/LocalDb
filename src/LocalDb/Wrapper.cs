@@ -163,7 +163,7 @@ for attach;
         }
         catch (Exception exception)
         {
-            throw BuildException("template", exception, nameof(CreateDatabaseFromTemplate), dataFile, commandText);
+            throw BuildException("template", exception, nameof(RestoreTemplate), dataFile, commandText);
         }
 
         return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True";
