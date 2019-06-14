@@ -172,7 +172,7 @@ namespace EfLocalDb
 
             wrapper.Detach("template");
             wrapper.Purge();
-            wrapper.DeleteFiles(exclude: "template");
+            wrapper.DeleteNonTemplateFiles();
             return false;
         }
 

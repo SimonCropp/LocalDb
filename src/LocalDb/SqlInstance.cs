@@ -113,7 +113,7 @@ namespace LocalDb
 
             wrapper.Detach("template");
             wrapper.Purge();
-            wrapper.DeleteFiles(exclude: "template");
+            wrapper.DeleteNonTemplateFiles();
             return false;
         }
 
