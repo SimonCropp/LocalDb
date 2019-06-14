@@ -1,0 +1,12 @@
+﻿{
+  Files: [
+    {
+      Name: 'Tests_DbSettings',
+      Filename: 'LocalDb\TestDbContext\Tests_DbSettings.mdf'
+    },
+    {
+      Name: 'Tests_DbSettings_log',
+      Filename: 'LocalDb\TestDbContext\Tests_DbSettings_log.ldf'
+    }
+  ]
+}

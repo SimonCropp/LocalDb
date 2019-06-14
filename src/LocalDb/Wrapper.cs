@@ -182,6 +182,11 @@ create database [{name}] on
     fileGrowth = 5MB
 )
 for attach;
+
+alter database [{name}]
+    modify file (name=N'template', newname=N'{name}')
+alter database [{name}]
+    modify file (name=N'template_log', newname=N'{name}_log')
 ";
         try
         {

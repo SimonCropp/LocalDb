@@ -41,5 +41,12 @@ namespace EfLocalDb
             builder.UseSqlServer(Connection);
             return constructInstance(builder);
         }
+
+        public async Task<SqlConnection> OpenConnection()
+        {
+            var connection = new SqlConnection(Connection);
+            await connection.OpenAsync();
+            return connection;
+        }
     }
 }

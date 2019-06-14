@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ApprovalTests;
 using EfLocalDb;
+using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -135,6 +137,19 @@ public class Tests :
         using (var dbContext = database.NewDbContext())
         {
             Assert.Equal(2, dbContext.TestEntities.Count());
+        }
+    }
+
+    [Fact]
+    public async Task DbSettings()
+    {
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options));
+        var database = await instance.Build();
+        using (var connection = await database.OpenConnection())
+        {
+            var settings = DbPropertyReader.Read(connection, "Tests_DbSettings");
+            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
         }
     }
 

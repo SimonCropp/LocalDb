@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using ApprovalTests;
 using LocalDb;
+using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -60,10 +62,23 @@ public class Tests:
             Assert.Single(data);
         }
     }
+    [Fact]
+    public async Task DbSettings()
+    {
+        var instance = new SqlInstance(
+            name: "Name",
+            buildTemplate: TestDbBuilder.CreateTable);
+
+        var database = await instance.Build();
+        using (var connection = await database.OpenConnection())
+        {
+            var settings = DbPropertyReader.Read(connection, "Tests_DbSettings");
+            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
+        }
+    }
 
     public Tests(ITestOutputHelper output) :
         base(output)
     {
     }
-
 }
