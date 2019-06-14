@@ -92,12 +92,12 @@ execute sp_executesql @command";
         }
     }
 
-    public Task<string> CreateDatabaseFromTemplate(string name, string templateName)
+    public Task<string> CreateDatabaseFromTemplate(string name)
     {
         var stopwatch = Stopwatch.StartNew();
         try
         {
-            return InnerCreateDatabaseFromTemplate(name, templateName);
+            return InnerCreateDatabaseFromTemplate(name);
         }
         finally
         {
@@ -105,7 +105,7 @@ execute sp_executesql @command";
         }
     }
 
-    Task<string> InnerCreateDatabaseFromTemplate(string name, string templateName)
+    Task<string> InnerCreateDatabaseFromTemplate(string name)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -118,7 +118,7 @@ execute sp_executesql @command";
             throw new Exception($"The database name '{name}' has already been used.");
         }
 
-        var templateDataFile = Path.Combine(directory, templateName + ".mdf");
+        var templateDataFile = Path.Combine(directory, "template.mdf");
 
         var copyTask = FileExtensions.Copy(templateDataFile, dataFile);
 

@@ -196,7 +196,7 @@ namespace EfLocalDb
 
         Task<string> BuildDatabase(string dbName)
         {
-            return wrapper.CreateDatabaseFromTemplate(dbName, "template");
+            return wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
         #region BuildLocalDbSignature

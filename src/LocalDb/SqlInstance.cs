@@ -122,7 +122,7 @@ namespace LocalDb
 
         Task<string> BuildContext(string dbName)
         {
-            return wrapper.CreateDatabaseFromTemplate(dbName, "template");
+            return wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
         /// <summary>
