@@ -155,7 +155,7 @@ namespace EfLocalDb
                 return true;
             }
 
-            var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
+            var connection = wrapper.RestoreTemplate("template");
             connection = Wrapper.NonPooled(connection);
             var builder = new DbContextOptionsBuilder<TDbContext>();
             builder.UseSqlServer(connection);

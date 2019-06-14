@@ -98,7 +98,7 @@ namespace LocalDb
                 return true;
             }
 
-            var connection = wrapper.CreateDatabaseFromFile("template").GetAwaiter().GetResult();
+            var connection = wrapper.RestoreTemplate("template");
             connection = Wrapper.NonPooled(connection);
             bool rebuild;
             using (var sqlConnection = new SqlConnection(connection))

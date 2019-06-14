@@ -137,7 +137,39 @@ execute sp_executesql @command";
         return File.Exists(dataFile);
     }
 
-    public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask = null)
+    public string RestoreTemplate(string name)
+    {
+        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var commandText = $@"
+create database [{name}] on
+(
+    name = [{name}],
+    filename = '{dataFile}',
+    size = 10MB,
+    maxSize = 10GB,
+    fileGrowth = 5MB
+)
+for attach;
+";
+        try
+        {
+            using (var connection = new SqlConnection(masterConnection))
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = commandText;
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+        }
+        catch (Exception exception)
+        {
+            throw BuildException(name, exception, nameof(CreateDatabaseFromTemplate), dataFile, commandText);
+        }
+
+        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
+    }
+
+    public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
     {
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         var commandText = $@"
@@ -158,26 +190,13 @@ for attach;
             {
                 command.CommandText = commandText;
                 await connection.OpenAsync();
-                if (fileCopyTask != null)
-                {
-                    await fileCopyTask;
-                }
-
+                await fileCopyTask;
                 await command.ExecuteNonQueryAsync();
             }
         }
         catch (Exception exception)
         {
-            throw new Exception(
-                innerException: exception,
-                message: $@"Failed to {nameof(CreateDatabaseFromTemplate)}
-{nameof(directory)}: {directory}
-{nameof(masterConnection)}: {masterConnection}
-{nameof(instance)}: {instance}
-{nameof(name)}: {name}
-{nameof(dataFile)}: {dataFile}
-{nameof(commandText)}: {commandText}
-");
+            throw BuildException(name, exception, nameof(CreateDatabaseFromFile), dataFile, commandText);
         }
 
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
@@ -284,5 +303,19 @@ create database [{name}] on
 {nameof(command)}: sqllocaldb {command}
 ");
         }
+    }
+
+    Exception BuildException(string name, Exception exception, string methodName, string dataFile, string commandText)
+    {
+        return new Exception(
+            innerException: exception,
+            message: $@"Failed to {methodName}
+{nameof(directory)}: {directory}
+{nameof(masterConnection)}: {masterConnection}
+{nameof(instance)}: {instance}
+{nameof(name)}: {name}
+{nameof(dataFile)}: {dataFile}
+{nameof(commandText)}: {commandText}
+");
     }
 }
