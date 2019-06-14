@@ -236,24 +236,16 @@ create database [{name}] on
         DeleteFiles();
     }
 
-    public void DeleteFiles()
+    public void DeleteFiles(string exclude = null)
     {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
-            File.Delete(file);
-        }
-    }
-
-    public void DeleteNonTemplateFiles()
-    {
-        foreach (var file in Directory.EnumerateFiles(directory))
-        {
-            var fileName = Path.GetFileName(file);
-
-            if (fileName == "template.mdf" ||
-                fileName == "template_log.ldf")
+            if (exclude != null)
             {
-                continue;
+                if (Path.GetFileNameWithoutExtension(file) == exclude)
+                {
+                    continue;
+                }
             }
 
             File.Delete(file);
