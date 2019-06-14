@@ -146,7 +146,6 @@ create database [template] on
     name = [template],
     filename = '{dataFile}',
     size = 10MB,
-    maxSize = 10GB,
     fileGrowth = 5MB
 )
 for attach;
@@ -178,7 +177,6 @@ create database [{name}] on
     name = [{name}],
     filename = '{dataFile}',
     size = 10MB,
-    maxSize = 10GB,
     fileGrowth = 5MB
 )
 for attach;
@@ -216,7 +214,6 @@ create database [{name}] on
     name = [{name}],
     filename = '{dataFile}',
     size = 10MB,
-    maxSize = 10GB,
     fileGrowth = 5MB
 );
 ";
