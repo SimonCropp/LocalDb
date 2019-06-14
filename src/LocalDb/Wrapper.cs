@@ -20,12 +20,6 @@ class Wrapper
         Trace.WriteLine($@"Creating LocalDb instance. Server Name: {ServerName}");
     }
 
-    public static string NonPooled(string connectionString)
-    {
-        // needs to be pooling=false so that we can immediately detach and use the files
-        return connectionString + ";Pooling=false";
-    }
-
     public readonly string ServerName;
 
     public void DetachTemplate()
@@ -165,7 +159,8 @@ for attach;
             throw BuildException("template", exception, nameof(RestoreTemplate), dataFile, commandText);
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True";
+        // needs to be pooling=false so that we can immediately detach and use the files
+        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
     }
 
     public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
@@ -205,13 +200,13 @@ alter database [{name}]
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
     }
 
-    public string CreateDatabase(string name)
+    public string CreateDatabase()
     {
-        var dataFile = Path.Combine(directory, name + ".mdf");
+        var dataFile = Path.Combine(directory, "template.mdf");
         var commandText = $@"
-create database [{name}] on
+create database [template] on
 (
-    name = [{name}],
+    name = [template],
     filename = '{dataFile}',
     size = 10MB,
     fileGrowth = 5MB
@@ -235,13 +230,12 @@ create database [{name}] on
 {nameof(directory)}: {directory}
 {nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
-{nameof(name)}: {name}
 {nameof(dataFile)}: {dataFile}
 {nameof(commandText)}: {commandText}
 ");
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True";
+        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
     }
 
     public void Start()

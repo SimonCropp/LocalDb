@@ -79,8 +79,7 @@ namespace LocalDb
             wrapper.Purge();
             wrapper.DeleteFiles();
 
-            var connectionString = wrapper.CreateDatabase("template");
-            connectionString = Wrapper.NonPooled(connectionString);
+            var connectionString = wrapper.CreateDatabase();
             buildTemplate(connectionString);
 
             wrapper.DetachTemplate();
@@ -99,7 +98,6 @@ namespace LocalDb
             }
 
             var connection = wrapper.RestoreTemplate();
-            connection = Wrapper.NonPooled(connection);
             bool rebuild;
             using (var sqlConnection = new SqlConnection(connection))
             {

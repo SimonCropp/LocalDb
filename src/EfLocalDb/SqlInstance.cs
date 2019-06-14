@@ -129,8 +129,7 @@ namespace EfLocalDb
             wrapper.Purge();
             wrapper.DeleteFiles();
 
-            var connectionString = wrapper.CreateDatabase("template");
-            connectionString = Wrapper.NonPooled(connectionString);
+            var connectionString = wrapper.CreateDatabase();
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -156,7 +155,6 @@ namespace EfLocalDb
             }
 
             var connection = wrapper.RestoreTemplate();
-            connection = Wrapper.NonPooled(connection);
             var builder = new DbContextOptionsBuilder<TDbContext>();
             builder.UseSqlServer(connection);
             bool rebuild;
