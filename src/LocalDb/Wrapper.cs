@@ -24,15 +24,15 @@ class Wrapper
 
     public void DetachTemplate()
     {
-        var commandText = "EXEC sp_detach_db 'template', 'true';";
+        var commandText = @"
+exec sp_detach_db 'template', 'true';
+";
         try
         {
             using (var connection = new SqlConnection(masterConnection))
-            using (var command = connection.CreateCommand())
             {
                 connection.Open();
-                command.CommandText = commandText;
-                command.ExecuteNonQuery();
+                connection.ExecuteCommand(commandText);
             }
         }
         catch (Exception exception)
@@ -41,9 +41,7 @@ class Wrapper
                 innerException: exception,
                 message: $@"Failed to {nameof(DetachTemplate)}
 {nameof(directory)}: {directory}
-{nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
-{nameof(commandText)}: {commandText}
 ");
         }
     }
@@ -72,11 +70,9 @@ execute sp_executesql @command";
         try
         {
             using (var connection = new SqlConnection(masterConnection))
-            using (var command = connection.CreateCommand())
             {
                 connection.Open();
-                command.CommandText = commandText;
-                command.ExecuteNonQuery();
+                connection.ExecuteCommand(commandText);
             }
         }
         catch (Exception exception)
@@ -85,9 +81,7 @@ execute sp_executesql @command";
                 innerException: exception,
                 message: $@"Failed to {nameof(Purge)}
 {nameof(directory)}: {directory}
-{nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
-{nameof(commandText)}: {commandText}
 ");
         }
     }
@@ -138,25 +132,21 @@ execute sp_executesql @command";
 create database [template] on
 (
     name = [template],
-    filename = '{dataFile}',
-    size = 10MB,
-    fileGrowth = 5MB
+    filename = '{dataFile}'
 )
 for attach;
 ";
         try
         {
             using (var connection = new SqlConnection(masterConnection))
-            using (var command = connection.CreateCommand())
             {
-                command.CommandText = commandText;
                 connection.Open();
-                command.ExecuteNonQuery();
+                connection.ExecuteCommand(commandText);
             }
         }
         catch (Exception exception)
         {
-            throw BuildException("template", exception, nameof(RestoreTemplate), dataFile, commandText);
+            throw BuildException("template", exception, nameof(RestoreTemplate), dataFile);
         }
 
         // needs to be pooling=false so that we can immediately detach and use the files
@@ -170,9 +160,7 @@ for attach;
 create database [{name}] on
 (
     name = [{name}],
-    filename = '{dataFile}',
-    size = 10MB,
-    fileGrowth = 5MB
+    filename = '{dataFile}'
 )
 for attach;
 
@@ -184,54 +172,48 @@ alter database [{name}]
         try
         {
             using (var connection = new SqlConnection(masterConnection))
-            using (var command = connection.CreateCommand())
             {
-                command.CommandText = commandText;
                 await connection.OpenAsync();
                 await fileCopyTask;
-                await command.ExecuteNonQueryAsync();
+                await connection.ExecuteCommandAsync(commandText);
             }
         }
         catch (Exception exception)
         {
-            throw BuildException(name, exception, nameof(CreateDatabaseFromFile), dataFile, commandText);
+            throw BuildException(name, exception, nameof(CreateDatabaseFromFile), dataFile);
         }
 
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
     }
 
-    public string CreateDatabase()
+    public string CreateTemplate()
     {
         var dataFile = Path.Combine(directory, "template.mdf");
-        var commandText = $@"
+        try
+        {
+            using (var connection = new SqlConnection(masterConnection))
+            {
+                connection.Open();
+                var commandText = $@"
 create database [template] on
 (
     name = [template],
     filename = '{dataFile}',
-    size = 10MB,
-    fileGrowth = 5MB
+    size = 1MB,
+    fileGrowth = 100KB
 );
 ";
-        try
-        {
-            using (var connection = new SqlConnection(masterConnection))
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                connection.Open();
-                command.ExecuteNonQuery();
+                connection.ExecuteCommand(commandText);
             }
         }
         catch (Exception exception)
         {
             throw new Exception(
                 innerException: exception,
-                message: $@"Failed to {nameof(CreateDatabase)}
+                message: $@"Failed to {nameof(CreateTemplate)}
 {nameof(directory)}: {directory}
-{nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
 {nameof(dataFile)}: {dataFile}
-{nameof(commandText)}: {commandText}
 ");
         }
 
@@ -301,17 +283,15 @@ create database [template] on
         }
     }
 
-    Exception BuildException(string name, Exception exception, string methodName, string dataFile, string commandText)
+    Exception BuildException(string name, Exception exception, string methodName, string dataFile)
     {
         return new Exception(
             innerException: exception,
             message: $@"Failed to {methodName}
 {nameof(directory)}: {directory}
-{nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
 {nameof(name)}: {name}
 {nameof(dataFile)}: {dataFile}
-{nameof(commandText)}: {commandText}
 ");
     }
 }

@@ -79,8 +79,13 @@ namespace LocalDb
             wrapper.Purge();
             wrapper.DeleteFiles();
 
-            var connectionString = wrapper.CreateDatabase();
+            var connectionString = wrapper.CreateTemplate();
             buildTemplate(connectionString);
+            using (var sqlConnection = new SqlConnection(connectionString))
+            {
+                sqlConnection.Open();
+                sqlConnection.ExecuteCommand("DBCC SHRINKFILE (template, 1);");
+            }
 
             wrapper.DetachTemplate();
         }

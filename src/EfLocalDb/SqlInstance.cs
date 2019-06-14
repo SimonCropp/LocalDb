@@ -129,7 +129,7 @@ namespace EfLocalDb
             wrapper.Purge();
             wrapper.DeleteFiles();
 
-            var connectionString = wrapper.CreateDatabase();
+            var connectionString = wrapper.CreateTemplate();
             using (var connection = new SqlConnection(connectionString))
             {
                 connection.Open();

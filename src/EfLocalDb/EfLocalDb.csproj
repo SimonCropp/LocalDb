@@ -11,6 +11,7 @@
     <Compile Include="..\LocalDb\DirectoryFinder.cs" Link="DirectoryFinder.cs" />
     <Compile Include="..\LocalDb\ExceptionBuilder.cs" Link="ExceptionBuilder.cs" />
     <Compile Include="..\LocalDb\FileExtensions.cs" Link="FileExtensions.cs" />
+    <Compile Include="..\LocalDb\SqlExtensions.cs" Link="SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" Link="Wrapper.cs" />
   </ItemGroup>
   <ItemGroup>
