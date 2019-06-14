@@ -140,7 +140,7 @@ namespace EfLocalDb
                 buildTemplate(connection, builder);
             }
 
-            wrapper.Detach("template");
+            wrapper.DetachTemplate();
         }
 
         bool CheckRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
@@ -150,12 +150,12 @@ namespace EfLocalDb
                 return true;
             }
 
-            if (!wrapper.DatabaseFileExists("template"))
+            if (!wrapper.TemplateFileExists())
             {
                 return true;
             }
 
-            var connection = wrapper.RestoreTemplate("template");
+            var connection = wrapper.RestoreTemplate();
             connection = Wrapper.NonPooled(connection);
             var builder = new DbContextOptionsBuilder<TDbContext>();
             builder.UseSqlServer(connection);
@@ -170,7 +170,7 @@ namespace EfLocalDb
                 return true;
             }
 
-            wrapper.Detach("template");
+            wrapper.DetachTemplate();
             wrapper.Purge();
             wrapper.DeleteFiles(exclude: "template");
             return false;

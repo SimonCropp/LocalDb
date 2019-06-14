@@ -28,9 +28,9 @@ class Wrapper
 
     public readonly string ServerName;
 
-    public void Detach(string name)
+    public void DetachTemplate()
     {
-        var commandText = $"EXEC sp_detach_db '{name}', 'true';";
+        var commandText = "EXEC sp_detach_db 'template', 'true';";
         try
         {
             using (var connection = new SqlConnection(masterConnection))
@@ -45,7 +45,7 @@ class Wrapper
         {
             throw new Exception(
                 innerException: exception,
-                message: $@"Failed to {nameof(Detach)}
+                message: $@"Failed to {nameof(DetachTemplate)}
 {nameof(directory)}: {directory}
 {nameof(masterConnection)}: {masterConnection}
 {nameof(instance)}: {instance}
@@ -131,19 +131,19 @@ execute sp_executesql @command";
         return CreateDatabaseFromFile(name, copyTask);
     }
 
-    public bool DatabaseFileExists(string name)
+    public bool TemplateFileExists()
     {
-        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var dataFile = Path.Combine(directory, "template.mdf");
         return File.Exists(dataFile);
     }
 
-    public string RestoreTemplate(string name)
+    public string RestoreTemplate()
     {
-        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var dataFile = Path.Combine(directory, "template.mdf");
         var commandText = $@"
-create database [{name}] on
+create database [template] on
 (
-    name = [{name}],
+    name = [template],
     filename = '{dataFile}',
     size = 10MB,
     maxSize = 10GB,
@@ -163,10 +163,10 @@ for attach;
         }
         catch (Exception exception)
         {
-            throw BuildException(name, exception, nameof(CreateDatabaseFromTemplate), dataFile, commandText);
+            throw BuildException("template", exception, nameof(CreateDatabaseFromTemplate), dataFile, commandText);
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
+        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True";
     }
 
     public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
@@ -184,9 +184,9 @@ create database [{name}] on
 for attach;
 
 alter database [{name}]
-    modify file (name=N'template', newname=N'{name}')
+    modify file (name=template, newname='{name}')
 alter database [{name}]
-    modify file (name=N'template_log', newname=N'{name}_log')
+    modify file (name=template_log, newname='{name}_log')
 ";
         try
         {

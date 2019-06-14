@@ -7,7 +7,7 @@ using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
 
-public class Tests:
+public class Tests :
     XunitLoggingBase
 {
     [Fact]
@@ -24,6 +24,7 @@ public class Tests:
             Assert.Single(await TestDbBuilder.GetData(connection));
         }
     }
+
     [Fact]
     public void DuplicateDbContext()
     {
@@ -62,6 +63,7 @@ public class Tests:
             Assert.Single(data);
         }
     }
+
     [Fact]
     public async Task DbSettings()
     {

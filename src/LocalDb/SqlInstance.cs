@@ -83,7 +83,7 @@ namespace LocalDb
             connectionString = Wrapper.NonPooled(connectionString);
             buildTemplate(connectionString);
 
-            wrapper.Detach("template");
+            wrapper.DetachTemplate();
         }
 
         bool CheckRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
@@ -93,12 +93,12 @@ namespace LocalDb
                 return true;
             }
 
-            if (!wrapper.DatabaseFileExists("template"))
+            if (!wrapper.TemplateFileExists())
             {
                 return true;
             }
 
-            var connection = wrapper.RestoreTemplate("template");
+            var connection = wrapper.RestoreTemplate();
             connection = Wrapper.NonPooled(connection);
             bool rebuild;
             using (var sqlConnection = new SqlConnection(connection))
@@ -111,7 +111,7 @@ namespace LocalDb
                 return true;
             }
 
-            wrapper.Detach("template");
+            wrapper.DetachTemplate();
             wrapper.Purge();
             wrapper.DeleteFiles(exclude: "template");
             return false;
