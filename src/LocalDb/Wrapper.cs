@@ -24,9 +24,7 @@ class Wrapper
 
     public void DetachTemplate()
     {
-        var commandText = @"
-exec sp_detach_db 'template', 'true';
-";
+        var commandText = @"exec sp_detach_db 'template', 'true';";
         try
         {
             using (var connection = new SqlConnection(masterConnection))
