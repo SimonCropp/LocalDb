@@ -197,9 +197,15 @@ create database template on
 (
     name = template,
     filename = '{dataFile}',
-    size = 1MB,
+    size = 8MB,
     fileGrowth = 100KB
-);
+)
+log on
+(
+    name = template_log,
+    filename = '{logFile}',
+    size = 512KB,
+    filegrowth = 100KB );
 ";
                 connection.ExecuteCommand(commandText);
             }
