@@ -343,6 +343,13 @@ Useful commands:
  * `sqllocaldb delete InstanceName`: delete an instance (this does not delete the file system data for the instance)
 
 
+## SQL Server Updates
+
+Ensure that the latests SQL Server CU is being used.
+
+ * [SQL Server 2017 Cumulative Update (CU) builds](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
+
+
 ## Icon
 
 <a href="https://thenounproject.com/term/robot/960055/" target="_blank">Robot</a> designed by Creaticca Creative Agency from The Noun Project.
