@@ -81,11 +81,6 @@ namespace LocalDb
 
             var connectionString = wrapper.CreateTemplate();
             buildTemplate(connectionString);
-            using (var sqlConnection = new SqlConnection(connectionString))
-            {
-                sqlConnection.Open();
-                sqlConnection.ExecuteCommand("DBCC SHRINKFILE (template, 1);");
-            }
 
             wrapper.DetachTemplate();
         }
