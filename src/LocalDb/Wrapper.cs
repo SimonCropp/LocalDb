@@ -187,6 +187,7 @@ alter database [{name}]
     public string CreateTemplate()
     {
         var dataFile = Path.Combine(directory, "template.mdf");
+        var logFile = Path.Combine(directory, "template_log.ldf");
         try
         {
             using (var connection = new SqlConnection(masterConnection))
