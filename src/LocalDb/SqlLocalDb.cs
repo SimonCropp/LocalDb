@@ -1,20 +1,34 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 
 static class SqlLocalDb
 {
-
     public static void Start(string instance)
     {
         RunLocalDbCommand($"create \"{instance}\" -s");
     }
+
+    public static IEnumerable<string> Instances()
+    {
+        using (var reader = new StringReader(RunLocalDbCommand($"i")))
+        {
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                yield return line;
+            }
+        }
+    }
+
     public static void DeleteInstance(string instance)
     {
         RunLocalDbCommand(instance);
         RunLocalDbCommand(instance);
     }
 
-    public static void RunLocalDbCommand(string command)
+    static string RunLocalDbCommand(string command)
     {
         var startInfo = new ProcessStartInfo("sqllocaldb", command)
         {
@@ -33,6 +47,7 @@ static class SqlLocalDb
                     var readToEnd = process.StandardError.ReadToEnd();
                     throw new Exception($"ExitCode: {process.ExitCode}. Output: {readToEnd}");
                 }
+                return process.StandardOutput.ReadToEnd();
             }
         }
         catch (Exception exception)
