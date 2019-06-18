@@ -64,7 +64,7 @@ static class SqlLocalDb
 
             if (key == "Last start time")
             {
-                instanceInfo.LastStartTime = DateTime.ParseExact(value, "dd/MM/yyyy h:mm:ss tt", null);
+                instanceInfo.LastStartTime = DateTime.Parse(value);
                 continue;
             }
 
