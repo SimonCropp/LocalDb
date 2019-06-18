@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 
 static class SqlLocalDb
 {
@@ -12,23 +11,82 @@ static class SqlLocalDb
 
     public static IEnumerable<string> Instances()
     {
-        using (var reader = new StringReader(RunLocalDbCommand($"i")))
+        return RunLocalDbCommand("i");
+    }
+
+    public static InstanceInfo Info(string instance)
+    {
+        var instanceInfo = new InstanceInfo();
+        foreach (var line in RunLocalDbCommand($"i {instance}"))
         {
-            string line;
-            while ((line = reader.ReadLine()) != null)
+            if (line == "The automatic instance \"{instance}\" is not created.")
             {
-                yield return line;
+                throw new Exception(line);
             }
+            var colonIndex = line.IndexOf(":");
+            var key = line.Substring(0, colonIndex);
+            var value = line.Substring(colonIndex+1).Trim();
+            if (key == "Name")
+            {
+                instanceInfo.Name = value;
+                continue;
+            }
+
+            if (key == "Version")
+            {
+                instanceInfo.Version = Version.Parse(value);
+                continue;
+            }
+
+            if (key == "Shared name")
+            {
+                instanceInfo.SharedName = value;
+                continue;
+            }
+
+            if (key == "Owner")
+            {
+                instanceInfo.Owner = value;
+                continue;
+            }
+
+            if (key == "Auto-create")
+            {
+                instanceInfo.AutoCreate = value != "No";
+                continue;
+            }
+
+            if (key == "State")
+            {
+                instanceInfo.State = (State) Enum.Parse(typeof(State), value);
+                continue;
+            }
+
+            if (key == "Last start time")
+            {
+                instanceInfo.LastStartTime = DateTime.ParseExact(value, "dd/MM/yyyy h:mm:ss tt", null);
+                continue;
+            }
+
+            if (key == "Instance pipe name")
+            {
+                instanceInfo.InstancePipeName = value;
+                continue;
+            }
+
+            throw new Exception($"Unknown key: {key}");
         }
+
+        return instanceInfo;
     }
 
     public static void DeleteInstance(string instance)
     {
-        RunLocalDbCommand(instance);
-        RunLocalDbCommand(instance);
+        RunLocalDbCommand($"stop \"{instance}\"");
+        RunLocalDbCommand($"delete \"{instance}\"");
     }
 
-    static string RunLocalDbCommand(string command)
+    static List<string> RunLocalDbCommand(string command)
     {
         var startInfo = new ProcessStartInfo("sqllocaldb", command)
         {
@@ -47,7 +105,19 @@ static class SqlLocalDb
                     var readToEnd = process.StandardError.ReadToEnd();
                     throw new Exception($"ExitCode: {process.ExitCode}. Output: {readToEnd}");
                 }
-                return process.StandardOutput.ReadToEnd();
+
+                string line;
+                var list = new List<string>();
+                while ((line = process.StandardOutput.ReadLine()) != null)
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
+                    list.Add(line);
+                }
+
+                return list;
             }
         }
         catch (Exception exception)
