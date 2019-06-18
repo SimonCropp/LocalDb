@@ -1,12 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 static class SqlLocalDb
 {
-    public static void Start(string instance)
+    public static State Start(string instance)
     {
-        RunLocalDbCommand($"create \"{instance}\" -s");
+        var info = Info(instance);
+        if (info==null)
+        {
+            RunLocalDbCommand($"create \"{instance}\" -s");
+            return State.NotExists;
+        }
+
+        if (info.State != State.Running)
+        {
+            RunLocalDbCommand($"create \"{instance}\" -s");
+        }
+
+        return info.State;
     }
 
     public static IEnumerable<string> Instances()
@@ -17,12 +30,21 @@ static class SqlLocalDb
     public static InstanceInfo Info(string instance)
     {
         var instanceInfo = new InstanceInfo();
-        foreach (var line in RunLocalDbCommand($"i {instance}"))
+        var lines = RunLocalDbCommand($"i {instance}");
+        if (lines.Any(x => x == $"LocalDB instance \"{instance}\" doesn't exist! "))
         {
-            if (line == "The automatic instance \"{instance}\" is not created.")
+            return null;
+        }
+        if (lines.Count == 1)
+        {
+            var line = lines.Single();
+            if (line == $"The automatic instance \"{instance}\" is not created.")
             {
                 throw new Exception(line);
             }
+        }
+        foreach (var line in lines)
+        {
             var colonIndex = line.IndexOf(":");
             var key = line.Substring(0, colonIndex);
             var value = line.Substring(colonIndex+1).Trim();

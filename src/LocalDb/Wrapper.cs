@@ -198,7 +198,7 @@ create database template on
 (
     name = template,
     filename = '{dataFile}',
-    size = 8MB,
+    size = 3MB,
     fileGrowth = 100KB
 )
 log on
@@ -227,7 +227,17 @@ log on
 
     public void Start()
     {
-        SqlLocalDb.Start(instance);
+        if (SqlLocalDb.Start(instance) == State.NotExists)
+        {
+            var commandText = @"
+use model;
+dbcc shrinkfile(modeldev, 3)";
+            using (var connection = new SqlConnection(masterConnection))
+            {
+                connection.Open();
+                connection.ExecuteCommand(commandText);
+            }
+        }
     }
 
     public void DeleteInstance()

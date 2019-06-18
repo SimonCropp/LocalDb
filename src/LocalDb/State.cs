@@ -1,5 +1,6 @@
 internal enum State
 {
     Running,
-    Stopped
+    Stopped,
+    NotExists
 }

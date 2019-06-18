@@ -19,6 +19,12 @@ public class SqlLocalDbTests :
     }
 
     [Fact]
+    public void NonInstanceInfo()
+    {
+        var info = SqlLocalDb.Info("Missing");
+        Assert.Null(info);
+    }
+    [Fact]
     public void Info()
     {
         SqlLocalDb.Start("InfoTest");
@@ -30,14 +36,14 @@ public class SqlLocalDbTests :
         SqlLocalDb.DeleteInstance("InfoTest");
     }
 
-    [Fact(Skip = "Destructive")]
-    public void DeleteAll()
-    {
-        foreach (var instance in SqlLocalDb.Instances())
-        {
-            SqlLocalDb.DeleteInstance(instance);
-        }
-    }
+    //[Fact]
+    //public void DeleteAll()
+    //{
+    //    foreach (var instance in SqlLocalDb.Instances())
+    //    {
+    //        SqlLocalDb.DeleteInstance(instance);
+    //    }
+    //}
 
     public SqlLocalDbTests(ITestOutputHelper output) :
         base(output)
