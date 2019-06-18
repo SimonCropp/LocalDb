@@ -227,14 +227,12 @@ log on
 
     public void Start()
     {
-        RunLocalDbCommand($"create \"{instance}\" -s");
-        //RunLocalDbCommand($"start \"{instance}\"");
+        SqlLocalDb.Start(instance);
     }
 
     public void DeleteInstance()
     {
-        RunLocalDbCommand($"stop \"{instance}\"");
-        RunLocalDbCommand($"delete \"{instance}\"");
+        SqlLocalDb.DeleteInstance(instance);
         DeleteFiles();
     }
 
@@ -251,40 +249,6 @@ log on
             }
 
             File.Delete(file);
-        }
-    }
-
-    void RunLocalDbCommand(string command)
-    {
-        var startInfo = new ProcessStartInfo("sqllocaldb", command)
-        {
-            CreateNoWindow = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        };
-        try
-        {
-            using (var process = Process.Start(startInfo))
-            {
-                process.WaitForExit();
-                if (process.ExitCode != 0)
-                {
-                    var readToEnd = process.StandardError.ReadToEnd();
-                    throw new Exception($"ExitCode: {process.ExitCode}. Output: {readToEnd}");
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(
-                innerException: exception,
-                message: $@"Failed to {nameof(RunLocalDbCommand)}
-{nameof(directory)}: {directory}
-{nameof(masterConnection)}: {masterConnection}
-{nameof(instance)}: {instance}
-{nameof(command)}: sqllocaldb {command}
-");
         }
     }
 
