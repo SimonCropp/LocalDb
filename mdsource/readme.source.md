@@ -114,7 +114,7 @@ When doing a [create database](https://docs.microsoft.com/en-us/sql/t-sql/statem
 
 > The size specified for the primary file must be at least as large as the primary file of the model database.
 
-Since the model database is 8MB, the default size for any new database is also 8MB. This is not ideal when using LocalDB for unit tests, since a database is created for each test, is means an 8MB file needs to be created for each test, with the resulting cost in IO time and disk usage.
+Since the model database is 8MB, the default (and smallest) size for any new database is also 8MB. This is not ideal when using LocalDB for unit tests, since a database is created for each test, is means an 8MB file needs to be created for each test, with the resulting cost in IO time and disk usage.
 
 To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/sql/t-sql/database-console-commands/dbcc-shrinkfile-transact-sql) is performed on the model database at the time a new LocalDB instance is created. The smallest size allowed is 3MB.
 
