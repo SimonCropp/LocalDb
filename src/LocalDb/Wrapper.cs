@@ -230,8 +230,11 @@ log on
         if (SqlLocalDb.Start(instance) == State.NotExists)
         {
             var commandText = @"
+-- begin-snippet: ShrinkModelDb
 use model;
-dbcc shrinkfile(modeldev, 3)";
+dbcc shrinkfile(modeldev, 3)
+-- end-snippet
+";
             using (var connection = new SqlConnection(masterConnection))
             {
                 connection.Open();
