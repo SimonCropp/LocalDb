@@ -110,7 +110,7 @@ As the most common usage scenario is "Single SqlInstance per test project" there
 
 ### Template database size
 
-When doing a [create database](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql) that new database is created based on the [model database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/model-database). See [The model Database and Creating New Databases](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql#the-model-database-and-creating-new-databases). When [defining a size](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql#arguments) for a new database, that size is ignored if is smaller than the model database:
+When doing a [create database](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql) that new database is created based on the [model database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/model-database). See [The model Database and Creating New Databases](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql#the-model-database-and-creating-new-databases). When [defining a size](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql#arguments) for a new database, that size is ignored if it is smaller than the model database size:
 
 > The size specified for the primary file must be at least as large as the primary file of the model database.
 
