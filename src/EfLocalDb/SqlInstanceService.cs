@@ -24,10 +24,11 @@ namespace EfLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix, requiresRebuild);
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceSuffix, requiresRebuild, templateSize);
         }
 
         public static void Register(
@@ -35,20 +36,22 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceName,
             string directory,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, requiresRebuild, templateSize);
         }
 
         public static void Register(
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             Action<TDbContext> buildTemplate = null,
             string instanceSuffix = null,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(constructInstance, buildTemplate, instanceSuffix, requiresRebuild);
+            instance = new SqlInstance<TDbContext>(constructInstance, buildTemplate, instanceSuffix, requiresRebuild, templateSize);
         }
 
         public static void Register(
@@ -56,10 +59,11 @@ namespace EfLocalDb
             string instanceName,
             string directory,
             Action<TDbContext> buildTemplate = null,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(constructInstance, instanceName, directory, buildTemplate, requiresRebuild);
+            instance = new SqlInstance<TDbContext>(constructInstance, instanceName, directory, buildTemplate, requiresRebuild, templateSize);
         }
 
         static void ThrowIfInstanceNull()

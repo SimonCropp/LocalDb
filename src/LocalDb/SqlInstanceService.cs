@@ -22,19 +22,21 @@ namespace LocalDb
             string name,
             Action<SqlConnection> buildTemplate,
             string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null)
+            Func<SqlConnection, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild);
+            instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild, templateSize);
         }
         public static void Register(
             string name,
             Action<string> buildTemplate,
             string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null)
+            Func<SqlConnection, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild);
+            instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild, templateSize);
         }
 
         static void ThrowIfInstanceNull()
