@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace EfLocalDb
 
         public string Connection { get; }
 
-        public async Task AddData(params object[] entities)
+        public async Task AddData(IEnumerable<object> entities)
         {
             Guard.AgainstNull(nameof(entities), entities);
             using (var sqlConnection = new SqlConnection(Connection))
@@ -35,11 +36,17 @@ namespace EfLocalDb
             }
         }
 
+        public Task AddData(params object[] entities)
+        {
+            return AddData((IEnumerable<object>) entities);
+        }
+
         public TDbContext NewDbContext()
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection);
-            return constructInstance(builder);
+            var newDbContext = constructInstance(builder);
+            return newDbContext;
         }
 
         public async Task<SqlConnection> OpenConnection()

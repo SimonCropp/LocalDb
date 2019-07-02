@@ -12,6 +12,26 @@ public class Tests :
     XunitLoggingBase
 {
     [Fact]
+    public async Task AddData()
+    {
+        var instance = new SqlInstance<ScopedDbContext>(
+            constructInstance: builder => new ScopedDbContext(builder.Options),
+            instanceSuffix: "AddData");
+
+        var database = await instance.Build();
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await database.AddData(entity);
+
+        using (var dbContext = database.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
+    }
+
+    [Fact]
     public async Task ScopedDbContext()
     {
         var instance = new SqlInstance<ScopedDbContext>(
