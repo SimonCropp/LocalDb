@@ -24,12 +24,8 @@ using Microsoft.Win32;
          GetInstances = GetFunction<LocalDBGetInstances>();
          GetVersionInfo = GetFunction<LocalDBGetVersionInfo>();
          GetVersions = GetFunction<LocalDBGetVersions>();
-         ShareInstance = GetFunction<LocalDBShareInstance>();
          StartInstance = GetFunction<LocalDBStartInstance>();
-         StartTracing = GetFunction<LocalDBStartTracing>();
          StopInstance = GetFunction<LocalDBStopInstance>();
-         StopTracing = GetFunction<LocalDBStopTracing>();
-         UnshareInstance = GetFunction<LocalDBUnshareInstance>();
      }
 
      public string ApiVersion { get; private set; }
@@ -44,12 +40,8 @@ using Microsoft.Win32;
      public LocalDBGetInstances GetInstances;
      public LocalDBGetVersionInfo GetVersionInfo;
      public LocalDBGetVersions GetVersions;
-     public LocalDBShareInstance ShareInstance;
      public LocalDBStartInstance StartInstance;
-     public LocalDBStartTracing StartTracing;
      public LocalDBStopInstance StopInstance;
-     public LocalDBStopTracing StopTracing;
-     public LocalDBUnshareInstance UnshareInstance;
 
      string GetLocalDbDllName()
      {
@@ -77,11 +69,15 @@ using Microsoft.Win32;
          }
      }
 
-     T GetFunction<T>() where T : class
+     T GetFunction<T>()
+         where T : class
      {
          var name = typeof(T).Name;
          var ptr = Kernel32.GetProcAddress(api, name);
-         if (ptr == IntPtr.Zero) throw new EntryPointNotFoundException($@"{name}");
+         if (ptr == IntPtr.Zero)
+         {
+             throw new EntryPointNotFoundException($@"{name}");
+         }
 
          object function = Marshal.GetDelegateForFunctionPointer(ptr, typeof(T));
          return (T) function;
@@ -89,13 +85,16 @@ using Microsoft.Win32;
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBCreateInstance(
-         [MarshalAs(UnmanagedType.LPWStr)] string wszVersion,
-         [MarshalAs(UnmanagedType.LPWStr)] string pInstanceName,
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string wszVersion,
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string pInstanceName,
          int dwFlags);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBDeleteInstance(
-         [MarshalAs(UnmanagedType.LPWStr)] string pInstanceName,
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string pInstanceName,
          int dwFlags);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -103,12 +102,14 @@ using Microsoft.Win32;
          int hrLocalDB,
          int dwFlags,
          int dwLanguageId,
-         [MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder wszMessage,
+         [MarshalAs(UnmanagedType.LPWStr), Out]
+         StringBuilder wszMessage,
          ref int lpcchMessage);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBGetInstanceInfo(
-         [MarshalAs(UnmanagedType.LPWStr)] string wszInstanceName,
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string wszInstanceName,
          ref LocalDbInstanceInfo pInstanceInfo,
          int dwInstanceInfoSize);
 
@@ -119,7 +120,8 @@ using Microsoft.Win32;
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBGetVersionInfo(
-         [MarshalAs(UnmanagedType.LPWStr)] string wszVersionName,
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string wszVersionName,
          IntPtr pVersionInfo, int dwVersionInfoSize);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -127,32 +129,19 @@ using Microsoft.Win32;
          IntPtr pVersion,
          ref int lpdwNumberOfVersions);
 
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBShareInstance(
-         IntPtr pOwnerSid,
-         [MarshalAs(UnmanagedType.LPWStr)] string pInstancePrivateName,
-         [MarshalAs(UnmanagedType.LPWStr)] string pInstanceSharedName, int dwFlags);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBStartInstance(
-         [MarshalAs(UnmanagedType.LPWStr)] string pInstanceName,
-         int dwFlags, [MarshalAs(UnmanagedType.LPWStr)] [Out]
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string pInstanceName,
+         int dwFlags,
+         [MarshalAs(UnmanagedType.LPWStr), Out]
          StringBuilder wszSqlConnection,
          ref int lpcchSqlConnection);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBStartTracing();
-
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBStopInstance(
-         [MarshalAs(UnmanagedType.LPWStr)] string pInstanceName,
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string pInstanceName,
          int dwFlags, int ulTimeout);
-
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBStopTracing();
-
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBUnshareInstance(
-         [MarshalAs(UnmanagedType.LPWStr)] string pInstanceName,
-         int dwFlags);
  }

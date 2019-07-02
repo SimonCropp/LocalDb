@@ -9,6 +9,7 @@ public static class ModuleInitializer
         SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
         SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Build);
         SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Major);
+        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Minor);
         SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Revision);
     }
 }
