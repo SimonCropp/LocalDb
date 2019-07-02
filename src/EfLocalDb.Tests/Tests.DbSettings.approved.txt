@@ -2,11 +2,11 @@
   Files: [
     {
       Name: 'Tests_DbSettings',
-      Filename: 'D:\LocalDBData\TestDbContext\Tests_DbSettings.mdf'
+      Filename: 'LocalDb\TestDbContext\Tests_DbSettings.mdf'
     },
     {
       Name: 'Tests_DbSettings_log',
-      Filename: 'D:\LocalDBData\TestDbContext\Tests_DbSettings_log.ldf'
+      Filename: 'LocalDb\TestDbContext\Tests_DbSettings_log.ldf'
     }
   ]
 }

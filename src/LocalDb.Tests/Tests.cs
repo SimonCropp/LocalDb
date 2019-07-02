@@ -74,7 +74,7 @@ public class Tests :
         using (var connection = await database.OpenConnection())
         {
             var settings = DbPropertyReader.Read(connection, "Tests_DbSettings");
-            ObjectApprover.VerifyWithJson(settings, s => s.Replace(DirectoryFinder.Find("Name"), "Root"));
+            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
         }
     }
 
