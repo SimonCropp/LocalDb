@@ -11,13 +11,17 @@
     <Compile Include="..\LocalDb\DirectoryFinder.cs" />
     <Compile Include="..\LocalDb\ExceptionBuilder.cs" />
     <Compile Include="..\LocalDb\FileExtensions.cs" />
+    <Compile Include="..\LocalDb\Interop\Kernel32.cs" Link="Interop\Kernel32.cs" />
+    <Compile Include="..\LocalDb\Interop\ManagedLocalDbApi.cs" Link="Interop\ManagedLocalDbApi.cs" />
+    <Compile Include="..\LocalDb\Interop\LocalDbInstanceInfo.cs" Link="Interop\LocalDbInstanceInfo.cs" />
+    <Compile Include="..\LocalDb\Interop\UnmanagedLocalDbApi.cs" Link="Interop\UnmanagedLocalDbApi.cs" />
     <Compile Include="..\LocalDb\SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\SqlLocalDb.cs" />
-    <Compile Include="..\LocalDb\InstanceInfo.cs" />
     <Compile Include="..\LocalDb\State.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.1.0" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="5.1.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />

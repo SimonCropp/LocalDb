@@ -21,17 +21,16 @@ public class SqlLocalDbTests :
     [Fact]
     public void NonInstanceInfo()
     {
-        var info = SqlLocalDb.Info("Missing");
-        Assert.Null(info);
+        var info = new ManagedLocalDbApi().GetInstance("Missing");
+        Assert.False(info.Exists);
     }
+
     [Fact]
     public void Info()
     {
         SqlLocalDb.Start("InfoTest");
-        var info = SqlLocalDb.Info("InfoTest");
-        info.InstancePipeName = null;
-        info.Version = null;
-        info.Owner = null;
+        var info = new ManagedLocalDbApi().GetInstance("InfoTest");
+
         ObjectApprover.VerifyWithJson(info);
         SqlLocalDb.DeleteInstance("InfoTest");
     }
