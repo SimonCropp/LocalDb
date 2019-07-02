@@ -1,5 +1,7 @@
 ﻿{
-  Name: 'InfoTest',
-  SharedName: '',
-  LastStartTime: DateTime_1
+  Size: 1460,
+  InstanceName: 'InfoTest',
+  Exists: true,
+  IsRunning: true,
+  SharedInstanceName: ''
 }
