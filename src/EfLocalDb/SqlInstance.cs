@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
-
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
@@ -21,7 +20,8 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             Action<TDbContext> buildTemplate = null,
             string instanceSuffix = null,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
@@ -31,7 +31,8 @@ namespace EfLocalDb
                 constructInstance,
                 instanceName,
                 directory,
-                requiresRebuild);
+                requiresRebuild,
+                templateSize);
         }
 
         public SqlInstance(
@@ -39,14 +40,16 @@ namespace EfLocalDb
             string name,
             string directory,
             Action<TDbContext> buildTemplate = null,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             Init(
                 ConvertBuildTemplate(constructInstance, buildTemplate),
                 constructInstance,
                 name,
                 directory,
-                requiresRebuild);
+                requiresRebuild,
+                templateSize);
         }
 
         static Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> ConvertBuildTemplate(
@@ -73,11 +76,12 @@ namespace EfLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
-            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild);
+            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild, templateSize);
         }
 
         public SqlInstance(
@@ -85,9 +89,10 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
-            Func<TDbContext, bool> requiresRebuild = null)
+            Func<TDbContext, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
-            Init(buildTemplate, constructInstance, name, directory, requiresRebuild);
+            Init(buildTemplate, constructInstance, name, directory, requiresRebuild, templateSize);
         }
 
         void Init(
@@ -95,7 +100,8 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
-            Func<TDbContext, bool> requiresRebuild)
+            Func<TDbContext, bool> requiresRebuild,
+            ushort templateSize)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
@@ -103,7 +109,7 @@ namespace EfLocalDb
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                InnerInit(buildTemplate, constructInstance, name, directory, requiresRebuild);
+                InnerInit(buildTemplate, constructInstance, name, directory, requiresRebuild,templateSize);
                 Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
@@ -112,14 +118,20 @@ namespace EfLocalDb
             }
         }
 
-        void InnerInit(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance, string name, string directory, Func<TDbContext, bool> requiresRebuild)
+        void InnerInit(
+            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            string name,
+            string directory, Func<TDbContext, bool>
+                requiresRebuild,
+            ushort templateSize)
         {
             wrapper = new Wrapper(name, directory);
 
 
             this.constructInstance = constructInstance;
 
-            wrapper.Start();
+            wrapper.Start(templateSize);
 
             if (!CheckRequiresRebuild(requiresRebuild))
             {

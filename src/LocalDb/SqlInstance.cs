@@ -17,17 +17,19 @@ namespace LocalDb
             string name,
             Action<string> buildTemplate,
             string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null)
+            Func<SqlConnection, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
-            Init(name, buildTemplate, directory, requiresRebuild);
+            Init(name, buildTemplate, directory, requiresRebuild, templateSize);
         }
 
         public SqlInstance(
             string name,
             Action<SqlConnection> buildTemplate,
             string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null)
+            Func<SqlConnection, bool> requiresRebuild = null,
+            ushort templateSize = 3)
         {
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Init(
@@ -41,10 +43,12 @@ namespace LocalDb
                     }
                 },
                 directory,
-                requiresRebuild);
+                requiresRebuild,
+                templateSize);
         }
 
-        void Init(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild)
+        void Init(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild,
+            ushort templateSize)
         {
             Guard.AgainstWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
@@ -56,7 +60,7 @@ namespace LocalDb
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                InnerInit(name, buildTemplate, directory, requiresRebuild);
+                InnerInit(name, buildTemplate, directory, requiresRebuild, templateSize);
                 Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
@@ -65,11 +69,11 @@ namespace LocalDb
             }
         }
 
-        void InnerInit(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild)
+        void InnerInit(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
         {
             wrapper = new Wrapper(name, directory);
 
-            wrapper.Start();
+            wrapper.Start(templateSize);
 
             if (!CheckRequiresRebuild(requiresRebuild))
             {

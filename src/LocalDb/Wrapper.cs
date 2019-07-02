@@ -225,8 +225,13 @@ log on
         return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
     }
 
-    public void Start()
+    public void Start(ushort size)
     {
+        if (size < 3)
+        {
+            throw new ArgumentOutOfRangeException(nameof(size), size, "3 is the min allowed value");
+        }
+
         if (SqlLocalDb.Start(instance) == State.NotExists)
         {
             var commandText = @"
