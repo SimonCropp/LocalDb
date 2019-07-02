@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices.ComTypes;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-public struct LocalDbInstanceInfo
+struct LocalDbInstanceInfo
 {
     internal static readonly int MarshalSize = Marshal.SizeOf(typeof(LocalDbInstanceInfo));
     public uint Size;

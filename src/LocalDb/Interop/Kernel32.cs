@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-public static class Kernel32
+static class Kernel32
 {
     [Flags]
     public enum LoadLibraryFlags : uint

@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-public class ManagedLocalDbApi
+static class ManagedLocalDbApi
 {
-    private readonly UnmanagedLocalDbApi api = new UnmanagedLocalDbApi();
-
-    public IList<string> GetInstanceNames()
+    public static List<string> GetInstanceNames()
     {
         var count = 0;
-        api.GetInstances(IntPtr.Zero, ref count);
+        UnmanagedLocalDbApi.GetInstances(IntPtr.Zero, ref count);
         var length = UnmanagedLocalDbApi.MaxName * sizeof(char);
         var ptr = Marshal.AllocHGlobal(count * length);
         try
         {
-            api.GetInstances(ptr, ref count);
+            UnmanagedLocalDbApi.GetInstances(ptr, ref count);
             var names = new List<string>(count);
             for (var i = 0; i < count; i++)
             {
@@ -31,33 +29,33 @@ public class ManagedLocalDbApi
         }
     }
 
-    public LocalDbInstanceInfo GetInstance(string instanceName)
+    public static LocalDbInstanceInfo GetInstance(string instanceName)
     {
         var info = new LocalDbInstanceInfo();
-        api.GetInstanceInfo(instanceName, ref info, Marshal.SizeOf(typeof(LocalDbInstanceInfo)));
+        UnmanagedLocalDbApi.GetInstanceInfo(instanceName, ref info, Marshal.SizeOf(typeof(LocalDbInstanceInfo)));
         return info;
     }
 
-    public void CreateInstance(string instanceName)
+    public static void CreateInstance(string instanceName)
     {
-        api.CreateInstance(api.ApiVersion, instanceName, 0);
+        UnmanagedLocalDbApi.CreateInstance(UnmanagedLocalDbApi.ApiVersion, instanceName, 0);
     }
 
-    public void StartInstance(string instanceName)
+    public static void StartInstance(string instanceName)
     {
         var connection = new StringBuilder(UnmanagedLocalDbApi.MaxPath);
         var size = connection.Capacity;
 
-        api.StartInstance(instanceName, 0, connection, ref size);
+        UnmanagedLocalDbApi.StartInstance(instanceName, 0, connection, ref size);
     }
 
-    public void StopInstance(string instanceName, TimeSpan timeout)
+    public static void StopInstance(string instanceName, TimeSpan timeout)
     {
-        api.StopInstance(instanceName, 0, (int) timeout.TotalSeconds);
+        UnmanagedLocalDbApi.StopInstance(instanceName, 0, (int) timeout.TotalSeconds);
     }
 
-    public void DeleteInstance(string instanceName)
+    public static void DeleteInstance(string instanceName)
     {
-        api.DeleteInstance(instanceName, 0);
+        UnmanagedLocalDbApi.DeleteInstance(instanceName, 0);
     }
 }

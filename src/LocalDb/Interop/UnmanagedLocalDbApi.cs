@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32;
 
- public class UnmanagedLocalDbApi
+ static class UnmanagedLocalDbApi
  {
-     IntPtr api;
+     static IntPtr api;
 
-     public UnmanagedLocalDbApi()
+     static UnmanagedLocalDbApi()
      {
          var dllName = GetLocalDbDllName();
          if (dllName == null) throw new InvalidOperationException("Could not find local db dll.");
@@ -19,31 +19,25 @@ using Microsoft.Win32;
 
          CreateInstance = GetFunction<LocalDBCreateInstance>();
          DeleteInstance = GetFunction<LocalDBDeleteInstance>();
-         FormatMessage = GetFunction<LocalDBFormatMessage>();
          GetInstanceInfo = GetFunction<LocalDBGetInstanceInfo>();
          GetInstances = GetFunction<LocalDBGetInstances>();
-         GetVersionInfo = GetFunction<LocalDBGetVersionInfo>();
-         GetVersions = GetFunction<LocalDBGetVersions>();
          StartInstance = GetFunction<LocalDBStartInstance>();
          StopInstance = GetFunction<LocalDBStopInstance>();
      }
 
-     public string ApiVersion { get; private set; }
+     public static string ApiVersion { get; private set; }
      public const int MaxPath = 260;
      public const int MaxName = 129;
      public const int MaxSid = 187;
 
-     public LocalDBCreateInstance CreateInstance;
-     public LocalDBDeleteInstance DeleteInstance;
-     public LocalDBFormatMessage FormatMessage;
-     public LocalDBGetInstanceInfo GetInstanceInfo;
-     public LocalDBGetInstances GetInstances;
-     public LocalDBGetVersionInfo GetVersionInfo;
-     public LocalDBGetVersions GetVersions;
-     public LocalDBStartInstance StartInstance;
-     public LocalDBStopInstance StopInstance;
+     public static LocalDBCreateInstance CreateInstance;
+     public static LocalDBDeleteInstance DeleteInstance;
+     public static LocalDBGetInstanceInfo GetInstanceInfo;
+     public static LocalDBGetInstances GetInstances;
+     public static LocalDBStartInstance StartInstance;
+     public static LocalDBStopInstance StopInstance;
 
-     string GetLocalDbDllName()
+     static string GetLocalDbDllName()
      {
          var isWow64Process = RuntimeInformation.OSArchitecture == Architecture.X64 &&
                                RuntimeInformation.OSArchitecture == Architecture.X86;
@@ -69,7 +63,7 @@ using Microsoft.Win32;
          }
      }
 
-     T GetFunction<T>()
+     static T GetFunction<T>()
          where T : class
      {
          var name = typeof(T).Name;
@@ -98,15 +92,6 @@ using Microsoft.Win32;
          int dwFlags);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBFormatMessage(
-         int hrLocalDB,
-         int dwFlags,
-         int dwLanguageId,
-         [MarshalAs(UnmanagedType.LPWStr), Out]
-         StringBuilder wszMessage,
-         ref int lpcchMessage);
-
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBGetInstanceInfo(
          [MarshalAs(UnmanagedType.LPWStr)]
          string wszInstanceName,
@@ -117,18 +102,6 @@ using Microsoft.Win32;
      public delegate int LocalDBGetInstances(
          IntPtr pInstanceNames,
          ref int lpdwNumberOfInstances);
-
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBGetVersionInfo(
-         [MarshalAs(UnmanagedType.LPWStr)]
-         string wszVersionName,
-         IntPtr pVersionInfo, int dwVersionInfoSize);
-
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBGetVersions(
-         IntPtr pVersion,
-         ref int lpdwNumberOfVersions);
-
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBStartInstance(

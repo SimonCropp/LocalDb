@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,7 +9,7 @@ public class SqlLocalDbTests :
     [Fact]
     public void Instances()
     {
-        var collection = SqlLocalDb.Instances().ToList();
+        var collection = ManagedLocalDbApi.GetInstanceNames();
         foreach (var instance in collection)
         {
             Trace.WriteLine(instance);
@@ -21,7 +20,7 @@ public class SqlLocalDbTests :
     [Fact]
     public void NonInstanceInfo()
     {
-        var info = new ManagedLocalDbApi().GetInstance("Missing");
+        var info = ManagedLocalDbApi.GetInstance("Missing");
         Assert.False(info.Exists);
     }
 
@@ -29,7 +28,7 @@ public class SqlLocalDbTests :
     public void Info()
     {
         SqlLocalDb.Start("InfoTest");
-        var info = new ManagedLocalDbApi().GetInstance("InfoTest");
+        var info = ManagedLocalDbApi.GetInstance("InfoTest");
 
         ObjectApprover.VerifyWithJson(info);
         SqlLocalDb.DeleteInstance("InfoTest");
