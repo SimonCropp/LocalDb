@@ -9,17 +9,17 @@ public class ManagedLocalDbApi
 
     public IList<string> GetInstanceNames()
     {
-        int count = 0;
+        var count = 0;
         _api.GetInstances(IntPtr.Zero, ref count);
         var length = UnmanagedLocalDbApi.MaxName*sizeof (char);
-        IntPtr ptr = Marshal.AllocHGlobal(count * length);
+        var ptr = Marshal.AllocHGlobal(count * length);
         try
         {
             _api.GetInstances(ptr, ref count);
             var names = new List<string>(count);
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                IntPtr idx = IntPtr.Add(ptr, length*i);
+                var idx = IntPtr.Add(ptr, length*i);
                 names.Add(Marshal.PtrToStringAuto(idx));
             }
             return names;
@@ -32,7 +32,7 @@ public class ManagedLocalDbApi
 
     public LocalDbInstanceInfo GetInstance(string instanceName)
     {
-        LocalDbInstanceInfo info = new LocalDbInstanceInfo();
+        var info = new LocalDbInstanceInfo();
         _api.GetInstanceInfo(instanceName, ref info, Marshal.SizeOf(typeof(LocalDbInstanceInfo)));
         return info;
     }
@@ -45,11 +45,11 @@ public class ManagedLocalDbApi
     public string StartInstance(string instanceName)
     {
         var connection = new StringBuilder(UnmanagedLocalDbApi.MaxPath);
-        int size = connection.Capacity;
+        var size = connection.Capacity;
 
         _api.StartInstance(instanceName, 0, connection, ref size);
 
-        string namedPipe = connection.ToString();
+        var namedPipe = connection.ToString();
         return namedPipe;
     }
 
