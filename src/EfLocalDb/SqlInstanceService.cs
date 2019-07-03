@@ -125,8 +125,8 @@ To register different configurations for the same DbContext type use the instanc
             ThrowIfInstanceNull();
             return instance.Build(data, dbName);
         }
-        public static Task<SqlDatabase<TDbContext>> Build(
-            string dbName)
+
+        public static Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
             ThrowIfInstanceNull();
             return instance.Build(dbName);

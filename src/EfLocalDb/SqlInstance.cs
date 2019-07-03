@@ -110,7 +110,7 @@ namespace EfLocalDb
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                InnerInit(buildTemplate, constructInstance, name, directory, requiresRebuild,templateSize);
+                InnerInit(buildTemplate, constructInstance, name, directory, requiresRebuild, templateSize);
                 Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
@@ -190,6 +190,7 @@ namespace EfLocalDb
         static string GetInstanceName(string scopeSuffix)
         {
             Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
+
             #region GetInstanceName
 
             if (scopeSuffix == null)
@@ -212,7 +213,6 @@ namespace EfLocalDb
             return wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
-        #region BuildLocalDbSignature
 
         /// <summary>
         ///   Build DB with a name based on the calling Method.
@@ -222,7 +222,6 @@ namespace EfLocalDb
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 
-        #endregion
         public Task<SqlDatabase<TDbContext>> Build(
             IEnumerable<object> data,
             [CallerFilePath] string testFile = null,
@@ -239,12 +238,17 @@ namespace EfLocalDb
             return Build(dbName, data);
         }
 
+        #region BuildLocalDbSignature
+
         /// <summary>
         ///   Build DB with a name based on the calling Method.
         /// </summary>
         /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
+
+        #endregion
+
         public Task<SqlDatabase<TDbContext>> Build(
             [CallerFilePath] string testFile = null,
             string databaseSuffix = null,
@@ -263,6 +267,7 @@ namespace EfLocalDb
             await database.Start();
             return database;
         }
+
         public Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
             return Build(dbName, (IEnumerable<object>) null);
