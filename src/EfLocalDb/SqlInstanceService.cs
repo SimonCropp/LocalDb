@@ -104,6 +104,7 @@ To register different configurations for the same DbContext type use the instanc
         /// <summary>
         ///   Build DB with a name based on the calling Method.
         /// </summary>
+        /// <param name="data">The seed data.</param>
         /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
