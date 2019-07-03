@@ -262,16 +262,15 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var database = await sqlInstance.Build();
-        using (var connection = await database.OpenConnection())
+        using (var database = await sqlInstance.Build())
         {
-            await TestDbBuilder.AddData(connection);
-            Assert.Single(await TestDbBuilder.GetData(connection));
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L32)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L31)</sup>
 <!-- endsnippet -->
 
 
@@ -292,25 +291,18 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var database = await sqlInstance.Build();
-        using (var dbContext = database.NewDbContext())
+        var entity = new TheEntity
         {
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
-
-        using (var dbContext = database.NewDbContext())
+            Property = "prop"
+        };
+        using (var database = await sqlInstance.Build(new List<object> {entity}))
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(database.Context.TestEntities);
         }
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L7-L40)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L8-L34)</sup>
 <!-- endsnippet -->
 
 
@@ -348,16 +340,15 @@ public class Tests:
     [Fact]
     public async Task Test()
     {
-        var database = await LocalDb();
-        using (var connection = await database.OpenConnection())
+        using (var database = await LocalDb())
         {
-            await TestDbBuilder.AddData(connection);
-            Assert.Single(await TestDbBuilder.GetData(connection));
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L44)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L43)</sup>
 <!-- endsnippet -->
 
 
@@ -383,31 +374,26 @@ public class TestBase
     }
 }
 
-public class Tests:
+public class Tests :
     TestBase
 {
     [Fact]
     public async Task Test()
     {
-        var database = await LocalDb();
-        using (var dbContext = database.NewDbContext())
+        using (var database = await LocalDb())
         {
             var entity = new TheEntity
             {
                 Property = "prop"
             };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
+            await database.AddData(entity);
 
-        using (var dbContext = database.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(database.Context.TestEntities);
         }
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L52)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L47)</sup>
 <!-- endsnippet -->
 
 
@@ -466,9 +452,13 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-var database = await SqlInstanceService.Build();
+using (var database = await SqlInstanceService.Build())
+{
+    await TestDbBuilder.AddData(database.Connection);
+    Assert.Single(await TestDbBuilder.GetData(database.Connection));
+}
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L14)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L22)</sup>
 <!-- endsnippet -->
 
 
@@ -495,7 +485,7 @@ The signature is as follows:
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L214-L222)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L241-L250)</sup>
 <!-- endsnippet -->
 
 
@@ -522,9 +512,14 @@ There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
 ```cs
-var database = await SqlInstanceService.Build("TheTestWithDbName");
+using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
+{
+    await TestDbBuilder.AddData(database.Connection);
+    Assert.Single(await TestDbBuilder.GetData(database.Connection));
+}
+}
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L30-L32)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L30-L38)</sup>
 <!-- endsnippet -->
 
 
@@ -534,19 +529,19 @@ var database = await SqlInstanceService.Build("TheTestWithDbName");
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L40-L42)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L40-L44)</sup>
 <!-- endsnippet -->
 
 
-#### Building and using DbContexts/SQLConnection
+#### Using DbContexts/SQLConnection
 
 
 ##### For SQL:
 
 <!-- snippet: BuildContext -->
 ```cs
-using (var connection = await database.OpenConnection())
-{
+await TestDbBuilder.AddData(database.Connection);
+Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L16-L19)</sup>
 <!-- endsnippet -->
@@ -576,13 +571,13 @@ The above are combined in a full test:
 [Fact]
 public async Task TheTest()
 {
-    var database = await SqlInstanceService.Build();
 
-    using (var connection = await database.OpenConnection())
+    using (var database = await SqlInstanceService.Build())
     {
-        await TestDbBuilder.AddData(connection);
-        Assert.Single(await TestDbBuilder.GetData(connection));
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
+
 }
 ```
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L25)</sup>
@@ -661,7 +656,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L192-L201)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L194-L203)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:

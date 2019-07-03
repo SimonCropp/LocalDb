@@ -6,34 +6,42 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
-    public class SqlDatabase<TDbContext>
+    public class SqlDatabase<TDbContext>:
+        IDisposable
         where TDbContext : DbContext
     {
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        IEnumerable<object> data;
 
-        public SqlDatabase(string connection, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance)
+        public SqlDatabase(
+            string connection,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            IEnumerable<object> data)
         {
             this.constructInstance = constructInstance;
-            Connection = connection;
+            this.data = data;
+            Connection = new SqlConnection(connection);
         }
 
-        public string Connection { get; }
+        public SqlConnection Connection { get; }
+
+        public async Task Start()
+        {
+            await Connection.OpenAsync();
+            Context = NewDbContext();
+            if (data != null)
+            {
+                await AddData(data);
+            }
+        }
+
+        public TDbContext Context { get; private set; }
 
         public async Task AddData(IEnumerable<object> entities)
         {
             Guard.AgainstNull(nameof(entities), entities);
-            using (var sqlConnection = new SqlConnection(Connection))
-            {
-                var openAsync = sqlConnection.OpenAsync();
-                var builder = DefaultOptionsBuilder.Build<TDbContext>();
-                builder.UseSqlServer(sqlConnection);
-                using (var dbContext = constructInstance(builder))
-                {
-                    dbContext.AddRange(entities);
-                    await openAsync;
-                    await dbContext.SaveChangesAsync();
-                }
-            }
+            Context.AddRange(entities);
+            await Context.SaveChangesAsync();
         }
 
         public Task AddData(params object[] entities)
@@ -45,15 +53,12 @@ namespace EfLocalDb
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection);
-            var newDbContext = constructInstance(builder);
-            return newDbContext;
+            return constructInstance(builder);
         }
 
-        public async Task<SqlConnection> OpenConnection()
+        public void Dispose()
         {
-            var connection = new SqlConnection(Connection);
-            await connection.OpenAsync();
-            return connection;
+            Connection.Dispose();
         }
     }
 }

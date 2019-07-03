@@ -181,7 +181,7 @@ alter database [{name}]
             throw BuildException(name, exception, nameof(CreateDatabaseFromFile), dataFile);
         }
 
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
+        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
     public string CreateTemplate()

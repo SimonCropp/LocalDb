@@ -17,11 +17,10 @@ public class Tests :
             name: "Name",
             buildTemplate: TestDbBuilder.CreateTable);
 
-        var database = await instance.Build();
-        using (var connection = await database.OpenConnection())
+        using (var database = await instance.Build())
         {
-            await TestDbBuilder.AddData(connection);
-            Assert.Single(await TestDbBuilder.GetData(connection));
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
     }
 
@@ -45,21 +44,19 @@ public class Tests :
             name: "rebuild",
             buildTemplate: TestDbBuilder.CreateTable,
             requiresRebuild: dbContext => true);
-        var database1 = await instance1.Build();
-        using (var connection = await database1.OpenConnection())
+        using (var database1 = await instance1.Build())
         {
-            await TestDbBuilder.AddData(connection);
+            await TestDbBuilder.AddData(database1.Connection);
         }
 
         var instance2 = new SqlInstance(
             name: "rebuild",
             buildTemplate: (string connection) => throw new Exception(),
             requiresRebuild: dbContext => false);
-        var database2 = await instance2.Build();
-        using (var connection = await database2.OpenConnection())
+        using (var database2 = await instance2.Build())
         {
-            await TestDbBuilder.AddData(connection);
-            var data = await TestDbBuilder.GetData(connection);
+            await TestDbBuilder.AddData(database2.Connection);
+            var data = await TestDbBuilder.GetData(database2.Connection);
             Assert.Single(data);
         }
     }
@@ -71,10 +68,9 @@ public class Tests :
             name: "Name",
             buildTemplate: TestDbBuilder.CreateTable);
 
-        var database = await instance.Build();
-        using (var connection = await database.OpenConnection())
+        using (var database = await instance.Build())
         {
-            var settings = DbPropertyReader.Read(connection, "Tests_DbSettings");
+            var settings = DbPropertyReader.Read(database.Connection, "Tests_DbSettings");
             ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
         }
     }

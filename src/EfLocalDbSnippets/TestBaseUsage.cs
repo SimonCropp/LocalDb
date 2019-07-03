@@ -25,26 +25,21 @@ namespace TestBase
         }
     }
 
-    public class Tests:
+    public class Tests :
         TestBase
     {
         [Fact]
         public async Task Test()
         {
-            var database = await LocalDb();
-            using (var dbContext = database.NewDbContext())
+            using (var database = await LocalDb())
             {
                 var entity = new TheEntity
                 {
                     Property = "prop"
                 };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
-            }
+                await database.AddData(entity);
 
-            using (var dbContext = database.NewDbContext())
-            {
-                Assert.Single(dbContext.TestEntities);
+                Assert.Single(database.Context.TestEntities);
             }
         }
     }

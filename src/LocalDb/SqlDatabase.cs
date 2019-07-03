@@ -1,22 +1,37 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace LocalDb
 {
-    public class SqlDatabase
+    public class SqlDatabase :
+        IDisposable
     {
-        public SqlDatabase(string connection)
+        public string ConnectionString{ get; }
+
+        public SqlDatabase(string connectionString)
         {
-            Connection = connection;
+            ConnectionString = connectionString;
+            Connection = new SqlConnection(connectionString);
         }
 
-        public string Connection { get; }
+        public SqlConnection Connection { get; }
 
         public async Task<SqlConnection> OpenConnection()
         {
-            var sqlConnection = new SqlConnection(Connection);
+            var sqlConnection = new SqlConnection(ConnectionString);
             await sqlConnection.OpenAsync();
             return sqlConnection;
+        }
+
+        public Task Start()
+        {
+            return Connection.OpenAsync();
+        }
+
+        public void Dispose()
+        {
+            Connection.Dispose();
         }
     }
 }

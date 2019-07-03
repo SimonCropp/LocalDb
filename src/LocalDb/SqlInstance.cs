@@ -154,7 +154,10 @@ namespace LocalDb
         public async Task<SqlDatabase> Build(string dbName)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            return new SqlDatabase(await BuildContext(dbName));
+            var connectionString = await BuildContext(dbName);
+            var sqlDatabase = new SqlDatabase(connectionString);
+            await sqlDatabase.Start();
+            return sqlDatabase;
         }
     }
 }
