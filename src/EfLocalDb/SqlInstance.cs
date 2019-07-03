@@ -123,12 +123,11 @@ namespace EfLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
-            string directory, Func<TDbContext, bool>
-                requiresRebuild,
+            string directory,
+            Func<TDbContext, bool> requiresRebuild,
             ushort templateSize)
         {
             wrapper = new Wrapper(name, directory);
-
 
             this.constructInstance = constructInstance;
 
