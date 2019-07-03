@@ -12,10 +12,16 @@ using Microsoft.Win32;
      static UnmanagedLocalDbApi()
      {
          var dllName = GetLocalDbDllName();
-         if (dllName == null) throw new InvalidOperationException("Could not find local db dll.");
+         if (dllName == null)
+         {
+             throw new InvalidOperationException("Could not find local db dll.");
+         }
 
          api = Kernel32.LoadLibraryEx(dllName, IntPtr.Zero, Kernel32.LoadLibraryFlags.LoadLibrarySearchDefaultDirs);
-         if (api == IntPtr.Zero) throw new Win32Exception();
+         if (api == IntPtr.Zero)
+         {
+             throw new Win32Exception();
+         }
 
          CreateInstance = GetFunction<LocalDBCreateInstance>();
          DeleteInstance = GetFunction<LocalDBDeleteInstance>();
@@ -50,7 +56,10 @@ using Microsoft.Win32;
                  throw new InvalidOperationException("LocalDb not installed.");
              }
 
-             var latest = versions.GetSubKeyNames().Select(s => new Version(s)).OrderBy(s => s).FirstOrDefault();
+             var latest = versions.GetSubKeyNames()
+                 .Select(s => new Version(s))
+                 .OrderBy(s => s)
+                 .FirstOrDefault();
              if (latest == null)
              {
                  throw new InvalidOperationException("LocalDb not installed.");
@@ -70,7 +79,7 @@ using Microsoft.Win32;
          var ptr = Kernel32.GetProcAddress(api, name);
          if (ptr == IntPtr.Zero)
          {
-             throw new EntryPointNotFoundException($@"{name}");
+             throw new EntryPointNotFoundException($"{name}");
          }
 
          object function = Marshal.GetDelegateForFunctionPointer(ptr, typeof(T));
