@@ -10,15 +10,27 @@ namespace EfLocalDb
         where TDbContext : DbContext
     {
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        IEnumerable<object> data;
 
-        public SqlDatabase(string connection, Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance)
+        public SqlDatabase(
+            string connection,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            IEnumerable<object> data)
         {
             this.constructInstance = constructInstance;
+            this.data = data;
             Connection = connection;
         }
 
         public string Connection { get; }
 
+        public async Task Start()
+        {
+            if (data != null)
+            {
+                await AddData(data);
+            }
+        }
         public async Task AddData(IEnumerable<object> entities)
         {
             Guard.AgainstNull(nameof(entities), entities);

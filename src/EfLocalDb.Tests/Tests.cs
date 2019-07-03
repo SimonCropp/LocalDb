@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,24 @@ using Xunit.Abstractions;
 public class Tests :
     XunitLoggingBase
 {
+    [Fact]
+    public async Task SeedData()
+    {
+        var instance = new SqlInstance<ScopedDbContext>(
+            constructInstance: builder => new ScopedDbContext(builder.Options),
+            instanceSuffix: "SeedData");
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        var database = await instance.Build(new List<object>{entity});
+        using (var dbContext = database.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
+    }
+
     [Fact]
     public async Task AddData()
     {

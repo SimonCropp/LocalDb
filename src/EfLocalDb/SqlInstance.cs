@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
@@ -221,6 +222,7 @@ namespace EfLocalDb
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
         #endregion
         public Task<SqlDatabase<TDbContext>> Build(
+            IEnumerable<object> data,
             [CallerFilePath] string testFile = null,
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
@@ -232,14 +234,29 @@ namespace EfLocalDb
             var testClass = Path.GetFileNameWithoutExtension(testFile);
 
             var dbName = DbNamer.DeriveDbName(databaseSuffix, memberName, testClass);
-            return Build(dbName);
+            return Build(dbName, data);
+        }
+        public Task<SqlDatabase<TDbContext>> Build(
+            [CallerFilePath] string testFile = null,
+            string databaseSuffix = null,
+            [CallerMemberName] string memberName = null)
+        {
+            return Build(null, testFile, databaseSuffix, memberName);
         }
 
-        public async Task<SqlDatabase<TDbContext>> Build(string dbName)
+        public async Task<SqlDatabase<TDbContext>> Build(
+            string dbName,
+            IEnumerable<object> data)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
-            return new SqlDatabase<TDbContext>(connection, constructInstance);
+            var database = new SqlDatabase<TDbContext>(connection, constructInstance, data);
+            await database.Start();
+            return database;
+        }
+        public Task<SqlDatabase<TDbContext>> Build(string dbName)
+        {
+            return Build(dbName, (IEnumerable<object>) null);
         }
     }
 }
