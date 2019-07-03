@@ -10,16 +10,16 @@ public class Tests
     public async Task TheTest()
     {
         #region BuildLocalDbInstance
-        var database = await SqlInstanceService.Build();
-        #endregion
 
-        #region BuildContext
-        using (var connection = await database.OpenConnection())
+        using (var database = await SqlInstanceService.Build())
         {
+            #region BuildContext
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
             #endregion
-            await TestDbBuilder.AddData(connection);
-            Assert.Single(await TestDbBuilder.GetData(connection));
         }
+
+        #endregion
     }
 
     #endregion
@@ -28,13 +28,13 @@ public class Tests
     public async Task TheTestWithDbName()
     {
         #region WithDbName
-        var database = await SqlInstanceService.Build("TheTestWithDbName");
-        #endregion
 
-        using (var connection = await database.OpenConnection())
+        using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
         {
-            await TestDbBuilder.AddData(connection);
-            Assert.Single(await TestDbBuilder.GetData(connection));
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
     }
+    #endregion
+
 }

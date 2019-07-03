@@ -262,16 +262,15 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var database = await sqlInstance.Build();
-        using (var connection = await database.OpenConnection())
+        using (var database = await sqlInstance.Build())
         {
-            await TestDbBuilder.AddData(connection);
-            Assert.Single(await TestDbBuilder.GetData(connection));
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L32)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L31)</sup>
 <!-- endsnippet -->
 
 
@@ -341,16 +340,15 @@ public class Tests:
     [Fact]
     public async Task Test()
     {
-        var database = await LocalDb();
-        using (var connection = await database.OpenConnection())
+        using (var database = await LocalDb())
         {
-            await TestDbBuilder.AddData(connection);
-            Assert.Single(await TestDbBuilder.GetData(connection));
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L44)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L43)</sup>
 <!-- endsnippet -->
 
 
@@ -454,9 +452,13 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-var database = await SqlInstanceService.Build();
+using (var database = await SqlInstanceService.Build())
+{
+    await TestDbBuilder.AddData(database.Connection);
+    Assert.Single(await TestDbBuilder.GetData(database.Connection));
+}
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L14)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L22)</sup>
 <!-- endsnippet -->
 
 
@@ -510,9 +512,14 @@ There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
 ```cs
-var database = await SqlInstanceService.Build("TheTestWithDbName");
+using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
+{
+    await TestDbBuilder.AddData(database.Connection);
+    Assert.Single(await TestDbBuilder.GetData(database.Connection));
+}
+}
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L30-L32)</sup>
+<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L30-L38)</sup>
 <!-- endsnippet -->
 
 
@@ -526,15 +533,15 @@ var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 <!-- endsnippet -->
 
 
-#### Building and using DbContexts/SQLConnection
+#### Using DbContexts/SQLConnection
 
 
 ##### For SQL:
 
 <!-- snippet: BuildContext -->
 ```cs
-using (var connection = await database.OpenConnection())
-{
+await TestDbBuilder.AddData(database.Connection);
+Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L16-L19)</sup>
 <!-- endsnippet -->
@@ -564,13 +571,13 @@ The above are combined in a full test:
 [Fact]
 public async Task TheTest()
 {
-    var database = await SqlInstanceService.Build();
 
-    using (var connection = await database.OpenConnection())
+    using (var database = await SqlInstanceService.Build())
     {
-        await TestDbBuilder.AddData(connection);
-        Assert.Single(await TestDbBuilder.GetData(connection));
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
+
 }
 ```
 <sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L25)</sup>

@@ -20,11 +20,10 @@ namespace StaticConstructor
         [Fact]
         public async Task Test()
         {
-            var database = await sqlInstance.Build();
-            using (var connection = await database.OpenConnection())
+            using (var database = await sqlInstance.Build())
             {
-                await TestDbBuilder.AddData(connection);
-                Assert.Single(await TestDbBuilder.GetData(connection));
+                await TestDbBuilder.AddData(database.Connection);
+                Assert.Single(await TestDbBuilder.GetData(database.Connection));
             }
         }
     }

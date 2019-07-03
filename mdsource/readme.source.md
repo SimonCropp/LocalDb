@@ -244,7 +244,7 @@ snippet: WithDbName
 snippet: EfWithDbName
 
 
-#### Building and using DbContexts/SQLConnection
+#### Using DbContexts/SQLConnection
 
 
 ##### For SQL:
