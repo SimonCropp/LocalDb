@@ -38,22 +38,17 @@ public class Tests
     public async Task TheTestWithDbName()
     {
         #region EfWithDbName
+
         var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
+
         #endregion
 
-        using (var dbContext = database.NewDbContext())
+        var entity = new TheEntity
         {
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
+            Property = "prop"
+        };
+        await database.AddData(entity);
 
-        using (var dbContext = database.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
-        }
+        Assert.Single(database.Context.TestEntities);
     }
 }

@@ -292,25 +292,18 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        var database = await sqlInstance.Build();
-        using (var dbContext = database.NewDbContext())
+        var entity = new TheEntity
         {
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
-
-        using (var dbContext = database.NewDbContext())
+            Property = "prop"
+        };
+        using (var database = await sqlInstance.Build(new List<object> {entity}))
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(database.Context.TestEntities);
         }
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L7-L40)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L8-L34)</sup>
 <!-- endsnippet -->
 
 
@@ -383,31 +376,26 @@ public class TestBase
     }
 }
 
-public class Tests:
+public class Tests :
     TestBase
 {
     [Fact]
     public async Task Test()
     {
-        var database = await LocalDb();
-        using (var dbContext = database.NewDbContext())
+        using (var database = await LocalDb())
         {
             var entity = new TheEntity
             {
                 Property = "prop"
             };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
+            await database.AddData(entity);
 
-        using (var dbContext = database.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(database.Context.TestEntities);
         }
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L52)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L47)</sup>
 <!-- endsnippet -->
 
 
@@ -495,7 +483,7 @@ The signature is as follows:
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L215-L223)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L241-L250)</sup>
 <!-- endsnippet -->
 
 
@@ -534,7 +522,7 @@ var database = await SqlInstanceService.Build("TheTestWithDbName");
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L40-L42)</sup>
+<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L40-L44)</sup>
 <!-- endsnippet -->
 
 
@@ -661,7 +649,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L193-L202)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L194-L203)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:

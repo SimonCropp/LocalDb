@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
 
@@ -19,20 +20,13 @@ namespace StaticConstructor
         [Fact]
         public async Task Test()
         {
-            var database = await sqlInstance.Build();
-            using (var dbContext = database.NewDbContext())
+            var entity = new TheEntity
             {
-                var entity = new TheEntity
-                {
-                    Property = "prop"
-                };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
-            }
-
-            using (var dbContext = database.NewDbContext())
+                Property = "prop"
+            };
+            using (var database = await sqlInstance.Build(new List<object> {entity}))
             {
-                Assert.Single(dbContext.TestEntities);
+                Assert.Single(database.Context.TestEntities);
             }
         }
     }
