@@ -162,9 +162,11 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             builder => new TestDbContext(builder.Options));
-        var database = await instance.Build();
-        var settings = DbPropertyReader.Read(database.Connection, "Tests_DbSettings");
-        ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
+        using (var database = await instance.Build())
+        {
+            var settings = DbPropertyReader.Read(database.Connection, "Tests_DbSettings");
+            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
+        }
     }
 
     public Tests(ITestOutputHelper output) :
