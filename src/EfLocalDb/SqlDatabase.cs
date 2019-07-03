@@ -25,6 +25,10 @@ namespace EfLocalDb
 
         public SqlConnection Connection { get; }
 
+        public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
+        {
+            return instance.Context;
+        }
         public async Task Start()
         {
             await Connection.OpenAsync();
@@ -35,18 +39,36 @@ namespace EfLocalDb
             }
         }
 
+        public void DetachTracked()
+        {
+            Context.DetachAllEntities();
+        }
+
         public TDbContext Context { get; private set; }
 
-        public async Task AddData(IEnumerable<object> entities)
+        public Task AddData(IEnumerable<object> entities)
         {
             Guard.AgainstNull(nameof(entities), entities);
             Context.AddRange(entities);
-            await Context.SaveChangesAsync();
+            return Context.SaveChangesAsync();
         }
 
         public Task AddData(params object[] entities)
         {
             return AddData((IEnumerable<object>) entities);
+        }
+
+        public async Task AddDataUntracked(IEnumerable<object> entities)
+        {
+            Guard.AgainstNull(nameof(entities), entities);
+            Context.AddRange(entities);
+            await Context.SaveChangesAsync();
+            Context.DetachAllEntities();
+        }
+
+        public Task AddDataUntracked(params object[] entities)
+        {
+            return AddDataUntracked((IEnumerable<object>) entities);
         }
 
         public TDbContext NewDbContext()
