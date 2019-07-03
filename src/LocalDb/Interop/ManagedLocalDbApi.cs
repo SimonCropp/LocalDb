@@ -10,14 +10,14 @@ static class ManagedLocalDbApi
         var count = 0;
         UnmanagedLocalDbApi.GetInstances(IntPtr.Zero, ref count);
         var length = UnmanagedLocalDbApi.MaxName * sizeof(char);
-        var ptr = Marshal.AllocHGlobal(count * length);
+        var pointer = Marshal.AllocHGlobal(count * length);
         try
         {
-            UnmanagedLocalDbApi.GetInstances(ptr, ref count);
+            UnmanagedLocalDbApi.GetInstances(pointer, ref count);
             var names = new List<string>(count);
             for (var i = 0; i < count; i++)
             {
-                var idx = IntPtr.Add(ptr, length * i);
+                var idx = IntPtr.Add(pointer, length * i);
                 names.Add(Marshal.PtrToStringAuto(idx));
             }
 
@@ -25,7 +25,7 @@ static class ManagedLocalDbApi
         }
         finally
         {
-            Marshal.FreeHGlobal(ptr);
+            Marshal.FreeHGlobal(pointer);
         }
     }
 
