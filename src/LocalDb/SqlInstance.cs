@@ -102,13 +102,7 @@ namespace LocalDb
             }
 
             wrapper.RestoreTemplate();
-            bool rebuild;
-            using (var sqlConnection = new SqlConnection(wrapper.TemplateConnection))
-            {
-                rebuild = requiresRebuild(sqlConnection);
-            }
-
-            if (rebuild)
+            if (ExecuteRequiresRebuild(requiresRebuild))
             {
                 return true;
             }
@@ -117,6 +111,14 @@ namespace LocalDb
             wrapper.Purge();
             wrapper.DeleteFiles(exclude: "template");
             return false;
+        }
+
+        bool ExecuteRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
+        {
+            using (var sqlConnection = new SqlConnection(wrapper.TemplateConnection))
+            {
+                return requiresRebuild(sqlConnection);
+            }
         }
 
         public void Cleanup()

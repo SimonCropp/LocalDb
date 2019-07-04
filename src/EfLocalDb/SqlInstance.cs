@@ -167,15 +167,7 @@ namespace EfLocalDb
             }
 
             wrapper.RestoreTemplate();
-            var builder = new DbContextOptionsBuilder<TDbContext>();
-            builder.UseSqlServer(wrapper.TemplateConnection);
-            bool rebuild;
-            using (var dbContext = constructInstance(builder))
-            {
-                rebuild = requiresRebuild(dbContext);
-            }
-
-            if (rebuild)
+            if (ExecuteRequiresRebuild(requiresRebuild))
             {
                 return true;
             }
@@ -184,6 +176,16 @@ namespace EfLocalDb
             wrapper.Purge();
             wrapper.DeleteFiles(exclude: "template");
             return false;
+        }
+
+        bool ExecuteRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
+        {
+            var builder = new DbContextOptionsBuilder<TDbContext>();
+            builder.UseSqlServer(wrapper.TemplateConnection);
+            using (var dbContext = constructInstance(builder))
+            {
+                return requiresRebuild(dbContext);
+            }
         }
 
         static string GetInstanceName(string scopeSuffix)
