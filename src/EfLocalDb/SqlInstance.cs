@@ -132,18 +132,32 @@ namespace EfLocalDb
             this.constructInstance = constructInstance;
 
             wrapper.Start(templateSize);
+            var type = typeof(TDbContext);
+            var assemblyLastModified = type.Assembly.LastModified();
+
             try
             {
                 wrapper.Purge();
                 wrapper.DeleteNonTemplateFiles();
 
-                if (requiresRebuild != null &&
-                    wrapper.TemplateFileExists())
+                if (wrapper.TemplateFileExists())
                 {
-                    wrapper.RestoreTemplate();
-                    if (!ExecuteRequiresRebuild(requiresRebuild))
+                    if (requiresRebuild == null)
                     {
-                        return;
+                        var templateLastMod = File.GetLastWriteTime(wrapper.TemplateDataFile);
+                        if (assemblyLastModified == templateLastMod)
+                        {
+                            Trace.WriteLine($"{type.FullName} was not modified so skipping rebuild");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        wrapper.RestoreTemplate();
+                        if (!ExecuteRequiresRebuild(requiresRebuild))
+                        {
+                            return;
+                        }
                     }
                 }
 
@@ -155,6 +169,7 @@ namespace EfLocalDb
             finally
             {
                 wrapper.DetachTemplate();
+                File.SetLastWriteTime(wrapper.TemplateDataFile, assemblyLastModified);
             }
         }
 
