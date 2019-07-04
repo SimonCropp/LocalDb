@@ -14,11 +14,15 @@ class Wrapper
     {
         this.instance = instance;
         masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master";
+        // needs to be pooling=false so that we can immediately detach and use the files
+        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
         this.directory = directory;
         Directory.CreateDirectory(directory);
         ServerName = $@"(LocalDb)\{instance}";
         Trace.WriteLine($@"Creating LocalDb instance. Server Name: {ServerName}");
     }
+
+    public readonly string TemplateConnection;
 
     public readonly string ServerName;
 
@@ -123,7 +127,7 @@ execute sp_executesql @command";
         return File.Exists(dataFile);
     }
 
-    public string RestoreTemplate()
+    public void RestoreTemplate()
     {
         var dataFile = Path.Combine(directory, "template.mdf");
         var commandText = $@"
@@ -146,9 +150,6 @@ for attach;
         {
             throw BuildException("template", exception, nameof(RestoreTemplate), dataFile);
         }
-
-        // needs to be pooling=false so that we can immediately detach and use the files
-        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
     }
 
     public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
@@ -181,6 +182,7 @@ alter database [{name}]
             throw BuildException(name, exception, nameof(CreateDatabaseFromFile), dataFile);
         }
 
+        // needs to be pooling=false so that we can immediately detach and use the files
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 

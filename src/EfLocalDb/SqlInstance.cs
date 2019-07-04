@@ -166,9 +166,9 @@ namespace EfLocalDb
                 return true;
             }
 
-            var connection = wrapper.RestoreTemplate();
+            wrapper.RestoreTemplate();
             var builder = new DbContextOptionsBuilder<TDbContext>();
-            builder.UseSqlServer(connection);
+            builder.UseSqlServer(wrapper.TemplateConnection);
             bool rebuild;
             using (var dbContext = constructInstance(builder))
             {

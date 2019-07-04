@@ -129,7 +129,7 @@ To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/s
 use model;
 dbcc shrinkfile(modeldev, 3)
 ```
-<sup>[snippet source](/src/LocalDb/Wrapper.cs#L238-L241)</sup>
+<sup>[snippet source](/src/LocalDb/Wrapper.cs#L240-L243)</sup>
 <!-- endsnippet -->
 
 
@@ -485,7 +485,7 @@ The signature is as follows:
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L241-L250)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L240-L249)</sup>
 <!-- endsnippet -->
 
 
@@ -656,7 +656,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L194-L203)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L193-L202)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:

@@ -101,9 +101,9 @@ namespace LocalDb
                 return true;
             }
 
-            var connection = wrapper.RestoreTemplate();
+            wrapper.RestoreTemplate();
             bool rebuild;
-            using (var sqlConnection = new SqlConnection(connection))
+            using (var sqlConnection = new SqlConnection(wrapper.TemplateConnection))
             {
                 rebuild = requiresRebuild(sqlConnection);
             }
