@@ -83,8 +83,8 @@ namespace LocalDb
             wrapper.Purge();
             wrapper.DeleteFiles();
 
-            var connectionString = wrapper.CreateTemplate();
-            buildTemplate(connectionString);
+            wrapper.CreateTemplate();
+            buildTemplate(wrapper.TemplateConnection);
 
             wrapper.DetachTemplate();
         }

@@ -141,8 +141,8 @@ namespace EfLocalDb
             wrapper.Purge();
             wrapper.DeleteFiles();
 
-            var connectionString = wrapper.CreateTemplate();
-            using (var connection = new SqlConnection(connectionString))
+            wrapper.CreateTemplate();
+            using (var connection = new SqlConnection(wrapper.TemplateConnection))
             {
                 connection.Open();
 

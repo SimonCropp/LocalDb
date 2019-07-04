@@ -194,7 +194,7 @@ alter database [{name}]
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
-    public string CreateTemplate()
+    public void CreateTemplate()
     {
         try
         {
@@ -229,8 +229,6 @@ log on
 {nameof(TemplateDataFile)}: {TemplateDataFile}
 ");
         }
-
-        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
     }
 
     public void Start(ushort size)
