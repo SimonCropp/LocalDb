@@ -14,17 +14,29 @@ class Wrapper
     {
         this.instance = instance;
         masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master";
+        // needs to be pooling=false so that we can immediately detach and use the files
+        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
         this.directory = directory;
+        TemplateDataFile = Path.Combine(directory, "template.mdf");
+        TemplateLogFile = Path.Combine(directory, "template_log.ldf");
         Directory.CreateDirectory(directory);
         ServerName = $@"(LocalDb)\{instance}";
         Trace.WriteLine($@"Creating LocalDb instance. Server Name: {ServerName}");
     }
 
+    public readonly string TemplateDataFile;
+
+    public readonly string TemplateLogFile;
+
+    public readonly string TemplateConnection;
+
     public readonly string ServerName;
 
     public void DetachTemplate()
     {
-        var commandText = @"exec sp_detach_db 'template', 'true';";
+        var commandText = @"
+if db_id('template') is not null
+  exec sp_detach_db 'template', 'true';";
         try
         {
             using (var connection = new SqlConnection(masterConnection))
@@ -123,7 +135,7 @@ execute sp_executesql @command";
         return File.Exists(dataFile);
     }
 
-    public string RestoreTemplate()
+    public void RestoreTemplate()
     {
         var dataFile = Path.Combine(directory, "template.mdf");
         var commandText = $@"
@@ -146,9 +158,6 @@ for attach;
         {
             throw BuildException("template", exception, nameof(RestoreTemplate), dataFile);
         }
-
-        // needs to be pooling=false so that we can immediately detach and use the files
-        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
     }
 
     public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
@@ -181,13 +190,12 @@ alter database [{name}]
             throw BuildException(name, exception, nameof(CreateDatabaseFromFile), dataFile);
         }
 
+        // needs to be pooling=false so that we can immediately detach and use the files
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
-    public string CreateTemplate()
+    public void CreateTemplate()
     {
-        var dataFile = Path.Combine(directory, "template.mdf");
-        var logFile = Path.Combine(directory, "template_log.ldf");
         try
         {
             using (var connection = new SqlConnection(masterConnection))
@@ -197,14 +205,14 @@ alter database [{name}]
 create database template on
 (
     name = template,
-    filename = '{dataFile}',
+    filename = '{TemplateDataFile}',
     size = 3MB,
     fileGrowth = 100KB
 )
 log on
 (
     name = template_log,
-    filename = '{logFile}',
+    filename = '{TemplateLogFile}',
     size = 512KB,
     filegrowth = 100KB );
 ";
@@ -218,11 +226,9 @@ log on
                 message: $@"Failed to {nameof(CreateTemplate)}
 {nameof(directory)}: {directory}
 {nameof(instance)}: {instance}
-{nameof(dataFile)}: {dataFile}
+{nameof(TemplateDataFile)}: {TemplateDataFile}
 ");
         }
-
-        return $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
     }
 
     public void Start(ushort size)
@@ -251,23 +257,29 @@ dbcc shrinkfile(modeldev, 3)
     public void DeleteInstance()
     {
         SqlLocalDb.DeleteInstance(instance);
-        DeleteFiles();
+        foreach (var file in Directory.EnumerateFiles(directory))
+        {
+            File.Delete(file);
+        }
     }
 
-    public void DeleteFiles(string exclude = null)
+    public void DeleteNonTemplateFiles()
     {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
-            if (exclude != null)
+            if (Path.GetFileNameWithoutExtension(file) == "template")
             {
-                if (Path.GetFileNameWithoutExtension(file) == exclude)
-                {
-                    continue;
-                }
+                continue;
             }
 
             File.Delete(file);
         }
+    }
+
+    public void DeleteTemplateFiles()
+    {
+        File.Delete(TemplateDataFile);
+        File.Delete(TemplateLogFile);
     }
 
     Exception BuildException(string name, Exception exception, string methodName, string dataFile)

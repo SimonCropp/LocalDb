@@ -74,49 +74,38 @@ namespace LocalDb
             wrapper = new Wrapper(name, directory);
 
             wrapper.Start(templateSize);
-
-            if (!CheckRequiresRebuild(requiresRebuild))
+            try
             {
-                return;
+                wrapper.Purge();
+                wrapper.DeleteNonTemplateFiles();
+
+                if (requiresRebuild != null &&
+                    wrapper.TemplateFileExists())
+                {
+                    wrapper.RestoreTemplate();
+                    if (!ExecuteRequiresRebuild(requiresRebuild))
+                    {
+                        return;
+                    }
+                }
+
+                wrapper.DetachTemplate();
+                wrapper.DeleteTemplateFiles();
+                wrapper.CreateTemplate();
+                buildTemplate(wrapper.TemplateConnection);
             }
-
-            wrapper.Purge();
-            wrapper.DeleteFiles();
-
-            var connectionString = wrapper.CreateTemplate();
-            buildTemplate(connectionString);
-
-            wrapper.DetachTemplate();
+            finally
+            {
+                wrapper.DetachTemplate();
+            }
         }
 
-        bool CheckRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
+        bool ExecuteRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
         {
-            if (requiresRebuild == null)
+            using (var sqlConnection = new SqlConnection(wrapper.TemplateConnection))
             {
-                return true;
+                return requiresRebuild(sqlConnection);
             }
-
-            if (!wrapper.TemplateFileExists())
-            {
-                return true;
-            }
-
-            var connection = wrapper.RestoreTemplate();
-            bool rebuild;
-            using (var sqlConnection = new SqlConnection(connection))
-            {
-                rebuild = requiresRebuild(sqlConnection);
-            }
-
-            if (rebuild)
-            {
-                return true;
-            }
-
-            wrapper.DetachTemplate();
-            wrapper.Purge();
-            wrapper.DeleteFiles(exclude: "template");
-            return false;
         }
 
         public void Cleanup()

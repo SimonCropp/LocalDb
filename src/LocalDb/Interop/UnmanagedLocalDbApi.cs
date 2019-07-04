@@ -12,10 +12,12 @@ using Microsoft.Win32;
      static UnmanagedLocalDbApi()
      {
          var dllName = GetLocalDbDllName();
-         if (dllName == null) throw new InvalidOperationException("Could not find local db dll.");
 
          api = Kernel32.LoadLibraryEx(dllName, IntPtr.Zero, Kernel32.LoadLibraryFlags.LoadLibrarySearchDefaultDirs);
-         if (api == IntPtr.Zero) throw new Win32Exception();
+         if (api == IntPtr.Zero)
+         {
+             throw new Win32Exception();
+         }
 
          CreateInstance = GetFunction<LocalDBCreateInstance>();
          DeleteInstance = GetFunction<LocalDBDeleteInstance>();
@@ -25,7 +27,7 @@ using Microsoft.Win32;
          StopInstance = GetFunction<LocalDBStopInstance>();
      }
 
-     public static string ApiVersion { get; private set; }
+     public static string ApiVersion;
      public const int MaxPath = 260;
      public const int MaxName = 129;
      public const int MaxSid = 187;
@@ -39,9 +41,7 @@ using Microsoft.Win32;
 
      static string GetLocalDbDllName()
      {
-         var isWow64Process = RuntimeInformation.OSArchitecture == Architecture.X64 &&
-                               RuntimeInformation.OSArchitecture == Architecture.X86;
-         var registryView = isWow64Process ? RegistryView.Registry32 : RegistryView.Default;
+         var registryView = GetRegistryView();
          using (var rootKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
          {
              var versions = rootKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions");
@@ -50,17 +50,36 @@ using Microsoft.Win32;
                  throw new InvalidOperationException("LocalDb not installed.");
              }
 
-             var latest = versions.GetSubKeyNames().Select(s => new Version(s)).OrderBy(s => s).FirstOrDefault();
+             var latest = versions.GetSubKeyNames()
+                 .Select(s => new Version(s))
+                 .OrderBy(s => s)
+                 .FirstOrDefault();
              if (latest == null)
              {
                  throw new InvalidOperationException("LocalDb not installed.");
              }
              using (var versionKey = versions.OpenSubKey(latest.ToString()))
              {
+                 if (versionKey == null)
+                 {
+                     throw new InvalidOperationException("Could not find LocalDb dll.");
+                 }
                  ApiVersion = latest.ToString();
-                 return (string) versionKey?.GetValue("InstanceAPIPath");
+                 return (string) versionKey.GetValue("InstanceAPIPath");
              }
          }
+     }
+
+     static RegistryView GetRegistryView()
+     {
+         var isWow64Process = RuntimeInformation.OSArchitecture == Architecture.X64 &&
+                              RuntimeInformation.OSArchitecture == Architecture.X86;
+         if (isWow64Process)
+         {
+             return RegistryView.Registry32;
+         }
+
+         return RegistryView.Default;
      }
 
      static T GetFunction<T>()
@@ -70,7 +89,7 @@ using Microsoft.Win32;
          var ptr = Kernel32.GetProcAddress(api, name);
          if (ptr == IntPtr.Zero)
          {
-             throw new EntryPointNotFoundException($@"{name}");
+             throw new EntryPointNotFoundException(name);
          }
 
          object function = Marshal.GetDelegateForFunctionPointer(ptr, typeof(T));

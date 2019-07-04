@@ -4,7 +4,6 @@ using System.Runtime.InteropServices.ComTypes;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 struct LocalDbInstanceInfo
 {
-    internal static readonly int MarshalSize = Marshal.SizeOf(typeof(LocalDbInstanceInfo));
     public uint Size;
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = UnmanagedLocalDbApi.MaxName)]

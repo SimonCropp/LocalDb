@@ -123,27 +123,69 @@ namespace EfLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
-            string directory, Func<TDbContext, bool>
-                requiresRebuild,
+            string directory,
+            Func<TDbContext, bool> requiresRebuild,
             ushort templateSize)
         {
             wrapper = new Wrapper(name, directory);
 
-
             this.constructInstance = constructInstance;
 
             wrapper.Start(templateSize);
+            var type = typeof(TDbContext);
+            var assemblyLastModified = type.Assembly.LastModified();
 
-            if (!CheckRequiresRebuild(requiresRebuild))
+            try
             {
-                return;
+                wrapper.Purge();
+                wrapper.DeleteNonTemplateFiles();
+
+                if (wrapper.TemplateFileExists())
+                {
+                    if (requiresRebuild == null)
+                    {
+                        var templateLastMod = File.GetLastWriteTime(wrapper.TemplateDataFile);
+                        if (assemblyLastModified == templateLastMod)
+                        {
+                            Trace.WriteLine($"{type.FullName} was not modified so skipping rebuild");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        wrapper.RestoreTemplate();
+                        if (!ExecuteRequiresRebuild(requiresRebuild))
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                wrapper.DetachTemplate();
+                wrapper.DeleteTemplateFiles();
+                wrapper.CreateTemplate();
+                ExecuteBuildTemplate(buildTemplate);
             }
+            finally
+            {
+                wrapper.DetachTemplate();
+                File.SetLastWriteTime(wrapper.TemplateDataFile, assemblyLastModified);
+            }
+        }
 
-            wrapper.Purge();
-            wrapper.DeleteFiles();
+        bool ExecuteRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
+        {
+            var builder = new DbContextOptionsBuilder<TDbContext>();
+            builder.UseSqlServer(wrapper.TemplateConnection);
+            using (var dbContext = constructInstance(builder))
+            {
+                return requiresRebuild(dbContext);
+            }
+        }
 
-            var connectionString = wrapper.CreateTemplate();
-            using (var connection = new SqlConnection(connectionString))
+        void ExecuteBuildTemplate(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate)
+        {
+            using (var connection = new SqlConnection(wrapper.TemplateConnection))
             {
                 connection.Open();
 
@@ -151,42 +193,7 @@ namespace EfLocalDb
                 builder.UseSqlServer(connection);
                 buildTemplate(connection, builder);
             }
-
-            wrapper.DetachTemplate();
         }
-
-        bool CheckRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
-        {
-            if (requiresRebuild == null)
-            {
-                return true;
-            }
-
-            if (!wrapper.TemplateFileExists())
-            {
-                return true;
-            }
-
-            var connection = wrapper.RestoreTemplate();
-            var builder = new DbContextOptionsBuilder<TDbContext>();
-            builder.UseSqlServer(connection);
-            bool rebuild;
-            using (var dbContext = constructInstance(builder))
-            {
-                rebuild = requiresRebuild(dbContext);
-            }
-
-            if (rebuild)
-            {
-                return true;
-            }
-
-            wrapper.DetachTemplate();
-            wrapper.Purge();
-            wrapper.DeleteFiles(exclude: "template");
-            return false;
-        }
-
         static string GetInstanceName(string scopeSuffix)
         {
             Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
