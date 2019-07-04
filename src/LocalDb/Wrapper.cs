@@ -277,6 +277,18 @@ dbcc shrinkfile(modeldev, 3)
             File.Delete(file);
         }
     }
+    public void DeleteNonTemplateFiles()
+    {
+        foreach (var file in Directory.EnumerateFiles(directory))
+        {
+            if (Path.GetFileNameWithoutExtension(file) == "template")
+            {
+                continue;
+            }
+
+            File.Delete(file);
+        }
+    }
 
     public void DeleteTemplateFiles()
     {
