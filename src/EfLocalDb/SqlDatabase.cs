@@ -29,6 +29,12 @@ namespace EfLocalDb
         {
             return instance.Context;
         }
+
+        public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance)
+        {
+            return instance.Connection;
+        }
+
         public async Task Start()
         {
             await Connection.OpenAsync();

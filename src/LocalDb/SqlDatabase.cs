@@ -17,6 +17,11 @@ namespace LocalDb
 
         public SqlConnection Connection { get; }
 
+        public static implicit operator SqlConnection(SqlDatabase instance)
+        {
+            return instance.Connection;
+        }
+
         public async Task<SqlConnection> OpenConnection()
         {
             var sqlConnection = new SqlConnection(ConnectionString);
