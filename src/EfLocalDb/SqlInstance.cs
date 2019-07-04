@@ -142,6 +142,13 @@ namespace EfLocalDb
             wrapper.DeleteFiles();
 
             wrapper.CreateTemplate();
+            ExecuteBuildTemplate(buildTemplate);
+
+            wrapper.DetachTemplate();
+        }
+
+        void ExecuteBuildTemplate(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate)
+        {
             using (var connection = new SqlConnection(wrapper.TemplateConnection))
             {
                 connection.Open();
@@ -150,8 +157,6 @@ namespace EfLocalDb
                 builder.UseSqlServer(connection);
                 buildTemplate(connection, builder);
             }
-
-            wrapper.DetachTemplate();
         }
 
         bool CheckRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
