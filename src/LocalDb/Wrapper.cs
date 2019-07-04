@@ -278,6 +278,12 @@ dbcc shrinkfile(modeldev, 3)
         }
     }
 
+    public void DeleteTemplateFiles()
+    {
+        File.Delete(TemplateDataFile);
+        File.Delete(TemplateLogFile);
+    }
+
     Exception BuildException(string name, Exception exception, string methodName, string dataFile)
     {
         return new Exception(
