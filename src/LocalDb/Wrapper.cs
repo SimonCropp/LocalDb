@@ -17,10 +17,16 @@ class Wrapper
         // needs to be pooling=false so that we can immediately detach and use the files
         TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
         this.directory = directory;
+        TemplateDataFile = Path.Combine(directory, "template.mdf");
+        TemplateLogFile = Path.Combine(directory, "template_log.ldf");
         Directory.CreateDirectory(directory);
         ServerName = $@"(LocalDb)\{instance}";
         Trace.WriteLine($@"Creating LocalDb instance. Server Name: {ServerName}");
     }
+
+    public readonly string TemplateDataFile;
+
+    public readonly string TemplateLogFile;
 
     public readonly string TemplateConnection;
 
@@ -190,8 +196,6 @@ alter database [{name}]
 
     public string CreateTemplate()
     {
-        var dataFile = Path.Combine(directory, "template.mdf");
-        var logFile = Path.Combine(directory, "template_log.ldf");
         try
         {
             using (var connection = new SqlConnection(masterConnection))
@@ -201,14 +205,14 @@ alter database [{name}]
 create database template on
 (
     name = template,
-    filename = '{dataFile}',
+    filename = '{TemplateDataFile}',
     size = 3MB,
     fileGrowth = 100KB
 )
 log on
 (
     name = template_log,
-    filename = '{logFile}',
+    filename = '{TemplateLogFile}',
     size = 512KB,
     filegrowth = 100KB );
 ";
@@ -222,7 +226,7 @@ log on
                 message: $@"Failed to {nameof(CreateTemplate)}
 {nameof(directory)}: {directory}
 {nameof(instance)}: {instance}
-{nameof(dataFile)}: {dataFile}
+{nameof(TemplateDataFile)}: {TemplateDataFile}
 ");
         }
 
