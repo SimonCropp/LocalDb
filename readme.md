@@ -215,7 +215,7 @@ public class TheDbContext :
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/TheDbContext.cs#L1-L17)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17)</sup>
 <!-- endsnippet -->
 
 <!-- snippet: TheEntity.cs -->
@@ -226,7 +226,7 @@ public class TheEntity
     public string Property { get; set; }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/TheEntity.cs#L1-L5)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5)</sup>
 <!-- endsnippet -->
 
 
@@ -270,7 +270,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/StaticConstructor.cs#L7-L31)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L7-L31)</sup>
 <!-- endsnippet -->
 
 
@@ -302,7 +302,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/StaticConstructor.cs#L8-L34)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L34)</sup>
 <!-- endsnippet -->
 
 
@@ -348,7 +348,7 @@ public class Tests:
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/TestBaseUsage.cs#L8-L43)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L43)</sup>
 <!-- endsnippet -->
 
 
@@ -393,7 +393,7 @@ public class Tests :
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/TestBaseUsage.cs#L8-L47)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L47)</sup>
 <!-- endsnippet -->
 
 
@@ -416,7 +416,7 @@ static class ModuleInitializer
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/ModuleInitializer.cs#L3-L14)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L5-L16)</sup>
 <!-- endsnippet -->
 
 
@@ -434,7 +434,7 @@ static class ModuleInitializer
     }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/ModuleInitializer.cs#L3-L14)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L5-L16)</sup>
 <!-- endsnippet -->
 
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
@@ -458,7 +458,7 @@ using (var database = await SqlInstanceService.Build())
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L12-L22)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L12-L22)</sup>
 <!-- endsnippet -->
 
 
@@ -468,7 +468,7 @@ using (var database = await SqlInstanceService.Build())
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build();
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L12-L14)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L12-L14)</sup>
 <!-- endsnippet -->
 
 
@@ -519,7 +519,7 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
 }
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L30-L38)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L30-L38)</sup>
 <!-- endsnippet -->
 
 
@@ -529,7 +529,7 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L40-L44)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L40-L44)</sup>
 <!-- endsnippet -->
 
 
@@ -543,7 +543,7 @@ var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L16-L19)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L16-L19)</sup>
 <!-- endsnippet -->
 
 
@@ -554,7 +554,7 @@ Assert.Single(await TestDbBuilder.GetData(database.Connection));
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L16-L20)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L16-L20)</sup>
 <!-- endsnippet -->
 
 
@@ -580,7 +580,7 @@ public async Task TheTest()
 
 }
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Tests.cs#L7-L25)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L7-L25)</sup>
 <!-- endsnippet -->
 
 
@@ -609,7 +609,7 @@ public async Task TheTest()
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Tests.cs#L7-L35)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L7-L35)</sup>
 <!-- endsnippet -->
 
 
@@ -670,7 +670,7 @@ There is an explicit registration override that takes an instance name and a dir
 
 ### For SQL:
 
-<!-- snippet: RegisterExplcit -->
+<!-- snippet: RegisterExplicit -->
 ```cs
 SqlInstanceService.Register(
     name: "theInstanceName",
@@ -678,20 +678,20 @@ SqlInstanceService.Register(
     directory: @"C:\LocalDb\theInstance"
 );
 ```
-<sup>[snippet source](/src/LocalDbSnippets/Snippets.cs#L7-L15)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/RegisterExplicit.cs#L7-L15)</sup>
 <!-- endsnippet -->
 
 
 ### For EF:
 
-<!-- snippet: EfRegisterExplcit -->
+<!-- snippet: EfRegisterExplicit -->
 ```cs
 SqlInstanceService<TheDbContext>.Register(
     constructInstance: builder => new TheDbContext(builder.Options),
     instanceName: "theInstanceName",
     directory: @"C:\LocalDb\theInstance");
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Snippets.cs#L7-L14)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfRegisterExplicit.cs#L7-L14)</sup>
 <!-- endsnippet -->
 
 ## EF Migrations
@@ -718,7 +718,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
         return dbContext.Database.GetPendingMigrations().Any();
     });
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Migrations.cs#L14-L40)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L14-L40)</sup>
 <!-- endsnippet -->
 
 The above performs the following actions:
@@ -732,7 +732,7 @@ Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/e
 ```cs
 optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Migrations.cs#L19-L21)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L19-L21)</sup>
 <!-- endsnippet -->
 
 
@@ -747,7 +747,7 @@ using (var dbContext = new MyDbContext(optionsBuilder.Options))
     dbContext.Database.Migrate();
 }
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Migrations.cs#L22-L27)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L22-L27)</sup>
 <!-- endsnippet -->
 
 
@@ -759,7 +759,7 @@ Check if there are any pending migrations. This is an optional performance impro
 ```cs
 return dbContext.Database.GetPendingMigrations().Any();
 ```
-<sup>[snippet source](/src/EfLocalDbSnippets/Migrations.cs#L35-L37)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L35-L37)</sup>
 <!-- endsnippet -->
 
 

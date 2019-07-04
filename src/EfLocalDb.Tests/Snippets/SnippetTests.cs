@@ -2,7 +2,7 @@
 using EfLocalDb;
 using Xunit;
 
-public class Tests
+public class SnippetTests
 {
     #region EfTest
 

@@ -25,7 +25,7 @@ public class Tests :
     }
 
     [Fact]
-    public void DuplicateDbContext()
+    public void Duplicate()
     {
         Register();
         var exception = Assert.Throws<Exception>(Register);
@@ -34,7 +34,7 @@ public class Tests :
 
     static void Register()
     {
-        SqlInstanceService.Register("LocalDbDuplicateDbContext", TestDbBuilder.CreateTable);
+        SqlInstanceService.Register("LocalDbDuplicate", TestDbBuilder.CreateTable);
     }
 
     [Fact]

@@ -1,10 +1,10 @@
 ﻿using LocalDb;
 
-class Snippets
+class RegisterExplicit
 {
-    Snippets()
+    RegisterExplicit()
     {
-        #region RegisterExplcit
+        #region RegisterExplicit
 
         SqlInstanceService.Register(
             name: "theInstanceName",

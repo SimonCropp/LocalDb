@@ -1,10 +1,10 @@
 ﻿using EfLocalDb;
 
-class Snippets
+class EfRegisterExplicit
 {
-    Snippets()
+    EfRegisterExplicit()
     {
-        #region EfRegisterExplcit
+        #region EfRegisterExplicit
 
         SqlInstanceService<TheDbContext>.Register(
             constructInstance: builder => new TheDbContext(builder.Options),

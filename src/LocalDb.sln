@@ -18,10 +18,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfLocalDb.Tests", "EfLocalD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalDb.Tests", "LocalDb.Tests\LocalDb.Tests.csproj", "{8E80940A-8FD0-4C4F-AD5C-97F8D2944FEF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfLocalDbSnippets", "EfLocalDbSnippets\EfLocalDbSnippets.csproj", "{2DD3E4F6-EFD7-450C-932E-71AC213A8A4A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalDbSnippets", "LocalDbSnippets\LocalDbSnippets.csproj", "{20642523-5D4C-44A8-9165-1848B8D150D4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHelpers", "TestHelpers\TestHelpers.csproj", "{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}"
 EndProject
 Global
@@ -46,14 +42,6 @@ Global
 		{8E80940A-8FD0-4C4F-AD5C-97F8D2944FEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E80940A-8FD0-4C4F-AD5C-97F8D2944FEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E80940A-8FD0-4C4F-AD5C-97F8D2944FEF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DD3E4F6-EFD7-450C-932E-71AC213A8A4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DD3E4F6-EFD7-450C-932E-71AC213A8A4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DD3E4F6-EFD7-450C-932E-71AC213A8A4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DD3E4F6-EFD7-450C-932E-71AC213A8A4A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20642523-5D4C-44A8-9165-1848B8D150D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20642523-5D4C-44A8-9165-1848B8D150D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20642523-5D4C-44A8-9165-1848B8D150D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20642523-5D4C-44A8-9165-1848B8D150D4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}.Release|Any CPU.ActiveCfg = Release|Any CPU

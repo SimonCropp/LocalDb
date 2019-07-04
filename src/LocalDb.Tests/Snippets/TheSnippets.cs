@@ -2,11 +2,10 @@
 using LocalDb;
 using Xunit;
 
-public class Tests
+public class TheSnippets
 {
     #region Test
 
-    [Fact]
     public async Task TheTest()
     {
         #region BuildLocalDbInstance
@@ -24,7 +23,6 @@ public class Tests
 
     #endregion
 
-    [Fact]
     public async Task TheTestWithDbName()
     {
         #region WithDbName
@@ -34,7 +32,6 @@ public class Tests
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
+        #endregion
     }
-    #endregion
-
 }

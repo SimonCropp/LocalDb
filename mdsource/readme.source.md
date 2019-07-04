@@ -297,12 +297,12 @@ There is an explicit registration override that takes an instance name and a dir
 
 ### For SQL:
 
-snippet: RegisterExplcit
+snippet: RegisterExplicit
 
 
 ### For EF:
 
-snippet: EfRegisterExplcit
+snippet: EfRegisterExplicit
 
 ## EF Migrations
 
