@@ -45,11 +45,6 @@ namespace EfLocalDb
             }
         }
 
-        public void DetachTracked()
-        {
-            Context.DetachAllEntities();
-        }
-
         public TDbContext Context { get; private set; }
 
         public Task AddData(IEnumerable<object> entities)
@@ -67,9 +62,11 @@ namespace EfLocalDb
         public async Task AddDataUntracked(IEnumerable<object> entities)
         {
             Guard.AgainstNull(nameof(entities), entities);
-            Context.AddRange(entities);
-            await Context.SaveChangesAsync();
-            Context.DetachAllEntities();
+            using (var context = NewDbContext())
+            {
+                context.AddRange(entities);
+                await context.SaveChangesAsync();
+            }
         }
 
         public Task AddDataUntracked(params object[] entities)

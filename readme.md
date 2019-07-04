@@ -416,7 +416,7 @@ static class ModuleInitializer
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L5-L16)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L2-L13)</sup>
 <!-- endsnippet -->
 
 
@@ -434,7 +434,7 @@ static class ModuleInitializer
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L5-L16)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L2-L13)</sup>
 <!-- endsnippet -->
 
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
@@ -458,7 +458,7 @@ using (var database = await SqlInstanceService.Build())
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L12-L22)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L11-L21)</sup>
 <!-- endsnippet -->
 
 
@@ -517,9 +517,8 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
     await TestDbBuilder.AddData(database.Connection);
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
-}
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L30-L38)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L28-L35)</sup>
 <!-- endsnippet -->
 
 
@@ -543,7 +542,7 @@ var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L16-L19)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L15-L18)</sup>
 <!-- endsnippet -->
 
 
@@ -568,7 +567,6 @@ The above are combined in a full test:
 
 <!-- snippet: Test -->
 ```cs
-[Fact]
 public async Task TheTest()
 {
 
@@ -580,7 +578,7 @@ public async Task TheTest()
 
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L7-L25)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L7-L24)</sup>
 <!-- endsnippet -->
 
 
