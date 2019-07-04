@@ -74,43 +74,30 @@ namespace LocalDb
             wrapper = new Wrapper(name, directory);
 
             wrapper.Start(templateSize);
-
-            if (!CheckRequiresRebuild(requiresRebuild))
+            try
             {
-                return;
+                wrapper.Purge();
+                wrapper.DeleteNonTemplateFiles();
+
+                if (requiresRebuild != null &&
+                    wrapper.TemplateFileExists())
+                {
+                    wrapper.RestoreTemplate();
+                    if (!ExecuteRequiresRebuild(requiresRebuild))
+                    {
+                        return;
+                    }
+                }
+
+                wrapper.DetachTemplate();
+                wrapper.DeleteTemplateFiles();
+                wrapper.CreateTemplate();
+                buildTemplate(wrapper.TemplateConnection);
             }
-
-            wrapper.Purge();
-            wrapper.DeleteFiles();
-
-            wrapper.CreateTemplate();
-            buildTemplate(wrapper.TemplateConnection);
-
-            wrapper.DetachTemplate();
-        }
-
-        bool CheckRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
-        {
-            if (requiresRebuild == null)
+            finally
             {
-                return true;
+                wrapper.DetachTemplate();
             }
-
-            if (!wrapper.TemplateFileExists())
-            {
-                return true;
-            }
-
-            wrapper.RestoreTemplate();
-            if (ExecuteRequiresRebuild(requiresRebuild))
-            {
-                return true;
-            }
-
-            wrapper.DetachTemplate();
-            wrapper.Purge();
-            wrapper.DeleteFiles(exclude: "template");
-            return false;
         }
 
         bool ExecuteRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)

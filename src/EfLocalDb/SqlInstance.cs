@@ -132,19 +132,40 @@ namespace EfLocalDb
             this.constructInstance = constructInstance;
 
             wrapper.Start(templateSize);
-
-            if (!CheckRequiresRebuild(requiresRebuild))
+            try
             {
-                return;
+                wrapper.Purge();
+                wrapper.DeleteNonTemplateFiles();
+
+                if (requiresRebuild != null &&
+                    wrapper.TemplateFileExists())
+                {
+                    wrapper.RestoreTemplate();
+                    if (!ExecuteRequiresRebuild(requiresRebuild))
+                    {
+                        return;
+                    }
+                }
+
+                wrapper.DetachTemplate();
+                wrapper.DeleteTemplateFiles();
+                wrapper.CreateTemplate();
+                ExecuteBuildTemplate(buildTemplate);
             }
+            finally
+            {
+                wrapper.DetachTemplate();
+            }
+        }
 
-            wrapper.Purge();
-            wrapper.DeleteFiles();
-
-            wrapper.CreateTemplate();
-            ExecuteBuildTemplate(buildTemplate);
-
-            wrapper.DetachTemplate();
+        bool ExecuteRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
+        {
+            var builder = new DbContextOptionsBuilder<TDbContext>();
+            builder.UseSqlServer(wrapper.TemplateConnection);
+            using (var dbContext = constructInstance(builder))
+            {
+                return requiresRebuild(dbContext);
+            }
         }
 
         void ExecuteBuildTemplate(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate)
@@ -158,41 +179,6 @@ namespace EfLocalDb
                 buildTemplate(connection, builder);
             }
         }
-
-        bool CheckRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
-        {
-            if (requiresRebuild == null)
-            {
-                return true;
-            }
-
-            if (!wrapper.TemplateFileExists())
-            {
-                return true;
-            }
-
-            wrapper.RestoreTemplate();
-            if (ExecuteRequiresRebuild(requiresRebuild))
-            {
-                return true;
-            }
-
-            wrapper.DetachTemplate();
-            wrapper.Purge();
-            wrapper.DeleteFiles(exclude: "template");
-            return false;
-        }
-
-        bool ExecuteRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
-        {
-            var builder = new DbContextOptionsBuilder<TDbContext>();
-            builder.UseSqlServer(wrapper.TemplateConnection);
-            using (var dbContext = constructInstance(builder))
-            {
-                return requiresRebuild(dbContext);
-            }
-        }
-
         static string GetInstanceName(string scopeSuffix)
         {
             Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);

@@ -257,24 +257,12 @@ dbcc shrinkfile(modeldev, 3)
     public void DeleteInstance()
     {
         SqlLocalDb.DeleteInstance(instance);
-        DeleteFiles();
-    }
-
-    public void DeleteFiles(string exclude = null)
-    {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
-            if (exclude != null)
-            {
-                if (Path.GetFileNameWithoutExtension(file) == exclude)
-                {
-                    continue;
-                }
-            }
-
             File.Delete(file);
         }
     }
+
     public void DeleteNonTemplateFiles()
     {
         foreach (var file in Directory.EnumerateFiles(directory))
