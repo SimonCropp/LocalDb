@@ -21,7 +21,7 @@ class Wrapper
         TemplateLogFile = Path.Combine(directory, "template_log.ldf");
         Directory.CreateDirectory(directory);
         ServerName = $@"(LocalDb)\{instance}";
-        Trace.WriteLine($@"Creating LocalDb instance. Server Name: {ServerName}");
+        Trace.WriteLine($"Creating LocalDb instance. Server Name: {ServerName}");
     }
 
     public readonly string TemplateDataFile;

@@ -43,7 +43,7 @@ namespace LocalDb
         {
             if (instance == null)
             {
-                throw new Exception($@"There is no instance registered.
+                throw new Exception(@"There is no instance registered.
 Ensure that `SqlInstanceService.Register` has been called.");
             }
         }
@@ -52,7 +52,7 @@ Ensure that `SqlInstanceService.Register` has been called.");
         {
             if (instance != null)
             {
-                throw new Exception($@"There is already an instance registered.
+                throw new Exception(@"There is already an instance registered.
 When using that static registration API, only one registration is allowed.
 To register different configurations use the instance based api via `SqlInstance`.");
             }

@@ -47,7 +47,10 @@ namespace LocalDb
                 templateSize);
         }
 
-        void Init(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild,
+        void Init(
+            string name,
+            Action<string> buildTemplate, string directory,
+            Func<SqlConnection, bool> requiresRebuild,
             ushort templateSize)
         {
             Guard.AgainstWhiteSpace(nameof(directory), directory);

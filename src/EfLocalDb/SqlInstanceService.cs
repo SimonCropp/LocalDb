@@ -80,7 +80,7 @@ Ensure that `SqlInstanceService.Register` has been called.");
         {
             if (instance != null)
             {
-                throw new Exception($@"There is already an instance registered for `TDbContext`.
+                throw new Exception(@"There is already an instance registered for `TDbContext`.
 When using that static registration API, only one registration is allowed per DBContext type.
 To register different configurations for the same DbContext type use the instance based api via `SqlInstance<TDbContext>)`.");
             }

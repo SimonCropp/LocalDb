@@ -21,6 +21,29 @@ public class Tests :
         {
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
+            var settings = DbPropertyReader.Read(database.Connection, "Tests_Simple");
+            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
+        }
+    }
+
+    [Fact]
+    public async Task NoFileAndNoDb()
+    {
+        SqlLocalDb.DeleteInstance("NoFileAndNoDb");
+        var directory = DirectoryFinder.Find("NoFileAndNoDb");
+
+        if (Directory.Exists(directory))
+        {
+            Directory.Delete(directory, true);
+        }
+        var instance = new SqlInstance(
+            name: "NoFileAndNoDb",
+            buildTemplate: TestDbBuilder.CreateTable);
+
+        using (var database = await instance.Build())
+        {
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
     }
 
@@ -58,20 +81,6 @@ public class Tests :
             await TestDbBuilder.AddData(database2.Connection);
             var data = await TestDbBuilder.GetData(database2.Connection);
             Assert.Single(data);
-        }
-    }
-
-    [Fact]
-    public async Task DbSettings()
-    {
-        var instance = new SqlInstance(
-            name: "Name",
-            buildTemplate: TestDbBuilder.CreateTable);
-
-        using (var database = await instance.Build())
-        {
-            var settings = DbPropertyReader.Read(database.Connection, "Tests_DbSettings");
-            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
         }
     }
 

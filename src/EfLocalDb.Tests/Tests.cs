@@ -154,17 +154,7 @@ public class Tests :
         using (var database = await instance.Build(new List<object> {entity}))
         {
             Assert.Single(database.Context.TestEntities);
-        }
-    }
-
-    [Fact]
-    public async Task DbSettings()
-    {
-        var instance = new SqlInstance<TestDbContext>(
-            builder => new TestDbContext(builder.Options));
-        using (var database = await instance.Build())
-        {
-            var settings = DbPropertyReader.Read(database.Connection, "Tests_DbSettings");
+            var settings = DbPropertyReader.Read(database.Connection, "Tests_Simple");
             ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
         }
     }
