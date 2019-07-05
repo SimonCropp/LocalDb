@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
-    public class SqlDatabase<TDbContext>:
+    public class SqlDatabase<TDbContext> :
         IDisposable
         where TDbContext : DbContext
     {
@@ -18,6 +18,7 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             IEnumerable<object> data)
         {
+            Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);
             this.constructInstance = constructInstance;
             this.data = data;
             ConnectionString = connectionString;
@@ -27,13 +28,22 @@ namespace EfLocalDb
         public SqlConnection Connection { get; }
         public string ConnectionString { get; }
 
+        public async Task<SqlConnection> OpenNewConnection()
+        {
+            var sqlConnection = new SqlConnection(ConnectionString);
+            await sqlConnection.OpenAsync();
+            return sqlConnection;
+        }
+
         public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
         {
+            Guard.AgainstNull(nameof(instance), instance);
             return instance.Context;
         }
 
         public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance)
         {
+            Guard.AgainstNull(nameof(instance), instance);
             return instance.Connection;
         }
 
@@ -85,6 +95,7 @@ namespace EfLocalDb
 
         public void Dispose()
         {
+            Context?.Dispose();
             Connection.Dispose();
         }
     }

@@ -485,7 +485,7 @@ The signature is as follows:
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L248-L257)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L249-L258)</sup>
 <!-- endsnippet -->
 
 
@@ -654,7 +654,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L201-L210)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L204-L213)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
