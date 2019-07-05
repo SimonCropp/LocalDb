@@ -14,16 +14,18 @@ namespace EfLocalDb
         IEnumerable<object> data;
 
         public SqlDatabase(
-            string connection,
+            string connectionString,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             IEnumerable<object> data)
         {
             this.constructInstance = constructInstance;
             this.data = data;
-            Connection = new SqlConnection(connection);
+            ConnectionString = connectionString;
+            Connection = new SqlConnection(connectionString);
         }
 
         public SqlConnection Connection { get; }
+        public string ConnectionString { get; }
 
         public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
         {
