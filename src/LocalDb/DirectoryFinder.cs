@@ -14,7 +14,7 @@ static class DirectoryFinder
         return Path.Combine(dataRoot, instanceName);
     }
 
-    public static string Delete(string instanceName)
+    public static void Delete(string instanceName)
     {
         var directory = Find(instanceName);
         if (Directory.Exists(directory))
