@@ -13,9 +13,7 @@ public class Tests :
     [Fact]
     public async Task Simple()
     {
-        var instance = new SqlInstance(
-            name: "Name",
-            buildTemplate: TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
         using (var database = await instance.Build())
         {
@@ -37,9 +35,8 @@ public class Tests :
         {
             Directory.Delete(directory, true);
         }
-        var instance = new SqlInstance(
-            name: "NoFileAndNoInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
+
+        var instance = new SqlInstance("NoFileAndNoInstance", TestDbBuilder.CreateTable);
 
         await AddAndVerifyData(instance);
     }
@@ -47,13 +44,9 @@ public class Tests :
     [Fact]
     public async Task WithFileAndNoInstance()
     {
-        new SqlInstance(
-            name: "WithFileAndNoInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
+        new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
         SqlLocalDb.DeleteInstance("WithFileAndNoInstance");
-        var instance = new SqlInstance(
-            name: "WithFileAndNoInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
 
         await AddAndVerifyData(instance);
     }
@@ -68,9 +61,8 @@ public class Tests :
         {
             Directory.Delete(directory, true);
         }
-        var instance = new SqlInstance(
-            name: "NoFileAndWithInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
+
+        var instance = new SqlInstance("NoFileAndWithInstance", TestDbBuilder.CreateTable);
 
         await AddAndVerifyData(instance);
     }
@@ -92,8 +84,8 @@ public class Tests :
     public async Task WithRebuild()
     {
         var instance1 = new SqlInstance(
-            name: "rebuild",
-            buildTemplate: TestDbBuilder.CreateTable,
+            "rebuild",
+            TestDbBuilder.CreateTable,
             requiresRebuild: dbContext => true);
         using (var database1 = await instance1.Build())
         {
@@ -101,8 +93,8 @@ public class Tests :
         }
 
         var instance2 = new SqlInstance(
-            name: "rebuild",
-            buildTemplate: (string connection) => throw new Exception(),
+            "rebuild",
+            (string connection) => throw new Exception(),
             requiresRebuild: dbContext => false);
         await AddAndVerifyData(instance2);
     }
