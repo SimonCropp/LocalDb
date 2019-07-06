@@ -11,13 +11,11 @@ using Xunit.Abstractions;
 public class Tests :
     XunitLoggingBase
 {
+    SqlInstance<TestDbContext> instance;
+
     [Fact]
     public async Task SeedData()
     {
-        var instance = new SqlInstance<ScopedDbContext>(
-            constructInstance: builder => new ScopedDbContext(builder.Options),
-            instanceSuffix: "SeedData");
-
         var entity = new TestEntity
         {
             Property = "prop"
@@ -31,10 +29,6 @@ public class Tests :
     [Fact]
     public async Task AddData()
     {
-        var instance = new SqlInstance<ScopedDbContext>(
-            constructInstance: builder => new ScopedDbContext(builder.Options),
-            instanceSuffix: "AddData");
-
         var entity = new TestEntity
         {
             Property = "prop"
@@ -82,7 +76,8 @@ public class Tests :
 
         var instance2 = new SqlInstance<WithRebuildDbContext>(
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
-            buildTemplate: x => throw new Exception(), requiresRebuild: dbContext => false);
+            buildTemplate: x => throw new Exception(),
+            requiresRebuild: dbContext => false);
         using (var database2 = await instance2.Build())
         {
             var entity = new TestEntity
@@ -97,8 +92,6 @@ public class Tests :
     [Fact]
     public async Task Secondary()
     {
-        var instance = new SqlInstance<SecondaryDbContext>(
-            builder => new SecondaryDbContext(builder.Options));
         var entity = new TestEntity
         {
             Property = "prop"
@@ -133,8 +126,6 @@ public class Tests :
     [Fact]
     public async Task NewDbContext()
     {
-        var instance = new SqlInstance<TestDbContext>(
-            builder => new TestDbContext(builder.Options));
         using (var database = await instance.Build())
         using (var dbContext = database.NewDbContext())
         {
@@ -145,8 +136,6 @@ public class Tests :
     [Fact]
     public async Task Simple()
     {
-        var instance = new SqlInstance<TestDbContext>(
-            builder => new TestDbContext(builder.Options));
         var entity = new TestEntity
         {
             Property = "Item1"
@@ -162,5 +151,7 @@ public class Tests :
     public Tests(ITestOutputHelper output) :
         base(output)
     {
+        instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options));
     }
 }
