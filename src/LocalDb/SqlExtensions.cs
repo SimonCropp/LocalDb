@@ -24,6 +24,7 @@ connectionString: {connection.ConnectionString}
 ");
         }
     }
+
     public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
     {
         try
