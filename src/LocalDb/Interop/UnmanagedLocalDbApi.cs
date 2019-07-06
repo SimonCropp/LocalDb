@@ -20,7 +20,6 @@ using Microsoft.Win32;
          }
 
          CreateInstance = GetFunction<LocalDBCreateInstance>();
-         DeleteInstance = GetFunction<LocalDBDeleteInstance>();
          GetInstanceInfo = GetFunction<LocalDBGetInstanceInfo>();
          GetInstances = GetFunction<LocalDBGetInstances>();
          StartInstance = GetFunction<LocalDBStartInstance>();
@@ -33,7 +32,6 @@ using Microsoft.Win32;
      public const int MaxSid = 187;
 
      public static LocalDBCreateInstance CreateInstance;
-     public static LocalDBDeleteInstance DeleteInstance;
      public static LocalDBGetInstanceInfo GetInstanceInfo;
      public static LocalDBGetInstances GetInstances;
      public static LocalDBStartInstance StartInstance;
@@ -100,12 +98,6 @@ using Microsoft.Win32;
      public delegate int LocalDBCreateInstance(
          [MarshalAs(UnmanagedType.LPWStr)]
          string wszVersion,
-         [MarshalAs(UnmanagedType.LPWStr)]
-         string pInstanceName,
-         int dwFlags);
-
-     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBDeleteInstance(
          [MarshalAs(UnmanagedType.LPWStr)]
          string pInstanceName,
          int dwFlags);

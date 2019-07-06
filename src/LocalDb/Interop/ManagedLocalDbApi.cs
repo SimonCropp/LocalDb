@@ -53,9 +53,4 @@ static class ManagedLocalDbApi
     {
         UnmanagedLocalDbApi.StopInstance(instanceName, 0, (int) timeout.TotalSeconds);
     }
-
-    public static void DeleteInstance(string instanceName)
-    {
-        UnmanagedLocalDbApi.DeleteInstance(instanceName, 0);
-    }
 }
