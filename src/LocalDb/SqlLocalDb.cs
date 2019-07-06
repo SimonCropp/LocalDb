@@ -6,18 +6,18 @@ static class SqlLocalDb
 {
     public static State Start(string instance)
     {
-        var localDbInstanceInfo = ManagedLocalDbApi.GetInstance(instance);
+        var localDbInstanceInfo = LocalDbApi.GetInstance(instance);
 
         if (!localDbInstanceInfo.Exists)
         {
-            ManagedLocalDbApi.CreateInstance(instance);
-            ManagedLocalDbApi.StartInstance(instance);
+            LocalDbApi.CreateInstance(instance);
+            LocalDbApi.StartInstance(instance);
             return State.NotExists;
         }
 
         if (!localDbInstanceInfo.IsRunning)
         {
-            ManagedLocalDbApi.StartInstance(instance);
+            LocalDbApi.StartInstance(instance);
         }
 
         return State.Running;
