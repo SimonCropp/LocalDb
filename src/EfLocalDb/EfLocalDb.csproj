@@ -13,9 +13,8 @@
     <Compile Include="..\LocalDb\ExceptionBuilder.cs" />
     <Compile Include="..\LocalDb\FileExtensions.cs" />
     <Compile Include="..\LocalDb\LocalDbRegistryReader.cs" />
-    <Compile Include="..\LocalDb\Interop\Kernel32.cs" Link="Interop\Kernel32.cs" />
-    <Compile Include="..\LocalDb\Interop\LocalDbInstanceInfo.cs" Link="Interop\LocalDbInstanceInfo.cs" />
-    <Compile Include="..\LocalDb\Interop\LocalDbApi.cs" Link="Interop\LocalDbApi.cs" />
+    <Compile Include="..\LocalDb\LocalDbInstanceInfo.cs" Link="LocalDbInstanceInfo.cs" />
+    <Compile Include="..\LocalDb\LocalDbApi.cs" Link="LocalDbApi.cs" />
     <Compile Include="..\LocalDb\SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\SqlLocalDb.cs" />

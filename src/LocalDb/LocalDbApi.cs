@@ -12,7 +12,8 @@ using System.Text;
      {
          var (path, version) = LocalDbRegistryReader.GetInfo();
          ApiVersion = version;
-         api = Kernel32.LoadLibraryEx(path, IntPtr.Zero, Kernel32.LoadLibraryFlags.LoadLibrarySearchDefaultDirs);
+         uint loadLibrarySearchDefaultDirs = 0x00001000;
+         api = LoadLibraryEx(path, IntPtr.Zero, loadLibrarySearchDefaultDirs);
          if (api == IntPtr.Zero)
          {
              throw new Win32Exception();
@@ -30,17 +31,17 @@ using System.Text;
      public const int MaxName = 129;
      public const int MaxSid = 187;
 
-     public static LocalDBCreateInstance createInstance;
-     public static LocalDBGetInstanceInfo getInstanceInfo;
-     public static LocalDBGetInstances getInstances;
-     public static LocalDBStartInstance startInstance;
-     public static LocalDBStopInstance stopInstance;
+     static LocalDBCreateInstance createInstance;
+     static LocalDBGetInstanceInfo getInstanceInfo;
+     static LocalDBGetInstances getInstances;
+     static LocalDBStartInstance startInstance;
+     static LocalDBStopInstance stopInstance;
 
      static T GetFunction<T>()
          where T : class
      {
          var name = typeof(T).Name;
-         var ptr = Kernel32.GetProcAddress(api, name);
+         var ptr = GetProcAddress(api, name);
          if (ptr == IntPtr.Zero)
          {
              throw new EntryPointNotFoundException(name);
@@ -124,7 +125,7 @@ using System.Text;
 
      public static void StartInstance(string instanceName)
      {
-         var connection = new StringBuilder(LocalDbApi.MaxPath);
+         var connection = new StringBuilder(MaxPath);
          var size = connection.Capacity;
 
          startInstance(instanceName, 0, connection, ref size);
@@ -134,4 +135,10 @@ using System.Text;
      {
          stopInstance(instanceName, 0, (int) timeout.TotalSeconds);
      }
+
+     [DllImport("kernel32", SetLastError = true)]
+     static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+     [DllImport("kernel32", SetLastError = true)]
+     static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, uint dwFlags);
  }
