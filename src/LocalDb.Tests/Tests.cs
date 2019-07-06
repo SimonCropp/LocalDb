@@ -77,16 +77,21 @@ public class Tests :
             "rebuild",
             TestDbBuilder.CreateTable,
             requiresRebuild: dbContext => true);
+        int data;
         using (var database1 = await instance1.Build())
         {
-            await TestDbBuilder.AddData(database1.Connection);
+            data = await TestDbBuilder.AddData(database1.Connection);
         }
 
         var instance2 = new SqlInstance(
             "rebuild",
             (string connection) => throw new Exception(),
             requiresRebuild: dbContext => false);
-        await AddAndVerifyData(instance2);
+        using (var database = await instance2.Build())
+        {
+            var connection1 = database.Connection;
+            Assert.Contains(data, await TestDbBuilder.GetData(connection1));
+        }
     }
 
     static async Task AddAndVerifyData(SqlInstance instance)
