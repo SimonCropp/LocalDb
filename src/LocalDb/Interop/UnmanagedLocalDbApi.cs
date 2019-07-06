@@ -127,5 +127,6 @@ using Microsoft.Win32;
      public delegate int LocalDBStopInstance(
          [MarshalAs(UnmanagedType.LPWStr)]
          string pInstanceName,
-         int dwFlags, int ulTimeout);
+         int dwFlags,
+         int ulTimeout);
  }
