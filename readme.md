@@ -148,6 +148,7 @@ The SQL snippets use the following helper class:
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using XunitLogger;
 
 public class TestDbBuilder
 {
@@ -160,15 +161,17 @@ public class TestDbBuilder
         }
     }
 
-    public static async Task AddData(SqlConnection connection)
+    public static async Task<int> AddData(SqlConnection connection)
     {
+        var nextInt = Counters.NextInt();
         using (var command = connection.CreateCommand())
         {
-            command.CommandText = @"
+            command.CommandText = $@"
 insert into MyTable (Value)
-values (1);";
+values ({nextInt});";
             await command.ExecuteNonQueryAsync();
         }
+        return nextInt;
     }
 
     public static async Task<List<int>> GetData(SqlConnection connection)
@@ -187,7 +190,7 @@ values (1);";
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/TestDbBuilder.cs#L1-L41)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/TestDbBuilder.cs#L1-L44)</sup>
 <!-- endsnippet -->
 
 

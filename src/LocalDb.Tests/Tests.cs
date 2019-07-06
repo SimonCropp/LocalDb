@@ -19,9 +19,10 @@ public class Tests :
 
         using (var database = await instance.Build())
         {
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-            var settings = DbPropertyReader.Read(database.Connection, "Tests_Simple");
+            var connection = database.Connection;
+            var data = await TestDbBuilder.AddData(connection);
+            Assert.Contains(data, await TestDbBuilder.GetData(connection));
+            var settings = DbPropertyReader.Read(connection, "Tests_Simple");
             ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
         }
     }
@@ -42,8 +43,9 @@ public class Tests :
 
         using (var database = await instance.Build())
         {
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
+            var connection = database.Connection;
+            var data = await TestDbBuilder.AddData(connection);
+            Assert.Contains(data, await TestDbBuilder.GetData(connection));
         }
     }
 
@@ -78,9 +80,9 @@ public class Tests :
             requiresRebuild: dbContext => false);
         using (var database2 = await instance2.Build())
         {
-            await TestDbBuilder.AddData(database2.Connection);
-            var data = await TestDbBuilder.GetData(database2.Connection);
-            Assert.Single(data);
+            var connection = database2.Connection;
+            var data = await TestDbBuilder.AddData(connection);
+            Assert.Contains(data, await TestDbBuilder.GetData(connection));
         }
     }
 
