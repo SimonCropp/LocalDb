@@ -41,12 +41,7 @@ public class Tests :
             name: "NoFileAndNoInstance",
             buildTemplate: TestDbBuilder.CreateTable);
 
-        using (var database = await instance.Build())
-        {
-            var connection = database.Connection;
-            var data = await TestDbBuilder.AddData(connection);
-            Assert.Contains(data, await TestDbBuilder.GetData(connection));
-        }
+        await AddAndVerifyData(instance);
     }
 
     [Fact]
@@ -60,12 +55,7 @@ public class Tests :
             name: "WithFileAndNoInstance",
             buildTemplate: TestDbBuilder.CreateTable);
 
-        using (var database = await instance.Build())
-        {
-            var connection = database.Connection;
-            var data = await TestDbBuilder.AddData(connection);
-            Assert.Contains(data, await TestDbBuilder.GetData(connection));
-        }
+        await AddAndVerifyData(instance);
     }
 
     [Fact]
@@ -82,12 +72,7 @@ public class Tests :
             name: "NoFileAndWithInstance",
             buildTemplate: TestDbBuilder.CreateTable);
 
-        using (var database = await instance.Build())
-        {
-            var connection = database.Connection;
-            var data = await TestDbBuilder.AddData(connection);
-            Assert.Contains(data, await TestDbBuilder.GetData(connection));
-        }
+        await AddAndVerifyData(instance);
     }
 
     [Fact]
@@ -119,9 +104,14 @@ public class Tests :
             name: "rebuild",
             buildTemplate: (string connection) => throw new Exception(),
             requiresRebuild: dbContext => false);
-        using (var database2 = await instance2.Build())
+        await AddAndVerifyData(instance2);
+    }
+
+    static async Task AddAndVerifyData(SqlInstance instance)
+    {
+        using (var database = await instance.Build())
         {
-            var connection = database2.Connection;
+            var connection = database.Connection;
             var data = await TestDbBuilder.AddData(connection);
             Assert.Contains(data, await TestDbBuilder.GetData(connection));
         }
