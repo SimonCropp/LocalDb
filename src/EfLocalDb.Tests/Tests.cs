@@ -41,10 +41,10 @@ public class Tests :
     }
 
     [Fact]
-    public async Task ScopedDbContext()
+    public async Task SuffixedContext()
     {
-        var instance = new SqlInstance<ScopedDbContext>(
-            constructInstance: builder => new ScopedDbContext(builder.Options),
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
             instanceSuffix: "theSuffix");
 
         var entity = new TestEntity
