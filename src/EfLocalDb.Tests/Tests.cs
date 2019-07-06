@@ -143,8 +143,6 @@ public class Tests :
                 Property = "prop"
             };
             await database1.AddData(entity);
-
-            Assert.Single(database1.Context.TestEntities);
         }
 
         var instance2 = new SqlInstance<WithRebuildDbContext>(
@@ -153,12 +151,7 @@ public class Tests :
             requiresRebuild: dbContext => false);
         using (var database2 = await instance2.Build())
         {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            await database2.AddData(entity);
-            Assert.Single(database2.Context.TestEntities);
+            Assert.Empty(database2.Context.TestEntities);
         }
     }
 

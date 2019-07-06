@@ -90,7 +90,7 @@ public class Tests :
         using (var database = await instance2.Build())
         {
             var connection1 = database.Connection;
-            Assert.Contains(data, await TestDbBuilder.GetData(connection1));
+            Assert.DoesNotContain(data, await TestDbBuilder.GetData(connection1));
         }
     }
 
