@@ -14,6 +14,15 @@ static class DirectoryFinder
         return Path.Combine(dataRoot, instanceName);
     }
 
+    public static string Delete(string instanceName)
+    {
+        var directory = Find(instanceName);
+        if (Directory.Exists(directory))
+        {
+            Directory.Delete(directory, true);
+        }
+    }
+
     static string FindDataRoot()
     {
         var localDbEnv = Environment.GetEnvironmentVariable("LocalDBData");

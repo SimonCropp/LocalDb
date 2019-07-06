@@ -29,12 +29,7 @@ public class Tests :
     public async Task NoFileAndNoInstance()
     {
         SqlLocalDb.DeleteInstance("NoFileAndNoInstance");
-        var directory = DirectoryFinder.Find("NoFileAndNoInstance");
-
-        if (Directory.Exists(directory))
-        {
-            Directory.Delete(directory, true);
-        }
+        DirectoryFinder.Delete("NoFileAndNoInstance");
 
         var instance = new SqlInstance("NoFileAndNoInstance", TestDbBuilder.CreateTable);
 
@@ -55,12 +50,7 @@ public class Tests :
     public async Task NoFileAndWithInstance()
     {
         ManagedLocalDbApi.CreateInstance("NoFileAndWithInstance");
-        var directory = DirectoryFinder.Find("NoFileAndWithInstance");
-
-        if (Directory.Exists(directory))
-        {
-            Directory.Delete(directory, true);
-        }
+        DirectoryFinder.Delete("NoFileAndWithInstance");
 
         var instance = new SqlInstance("NoFileAndWithInstance", TestDbBuilder.CreateTable);
 
