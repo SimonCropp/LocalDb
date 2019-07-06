@@ -28,17 +28,17 @@ public class Tests :
     }
 
     [Fact]
-    public async Task NoFileAndNoDb()
+    public async Task NoFileAndNoInstance()
     {
-        SqlLocalDb.DeleteInstance("NoFileAndNoDb");
-        var directory = DirectoryFinder.Find("NoFileAndNoDb");
+        SqlLocalDb.DeleteInstance("NoFileAndNoInstance");
+        var directory = DirectoryFinder.Find("NoFileAndNoInstance");
 
         if (Directory.Exists(directory))
         {
             Directory.Delete(directory, true);
         }
         var instance = new SqlInstance(
-            name: "NoFileAndNoDb",
+            name: "NoFileAndNoInstance",
             buildTemplate: TestDbBuilder.CreateTable);
 
         using (var database = await instance.Build())
@@ -50,14 +50,14 @@ public class Tests :
     }
 
     [Fact]
-    public async Task WithFileAndNoDb()
+    public async Task WithFileAndNoInstance()
     {
         new SqlInstance(
-            name: "WithFileAndNoDb",
+            name: "WithFileAndNoInstance",
             buildTemplate: TestDbBuilder.CreateTable);
-        SqlLocalDb.DeleteInstance("WithFileAndNoDb");
+        SqlLocalDb.DeleteInstance("WithFileAndNoInstance");
         var instance = new SqlInstance(
-            name: "WithFileAndNoDb",
+            name: "WithFileAndNoInstance",
             buildTemplate: TestDbBuilder.CreateTable);
 
         using (var database = await instance.Build())
@@ -69,17 +69,17 @@ public class Tests :
     }
 
     [Fact]
-    public async Task NoFileAndWithDb()
+    public async Task NoFileAndWithInstance()
     {
-        ManagedLocalDbApi.CreateInstance("NoFileAndWithDb");
-        var directory = DirectoryFinder.Find("NoFileAndWithDb");
+        ManagedLocalDbApi.CreateInstance("NoFileAndWithInstance");
+        var directory = DirectoryFinder.Find("NoFileAndWithInstance");
 
         if (Directory.Exists(directory))
         {
             Directory.Delete(directory, true);
         }
         var instance = new SqlInstance(
-            name: "NoFileAndWithDb",
+            name: "NoFileAndWithInstance",
             buildTemplate: TestDbBuilder.CreateTable);
 
         using (var database = await instance.Build())
