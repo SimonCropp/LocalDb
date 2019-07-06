@@ -25,6 +25,14 @@ public class SqlLocalDbTests :
     }
 
     [Fact]
+    public void DeleteInstance()
+    {
+        SqlLocalDb.Start("DeleteInstance");
+        SqlLocalDb.DeleteInstance("DeleteInstance");
+        Assert.False(ManagedLocalDbApi.GetInstance("DeleteInstance").Exists);
+    }
+
+    [Fact]
     public void Info()
     {
         SqlLocalDb.Start("InfoTest");
