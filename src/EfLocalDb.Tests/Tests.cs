@@ -24,7 +24,7 @@ public class Tests :
         };
         using (var database = await instance.Build(new List<object> {entity}))
         {
-            Assert.Single(database.Context.TestEntities);
+            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -42,7 +42,7 @@ public class Tests :
         using (var database = await instance.Build())
         {
             await database.AddData(entity);
-            Assert.Single(database.Context.TestEntities);
+            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -59,7 +59,7 @@ public class Tests :
         };
         using (var database = await instance.Build(new List<object> {entity}))
         {
-            Assert.Single(database.Context.TestEntities);
+            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -99,20 +99,20 @@ public class Tests :
     {
         var instance = new SqlInstance<SecondaryDbContext>(
             builder => new SecondaryDbContext(builder.Options));
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
         var database = await instance.Build();
         using (var dbContext = database.NewDbContext())
         {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
             dbContext.Add(entity);
             await dbContext.SaveChangesAsync();
         }
 
         using (var dbContext = database.NewDbContext())
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.NotNull(dbContext.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -153,7 +153,7 @@ public class Tests :
         };
         using (var database = await instance.Build(new List<object> {entity}))
         {
-            Assert.Single(database.Context.TestEntities);
+            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
             var settings = DbPropertyReader.Read(database.Connection, "Tests_Simple");
             ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
         }
