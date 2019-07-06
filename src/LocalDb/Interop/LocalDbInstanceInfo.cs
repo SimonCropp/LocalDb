@@ -6,7 +6,7 @@ struct LocalDbInstanceInfo
 {
     public uint Size;
 
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = UnmanagedLocalDbApi.MaxName)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = LocalDbApi.MaxName)]
     public string InstanceName;
 
     public bool Exists;
@@ -18,15 +18,15 @@ struct LocalDbInstanceInfo
     public uint Revision;
     public FILETIME LastStartUtc;
 
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = UnmanagedLocalDbApi.MaxPath)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = LocalDbApi.MaxPath)]
     public string Connection;
 
     public bool IsShared;
 
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = UnmanagedLocalDbApi.MaxName)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = LocalDbApi.MaxName)]
     public string SharedInstanceName;
 
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = UnmanagedLocalDbApi.MaxSid)]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = LocalDbApi.MaxSid)]
     public string OwnerSID;
 
     public bool IsAutomatic;

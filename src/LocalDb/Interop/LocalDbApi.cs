@@ -1,13 +1,14 @@
 ﻿﻿using System;
-using System.ComponentModel;
+ using System.Collections.Generic;
+ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 
- static class UnmanagedLocalDbApi
+ static class LocalDbApi
  {
      static IntPtr api;
 
-     static UnmanagedLocalDbApi()
+     static LocalDbApi()
      {
          var (path, version) = LocalDbRegistryReader.GetInfo();
          ApiVersion = version;
@@ -17,11 +18,11 @@ using System.Text;
              throw new Win32Exception();
          }
 
-         CreateInstance = GetFunction<LocalDBCreateInstance>();
-         GetInstanceInfo = GetFunction<LocalDBGetInstanceInfo>();
-         GetInstances = GetFunction<LocalDBGetInstances>();
-         StartInstance = GetFunction<LocalDBStartInstance>();
-         StopInstance = GetFunction<LocalDBStopInstance>();
+         createInstance = GetFunction<LocalDBCreateInstance>();
+         getInstanceInfo = GetFunction<LocalDBGetInstanceInfo>();
+         getInstances = GetFunction<LocalDBGetInstances>();
+         startInstance = GetFunction<LocalDBStartInstance>();
+         stopInstance = GetFunction<LocalDBStopInstance>();
      }
 
      public static string ApiVersion;
@@ -29,11 +30,11 @@ using System.Text;
      public const int MaxName = 129;
      public const int MaxSid = 187;
 
-     public static LocalDBCreateInstance CreateInstance;
-     public static LocalDBGetInstanceInfo GetInstanceInfo;
-     public static LocalDBGetInstances GetInstances;
-     public static LocalDBStartInstance StartInstance;
-     public static LocalDBStopInstance StopInstance;
+     public static LocalDBCreateInstance createInstance;
+     public static LocalDBGetInstanceInfo getInstanceInfo;
+     public static LocalDBGetInstances getInstances;
+     public static LocalDBStartInstance startInstance;
+     public static LocalDBStopInstance stopInstance;
 
      static T GetFunction<T>()
          where T : class
@@ -84,4 +85,53 @@ using System.Text;
          string pInstanceName,
          int dwFlags,
          int ulTimeout);
+
+     public static List<string> GetInstanceNames()
+     {
+         var count = 0;
+         getInstances(IntPtr.Zero, ref count);
+         var length = MaxName * sizeof(char);
+         var pointer = Marshal.AllocHGlobal(count * length);
+         try
+         {
+             getInstances(pointer, ref count);
+             var names = new List<string>(count);
+             for (var i = 0; i < count; i++)
+             {
+                 var idx = IntPtr.Add(pointer, length * i);
+                 names.Add(Marshal.PtrToStringAuto(idx));
+             }
+
+             return names;
+         }
+         finally
+         {
+             Marshal.FreeHGlobal(pointer);
+         }
+     }
+
+     public static LocalDbInstanceInfo GetInstance(string instanceName)
+     {
+         var info = new LocalDbInstanceInfo();
+         getInstanceInfo(instanceName, ref info, Marshal.SizeOf(typeof(LocalDbInstanceInfo)));
+         return info;
+     }
+
+     public static void CreateInstance(string instanceName)
+     {
+         createInstance(ApiVersion, instanceName, 0);
+     }
+
+     public static void StartInstance(string instanceName)
+     {
+         var connection = new StringBuilder(LocalDbApi.MaxPath);
+         var size = connection.Capacity;
+
+         startInstance(instanceName, 0, connection, ref size);
+     }
+
+     public static void StopInstance(string instanceName, TimeSpan timeout)
+     {
+         stopInstance(instanceName, 0, (int) timeout.TotalSeconds);
+     }
  }

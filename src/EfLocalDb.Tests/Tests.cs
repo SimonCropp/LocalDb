@@ -65,7 +65,7 @@ public class Tests :
     [Fact]
     public async Task NoFileAndWithDb()
     {
-        ManagedLocalDbApi.CreateInstance("TestDbContext_EfNoFileAndWithDb");
+        LocalDbApi.CreateInstance("TestDbContext_EfNoFileAndWithDb");
         var directory = DirectoryFinder.Find("EfNoFileAndWithDb");
 
         if (Directory.Exists(directory))

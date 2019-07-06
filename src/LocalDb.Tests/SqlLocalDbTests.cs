@@ -9,7 +9,7 @@ public class SqlLocalDbTests :
     [Fact]
     public void Instances()
     {
-        var collection = ManagedLocalDbApi.GetInstanceNames();
+        var collection = LocalDbApi.GetInstanceNames();
         foreach (var instance in collection)
         {
             Trace.WriteLine(instance);
@@ -20,7 +20,7 @@ public class SqlLocalDbTests :
     [Fact]
     public void NonInstanceInfo()
     {
-        var info = ManagedLocalDbApi.GetInstance("Missing");
+        var info = LocalDbApi.GetInstance("Missing");
         Assert.False(info.Exists);
     }
 
@@ -29,14 +29,14 @@ public class SqlLocalDbTests :
     {
         SqlLocalDb.Start("DeleteInstance");
         SqlLocalDb.DeleteInstance("DeleteInstance");
-        Assert.False(ManagedLocalDbApi.GetInstance("DeleteInstance").Exists);
+        Assert.False(LocalDbApi.GetInstance("DeleteInstance").Exists);
     }
 
     [Fact]
     public void Info()
     {
         SqlLocalDb.Start("InfoTest");
-        var info = ManagedLocalDbApi.GetInstance("InfoTest");
+        var info = LocalDbApi.GetInstance("InfoTest");
 
         ObjectApprover.VerifyWithJson(info);
         SqlLocalDb.DeleteInstance("InfoTest");

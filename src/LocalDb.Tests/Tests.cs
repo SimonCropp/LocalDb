@@ -49,7 +49,7 @@ public class Tests :
     [Fact]
     public async Task NoFileAndWithInstance()
     {
-        ManagedLocalDbApi.CreateInstance("NoFileAndWithInstance");
+        LocalDbApi.CreateInstance("NoFileAndWithInstance");
         DirectoryFinder.Delete("NoFileAndWithInstance");
 
         var instance = new SqlInstance("NoFileAndWithInstance", TestDbBuilder.CreateTable);
