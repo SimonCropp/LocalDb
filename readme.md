@@ -422,19 +422,18 @@ static class ModuleInitializer
 
 ##### For EF:
 
-<!-- snippet: ModuleInitializer -->
+<!-- snippet: EfModuleInitializer -->
 ```cs
 static class ModuleInitializer
 {
     public static void Initialize()
     {
-        SqlInstanceService.Register(
-            name: "MySqlInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
+        SqlInstanceService<MyDbContext>.Register(
+            builder => new MyDbContext(builder.Options));
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L2-L13)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/ModuleInitializer.cs#L5-L15)</sup>
 <!-- endsnippet -->
 
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
@@ -472,11 +471,11 @@ var database = await SqlInstanceService<MyDbContext>.Build();
 <!-- endsnippet -->
 
 
-#### BuildLocalDbSignature Signature
+#### Build Signature
 
 The signature is as follows:
 
-<!-- snippet: BuildLocalDbSignature -->
+<!-- snippet: BuildSignature -->
 ```cs
 /// <summary>
 ///   Build DB with a name based on the calling Method.
@@ -692,6 +691,7 @@ SqlInstanceService<TheDbContext>.Register(
 <sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfRegisterExplicit.cs#L7-L14)</sup>
 <!-- endsnippet -->
 
+
 ## EF Migrations
 
 [EF Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
@@ -787,7 +787,7 @@ Useful commands:
 
 Ensure that the latests SQL Server CU is being used.
 
- * [SQL Server 2017 Cumulative Update (CU) builds](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
+ * [SQL Server 2017 Cumulative Update builds](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
 
 
 ## Icon

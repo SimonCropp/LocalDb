@@ -246,7 +246,7 @@ namespace EfLocalDb
             return Build(dbName, data);
         }
 
-        #region BuildLocalDbSignature
+        #region BuildSignature
 
         /// <summary>
         ///   Build DB with a name based on the calling Method.

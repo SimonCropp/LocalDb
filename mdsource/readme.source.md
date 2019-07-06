@@ -194,7 +194,7 @@ snippet: ModuleInitializer
 
 ##### For EF:
 
-snippet: ModuleInitializer
+snippet: EfModuleInitializer
 
 Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
 
@@ -217,11 +217,11 @@ snippet: BuildLocalDbInstance
 snippet: EfBuildLocalDbInstance
 
 
-#### BuildLocalDbSignature Signature
+#### Build Signature
 
 The signature is as follows:
 
-snippet: BuildLocalDbSignature
+snippet: BuildSignature
 
 
 #### Database Name
@@ -304,6 +304,7 @@ snippet: RegisterExplicit
 
 snippet: EfRegisterExplicit
 
+
 ## EF Migrations
 
 [EF Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
@@ -360,7 +361,7 @@ Useful commands:
 
 Ensure that the latests SQL Server CU is being used.
 
- * [SQL Server 2017 Cumulative Update (CU) builds](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
+ * [SQL Server 2017 Cumulative Update builds](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
 
 
 ## Icon
