@@ -50,6 +50,47 @@ public class Tests :
     }
 
     [Fact]
+    public async Task WithFileAndNoDb()
+    {
+        new SqlInstance(
+            name: "WithFileAndNoDb",
+            buildTemplate: TestDbBuilder.CreateTable);
+        SqlLocalDb.DeleteInstance("WithFileAndNoDb");
+        var instance = new SqlInstance(
+            name: "WithFileAndNoDb",
+            buildTemplate: TestDbBuilder.CreateTable);
+
+        using (var database = await instance.Build())
+        {
+            var connection = database.Connection;
+            var data = await TestDbBuilder.AddData(connection);
+            Assert.Contains(data, await TestDbBuilder.GetData(connection));
+        }
+    }
+
+    [Fact]
+    public async Task NoFileAndWithDb()
+    {
+        ManagedLocalDbApi.CreateInstance("NoFileAndWithDb");
+        var directory = DirectoryFinder.Find("NoFileAndWithDb");
+
+        if (Directory.Exists(directory))
+        {
+            Directory.Delete(directory, true);
+        }
+        var instance = new SqlInstance(
+            name: "NoFileAndWithDb",
+            buildTemplate: TestDbBuilder.CreateTable);
+
+        using (var database = await instance.Build())
+        {
+            var connection = database.Connection;
+            var data = await TestDbBuilder.AddData(connection);
+            Assert.Contains(data, await TestDbBuilder.GetData(connection));
+        }
+    }
+
+    [Fact]
     public void Duplicate()
     {
         Register();

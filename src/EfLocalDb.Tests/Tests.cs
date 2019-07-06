@@ -41,6 +41,79 @@ public class Tests :
     }
 
     [Fact]
+    public async Task WithFileAndNoDb()
+    {
+        new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
+            instanceSuffix: "EfWithFileAndNoDb");
+        SqlLocalDb.DeleteInstance("TestDbContext_EfWithFileAndNoDb");
+
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
+            instanceSuffix: "EfWithFileAndNoDb");
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        using (var database = await instance.Build(new List<object> {entity}))
+        {
+            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
+        }
+    }
+
+    [Fact]
+    public async Task NoFileAndWithDb()
+    {
+        ManagedLocalDbApi.CreateInstance("TestDbContext_EfNoFileAndWithDb");
+        var directory = DirectoryFinder.Find("EfNoFileAndWithDb");
+
+        if (Directory.Exists(directory))
+        {
+            Directory.Delete(directory, true);
+        }
+
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
+            instanceSuffix: "EfNoFileAndWithDb");
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        using (var database = await instance.Build(new List<object> {entity}))
+        {
+            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
+        }
+    }
+
+
+    [Fact]
+    public async Task NoFileAndNoDb()
+    {
+        SqlLocalDb.DeleteInstance("TestDbContext_EfNoFileAndNoDb");
+        var directory = DirectoryFinder.Find("TestDbContext_EfNoFileAndNoDb");
+
+        if (Directory.Exists(directory))
+        {
+            Directory.Delete(directory, true);
+        }
+
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
+            instanceSuffix: "EfNoFileAndNoDb");
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        using (var database = await instance.Build(new List<object> {entity}))
+        {
+            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
+        }
+    }
+
+    [Fact]
     public async Task SuffixedContext()
     {
         var instance = new SqlInstance<TestDbContext>(
