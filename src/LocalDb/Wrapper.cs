@@ -165,10 +165,7 @@ alter database [{name}]
 
     public void CreateTemplate()
     {
-        using (var connection = new SqlConnection(masterConnection))
-        {
-            connection.Open();
-            var commandText = $@"
+        var commandText = $@"
 create database template on
 (
     name = template,
@@ -183,10 +180,12 @@ log on
     filegrowth = 100KB
 );
 ";
+        using (var connection = new SqlConnection(masterConnection))
+        {
+            connection.Open();
             connection.ExecuteCommand(commandText);
         }
     }
-
 
     public void Start(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
     {
@@ -247,7 +246,7 @@ log on
         }
     }
 
-    private void ShrinkModelDb()
+    void ShrinkModelDb()
     {
         var commandText = $@"
 -- begin-snippet: ShrinkModelDb
