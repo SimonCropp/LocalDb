@@ -178,23 +178,6 @@ snippet: TestBase
 snippet: EfTestBase
 
 
-#### Module initializer
-
-An alternative to the above "test base" scenario is to use a module initializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
-
-
-##### For SQL:
-
-snippet: ModuleInitializer
-
-
-##### For EF:
-
-snippet: EfModuleInitializer
-
-Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
-
-
 ### Usage in a Test
 
 Usage inside a test consists of two parts:

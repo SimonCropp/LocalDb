@@ -15,7 +15,7 @@ namespace LocalDb
 
         public SqlInstance(
             string name,
-            Action<string> buildTemplate,
+            Action<SqlConnection> buildTemplate,
             string directory = null,
             Func<SqlConnection, bool> requiresRebuild = null,
             ushort templateSize = 3)
@@ -24,32 +24,9 @@ namespace LocalDb
             Init(name, buildTemplate, directory, requiresRebuild, templateSize);
         }
 
-        public SqlInstance(
-            string name,
-            Action<SqlConnection> buildTemplate,
-            string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null,
-            ushort templateSize = 3)
-        {
-            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
-            Init(
-                name,
-                connectionString =>
-                {
-                    using (var connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        buildTemplate(connection);
-                    }
-                },
-                directory,
-                requiresRebuild,
-                templateSize);
-        }
-
         void Init(
             string name,
-            Action<string> buildTemplate, string directory,
+            Action<SqlConnection> buildTemplate, string directory,
             Func<SqlConnection, bool> requiresRebuild,
             ushort templateSize)
         {
@@ -72,43 +49,11 @@ namespace LocalDb
             }
         }
 
-        void InnerInit(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
+        void InnerInit(string name, Action<SqlConnection> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
         {
-            wrapper = new Wrapper(name, directory);
+            wrapper = new Wrapper(name, directory, templateSize);
 
-            wrapper.Start(templateSize);
-            try
-            {
-                wrapper.Purge();
-                wrapper.DeleteNonTemplateFiles();
-
-                if (requiresRebuild != null &&
-                    wrapper.TemplateFileExists())
-                {
-                    wrapper.RestoreTemplate();
-                    if (!ExecuteRequiresRebuild(requiresRebuild))
-                    {
-                        return;
-                    }
-                }
-
-                wrapper.DetachTemplate();
-                wrapper.DeleteTemplateFiles();
-                wrapper.CreateTemplate();
-                buildTemplate(wrapper.TemplateConnection);
-            }
-            finally
-            {
-                wrapper.DetachTemplate();
-            }
-        }
-
-        bool ExecuteRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
-        {
-            using (var sqlConnection = new SqlConnection(wrapper.TemplateConnection))
-            {
-                return requiresRebuild(sqlConnection);
-            }
+            wrapper.Start(requiresRebuild, null, buildTemplate);
         }
 
         public void Cleanup()

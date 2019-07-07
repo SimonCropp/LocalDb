@@ -4,6 +4,11 @@ using Xunit;
 
 public class SnippetTests
 {
+    static SnippetTests()
+    {
+        SqlInstanceService<MyDbContext>.Register(
+            builder => new MyDbContext(builder.Options));
+    }
     #region EfTest
 
     [Fact]

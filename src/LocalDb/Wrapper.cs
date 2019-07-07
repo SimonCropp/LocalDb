@@ -7,16 +7,23 @@ using System.Threading.Tasks;
 class Wrapper
 {
     string directory;
+    ushort size;
     string masterConnection;
     string instance;
 
-    public Wrapper(string instance, string directory)
+    public Wrapper(string instance, string directory, ushort size)
     {
+        if (size < 3)
+        {
+            throw new ArgumentOutOfRangeException(nameof(size), size, "3MB is the min allowed value");
+        }
+
         this.instance = instance;
         masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master";
         // needs to be pooling=false so that we can immediately detach and use the files
         TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
         this.directory = directory;
+        this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
         TemplateLogFile = Path.Combine(directory, "template_log.ldf");
         Directory.CreateDirectory(directory);
@@ -180,26 +187,78 @@ log on
         }
     }
 
-    public void Start(ushort size)
-    {
-        if (size < 3)
-        {
-            throw new ArgumentOutOfRangeException(nameof(size), size, "3MB is the min allowed value");
-        }
 
+    public void Start(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
+    {
         if (LocalDbApi.CreateAndStart(instance) == State.NotExists)
         {
-            var commandText = @"
--- begin-snippet: ShrinkModelDb
-use model;
-dbcc shrinkfile(modeldev, 3)
--- end-snippet
-";
-            using (var connection = new SqlConnection(masterConnection))
+            ShrinkModelDb();
+        }
+
+        try
+        {
+            Purge();
+            DeleteNonTemplateFiles();
+
+            if (TemplateFileExists())
+            {
+                if (requiresRebuild == null)
+                {
+                    if (timestamp != null)
+                    {
+                        var templateLastMod = File.GetLastWriteTime(TemplateDataFile);
+                        if (timestamp == templateLastMod)
+                        {
+                            Trace.WriteLine("Not modified so skipping rebuild");
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    RestoreTemplate();
+                    using (var connection = new SqlConnection(TemplateConnection))
+                    {
+                        connection.Open();
+                        if (!requiresRebuild(connection))
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            DetachTemplate();
+            DeleteTemplateFiles();
+            CreateTemplate();
+            using (var connection = new SqlConnection(TemplateConnection))
             {
                 connection.Open();
-                connection.ExecuteCommand(commandText);
+                buildTemplate(connection);
             }
+        }
+        finally
+        {
+            DetachTemplate();
+            if (timestamp != null)
+            {
+                File.SetLastWriteTime(TemplateDataFile, timestamp.Value);
+            }
+        }
+    }
+
+    private void ShrinkModelDb()
+    {
+        var commandText = $@"
+-- begin-snippet: ShrinkModelDb
+use model;
+dbcc shrinkfile(modeldev, {size})
+-- end-snippet
+";
+        using (var connection1 = new SqlConnection(masterConnection))
+        {
+            connection1.Open();
+            connection1.ExecuteCommand(commandText);
         }
     }
 
