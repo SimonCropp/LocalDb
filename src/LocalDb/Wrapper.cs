@@ -146,17 +146,10 @@ create database template on
 )
 for attach;
 ";
-        try
+        using (var connection = new SqlConnection(masterConnection))
         {
-            using (var connection = new SqlConnection(masterConnection))
-            {
-                connection.Open();
-                connection.ExecuteCommand(commandText);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw BuildException("template", exception, nameof(RestoreTemplate), dataFile);
+            connection.Open();
+            connection.ExecuteCommand(commandText);
         }
     }
 
@@ -176,18 +169,11 @@ alter database [{name}]
 alter database [{name}]
     modify file (name=template_log, newname='{name}_log')
 ";
-        try
+        using (var connection = new SqlConnection(masterConnection))
         {
-            using (var connection = new SqlConnection(masterConnection))
-            {
-                await connection.OpenAsync();
-                await fileCopyTask;
-                await connection.ExecuteCommandAsync(commandText);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw BuildException(name, exception, nameof(CreateDatabaseFromFile), dataFile);
+            await connection.OpenAsync();
+            await fileCopyTask;
+            await connection.ExecuteCommandAsync(commandText);
         }
 
         // needs to be pooling=false so that we can immediately detach and use the files
@@ -196,12 +182,10 @@ alter database [{name}]
 
     public void CreateTemplate()
     {
-        try
+        using (var connection = new SqlConnection(masterConnection))
         {
-            using (var connection = new SqlConnection(masterConnection))
-            {
-                connection.Open();
-                var commandText = $@"
+            connection.Open();
+            var commandText = $@"
 create database template on
 (
     name = template,
@@ -216,18 +200,7 @@ log on
     size = 512KB,
     filegrowth = 100KB );
 ";
-                connection.ExecuteCommand(commandText);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(
-                innerException: exception,
-                message: $@"Failed to {nameof(CreateTemplate)}
-{nameof(directory)}: {directory}
-{nameof(instance)}: {instance}
-{nameof(TemplateDataFile)}: {TemplateDataFile}
-");
+            connection.ExecuteCommand(commandText);
         }
     }
 
@@ -279,15 +252,4 @@ dbcc shrinkfile(modeldev, 3)
         File.Delete(TemplateLogFile);
     }
 
-    Exception BuildException(string name, Exception exception, string methodName, string dataFile)
-    {
-        return new Exception(
-            innerException: exception,
-            message: $@"Failed to {methodName}
-{nameof(directory)}: {directory}
-{nameof(instance)}: {instance}
-{nameof(name)}: {name}
-{nameof(dataFile)}: {dataFile}
-");
-    }
 }
