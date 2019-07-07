@@ -123,9 +123,9 @@ To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/s
 <!-- snippet: ShrinkModelDb -->
 ```cs
 use model;
-dbcc shrinkfile(modeldev, 3)
+dbcc shrinkfile(modeldev, {size})
 ```
-<sup>[snippet source](/src/LocalDb/Wrapper.cs#L244-L247)</sup>
+<sup>[snippet source](/src/LocalDb/Wrapper.cs#L253-L256)</sup>
 <!-- endsnippet -->
 
 
@@ -396,48 +396,6 @@ public class Tests :
 <!-- endsnippet -->
 
 
-#### Module initializer
-
-An alternative to the above "test base" scenario is to use a module initializer. This can be achieved using the [Fody](https://github.com/Fody/Home) addin [ModuleInit](https://github.com/Fody/ModuleInit):
-
-
-##### For SQL:
-
-<!-- snippet: ModuleInitializer -->
-```cs
-static class ModuleInitializer
-{
-    public static void Initialize()
-    {
-        SqlInstanceService.Register(
-            name: "MySqlInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
-    }
-}
-```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ModuleInitializer.cs#L2-L13)</sup>
-<!-- endsnippet -->
-
-
-##### For EF:
-
-<!-- snippet: EfModuleInitializer -->
-```cs
-static class ModuleInitializer
-{
-    public static void Initialize()
-    {
-        SqlInstanceService<MyDbContext>.Register(
-            builder => new MyDbContext(builder.Options));
-    }
-}
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/ModuleInitializer.cs#L5-L15)</sup>
-<!-- endsnippet -->
-
-Or, alternatively, the module initializer can be injected with [PostSharp](https://doc.postsharp.net/module-initializer).
-
-
 ### Usage in a Test
 
 Usage inside a test consists of two parts:
@@ -466,7 +424,7 @@ using (var database = await SqlInstanceService.Build())
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build();
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L12-L14)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L17-L19)</sup>
 <!-- endsnippet -->
 
 
@@ -483,7 +441,7 @@ The signature is as follows:
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L249-L258)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L209-L218)</sup>
 <!-- endsnippet -->
 
 
@@ -526,7 +484,7 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
 ```cs
 var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L40-L44)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L45-L49)</sup>
 <!-- endsnippet -->
 
 
@@ -551,7 +509,7 @@ Assert.Single(await TestDbBuilder.GetData(database.Connection));
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L16-L20)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L21-L25)</sup>
 <!-- endsnippet -->
 
 
@@ -605,7 +563,7 @@ public async Task TheTest()
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L7-L35)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L12-L40)</sup>
 <!-- endsnippet -->
 
 
@@ -652,7 +610,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L204-L213)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L164-L173)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:

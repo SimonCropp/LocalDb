@@ -85,7 +85,7 @@ public class Tests :
 
         var instance2 = new SqlInstance(
             "rebuild",
-            (string connection) => throw new Exception(),
+            connection => throw new Exception(),
             requiresRebuild: dbContext => false);
         using (var database = await instance2.Build())
         {

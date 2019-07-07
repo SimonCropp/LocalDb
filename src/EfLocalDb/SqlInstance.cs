@@ -109,10 +109,11 @@ namespace EfLocalDb
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
+            this.constructInstance = constructInstance;
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                InnerInit(buildTemplate, constructInstance, name, directory, requiresRebuild, templateSize);
+                InnerInit(buildTemplate, name, directory, requiresRebuild, templateSize);
                 Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
@@ -123,78 +124,37 @@ namespace EfLocalDb
 
         void InnerInit(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
             Func<TDbContext, bool> requiresRebuild,
             ushort templateSize)
         {
-            wrapper = new Wrapper(name, directory);
-
-            this.constructInstance = constructInstance;
-
-            wrapper.Start(templateSize);
-            var type = typeof(TDbContext);
-            var assemblyLastModified = type.Assembly.LastModified();
-
-            try
+            Func<SqlConnection, bool> requiresRebuild2 = null;
+            if (requiresRebuild != null)
             {
-                wrapper.Purge();
-                wrapper.DeleteNonTemplateFiles();
-
-                if (wrapper.TemplateFileExists())
+                requiresRebuild2 = templateConnection =>
                 {
-                    if (requiresRebuild == null)
+                    var builder = new DbContextOptionsBuilder<TDbContext>();
+                    builder.UseSqlServer(templateConnection);
+                    using (var dbContext = constructInstance(builder))
                     {
-                        var templateLastMod = File.GetLastWriteTime(wrapper.TemplateDataFile);
-                        if (assemblyLastModified == templateLastMod)
-                        {
-                            Trace.WriteLine($"{type.FullName} was not modified so skipping rebuild");
-                            return;
-                        }
+                        return requiresRebuild(dbContext);
                     }
-                    else
-                    {
-                        wrapper.RestoreTemplate();
-                        if (!ExecuteRequiresRebuild(requiresRebuild))
-                        {
-                            return;
-                        }
-                    }
-                }
-
-                wrapper.DetachTemplate();
-                wrapper.DeleteTemplateFiles();
-                wrapper.CreateTemplate();
-                ExecuteBuildTemplate(buildTemplate);
+                };
             }
-            finally
-            {
-                wrapper.DetachTemplate();
-                File.SetLastWriteTime(wrapper.TemplateDataFile, assemblyLastModified);
-            }
-        }
 
-        bool ExecuteRequiresRebuild(Func<TDbContext, bool> requiresRebuild)
-        {
-            var builder = new DbContextOptionsBuilder<TDbContext>();
-            builder.UseSqlServer(wrapper.TemplateConnection);
-            using (var dbContext = constructInstance(builder))
+            Action<SqlConnection> buildTemplate2 = connection =>
             {
-                return requiresRebuild(dbContext);
-            }
-        }
-
-        void ExecuteBuildTemplate(Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate)
-        {
-            using (var connection = new SqlConnection(wrapper.TemplateConnection))
-            {
-                connection.Open();
-
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
                 builder.UseSqlServer(connection);
                 buildTemplate(connection, builder);
-            }
+            };
+
+            var timestamp = typeof(TDbContext).Assembly.LastModified();
+
+            wrapper = new Wrapper(name, directory, templateSize);
+
+            wrapper.Start(requiresRebuild2, timestamp, buildTemplate2);
         }
 
         static string GetInstanceName(string scopeSuffix)
