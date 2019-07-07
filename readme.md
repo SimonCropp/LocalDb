@@ -784,9 +784,9 @@ Useful commands:
 
 ## SQL Server Updates
 
-Ensure that the latests SQL Server CU is being used.
+Ensure that the latests SQL Server Cumulative Update is being used.
 
- * [SQL Server 2017 Cumulative Update builds](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
+ * [SQL Server 2017](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
 
 
 ## Simple.LocalDb
