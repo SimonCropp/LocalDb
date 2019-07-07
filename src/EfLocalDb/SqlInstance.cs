@@ -130,42 +130,36 @@ namespace EfLocalDb
             Func<TDbContext, bool> requiresRebuild,
             ushort templateSize)
         {
-            void ExecuteBuildTemplate(SqlConnection connection)
+            //TODO: check requiresRebuild for null
+            Func<SqlConnection, bool> requiresRebuild2= null;
+            if (requiresRebuild != null)
+            {
+                requiresRebuild2 = templateConnection =>
+                {
+                    var builder = new DbContextOptionsBuilder<TDbContext>();
+                    builder.UseSqlServer(templateConnection);
+                    using (var dbContext = constructInstance(builder))
+                    {
+                        return requiresRebuild(dbContext);
+                    }
+                };
+            }
+
+            Action<SqlConnection> buildTemplate2 = connection =>
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
                 builder.UseSqlServer(connection);
                 buildTemplate(connection, builder);
-            }
+            };
 
-            bool ExecuteRequiresRebuild(string templateConnection)
-            {
-                var builder = new DbContextOptionsBuilder<TDbContext>();
-                builder.UseSqlServer(templateConnection);
-                using (var dbContext = constructInstance(builder))
-                {
-                    return requiresRebuild(dbContext);
-                }
-            }
-            //TODO: check requiresRebuild for null
-            Func<string, bool> requiresRebuild2= null;
-            if (requiresRebuild != null)
-            {
-                requiresRebuild2 = ExecuteRequiresRebuild;
-            }
-
-            Action<SqlConnection> buildTemplate2 = ExecuteBuildTemplate;
-
-
-            var type = typeof(TDbContext);
-            DateTime? timestamp = type.Assembly.LastModified();
+            var timestamp = typeof(TDbContext).Assembly.LastModified();
 
             wrapper = new Wrapper(name, directory, templateSize);
-
 
             Start2(requiresRebuild2, timestamp, buildTemplate2);
         }
 
-        private void Start2(Func<string, bool> requiresRebuild2, DateTime? timestamp, Action<SqlConnection> buildTemplate2)
+        void Start2(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
         {
             wrapper.Start();
 
@@ -176,7 +170,7 @@ namespace EfLocalDb
 
                 if (wrapper.TemplateFileExists())
                 {
-                    if (requiresRebuild2 == null)
+                    if (requiresRebuild == null)
                     {
                         if (timestamp != null)
                         {
@@ -191,9 +185,13 @@ namespace EfLocalDb
                     else
                     {
                         wrapper.RestoreTemplate();
-                        if (!requiresRebuild2(wrapper.TemplateConnection))
+                        using (var connection = new SqlConnection(wrapper.TemplateConnection))
                         {
-                            return;
+                            connection.Open();
+                            if (!requiresRebuild(connection))
+                            {
+                                return;
+                            }
                         }
                     }
                 }
@@ -204,7 +202,7 @@ namespace EfLocalDb
                 using (var connection = new SqlConnection(wrapper.TemplateConnection))
                 {
                     connection.Open();
-                    buildTemplate2(connection);
+                    buildTemplate(connection);
                 }
             }
             finally
