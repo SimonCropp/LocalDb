@@ -51,9 +51,9 @@ namespace LocalDb
 
         void InnerInit(string name, Action<SqlConnection> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
         {
-            wrapper = new Wrapper(name, directory,templateSize);
+            wrapper = new Wrapper(name, directory, templateSize);
 
-            wrapper.Start2(requiresRebuild, null, buildTemplate);
+            wrapper.Start(requiresRebuild, null, buildTemplate);
         }
 
         public void Cleanup()

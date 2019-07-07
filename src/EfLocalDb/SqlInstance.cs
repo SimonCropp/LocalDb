@@ -154,7 +154,7 @@ namespace EfLocalDb
 
             wrapper = new Wrapper(name, directory, templateSize);
 
-            wrapper.Start2(requiresRebuild2, timestamp, buildTemplate2);
+            wrapper.Start(requiresRebuild2, timestamp, buildTemplate2);
         }
 
         static string GetInstanceName(string scopeSuffix)
