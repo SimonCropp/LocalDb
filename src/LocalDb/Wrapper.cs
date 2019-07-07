@@ -174,7 +174,8 @@ log on
     name = template_log,
     filename = '{TemplateLogFile}',
     size = 512KB,
-    filegrowth = 100KB );
+    filegrowth = 100KB
+);
 ";
             connection.ExecuteCommand(commandText);
         }
@@ -227,5 +228,4 @@ dbcc shrinkfile(modeldev, 3)
         File.Delete(TemplateDataFile);
         File.Delete(TemplateLogFile);
     }
-
 }
