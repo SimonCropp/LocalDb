@@ -37,22 +37,10 @@ class Wrapper
         var commandText = @"
 if db_id('template') is not null
   exec sp_detach_db 'template', 'true';";
-        try
+        using (var connection = new SqlConnection(masterConnection))
         {
-            using (var connection = new SqlConnection(masterConnection))
-            {
-                connection.Open();
-                connection.ExecuteCommand(commandText);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(
-                innerException: exception,
-                message: $@"Failed to {nameof(DetachTemplate)}
-{nameof(directory)}: {directory}
-{nameof(instance)}: {instance}
-");
+            connection.Open();
+            connection.ExecuteCommand(commandText);
         }
     }
 
@@ -77,22 +65,10 @@ drop database [' + [name] + '];
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb');
 execute sp_executesql @command";
-        try
+        using (var connection = new SqlConnection(masterConnection))
         {
-            using (var connection = new SqlConnection(masterConnection))
-            {
-                connection.Open();
-                connection.ExecuteCommand(commandText);
-            }
-        }
-        catch (Exception exception)
-        {
-            throw new Exception(
-                innerException: exception,
-                message: $@"Failed to {nameof(Purge)}
-{nameof(directory)}: {directory}
-{nameof(instance)}: {instance}
-");
+            connection.Open();
+            connection.ExecuteCommand(commandText);
         }
     }
 
