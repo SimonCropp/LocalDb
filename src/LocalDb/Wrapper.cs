@@ -166,7 +166,6 @@ create database template on
 (
     name = template,
     filename = '{TemplateDataFile}',
-    size = 3MB,
     fileGrowth = 100KB
 )
 log on
