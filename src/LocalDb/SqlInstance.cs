@@ -15,7 +15,7 @@ namespace LocalDb
 
         public SqlInstance(
             string name,
-            Action<string> buildTemplate,
+            Action<SqlConnection> buildTemplate,
             string directory = null,
             Func<SqlConnection, bool> requiresRebuild = null,
             ushort templateSize = 3)
@@ -24,32 +24,9 @@ namespace LocalDb
             Init(name, buildTemplate, directory, requiresRebuild, templateSize);
         }
 
-        public SqlInstance(
-            string name,
-            Action<SqlConnection> buildTemplate,
-            string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null,
-            ushort templateSize = 3)
-        {
-            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
-            Init(
-                name,
-                connectionString =>
-                {
-                    using (var connection = new SqlConnection(connectionString))
-                    {
-                        connection.Open();
-                        buildTemplate(connection);
-                    }
-                },
-                directory,
-                requiresRebuild,
-                templateSize);
-        }
-
         void Init(
             string name,
-            Action<string> buildTemplate, string directory,
+            Action<SqlConnection> buildTemplate, string directory,
             Func<SqlConnection, bool> requiresRebuild,
             ushort templateSize)
         {
@@ -72,8 +49,21 @@ namespace LocalDb
             }
         }
 
-        void InnerInit(string name, Action<string> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
+        void InnerInit(string name, Action<SqlConnection> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
         {
+            void ExecuteBuildTemplate(SqlConnection templateConnection)
+            {
+                buildTemplate(templateConnection);
+            }
+
+            bool ExecuteRequiresRebuild(string templateConnection)
+            {
+                using (var sqlConnection = new SqlConnection(templateConnection))
+                {
+                    return requiresRebuild(sqlConnection);
+                }
+            }
+
             wrapper = new Wrapper(name, directory);
 
             wrapper.Start(templateSize);
@@ -82,20 +72,29 @@ namespace LocalDb
                 wrapper.Purge();
                 wrapper.DeleteNonTemplateFiles();
 
-                if (requiresRebuild != null &&
-                    wrapper.TemplateFileExists())
+                if (wrapper.TemplateFileExists() )
                 {
-                    wrapper.RestoreTemplate();
-                    if (!ExecuteRequiresRebuild(requiresRebuild))
+                    if (requiresRebuild == null)
                     {
-                        return;
+                    }
+                    else
+                    {
+                        wrapper.RestoreTemplate();
+                        if (!ExecuteRequiresRebuild(wrapper.TemplateConnection))
+                        {
+                            return;
+                        }
                     }
                 }
 
                 wrapper.DetachTemplate();
                 wrapper.DeleteTemplateFiles();
                 wrapper.CreateTemplate();
-                buildTemplate(wrapper.TemplateConnection);
+                using (var connection = new SqlConnection(wrapper.TemplateConnection))
+                {
+                    connection.Open();
+                    ExecuteBuildTemplate(connection);
+                }
             }
             finally
             {
@@ -103,13 +102,6 @@ namespace LocalDb
             }
         }
 
-        bool ExecuteRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
-        {
-            using (var sqlConnection = new SqlConnection(wrapper.TemplateConnection))
-            {
-                return requiresRebuild(sqlConnection);
-            }
-        }
 
         public void Cleanup()
         {
