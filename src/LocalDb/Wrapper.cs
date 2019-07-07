@@ -184,7 +184,7 @@ log on
     {
         if (size < 3)
         {
-            throw new ArgumentOutOfRangeException(nameof(size), size, "3 is the min allowed value");
+            throw new ArgumentOutOfRangeException(nameof(size), size, "3MB is the min allowed value");
         }
 
         if (LocalDbApi.CreateAndStart(instance) == State.NotExists)
