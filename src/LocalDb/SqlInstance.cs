@@ -64,9 +64,9 @@ namespace LocalDb
                 }
             }
 
-            wrapper = new Wrapper(name, directory);
+            wrapper = new Wrapper(name, directory,templateSize);
 
-            wrapper.Start(templateSize);
+            wrapper.Start();
             try
             {
                 wrapper.Purge();

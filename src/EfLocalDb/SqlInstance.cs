@@ -28,6 +28,7 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
+            this.constructInstance = constructInstance;
 
             Init(
                 ConvertBuildTemplate(constructInstance, buildTemplate),
@@ -46,6 +47,7 @@ namespace EfLocalDb
             Func<TDbContext, bool> requiresRebuild = null,
             ushort templateSize = 3)
         {
+            this.constructInstance = constructInstance;
             Init(
                 ConvertBuildTemplate(constructInstance, buildTemplate),
                 constructInstance,
@@ -112,7 +114,7 @@ namespace EfLocalDb
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                InnerInit(buildTemplate, constructInstance, name, directory, requiresRebuild, templateSize);
+                InnerInit(buildTemplate, name, directory, requiresRebuild, templateSize);
                 Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
@@ -123,7 +125,6 @@ namespace EfLocalDb
 
         void InnerInit(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
             Func<TDbContext, bool> requiresRebuild,
@@ -145,14 +146,28 @@ namespace EfLocalDb
                     return requiresRebuild(dbContext);
                 }
             }
+            //TODO: check requiresRebuild for null
+            Func<string, bool> requiresRebuild2= null;
+            if (requiresRebuild != null)
+            {
+                requiresRebuild2 = ExecuteRequiresRebuild;
+            }
 
-            wrapper = new Wrapper(name, directory);
+            Action<SqlConnection> buildTemplate2 = ExecuteBuildTemplate;
 
-            this.constructInstance = constructInstance;
 
             var type = typeof(TDbContext);
-            DateTime? assemblyLastModified = type.Assembly.LastModified();
-            wrapper.Start(templateSize);
+            DateTime? timestamp = type.Assembly.LastModified();
+
+            wrapper = new Wrapper(name, directory, templateSize);
+
+
+            Start2(requiresRebuild2, timestamp, buildTemplate2);
+        }
+
+        private void Start2(Func<string, bool> requiresRebuild2, DateTime? timestamp, Action<SqlConnection> buildTemplate2)
+        {
+            wrapper.Start();
 
             try
             {
@@ -161,19 +176,22 @@ namespace EfLocalDb
 
                 if (wrapper.TemplateFileExists())
                 {
-                    if (requiresRebuild == null)
+                    if (requiresRebuild2 == null)
                     {
-                        var templateLastMod = File.GetLastWriteTime(wrapper.TemplateDataFile);
-                        if (assemblyLastModified == templateLastMod)
+                        if (timestamp != null)
                         {
-                            Trace.WriteLine($"{type.FullName} was not modified so skipping rebuild");
-                            return;
+                            var templateLastMod = File.GetLastWriteTime(wrapper.TemplateDataFile);
+                            if (timestamp == templateLastMod)
+                            {
+                                Trace.WriteLine("Not modified so skipping rebuild");
+                                return;
+                            }
                         }
                     }
                     else
                     {
                         wrapper.RestoreTemplate();
-                        if (!ExecuteRequiresRebuild(wrapper.TemplateConnection))
+                        if (!requiresRebuild2(wrapper.TemplateConnection))
                         {
                             return;
                         }
@@ -186,15 +204,15 @@ namespace EfLocalDb
                 using (var connection = new SqlConnection(wrapper.TemplateConnection))
                 {
                     connection.Open();
-                    ExecuteBuildTemplate(connection);
+                    buildTemplate2(connection);
                 }
             }
             finally
             {
                 wrapper.DetachTemplate();
-                if (assemblyLastModified != null)
+                if (timestamp != null)
                 {
-                    File.SetLastWriteTime(wrapper.TemplateDataFile, assemblyLastModified.Value);
+                    File.SetLastWriteTime(wrapper.TemplateDataFile, timestamp.Value);
                 }
             }
         }
