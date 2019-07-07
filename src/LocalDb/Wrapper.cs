@@ -203,7 +203,62 @@ dbcc shrinkfile(modeldev, {size})
             }
         }
     }
+    
+        public void Start2(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
+        {
+            Start();
 
+            try
+            {
+                Purge();
+                DeleteNonTemplateFiles();
+
+                if (TemplateFileExists())
+                {
+                    if (requiresRebuild == null)
+                    {
+                        if (timestamp != null)
+                        {
+                            var templateLastMod = File.GetLastWriteTime(TemplateDataFile);
+                            if (timestamp == templateLastMod)
+                            {
+                                Trace.WriteLine("Not modified so skipping rebuild");
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        RestoreTemplate();
+                        using (var connection = new SqlConnection(TemplateConnection))
+                        {
+                            connection.Open();
+                            if (!requiresRebuild(connection))
+                            {
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                DetachTemplate();
+                DeleteTemplateFiles();
+                CreateTemplate();
+                using (var connection = new SqlConnection(TemplateConnection))
+                {
+                    connection.Open();
+                    buildTemplate(connection);
+                }
+            }
+            finally
+            {
+                DetachTemplate();
+                if (timestamp != null)
+                {
+                    File.SetLastWriteTime(TemplateDataFile, timestamp.Value);
+                }
+            }
+        }
     public void DeleteInstance()
     {
         LocalDbApi.StopAndDelete(instance);

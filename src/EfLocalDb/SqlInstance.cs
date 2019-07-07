@@ -28,7 +28,6 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
-            this.constructInstance = constructInstance;
 
             Init(
                 ConvertBuildTemplate(constructInstance, buildTemplate),
@@ -47,7 +46,6 @@ namespace EfLocalDb
             Func<TDbContext, bool> requiresRebuild = null,
             ushort templateSize = 3)
         {
-            this.constructInstance = constructInstance;
             Init(
                 ConvertBuildTemplate(constructInstance, buildTemplate),
                 constructInstance,
@@ -111,6 +109,7 @@ namespace EfLocalDb
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
+            this.constructInstance = constructInstance;
             try
             {
                 var stopwatch = Stopwatch.StartNew();
@@ -130,8 +129,7 @@ namespace EfLocalDb
             Func<TDbContext, bool> requiresRebuild,
             ushort templateSize)
         {
-            //TODO: check requiresRebuild for null
-            Func<SqlConnection, bool> requiresRebuild2= null;
+            Func<SqlConnection, bool> requiresRebuild2 = null;
             if (requiresRebuild != null)
             {
                 requiresRebuild2 = templateConnection =>
@@ -156,65 +154,8 @@ namespace EfLocalDb
 
             wrapper = new Wrapper(name, directory, templateSize);
 
-            Start2(requiresRebuild2, timestamp, buildTemplate2);
+            wrapper.Start2(requiresRebuild2, timestamp, buildTemplate2);
         }
-
-        void Start2(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
-        {
-            wrapper.Start();
-
-            try
-            {
-                wrapper.Purge();
-                wrapper.DeleteNonTemplateFiles();
-
-                if (wrapper.TemplateFileExists())
-                {
-                    if (requiresRebuild == null)
-                    {
-                        if (timestamp != null)
-                        {
-                            var templateLastMod = File.GetLastWriteTime(wrapper.TemplateDataFile);
-                            if (timestamp == templateLastMod)
-                            {
-                                Trace.WriteLine("Not modified so skipping rebuild");
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        wrapper.RestoreTemplate();
-                        using (var connection = new SqlConnection(wrapper.TemplateConnection))
-                        {
-                            connection.Open();
-                            if (!requiresRebuild(connection))
-                            {
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                wrapper.DetachTemplate();
-                wrapper.DeleteTemplateFiles();
-                wrapper.CreateTemplate();
-                using (var connection = new SqlConnection(wrapper.TemplateConnection))
-                {
-                    connection.Open();
-                    buildTemplate(connection);
-                }
-            }
-            finally
-            {
-                wrapper.DetachTemplate();
-                if (timestamp != null)
-                {
-                    File.SetLastWriteTime(wrapper.TemplateDataFile, timestamp.Value);
-                }
-            }
-        }
-
 
         static string GetInstanceName(string scopeSuffix)
         {

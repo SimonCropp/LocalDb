@@ -51,57 +51,10 @@ namespace LocalDb
 
         void InnerInit(string name, Action<SqlConnection> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
         {
-            void ExecuteBuildTemplate(SqlConnection templateConnection)
-            {
-                buildTemplate(templateConnection);
-            }
-
-            bool ExecuteRequiresRebuild(string templateConnection)
-            {
-                using (var sqlConnection = new SqlConnection(templateConnection))
-                {
-                    return requiresRebuild(sqlConnection);
-                }
-            }
-
             wrapper = new Wrapper(name, directory,templateSize);
 
-            wrapper.Start();
-            try
-            {
-                wrapper.Purge();
-                wrapper.DeleteNonTemplateFiles();
-
-                if (wrapper.TemplateFileExists() )
-                {
-                    if (requiresRebuild == null)
-                    {
-                    }
-                    else
-                    {
-                        wrapper.RestoreTemplate();
-                        if (!ExecuteRequiresRebuild(wrapper.TemplateConnection))
-                        {
-                            return;
-                        }
-                    }
-                }
-
-                wrapper.DetachTemplate();
-                wrapper.DeleteTemplateFiles();
-                wrapper.CreateTemplate();
-                using (var connection = new SqlConnection(wrapper.TemplateConnection))
-                {
-                    connection.Open();
-                    ExecuteBuildTemplate(connection);
-                }
-            }
-            finally
-            {
-                wrapper.DetachTemplate();
-            }
+            wrapper.Start2(requiresRebuild, null, buildTemplate);
         }
-
 
         public void Cleanup()
         {
