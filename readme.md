@@ -60,16 +60,12 @@ Interactions with LocalDB via a [SqlConnection](https://docs.microsoft.com/en-us
 
 https://nuget.org/packages/LocalDb/
 
-    PM> Install-Package LocalDb
-
 
 ### 2. EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)
 
 Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
 https://nuget.org/packages/EfLocalDb/
-
-    PM> Install-Package EfLocalDb
 
 
 ## Design
@@ -775,7 +771,7 @@ The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/
 
 ## SqlLocalDb
 
-The [SqlLocalDb Utility (SqlLocalDB.exe)](https://docs.microsoft.com/en-us/sql/tools/sqllocaldb-utility) utility is a simple command line tool to enable users and developers to create and manage an instance of LocalDB.
+The [SqlLocalDb Utility (SqlLocalDB.exe)](https://docs.microsoft.com/en-us/sql/tools/sqllocaldb-utility) is a command line tool to enable users and developers to create and manage an instance of LocalDB.
 
 Useful commands:
 
