@@ -46,7 +46,7 @@ public class Tests :
         new SqlInstance<TestDbContext>(
             constructInstance: builder => new TestDbContext(builder.Options),
             instanceSuffix: "EfWithFileAndNoDb");
-        SqlLocalDb.DeleteInstance("TestDbContext_EfWithFileAndNoDb");
+        LocalDbApi.StopAndDelete("TestDbContext_EfWithFileAndNoDb");
 
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: builder => new TestDbContext(builder.Options),
@@ -91,7 +91,7 @@ public class Tests :
     [Fact]
     public async Task NoFileAndNoDb()
     {
-        SqlLocalDb.DeleteInstance("TestDbContext_EfNoFileAndNoDb");
+        LocalDbApi.StopAndDelete("TestDbContext_EfNoFileAndNoDb");
         var directory = DirectoryFinder.Find("TestDbContext_EfNoFileAndNoDb");
 
         if (Directory.Exists(directory))

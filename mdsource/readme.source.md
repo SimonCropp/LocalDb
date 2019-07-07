@@ -366,9 +366,9 @@ Ensure that the latests SQL Server CU is being used.
 
 ## Simple.LocalDb
 
-https://github.com/skyguy94/Simple.LocalDb
+LocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
 
 ## Icon
 
-<a href="https://thenounproject.com/term/robot/960055/" target="_blank">Robot</a> designed by Creaticca Creative Agency from The Noun Project.
+[Robot](https://thenounproject.com/term/robot/960055/) designed by [Creaticca Creative Agency](https://thenounproject.com/creaticca/) from [The Noun Project](https://thenounproject.com/).

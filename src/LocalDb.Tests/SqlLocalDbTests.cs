@@ -27,19 +27,19 @@ public class SqlLocalDbTests :
     [Fact]
     public void DeleteInstance()
     {
-        SqlLocalDb.Start("DeleteInstance");
-        SqlLocalDb.DeleteInstance("DeleteInstance");
+        LocalDbApi.CreateAndStart("DeleteInstance");
+        LocalDbApi.StopAndDelete("DeleteInstance");
         Assert.False(LocalDbApi.GetInstance("DeleteInstance").Exists);
     }
 
     [Fact]
     public void Info()
     {
-        SqlLocalDb.Start("InfoTest");
+        LocalDbApi.CreateAndStart("InfoTest");
         var info = LocalDbApi.GetInstance("InfoTest");
 
         ObjectApprover.VerifyWithJson(info);
-        SqlLocalDb.DeleteInstance("InfoTest");
+        LocalDbApi.StopAndDelete("InfoTest");
     }
 
     //[Fact]

@@ -22,6 +22,7 @@ using System.Text;
          createInstance = GetFunction<LocalDBCreateInstance>();
          getInstanceInfo = GetFunction<LocalDBGetInstanceInfo>();
          getInstances = GetFunction<LocalDBGetInstances>();
+         deleteInstance = GetFunction<LocalDBDeleteInstance>();
          startInstance = GetFunction<LocalDBStartInstance>();
          stopInstance = GetFunction<LocalDBStopInstance>();
      }
@@ -34,6 +35,7 @@ using System.Text;
      static LocalDBCreateInstance createInstance;
      static LocalDBGetInstanceInfo getInstanceInfo;
      static LocalDBGetInstances getInstances;
+     static LocalDBDeleteInstance deleteInstance;
      static LocalDBStartInstance startInstance;
      static LocalDBStopInstance stopInstance;
 
@@ -50,6 +52,12 @@ using System.Text;
          object function = Marshal.GetDelegateForFunctionPointer(ptr, typeof(T));
          return (T) function;
      }
+
+     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+     public delegate int LocalDBDeleteInstance(
+         [MarshalAs(UnmanagedType.LPWStr)]
+         string pInstanceName,
+         int dwFlags);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
      public delegate int LocalDBCreateInstance(
@@ -118,10 +126,41 @@ using System.Text;
          return info;
      }
 
+     public static void DeleteInstance(string instanceName)
+     {
+         deleteInstance(instanceName, 0);
+     }
+
+     public static void StopAndDelete(string instanceName)
+     {
+         StopInstance(instanceName);
+         DeleteInstance(instanceName);
+     }
+
      public static void CreateInstance(string instanceName)
      {
          createInstance(ApiVersion, instanceName, 0);
      }
+
+     public static State CreateAndStart(string instance)
+     {
+         var localDbInstanceInfo = GetInstance(instance);
+
+         if (!localDbInstanceInfo.Exists)
+         {
+             CreateInstance(instance);
+             StartInstance(instance);
+             return State.NotExists;
+         }
+
+         if (!localDbInstanceInfo.IsRunning)
+         {
+             StartInstance(instance);
+         }
+
+         return State.Running;
+     }
+
 
      public static void StartInstance(string instanceName)
      {
@@ -131,9 +170,9 @@ using System.Text;
          startInstance(instanceName, 0, connection, ref size);
      }
 
-     public static void StopInstance(string instanceName, TimeSpan timeout)
+     public static void StopInstance(string instanceName)
      {
-         stopInstance(instanceName, 0, (int) timeout.TotalSeconds);
+         stopInstance(instanceName, 0, 10000);
      }
 
      [DllImport("kernel32", SetLastError = true)]

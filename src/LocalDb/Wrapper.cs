@@ -238,7 +238,7 @@ log on
             throw new ArgumentOutOfRangeException(nameof(size), size, "3 is the min allowed value");
         }
 
-        if (SqlLocalDb.Start(instance) == State.NotExists)
+        if (LocalDbApi.CreateAndStart(instance) == State.NotExists)
         {
             var commandText = @"
 -- begin-snippet: ShrinkModelDb
@@ -256,11 +256,8 @@ dbcc shrinkfile(modeldev, 3)
 
     public void DeleteInstance()
     {
-        SqlLocalDb.DeleteInstance(instance);
-        foreach (var file in Directory.EnumerateFiles(directory))
-        {
-            File.Delete(file);
-        }
+        LocalDbApi.StopAndDelete(instance);
+        Directory.Delete(directory, true);
     }
 
     public void DeleteNonTemplateFiles()
