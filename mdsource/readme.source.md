@@ -5,7 +5,8 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 
 ## More info
 
- * [Design]()
+ * [Design](/blob/master/pages/design.md)
+
 
 ## Why
 
