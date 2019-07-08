@@ -263,14 +263,10 @@ log on
         else
         {
             BringTemplateOnline();
-            using (var connection = new SqlConnection(TemplateConnection))
+            if (!ExecuteRequiresRebuild(requiresRebuild))
             {
-                connection.Open();
-                if (!requiresRebuild(connection))
-                {
-                    TakeTemplateOffline(timestamp);
-                    return;
-                }
+                TakeTemplateOffline(timestamp);
+                return;
             }
         }
 
@@ -279,6 +275,15 @@ log on
         CreateTemplate();
         ExecuteBuildTemplate(buildTemplate);
         TakeTemplateOffline(timestamp);
+    }
+
+    bool ExecuteRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
+    {
+        using (var connection = new SqlConnection(TemplateConnection))
+        {
+            connection.Open();
+            return requiresRebuild(connection);
+        }
     }
 
     private void ExecuteBuildTemplate(Action<SqlConnection> buildTemplate)
