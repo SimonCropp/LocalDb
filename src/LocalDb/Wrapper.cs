@@ -31,51 +31,36 @@ class Wrapper
         Trace.WriteLine($"Creating LocalDb instance. Server Name: {ServerName}");
     }
 
-    public readonly string TemplateDataFile;
-
-    public readonly string TemplateLogFile;
-
-    public readonly string TemplateConnection;
-
+    string TemplateDataFile;
+    string TemplateLogFile;
+    string TemplateConnection;
     public readonly string ServerName;
 
-    public void DetachTemplate()
+    void DetachTemplate()
     {
         var commandText = @"
 if db_id('template') is not null
   exec sp_detach_db 'template', 'true';";
-        using (var connection = new SqlConnection(masterConnection))
-        {
-            connection.Open();
-            connection.ExecuteCommand(commandText);
-        }
+        ExecuteOnMaster(commandText);
     }
 
-    public void BringTemplateOnline()
+    void BringTemplateOnline()
     {
         var commandText = @"alter database [template] set online";
-        using (var connection = new SqlConnection(masterConnection))
-        {
-            connection.Open();
-            connection.ExecuteCommand(commandText);
-        }
+        ExecuteOnMaster(commandText);
     }
 
-    public void TakeTemplateOffline(DateTime? timestamp)
+    void TakeTemplateOffline(DateTime? timestamp)
     {
         var commandText = @"alter database [template] set offline";
-        using (var connection = new SqlConnection(masterConnection))
-        {
-            connection.Open();
-            connection.ExecuteCommand(commandText);
-        }
+        ExecuteOnMaster(commandText);
         if (timestamp != null)
         {
             File.SetCreationTime(TemplateDataFile, timestamp.Value);
         }
     }
 
-    public void PurgeDbs()
+    void PurgeDbs()
     {
         var commandText = @"
 declare @command nvarchar(max)
@@ -96,11 +81,7 @@ drop database [' + [name] + '];
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
-        using (var connection = new SqlConnection(masterConnection))
-        {
-            connection.Open();
-            connection.ExecuteCommand(commandText);
-        }
+        ExecuteOnMaster(commandText);
     }
 
     public Task<string> CreateDatabaseFromTemplate(string name)
@@ -136,13 +117,7 @@ execute sp_executesql @command";
         return CreateDatabaseFromFile(name, copyTask);
     }
 
-    public bool TemplateFileExists()
-    {
-        var dataFile = Path.Combine(directory, "template.mdf");
-        return File.Exists(dataFile);
-    }
-
-    public void RestoreTemplate()
+    void RestoreTemplate()
     {
         var dataFile = Path.Combine(directory, "template.mdf");
         var commandText = $@"
@@ -157,14 +132,10 @@ begin
     alter database [template] set offline;
 end;
 ";
-        using (var connection = new SqlConnection(masterConnection))
-        {
-            connection.Open();
-            connection.ExecuteCommand(commandText);
-        }
+        ExecuteOnMaster(commandText);
     }
 
-    public async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
+    async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
     {
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         var commandText = $@"
@@ -191,7 +162,7 @@ alter database [{name}]
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
-    public void CreateTemplate()
+    void CreateTemplate()
     {
         var commandText = $@"
 create database template on
@@ -208,11 +179,7 @@ log on
     filegrowth = 100KB
 );
 ";
-        using (var connection = new SqlConnection(masterConnection))
-        {
-            connection.Open();
-            connection.ExecuteCommand(commandText);
-        }
+        ExecuteOnMaster(commandText);
     }
 
     public void Start(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
@@ -286,12 +253,21 @@ log on
         }
     }
 
-    private void ExecuteBuildTemplate(Action<SqlConnection> buildTemplate)
+    void ExecuteBuildTemplate(Action<SqlConnection> buildTemplate)
     {
         using (var connection = new SqlConnection(TemplateConnection))
         {
             connection.Open();
             buildTemplate(connection);
+        }
+    }
+
+    void ExecuteOnMaster(string command)
+    {
+        using (var connection = new SqlConnection(masterConnection))
+        {
+            connection.Open();
+            connection.ExecuteCommand(command);
         }
     }
 
@@ -303,11 +279,7 @@ use model;
 dbcc shrinkfile(modeldev, {size})
 -- end-snippet
 ";
-        using (var connection1 = new SqlConnection(masterConnection))
-        {
-            connection1.Open();
-            connection1.ExecuteCommand(commandText);
-        }
+        ExecuteOnMaster(commandText);
     }
 
     public void DeleteInstance()
@@ -316,7 +288,7 @@ dbcc shrinkfile(modeldev, {size})
         Directory.Delete(directory, true);
     }
 
-    public void DeleteNonTemplateFiles()
+    void DeleteNonTemplateFiles()
     {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
@@ -329,7 +301,7 @@ dbcc shrinkfile(modeldev, {size})
         }
     }
 
-    public void DeleteTemplateFiles()
+    void DeleteTemplateFiles()
     {
         File.Delete(TemplateDataFile);
         File.Delete(TemplateLogFile);
