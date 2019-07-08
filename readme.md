@@ -273,9 +273,10 @@ using (var database = await SqlInstanceService.Build())
 
 <!-- snippet: EfBuildLocalDbInstance -->
 ```cs
-var database = await SqlInstanceService<MyDbContext>.Build();
+using (var database = await SqlInstanceService<MyDbContext>.Build())
+{
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L17-L19)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L18-L21)</sup>
 <!-- endsnippet -->
 
 
@@ -333,9 +334,10 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
 
 <!-- snippet: EfWithDbName -->
 ```cs
-var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName");
+using (var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName"))
+{
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L45-L49)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L47-L50)</sup>
 <!-- endsnippet -->
 
 
@@ -360,9 +362,8 @@ Assert.Single(await TestDbBuilder.GetData(database.Connection));
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L21-L25)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L23-L26)</sup>
 <!-- endsnippet -->
-
 
 
 #### Full Test
@@ -396,25 +397,27 @@ public async Task TheTest()
 [Fact]
 public async Task TheTest()
 {
-    var database = await SqlInstanceService<MyDbContext>.Build();
-
-    using (var dbContext = database.NewDbContext())
+    using (var database = await SqlInstanceService<MyDbContext>.Build())
     {
-        var entity = new TheEntity
+
+        using (var dbContext = database.NewDbContext())
         {
-            Property = "prop"
-        };
-        dbContext.Add(entity);
-        dbContext.SaveChanges();
-    }
+            var entity = new TheEntity
+            {
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
 
-    using (var dbContext = database.NewDbContext())
-    {
-        Assert.Single(dbContext.TestEntities);
+        using (var dbContext = database.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
+        }
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L12-L40)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L13-L42)</sup>
 <!-- endsnippet -->
 
 

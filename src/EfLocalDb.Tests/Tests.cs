@@ -162,16 +162,18 @@ public class Tests :
         {
             Property = "prop"
         };
-        var database = await instance.Build();
-        using (var dbContext = database.NewDbContext())
+        using (var database = await instance.Build())
         {
-            dbContext.Add(entity);
-            await dbContext.SaveChangesAsync();
-        }
+            using (var dbContext = database.NewDbContext())
+            {
+                dbContext.Add(entity);
+                await dbContext.SaveChangesAsync();
+            }
 
-        using (var dbContext = database.NewDbContext())
-        {
-            Assert.NotNull(dbContext.TestEntities.FindAsync(entity.Id));
+            using (var dbContext = database.NewDbContext())
+            {
+                Assert.NotNull(dbContext.TestEntities.FindAsync(entity.Id));
+            }
         }
     }
 
