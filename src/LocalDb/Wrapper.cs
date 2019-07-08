@@ -51,7 +51,31 @@ if db_id('template') is not null
         }
     }
 
-    public void Purge()
+    public void BringTemplateOnline()
+    {
+        var commandText = @"alter database [template] set online";
+        using (var connection = new SqlConnection(masterConnection))
+        {
+            connection.Open();
+            connection.ExecuteCommand(commandText);
+        }
+    }
+
+    public void TakeTemplateOffline(DateTime? timestamp)
+    {
+        var commandText = @"alter database [template] set offline";
+        using (var connection = new SqlConnection(masterConnection))
+        {
+            connection.Open();
+            connection.ExecuteCommand(commandText);
+        }
+        if (timestamp != null)
+        {
+            File.SetCreationTime(TemplateDataFile, timestamp.Value);
+        }
+    }
+
+    public void PurgeDbs()
     {
         var commandText = @"
 declare @command nvarchar(max)
@@ -70,7 +94,7 @@ drop database [' + [name] + '];
 
 '
 from master.sys.databases
-where [name] not in ('master', 'model', 'msdb', 'tempdb');
+where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
         using (var connection = new SqlConnection(masterConnection))
         {
@@ -122,12 +146,16 @@ execute sp_executesql @command";
     {
         var dataFile = Path.Combine(directory, "template.mdf");
         var commandText = $@"
-create database template on
-(
-    name = template,
-    filename = '{dataFile}'
-)
-for attach;
+if db_id('template') is null
+begin
+    create database template on
+    (
+        name = template,
+        filename = '{dataFile}'
+    )
+    for attach;
+    alter database [template] set offline;
+end;
 ";
         using (var connection = new SqlConnection(masterConnection))
         {
@@ -189,60 +217,76 @@ log on
 
     public void Start(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
     {
-        if (LocalDbApi.CreateAndStart(instance) == State.NotExists)
+        void CleanStart()
         {
+            FileExtensions.FlushDirectory(directory);
+            LocalDbApi.CreateInstance(instance);
+            LocalDbApi.StartInstance(instance);
             ShrinkModelDb();
+            CreateTemplate();
+            ExecuteBuildTemplate(buildTemplate);
+            TakeTemplateOffline(timestamp);
         }
 
-        try
-        {
-            Purge();
-            DeleteNonTemplateFiles();
+        var info = LocalDbApi.GetInstance(instance);
 
-            if (TemplateFileExists())
+        if (!info.Exists)
+        {
+            CleanStart();
+            return;
+        }
+
+        if (!info.IsRunning)
+        {
+            LocalDbApi.DeleteInstance(instance);
+            CleanStart();
+            return;
+        }
+
+        PurgeDbs();
+        DeleteNonTemplateFiles();
+
+        //TODO: remove in future. only required for old versions that used detach
+        RestoreTemplate();
+        if (requiresRebuild == null)
+        {
+            if (timestamp != null)
             {
-                if (requiresRebuild == null)
+                var templateLastMod = File.GetCreationTime(TemplateDataFile);
+                if (timestamp == templateLastMod)
                 {
-                    if (timestamp != null)
-                    {
-                        var templateLastMod = File.GetLastWriteTime(TemplateDataFile);
-                        if (timestamp == templateLastMod)
-                        {
-                            Trace.WriteLine("Not modified so skipping rebuild");
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    RestoreTemplate();
-                    using (var connection = new SqlConnection(TemplateConnection))
-                    {
-                        connection.Open();
-                        if (!requiresRebuild(connection))
-                        {
-                            return;
-                        }
-                    }
+                    Trace.WriteLine("Not modified so skipping rebuild");
+                    return;
                 }
             }
-
-            DetachTemplate();
-            DeleteTemplateFiles();
-            CreateTemplate();
+        }
+        else
+        {
+            BringTemplateOnline();
             using (var connection = new SqlConnection(TemplateConnection))
             {
                 connection.Open();
-                buildTemplate(connection);
+                if (!requiresRebuild(connection))
+                {
+                    TakeTemplateOffline(timestamp);
+                    return;
+                }
             }
         }
-        finally
+
+        DetachTemplate();
+        DeleteTemplateFiles();
+        CreateTemplate();
+        ExecuteBuildTemplate(buildTemplate);
+        TakeTemplateOffline(timestamp);
+    }
+
+    private void ExecuteBuildTemplate(Action<SqlConnection> buildTemplate)
+    {
+        using (var connection = new SqlConnection(TemplateConnection))
         {
-            DetachTemplate();
-            if (timestamp != null)
-            {
-                File.SetLastWriteTime(TemplateDataFile, timestamp.Value);
-            }
+            connection.Open();
+            buildTemplate(connection);
         }
     }
 
