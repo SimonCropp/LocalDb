@@ -12,6 +12,7 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ## More info
 
  * [Design](/blob/master/pages/design.md)
+ * [EF Migrations](/blob/master/pages/efmigrations.md)
 
 
 ## Why
@@ -590,75 +591,6 @@ SqlInstanceService<TheDbContext>.Register(
     directory: @"C:\LocalDb\theInstance");
 ```
 <sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfRegisterExplicit.cs#L7-L14)</sup>
-<!-- endsnippet -->
-
-
-## EF Migrations
-
-[EF Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
-
-<!-- snippet: Migrations -->
-```cs
-var sqlInstance = new SqlInstance<MyDbContext>(
-    buildTemplate: (connection, optionsBuilder) =>
-    {
-        optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
-        using (var dbContext = new MyDbContext(optionsBuilder.Options))
-        {
-            dbContext.Database.Migrate();
-        }
-    },
-    constructInstance: builder =>
-    {
-        return new MyDbContext(builder.Options);
-    },
-    requiresRebuild: dbContext =>
-    {
-        return dbContext.Database.GetPendingMigrations().Any();
-    });
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L14-L40)</sup>
-<!-- endsnippet -->
-
-The above performs the following actions:
-
-
-### Custom Migrations Operations
-
-Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/operations).
-
-<!-- snippet: IMigrationsSqlGenerator -->
-```cs
-optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L19-L21)</sup>
-<!-- endsnippet -->
-
-
-### Apply the migration
-
-Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/#apply-migrations-at-runtime).
-
-<!-- snippet: Migrate -->
-```cs
-using (var dbContext = new MyDbContext(optionsBuilder.Options))
-{
-    dbContext.Database.Migrate();
-}
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L22-L27)</sup>
-<!-- endsnippet -->
-
-
-### CheckForMigrations
-
-Check if there are any pending migrations. This is an optional performance improvement. It allows the generated template to be re-used if there are no pending migrations.
-
-<!-- snippet: CheckForMigrations -->
-```cs
-return dbContext.Database.GetPendingMigrations().Any();
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L35-L37)</sup>
 <!-- endsnippet -->
 
 
