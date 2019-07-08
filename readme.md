@@ -11,9 +11,9 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 
 ## More info
 
- * [Design](/blob/master/pages/design.md)
- * [EF Migrations](/blob/master/pages/efmigrations.md)
- * [Directory and instance name resolution](/blob/master/pages/directory-and-instance-name-resolution.md)
+ * [Design](/pages/design.md)
+ * [EF Migrations](/pages/efmigrations.md)
+ * [Directory and instance name resolution](/pages/directory-and-instance-name-resolution.md)
 
 
 ## Why
