@@ -160,8 +160,7 @@ alter database [{name}]
             await connection.ExecuteCommandAsync(commandText);
         }
 
-        // needs to be pooling=false so that we can immediately detach and use the files
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
+        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
     }
 
     void CreateTemplate()
