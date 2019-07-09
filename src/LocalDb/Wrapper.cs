@@ -20,8 +20,7 @@ class Wrapper
 
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";
-        // needs to be pooling=false so that we can immediately detach and use the files
-        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
+        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template";
         this.directory = directory;
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
@@ -52,7 +51,10 @@ if db_id('template') is not null
 
     void TakeTemplateOffline(DateTime? timestamp)
     {
-        var commandText = @"alter database [template] set offline";
+        var commandText = @"
+alter database [template]
+set offline
+with rollback immediate";
         ExecuteOnMaster(commandText);
         if (timestamp != null)
         {
