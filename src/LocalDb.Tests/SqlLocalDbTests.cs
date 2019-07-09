@@ -45,9 +45,10 @@ public class SqlLocalDbTests :
     //[Fact]
     //public void DeleteAll()
     //{
-    //    foreach (var instance in ManagedLocalDbApi.GetInstanceNames())
+    //    foreach (var instance in LocalDbApi.GetInstanceNames())
     //    {
-    //        SqlLocalDb.DeleteInstance(instance);
+    //        Trace.WriteLine(instance);
+    //        LocalDbApi.StopAndDelete(instance);
     //    }
     //}
 

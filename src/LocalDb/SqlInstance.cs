@@ -92,9 +92,14 @@ namespace LocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connectionString = await BuildContext(dbName);
-            var sqlDatabase = new SqlDatabase(connectionString);
+            var sqlDatabase = new SqlDatabase(connectionString, () => wrapper.DeleteDatabase(dbName));
             await sqlDatabase.Start();
             return sqlDatabase;
+        }
+
+        public string MasterConnectionString
+        {
+            get => wrapper.MasterConnectionString;
         }
     }
 }

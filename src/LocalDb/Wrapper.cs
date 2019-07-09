@@ -8,7 +8,7 @@ class Wrapper
 {
     string directory;
     ushort size;
-    string masterConnection;
+    public readonly string MasterConnectionString;
     string instance;
 
     public Wrapper(string instance, string directory, ushort size)
@@ -19,7 +19,7 @@ class Wrapper
         }
 
         this.instance = instance;
-        masterConnection = $"Data Source=(LocalDb)\\{instance};Database=master";
+        MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";
         // needs to be pooling=false so that we can immediately detach and use the files
         TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;MultipleActiveResultSets=True;Pooling=false";
         this.directory = directory;
@@ -151,7 +151,7 @@ alter database [{name}]
 alter database [{name}]
     modify file (name=template_log, newname='{name}_log')
 ";
-        using (var connection = new SqlConnection(masterConnection))
+        using (var connection = new SqlConnection(MasterConnectionString))
         {
             await connection.OpenAsync();
             await fileCopyTask;
@@ -262,9 +262,17 @@ log on
         }
     }
 
+    async Task ExecuteOnMasterAsync(string command)
+    {
+        using (var connection = new SqlConnection(MasterConnectionString))
+        {
+            await connection.OpenAsync();
+            await connection.ExecuteCommandAsync(command);
+        }
+    }
     void ExecuteOnMaster(string command)
     {
-        using (var connection = new SqlConnection(masterConnection))
+        using (var connection = new SqlConnection(MasterConnectionString))
         {
             connection.Open();
             connection.ExecuteCommand(command);
@@ -305,5 +313,15 @@ dbcc shrinkfile(modeldev, {size})
     {
         File.Delete(TemplateDataFile);
         File.Delete(TemplateLogFile);
+    }
+
+    public async Task DeleteDatabase(string dbName)
+    {
+        var commandText = $"drop database [{dbName}];";
+        await ExecuteOnMasterAsync(commandText);
+        var dataFile = Path.Combine(directory, $"{dbName}.mdf");
+        var logFile = Path.Combine(directory, $"{dbName}.ldf");
+        File.Delete(dataFile);
+        File.Delete(logFile);
     }
 }

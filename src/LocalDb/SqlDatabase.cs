@@ -7,8 +7,11 @@ namespace LocalDb
     public class SqlDatabase :
         IDisposable
     {
-        public SqlDatabase(string connectionString)
+        Func<Task> delete;
+
+        public SqlDatabase(string connectionString, Func<Task> delete)
         {
+            this.delete = delete;
             Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);
             ConnectionString = connectionString;
             Connection = new SqlConnection(connectionString);
@@ -39,6 +42,12 @@ namespace LocalDb
         public void Dispose()
         {
             Connection.Dispose();
+        }
+
+        public Task Delete()
+        {
+            Dispose();
+            return delete();
         }
     }
 }

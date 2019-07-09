@@ -231,7 +231,7 @@ namespace EfLocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
-            var database = new SqlDatabase<TDbContext>(connection, constructInstance, data);
+            var database = new SqlDatabase<TDbContext>(connection, constructInstance, () => wrapper.DeleteDatabase(dbName), data);
             await database.Start();
             return database;
         }
@@ -239,6 +239,11 @@ namespace EfLocalDb
         public Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
             return Build(dbName, (IEnumerable<object>) null);
+        }
+
+        public string MasterConnectionString
+        {
+            get => wrapper.MasterConnectionString;
         }
     }
 }

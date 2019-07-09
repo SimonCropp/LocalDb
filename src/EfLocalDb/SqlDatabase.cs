@@ -11,15 +11,18 @@ namespace EfLocalDb
         where TDbContext : DbContext
     {
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        Func<Task> delete;
         IEnumerable<object> data;
 
         public SqlDatabase(
             string connectionString,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            Func<Task> delete,
             IEnumerable<object> data)
         {
             Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);
             this.constructInstance = constructInstance;
+            this.delete = delete;
             this.data = data;
             ConnectionString = connectionString;
             Connection = new SqlConnection(connectionString);
@@ -97,6 +100,11 @@ namespace EfLocalDb
         {
             Context?.Dispose();
             Connection.Dispose();
+        }
+        public Task Delete()
+        {
+            Dispose();
+            return delete();
         }
     }
 }
