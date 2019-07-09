@@ -45,7 +45,7 @@ namespace LocalDb
             }
             catch (Exception exception)
             {
-                ExceptionBuilder.WrapAndThrowLocalDbFailure(name, directory, exception);
+                throw ExceptionBuilder.WrapLocalDbFailure(name, directory, exception);
             }
         }
 

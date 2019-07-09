@@ -2,7 +2,7 @@
 
 static class ExceptionBuilder
 {
-    public static void WrapAndThrowLocalDbFailure(string name, string directory, Exception exception)
+    public static Exception WrapLocalDbFailure(string name, string directory, Exception exception)
     {
         var message = $@"Failed to setup a LocalDB instance.
 {nameof(name)}: {name}
@@ -13,6 +13,6 @@ To cleanup perform the following actions:
  * Execute 'sqllocaldb delete {name}'
  * Delete the directory {directory}'
 ";
-        throw new Exception(message, exception);
+        return new Exception(message, exception);
     }
 }
