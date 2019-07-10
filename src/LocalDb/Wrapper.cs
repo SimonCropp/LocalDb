@@ -40,7 +40,11 @@ class Wrapper
     {
         var commandText = @"
 if db_id('template') is not null
-  exec sp_detach_db 'template', 'true';";
+begin
+  alter database [template] set single_user with rollback immediate;
+  exec sp_detach_db 'template', 'true';
+end;";
+
         ExecuteOnMaster(commandText);
     }
 
