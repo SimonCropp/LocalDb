@@ -12,24 +12,6 @@ public class Tests :
     XunitLoggingBase
 {
     [Fact]
-    public async Task WithDelete()
-    {
-        var instance = new SqlInstance("WithDelete", TestDbBuilder.CreateTable);
-
-        using (var database = await instance.Build())
-        {
-            await database.Delete();
-        }
-
-        using (var sqlConnection = new SqlConnection(instance.MasterConnectionString))
-        {
-            await sqlConnection.OpenAsync();
-            var settings = DbPropertyReader.Read(sqlConnection, "Tests_WithDelete");
-            Assert.Empty(settings.Files);
-        }
-    }
-
-    [Fact]
     public async Task Simple()
     {
         var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
