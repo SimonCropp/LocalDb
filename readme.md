@@ -58,7 +58,7 @@ See the official guidance: [InMemory is not a relational database](https://docs.
  * [Introducing LocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
 
 
-## Usgae
+## Usage
 
 This project currently supports two approaches.
 
