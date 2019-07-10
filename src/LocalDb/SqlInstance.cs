@@ -40,20 +40,14 @@ namespace LocalDb
             try
             {
                 var stopwatch = Stopwatch.StartNew();
-                InnerInit(name, buildTemplate, directory, requiresRebuild, templateSize);
+                wrapper = new Wrapper(name, directory, templateSize);
+                wrapper.Start(requiresRebuild, null, buildTemplate);
                 Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
             }
             catch (Exception exception)
             {
                 throw ExceptionBuilder.WrapLocalDbFailure(name, directory, exception);
             }
-        }
-
-        void InnerInit(string name, Action<SqlConnection> buildTemplate, string directory, Func<SqlConnection, bool> requiresRebuild, ushort templateSize)
-        {
-            wrapper = new Wrapper(name, directory, templateSize);
-
-            wrapper.Start(requiresRebuild, null, buildTemplate);
         }
 
         public void Cleanup()
