@@ -1,6 +1,6 @@
 # LocalDb
 
-Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
+Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
 
 ## More info
@@ -29,7 +29,7 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 
 ### Why not SQL Express or full SQL Server
 
- * Control over file location. LocalDB connections support AttachDbFileName property, which allows developers to specify a database file location. LocalDB will attach the specified database file and the connection will be made to it. This allows database files to be stored in a temporary location, and cleaned up, as required by tests.
+ * Control over file location. SqlLocalDB connections support AttachDbFileName property, which allows developers to specify a database file location. SqlLocalDB will attach the specified database file and the connection will be made to it. This allows database files to be stored in a temporary location, and cleaned up, as required by tests.
  * No installed service is required. Processes are started and stopped automatically when needed.
  * Automatic cleanup. A few minutes after the last connection to this process is closed the process shuts down.
  * Full control of instances using the [Command-Line Management Tool: SqlLocalDB.exe](https://docs.microsoft.com/en-us/sql/relational-databases/express-localdb-instance-apis/command-line-management-tool-sqllocaldb-exe?view=sql-server-2017).
@@ -49,7 +49,7 @@ See the official guidance: [InMemory is not a relational database](https://docs.
 ## References:
 
  * [Which Edition of SQL Server is Best for Development Work?](https://www.red-gate.com/simple-talk/sql/sql-development/edition-sql-server-best-development-work/#8)
- * [Introducing LocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
+ * [Introducing SqlLocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
 
 
 ## Usage
@@ -59,21 +59,21 @@ This project currently supports two approaches.
 
 ### Raw SqlConnection
 
-Interactions with LocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
+Interactions with SqlLocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
 
 [Full Usage](/pages/raw-usage.md)
 
 
 ### EntityFramework
 
-Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
+Interactions with SqlLocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
 [Full Usage](/pages/ef-usage.md)
 
 
 ## Debugging
 
-To connect to a LocalDB instance using [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) use a server name with the following convention `(LocalDb)\INSTANCENAME`.
+To connect to a SqlLocalDB instance using [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) use a server name with the following convention `(LocalDb)\INSTANCENAME`.
 
 So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if a `name` or `instanceSuffix` have been defined for SqlInstance.
 
@@ -82,7 +82,7 @@ The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/
 
 ## SqlLocalDb
 
-The [SqlLocalDb Utility (SqlLocalDB.exe)](https://docs.microsoft.com/en-us/sql/tools/sqllocaldb-utility) is a command line tool to enable users and developers to create and manage an instance of LocalDB.
+The [SqlLocalDb Utility (SqlLocalDB.exe)](https://docs.microsoft.com/en-us/sql/tools/sqllocaldb-utility) is a command line tool to enable users and developers to create and manage an instance of SqlLocalDB.
 
 Useful commands:
 
@@ -102,7 +102,7 @@ Ensure that the latests SQL Server Cumulative Update is being used.
 
 ## Simple.LocalDb
 
-LocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
+SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
 
 ## Icon

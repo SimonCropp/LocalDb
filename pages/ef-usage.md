@@ -6,7 +6,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 -->
 # EntityFramework Usage
 
-Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
+Interactions with SqlLocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
 
 ## EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)

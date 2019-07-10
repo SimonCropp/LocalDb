@@ -10,7 +10,7 @@ For EF:
 
 SqlInstance > SqlDatabase > EfContext
 
-SqlInstance represents a [SQL Sever instance](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/database-engine-instances-sql-server?#instances) (in this case hosted in LocalDB) and SqlDatabase represents a [SQL Sever Database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/databases?view=sql-server-2017) running inside that SqlInstance.
+SqlInstance represents a [SQL Sever instance](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/database-engine-instances-sql-server?#instances) (in this case hosted in SqlLocalDB) and SqlDatabase represents a [SQL Sever Database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/databases?view=sql-server-2017) running inside that SqlInstance.
 
 From a API perspective:
 
@@ -48,6 +48,6 @@ When doing a [create database](https://docs.microsoft.com/en-us/sql/t-sql/statem
 
 Since the model database is 8MB, the default (and smallest) size for any new database is also 8MB. This is not ideal when using LocalDB for unit tests, since a database is created for each test, is means an 8MB file needs to be created for each test, with the resulting cost in IO time and disk usage.
 
-To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/sql/t-sql/database-console-commands/dbcc-shrinkfile-transact-sql) is performed on the model database at the time a new LocalDB instance is created. The smallest size allowed is 3MB.
+To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/sql/t-sql/database-console-commands/dbcc-shrinkfile-transact-sql) is performed on the model database at the time a new SqlLocalDB instance is created. The smallest size allowed is 3MB.
 
 snippet: ShrinkModelDb
