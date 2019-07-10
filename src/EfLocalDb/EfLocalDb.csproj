@@ -12,6 +12,7 @@
     <Compile Include="..\LocalDb\DirectoryFinder.cs" />
     <Compile Include="..\LocalDb\ExceptionBuilder.cs" />
     <Compile Include="..\LocalDb\FileExtensions.cs" />
+    <Compile Include="..\LocalDb\Guard.cs" />
     <Compile Include="..\LocalDb\LocalDbRegistryReader.cs" />
     <Compile Include="..\LocalDb\LocalDbInstanceInfo.cs" />
     <Compile Include="..\LocalDb\LocalDbApi.cs" />
