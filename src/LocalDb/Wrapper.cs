@@ -17,6 +17,7 @@ class Wrapper
         {
             throw new ArgumentOutOfRangeException(nameof(size), size, "3MB is the min allowed value");
         }
+        Guard.AgainstInvalidFileNameCharacters(nameof(instance),instance);
 
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";

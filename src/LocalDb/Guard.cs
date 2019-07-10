@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Linq;
 
 static class Guard
 {
@@ -7,6 +9,15 @@ static class Guard
         if (value == null)
         {
             throw new ArgumentNullException(argumentName);
+        }
+    }
+
+    static char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+    public static void AgainstInvalidFileNameCharacters(string argumentName, string value)
+    {
+        if (value.Any(x => invalidFileNameChars.Contains(x)))
+        {
+            throw new ArgumentException($"Invalid file name: {value}", argumentName);
         }
     }
 
