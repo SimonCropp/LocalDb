@@ -9,7 +9,6 @@ public class TheSnippets
     public async Task TheTest()
     {
         #region BuildLocalDbInstance
-
         using (var database = await SqlInstanceService.Build())
         {
             #region BuildContext
@@ -17,7 +16,6 @@ public class TheSnippets
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
             #endregion
         }
-
         #endregion
     }
 
@@ -26,7 +24,6 @@ public class TheSnippets
     public async Task TheTestWithDbName()
     {
         #region WithDbName
-
         using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
         {
             await TestDbBuilder.AddData(database.Connection);
