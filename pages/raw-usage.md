@@ -168,7 +168,7 @@ using (var database = await SqlInstanceService.Build())
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L11-L21)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L11-L19)</sup>
 <!-- endsnippet -->
 
 
@@ -218,7 +218,7 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L28-L35)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L26-L32)</sup>
 <!-- endsnippet -->
 
 
@@ -229,7 +229,7 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L15-L18)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L14-L17)</sup>
 <!-- endsnippet -->
 
 
@@ -241,14 +241,12 @@ The above are combined in a full test:
 ```cs
 public async Task TheTest()
 {
-
     using (var database = await SqlInstanceService.Build())
     {
         await TestDbBuilder.AddData(database.Connection);
         Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
-
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L7-L24)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L7-L22)</sup>
 <!-- endsnippet -->

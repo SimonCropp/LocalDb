@@ -67,14 +67,14 @@ This project currently supports two approaches.
 
 Interactions with LocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
 
-[Full Usage](/pages/raw-usage.md))
+[Full Usage](/pages/raw-usage.md)
 
 
 ### EntityFramework
 
 Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
-[Full Usage](/pages/ef-usage.md))
+[Full Usage](/pages/ef-usage.md)
 
 
 ## Debugging
