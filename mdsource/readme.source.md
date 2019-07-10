@@ -6,7 +6,9 @@ Provides a wrapper around [LocalDB](https://docs.microsoft.com/en-us/sql/databas
 ## More info
 
  * [Design](/pages/design.md)
- * [EF Migrations](/pages/efmigrations.md)
+ * [Raw SqlConnection Usage](/pages/raw-usage.md)
+ * [EntityFramework Usage](/pages/ef-usage.md)
+ * [EntityFramework Migrations](/pages/efmigrations.md)
  * [Directory and instance name resolution](/pages/directory-and-instance-name-resolution.md)
 
 
@@ -50,147 +52,23 @@ See the official guidance: [InMemory is not a relational database](https://docs.
  * [Introducing LocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
 
 
-## The NuGet packages
+## Usgae
 
 This project currently supports two approaches.
 
 
-### 1. LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg)](https://www.nuget.org/packages/LocalDb/)
+### Raw SqlConnection
 
 Interactions with LocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
 
-https://nuget.org/packages/LocalDb/
+[Full Usage](/pages/raw-usage.md))
 
 
-### 2. EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)
+### EntityFramework
 
 Interactions with LocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
-https://nuget.org/packages/EfLocalDb/
-
-
-## Usage
-
-[Schema and data used in snippets](/pages/snippethelpers.md)
-
-
-### Initialize SqlInstance
-
-SqlInstance needs to be initialized once.
-
-To ensure this happens only once there are several approaches that can be used:
-
-
-#### Static constructor
-
-In the static constructor of a test.
-
-If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
-
-
-##### For SQL:
-
-snippet: StaticConstructor
-
-
-##### For EF:
-
-snippet: EfStaticConstructor
-
-
-#### Static constructor in test base
-
-If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
-
-
-##### For SQL:
-
-snippet: TestBase
-
-
-##### For EF:
-
-snippet: EfTestBase
-
-
-### Usage in a Test
-
-Usage inside a test consists of two parts:
-
-
-#### Build a SqlInstance
-
-
-##### For SQL:
-
-snippet: BuildLocalDbInstance
-
-
-##### For EF:
-
-snippet: EfBuildLocalDbInstance
-
-
-#### Build Signature
-
-The signature is as follows:
-
-snippet: BuildSignature
-
-
-#### Database Name
-
-The database name is the derived as follows:
-
-
-snippet: DeriveName
-
-There is also an override that takes an explicit dbName:
-
-
-##### For SQL:
-
-snippet: WithDbName
-
-
-##### For EF:
-
-snippet: EfWithDbName
-
-
-#### Using DbContexts/SQLConnection
-
-
-##### For SQL:
-
-snippet: BuildContext
-
-
-##### For EF:
-
-snippet: EfBuildContext
-
-
-#### Full Test
-
-The above are combined in a full test:
-
-
-##### For SQL:
-
-snippet: Test
-
-
-##### For EF:
-
-snippet: EfTest
-
-
-### EF DefaultOptionsBuilder
-
-When building a `DbContextOptionsBuilder` the default configuration is as follows:
-
-snippet: DefaultOptionsBuilder.cs
+[Full Usage](/pages/ef-usage.md))
 
 
 ## Debugging

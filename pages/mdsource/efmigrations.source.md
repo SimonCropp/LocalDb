@@ -1,7 +1,6 @@
+# EntityFramework Migrations
 
-# EF Migrations
-
-[EF Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
+[EntityFramework Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
 
 snippet: Migrations
 

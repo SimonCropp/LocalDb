@@ -60,6 +60,7 @@ namespace LocalDb
             return wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
+        #region BuildSignature
         /// <summary>
         ///   Build DB with a name based on the calling Method.
         /// </summary>
@@ -70,6 +71,7 @@ namespace LocalDb
             [CallerFilePath] string testFile = null,
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
+        #endregion
         {
             Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
