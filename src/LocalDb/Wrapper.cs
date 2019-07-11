@@ -240,7 +240,12 @@ dbcc shrinkfile(modeldev, {size})
     {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
-            if (Path.GetFileNameWithoutExtension(file) == "template")
+            var nameWithoutExtension = Path.GetFileNameWithoutExtension(file);
+            if (nameWithoutExtension == "template")
+            {
+                continue;
+            }
+            if (nameWithoutExtension == "template_log")
             {
                 continue;
             }
