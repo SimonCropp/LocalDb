@@ -42,7 +42,7 @@ class Wrapper
     public readonly string ServerName;
 
     [Time]
-    void DetachTemplate()
+    void DetachTemplate(DateTime timestamp)
     {
         var commandText = @"
 if db_id('template') is not null
@@ -52,19 +52,7 @@ begin
 end;";
 
         ExecuteOnMaster(commandText);
-    }
-
-    [Time]
-    void TakeTemplateOffline(DateTime? timestamp)
-    {
-        var commandText = @"
-alter database [template]
-set offline";
-        ExecuteOnMaster(commandText);
-        if (timestamp != null)
-        {
-            File.SetCreationTime(TemplateDataFile, timestamp.Value);
-        }
+        File.SetCreationTime(TemplateDataFile, timestamp);
     }
 
     [Time]
@@ -172,7 +160,7 @@ log on
             ShrinkModelDb();
             CreateTemplate();
             ExecuteBuildTemplate(buildTemplate);
-            TakeTemplateOffline(timestamp);
+            DetachTemplate(timestamp);
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -200,11 +188,10 @@ log on
             return;
         }
 
-        DetachTemplate();
         DeleteTemplateFiles();
         CreateTemplate();
         ExecuteBuildTemplate(buildTemplate);
-        TakeTemplateOffline(timestamp);
+        DetachTemplate(timestamp);
     }
 
     [Time]
