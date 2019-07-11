@@ -208,16 +208,6 @@ log on
     }
 
     [Time]
-    bool ExecuteRequiresRebuild(Func<SqlConnection, bool> requiresRebuild)
-    {
-        using (var connection = new SqlConnection(TemplateConnection))
-        {
-            connection.Open();
-            return requiresRebuild(connection);
-        }
-    }
-
-    [Time]
     void ExecuteBuildTemplate(Action<SqlConnection> buildTemplate)
     {
         using (var connection = new SqlConnection(TemplateConnection))
