@@ -22,6 +22,20 @@ public class Tests :
             Assert.NotEmpty(settings.Files);
         }
     }
+    [Fact]
+    public async Task Multiple()
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
+
+        using ( await instance.Build(databaseSuffix:"one"))
+        {
+        }
+        using (await instance.Build(databaseSuffix:"two"))
+        {
+        }
+        Trace.WriteLine(stopwatch.ElapsedMilliseconds);
+    }
 
     [Fact]
     public async Task NoFileAndNoInstance()
