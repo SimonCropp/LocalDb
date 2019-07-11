@@ -21,7 +21,7 @@ class Wrapper
 
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";
-        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template";
+        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
         this.directory = directory;
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
@@ -58,8 +58,7 @@ end;";
     {
         var commandText = @"
 alter database [template]
-set offline
-with rollback immediate";
+set offline";
         ExecuteOnMaster(commandText);
         if (timestamp != null)
         {
