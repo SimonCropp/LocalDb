@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using ApprovalTests;
 using LocalDb;
-using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -20,7 +19,7 @@ public class Tests :
             var data = await TestDbBuilder.AddData(connection);
             Assert.Contains(data, await TestDbBuilder.GetData(connection));
             var settings = DbPropertyReader.Read(connection, "Tests_Simple");
-            ObjectApprover.VerifyWithJson(settings, s => s.Replace(DirectoryFinder.FindDataRoot(), ""));
+            Assert.NotEmpty(settings.Files);
         }
     }
 

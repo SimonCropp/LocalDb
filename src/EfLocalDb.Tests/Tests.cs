@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using ApprovalTests;
 using EfLocalDb;
-using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -212,7 +211,7 @@ public class Tests :
         {
             Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
             var settings = DbPropertyReader.Read(database.Connection, "Tests_Simple");
-            ObjectApprover.VerifyWithJson(settings, s => s.Replace(DirectoryFinder.FindDataRoot(), ""));
+            Assert.NotEmpty(settings.Files);
         }
     }
 

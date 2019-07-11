@@ -10,7 +10,7 @@ static class MethodTimeLogger
 {
     public static void Log(MethodBase methodBase, long milliseconds, string message)
     {
-        if (Logging.VerboseLogging)
+        if (Logging.Enabled)
         {
             Trace.WriteLine($"{methodBase.Name} {milliseconds}ms", "LocalDb");
         }

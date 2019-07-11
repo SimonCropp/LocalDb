@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-#if EF
+﻿#if EF
 namespace EfLocalDb
 #else
 namespace LocalDb
@@ -7,19 +6,11 @@ namespace LocalDb
 {
     public static class Logging
     {
-        public static void EnableVerbose()
+        public static void Enable()
         {
-            VerboseLogging = true;
+            Enabled = true;
         }
 
-        public static bool VerboseLogging { get; private set; }
-
-        public static void Log(string message)
-        {
-            if (VerboseLogging)
-            {
-                Trace.WriteLine(message, "LocalDb");
-            }
-        }
+        public static bool Enabled { get; private set; }
     }
 }

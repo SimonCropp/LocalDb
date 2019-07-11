@@ -4,11 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using MethodTimer;
-#if EF
-using EfLocalDb;
-#else
-using LocalDb;
-#endif
 
 class Wrapper
 {
@@ -99,20 +94,8 @@ execute sp_executesql @command";
         ExecuteOnMaster(commandText);
     }
 
+    [Time]
     public async Task<string> CreateDatabaseFromTemplate(string name)
-    {
-        var stopwatch = Stopwatch.StartNew();
-        try
-        {
-           return await InnerCreateDatabaseFromTemplate(name);
-        }
-        finally
-        {
-            Logging.Log($"CreateDatabaseFromTemplate: {stopwatch.ElapsedMilliseconds}ms");
-        }
-    }
-
-    async Task<string> InnerCreateDatabaseFromTemplate(string name)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -140,7 +123,6 @@ alter database [{name}]
     modify file (name=template_log, newname='{name}_log')
 ";
         await ExecuteOnMasterAsync(commandText);
-
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
     }
 
@@ -213,13 +195,12 @@ log on
         ExecuteOnMaster(commandText);
     }
 
+    [Time]
     public void Start(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
     {
         try
         {
-            var stopwatch = Stopwatch.StartNew();
             InnerStart(requiresRebuild, timestamp, buildTemplate);
-            Trace.WriteLine($"Initialization: {stopwatch.ElapsedMilliseconds}ms", "LocalDb");
         }
         catch (Exception exception)
         {
