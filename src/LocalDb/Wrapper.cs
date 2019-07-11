@@ -266,7 +266,7 @@ dbcc shrinkfile(modeldev, {size})
         var commandText = $"drop database [{dbName}];";
         await ExecuteOnMasterAsync(commandText);
         var dataFile = Path.Combine(directory, $"{dbName}.mdf");
-        var logFile = Path.Combine(directory, $"{dbName}.ldf");
+        var logFile = Path.Combine(directory, $"{dbName}_log.ldf");
         File.Delete(dataFile);
         File.Delete(logFile);
     }
