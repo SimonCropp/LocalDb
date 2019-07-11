@@ -336,9 +336,7 @@ dbcc shrinkfile(modeldev, {size})
 
     public async Task DeleteDatabase(string dbName)
     {
-        var commandText = $@"
-alter database [{dbName}] set single_user with rollback immediate;
-drop database [{dbName}];";
+        var commandText = $"drop database [{dbName}];";
         await ExecuteOnMasterAsync(commandText);
         var dataFile = Path.Combine(directory, $"{dbName}.mdf");
         var logFile = Path.Combine(directory, $"{dbName}.ldf");
