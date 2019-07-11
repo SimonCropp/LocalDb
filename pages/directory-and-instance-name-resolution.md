@@ -17,7 +17,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L144-L153)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L131-L140)</sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:

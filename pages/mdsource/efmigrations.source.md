@@ -19,10 +19,3 @@ snippet: IMigrationsSqlGenerator
 Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/#apply-migrations-at-runtime).
 
 snippet: Migrate
-
-
-## CheckForMigrations
-
-Check if there are any pending migrations. This is an optional performance improvement. It allows the generated template to be re-used if there are no pending migrations.
-
-snippet: CheckForMigrations

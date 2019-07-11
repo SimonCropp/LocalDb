@@ -132,9 +132,10 @@ public class Tests :
     [Fact]
     public async Task WithRebuildDbContext()
     {
+        var dateTime = DateTime.Now;
         var instance1 = new SqlInstance<WithRebuildDbContext>(
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
-            requiresRebuild: dbContext => true);
+            timestamp: dateTime);
         using (var database1 = await instance1.Build())
         {
             var entity = new TestEntity
@@ -147,7 +148,7 @@ public class Tests :
         var instance2 = new SqlInstance<WithRebuildDbContext>(
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
             buildTemplate: x => throw new Exception(),
-            requiresRebuild: dbContext => false);
+            timestamp: dateTime);
         using (var database2 = await instance2.Build())
         {
             Assert.Empty(database2.Context.TestEntities);

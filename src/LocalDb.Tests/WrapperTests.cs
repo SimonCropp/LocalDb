@@ -39,6 +39,6 @@ public class WrapperTests :
     static WrapperTests()
     {
         instance = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"), 4);
-        instance.Start(connection => true, DateTime.Now, TestDbBuilder.CreateTable);
+        instance.Start(DateTime.Now, TestDbBuilder.CreateTable);
     }
 }

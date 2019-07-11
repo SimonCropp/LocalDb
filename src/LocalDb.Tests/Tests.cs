@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using ApprovalTests;
 using LocalDb;
@@ -85,10 +86,11 @@ public class Tests :
     [Fact]
     public async Task WithRebuild()
     {
+        var dateTime = DateTime.Now;
         var instance1 = new SqlInstance(
             "rebuild",
             TestDbBuilder.CreateTable,
-            requiresRebuild: dbContext => true);
+            timestamp: dateTime);
         int data;
         using (var database1 = await instance1.Build())
         {
@@ -98,7 +100,7 @@ public class Tests :
         var instance2 = new SqlInstance(
             "rebuild",
             connection => throw new Exception(),
-            requiresRebuild: dbContext => false);
+            timestamp: dateTime);
         using (var database = await instance2.Build())
         {
             var connection1 = database.Connection;

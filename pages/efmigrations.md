@@ -22,13 +22,9 @@ var sqlInstance = new SqlInstance<MyDbContext>(
     constructInstance: builder =>
     {
         return new MyDbContext(builder.Options);
-    },
-    requiresRebuild: dbContext =>
-    {
-        return dbContext.Database.GetPendingMigrations().Any();
     });
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L14-L40)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L33)</sup>
 <!-- endsnippet -->
 
 The above performs the following actions:
@@ -42,7 +38,7 @@ Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/e
 ```cs
 optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L19-L21)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L20)</sup>
 <!-- endsnippet -->
 
 
@@ -57,17 +53,5 @@ using (var dbContext = new MyDbContext(optionsBuilder.Options))
     dbContext.Database.Migrate();
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L22-L27)</sup>
-<!-- endsnippet -->
-
-
-## CheckForMigrations
-
-Check if there are any pending migrations. This is an optional performance improvement. It allows the generated template to be re-used if there are no pending migrations.
-
-<!-- snippet: CheckForMigrations -->
-```cs
-return dbContext.Database.GetPendingMigrations().Any();
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L35-L37)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L26)</sup>
 <!-- endsnippet -->

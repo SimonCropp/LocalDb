@@ -133,25 +133,6 @@ alter database [{name}]
     }
 
     [Time]
-    void RestoreTemplate()
-    {
-        var dataFile = Path.Combine(directory, "template.mdf");
-        var commandText = $@"
-if db_id('template') is null
-begin
-    create database template on
-    (
-        name = template,
-        filename = '{dataFile}'
-    )
-    for attach;
-    alter database [template] set offline;
-end;
-";
-        ExecuteOnMaster(commandText);
-    }
-
-    [Time]
     void CreateTemplate()
     {
         var commandText = $@"
@@ -173,12 +154,12 @@ log on
     }
 
     [Time]
-    public void Start(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
+    public void Start(DateTime timestamp, Action<SqlConnection> buildTemplate)
     {
         try
         {
             var stopwatch = Stopwatch.StartNew();
-            InnerStart(requiresRebuild, timestamp, buildTemplate);
+            InnerStart(timestamp, buildTemplate);
             Trace.WriteLine($"Start {ServerName} {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
         }
         catch (Exception exception)
@@ -187,7 +168,7 @@ log on
         }
     }
 
-    void InnerStart(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
+    void InnerStart(DateTime timestamp, Action<SqlConnection> buildTemplate)
     {
         void CleanStart()
         {
@@ -218,28 +199,11 @@ log on
         PurgeDbs();
         DeleteNonTemplateFiles();
 
-        //TODO: remove in future. only required for old versions that used detach
-        RestoreTemplate();
-        if (requiresRebuild == null)
+        var templateLastMod = File.GetCreationTime(TemplateDataFile);
+        if (timestamp == templateLastMod)
         {
-            if (timestamp != null)
-            {
-                var templateLastMod = File.GetCreationTime(TemplateDataFile);
-                if (timestamp == templateLastMod)
-                {
-                    Logging.Log("Not modified so skipping rebuild");
-                    return;
-                }
-            }
-        }
-        else
-        {
-            BringTemplateOnline();
-            if (!ExecuteRequiresRebuild(requiresRebuild))
-            {
-                TakeTemplateOffline(timestamp);
-                return;
-            }
+            Logging.Log("Not modified so skipping rebuild");
+            return;
         }
 
         DetachTemplate();

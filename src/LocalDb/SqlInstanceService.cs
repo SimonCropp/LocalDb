@@ -22,11 +22,11 @@ namespace LocalDb
             string name,
             Action<SqlConnection> buildTemplate,
             string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null,
+            DateTime? timestamp = null,
             ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance(name, buildTemplate, directory, requiresRebuild, templateSize);
+            instance = new SqlInstance(name, buildTemplate, directory, timestamp, templateSize);
         }
 
         static void ThrowIfInstanceNull()

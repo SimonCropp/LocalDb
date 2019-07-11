@@ -20,7 +20,7 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             Action<TDbContext> buildTemplate = null,
             string instanceSuffix = null,
-            Func<TDbContext, bool> requiresRebuild = null,
+            DateTime? timestamp = null,
             ushort templateSize = 3)
         {
             Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
@@ -33,7 +33,7 @@ namespace EfLocalDb
                 constructInstance,
                 instanceName,
                 directory,
-                requiresRebuild,
+                timestamp,
                 templateSize);
         }
 
@@ -42,7 +42,7 @@ namespace EfLocalDb
             string name,
             string directory,
             Action<TDbContext> buildTemplate = null,
-            Func<TDbContext, bool> requiresRebuild = null,
+            DateTime? timestamp = null,
             ushort templateSize = 3)
         {
             Init(
@@ -50,7 +50,7 @@ namespace EfLocalDb
                 constructInstance,
                 name,
                 directory,
-                requiresRebuild,
+                timestamp,
                 templateSize);
         }
 
@@ -78,12 +78,12 @@ namespace EfLocalDb
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string instanceSuffix = null,
-            Func<TDbContext, bool> requiresRebuild = null,
+            DateTime? timestamp = null,
             ushort templateSize = 3)
         {
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
-            Init(buildTemplate, constructInstance, instanceName, directory, requiresRebuild, templateSize);
+            Init(buildTemplate, constructInstance, instanceName, directory, timestamp, templateSize);
         }
 
         public SqlInstance(
@@ -91,10 +91,10 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
-            Func<TDbContext, bool> requiresRebuild = null,
+            DateTime? timestamp = null,
             ushort templateSize = 3)
         {
-            Init(buildTemplate, constructInstance, name, directory, requiresRebuild, templateSize);
+            Init(buildTemplate, constructInstance, name, directory, timestamp, templateSize);
         }
 
         void Init(
@@ -102,26 +102,13 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
-            Func<TDbContext, bool> requiresRebuild,
+            DateTime? timestamp,
             ushort templateSize)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
-            Func<SqlConnection, bool> wrappedRequiresRebuild = null;
-            if (requiresRebuild != null)
-            {
-                wrappedRequiresRebuild = templateConnection =>
-                {
-                    var builder = new DbContextOptionsBuilder<TDbContext>();
-                    builder.UseSqlServer(templateConnection);
-                    using (var dbContext = this.constructInstance(builder))
-                    {
-                        return requiresRebuild(dbContext);
-                    }
-                };
-            }
 
             void BuildTemplate(SqlConnection connection)
             {
@@ -130,11 +117,11 @@ namespace EfLocalDb
                 buildTemplate(connection, builder);
             }
 
-            var timestamp = typeof(TDbContext).Assembly.LastModified();
+            var resultTimestamp = timestamp.GetValueOrDefault(typeof(TDbContext).Assembly.LastModified());
 
             wrapper = new Wrapper(name, directory, templateSize);
 
-            wrapper.Start(wrappedRequiresRebuild, timestamp, BuildTemplate);
+            wrapper.Start(resultTimestamp, BuildTemplate);
         }
 
         static string GetInstanceName(string scopeSuffix)

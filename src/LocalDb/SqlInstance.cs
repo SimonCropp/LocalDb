@@ -16,7 +16,7 @@ namespace LocalDb
             string name,
             Action<SqlConnection> buildTemplate,
             string directory = null,
-            Func<SqlConnection, bool> requiresRebuild = null,
+            DateTime? timestamp = null,
             ushort templateSize = 3)
         {
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
@@ -28,7 +28,7 @@ namespace LocalDb
             }
 
             wrapper = new Wrapper(name, directory, templateSize);
-            wrapper.Start(requiresRebuild, null, buildTemplate);
+            wrapper.Start(timestamp.GetValueOrDefault(DateTime.Now), buildTemplate);
         }
 
         public void Cleanup()

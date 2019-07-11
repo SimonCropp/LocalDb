@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -29,12 +28,6 @@ public class Migrations
             constructInstance: builder =>
             {
                 return new MyDbContext(builder.Options);
-            },
-            requiresRebuild: dbContext =>
-            {
-                #region CheckForMigrations
-                return dbContext.Database.GetPendingMigrations().Any();
-                #endregion
             });
 
         #endregion
