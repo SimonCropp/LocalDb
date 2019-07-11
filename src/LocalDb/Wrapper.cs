@@ -54,12 +54,6 @@ end;";
         ExecuteOnMaster(commandText);
     }
 
-    void BringTemplateOnline()
-    {
-        var commandText = @"alter database [template] set online";
-        ExecuteOnMaster(commandText);
-    }
-
     [Time]
     void TakeTemplateOffline(DateTime? timestamp)
     {
