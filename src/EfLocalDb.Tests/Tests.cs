@@ -212,7 +212,7 @@ public class Tests :
         {
             Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
             var settings = DbPropertyReader.Read(database.Connection, "Tests_Simple");
-            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
+            ObjectApprover.VerifyWithJson(settings, s => s.Replace(DirectoryFinder.FindDataRoot(), ""));
         }
     }
 

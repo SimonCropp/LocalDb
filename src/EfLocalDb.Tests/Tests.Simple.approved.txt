@@ -2,11 +2,11 @@
   Files: [
     {
       Name: 'Tests_Simple',
-      Filename: 'LocalDb\TestDbContext\Tests_Simple.mdf'
+      Filename: 'TestDbContext\Tests_Simple.mdf'
     },
     {
       Name: 'Tests_Simple_log',
-      Filename: 'LocalDb\TestDbContext\Tests_Simple_log.ldf'
+      Filename: 'TestDbContext\Tests_Simple_log.ldf'
     }
   ]
 }
