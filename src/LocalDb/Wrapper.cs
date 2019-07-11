@@ -128,7 +128,7 @@ alter database [{name}]
     modify file (name=template_log, newname='{name}_log')
 ";
         await ExecuteOnMasterAsync(commandText);
-        Trace.WriteLine($"Create DB ({stopwatch.ElapsedMilliseconds}ms).", "LocalDb");
+        Trace.WriteLine($"Create DB {name} {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
     }
 
@@ -179,7 +179,7 @@ log on
         {
             var stopwatch = Stopwatch.StartNew();
             InnerStart(requiresRebuild, timestamp, buildTemplate);
-            Trace.WriteLine($"Start ({stopwatch.ElapsedMilliseconds}ms). Server Name: {ServerName}.", "LocalDb");
+            Trace.WriteLine($"Start {ServerName} {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
         }
         catch (Exception exception)
         {
