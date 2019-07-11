@@ -111,7 +111,7 @@ alter database [{name}]
 ";
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB {name} {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
+        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
     [Time]
