@@ -129,10 +129,10 @@ namespace EfLocalDb
             Func<TDbContext, bool> requiresRebuild,
             ushort templateSize)
         {
-            Func<SqlConnection, bool> requiresRebuild2 = null;
+            Func<SqlConnection, bool> wrappedRequiresRebuild = null;
             if (requiresRebuild != null)
             {
-                requiresRebuild2 = templateConnection =>
+                wrappedRequiresRebuild = templateConnection =>
                 {
                     var builder = new DbContextOptionsBuilder<TDbContext>();
                     builder.UseSqlServer(templateConnection);
@@ -143,18 +143,18 @@ namespace EfLocalDb
                 };
             }
 
-            Action<SqlConnection> buildTemplate2 = connection =>
+            void BuildTemplate(SqlConnection connection)
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
                 builder.UseSqlServer(connection);
                 buildTemplate(connection, builder);
-            };
+            }
 
             var timestamp = typeof(TDbContext).Assembly.LastModified();
 
             wrapper = new Wrapper(name, directory, templateSize);
 
-            wrapper.Start(requiresRebuild2, timestamp, buildTemplate2);
+            wrapper.Start(wrappedRequiresRebuild, timestamp, BuildTemplate);
         }
 
         static string GetInstanceName(string scopeSuffix)
