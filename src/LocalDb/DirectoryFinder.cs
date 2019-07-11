@@ -23,7 +23,7 @@ static class DirectoryFinder
         }
     }
 
-    static string FindDataRoot()
+    public static string FindDataRoot()
     {
         var localDbEnv = Environment.GetEnvironmentVariable("LocalDBData");
         if (localDbEnv != null)

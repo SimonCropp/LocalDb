@@ -21,7 +21,7 @@ public class Tests :
             var data = await TestDbBuilder.AddData(connection);
             Assert.Contains(data, await TestDbBuilder.GetData(connection));
             var settings = DbPropertyReader.Read(connection, "Tests_Simple");
-            ObjectApprover.VerifyWithJson(settings, s => s.Replace(Path.GetTempPath(), ""));
+            ObjectApprover.VerifyWithJson(settings, s => s.Replace(DirectoryFinder.FindDataRoot(), ""));
         }
     }
 
