@@ -289,6 +289,7 @@ log on
             await connection.ExecuteCommandAsync(command);
         }
     }
+
     void ExecuteOnMaster(string command)
     {
         using (var connection = new SqlConnection(MasterConnectionString))
