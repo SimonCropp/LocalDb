@@ -62,15 +62,15 @@ end;";
 declare @command nvarchar(max)
 set @command = ''
 
-select @command = @command + '[' + [name] + '], '
+select @command = @command
++ '
+
+drop database [' + [name] + '];
+
+'
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
-
-if LEN(@command) > 0
-begin
-select @command = 'drop database ' + LEFT(@command, LEN(@command) - 1) + ';'
-execute sp_executesql @command
-end";
+execute sp_executesql @command";
         ExecuteOnMaster(commandText);
     }
 
