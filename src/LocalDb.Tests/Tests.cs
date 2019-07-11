@@ -30,11 +30,13 @@ public class Tests :
         var stopwatch = Stopwatch.StartNew();
         var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable,timestamp:lastModified);
 
-        using ( await instance.Build(databaseSuffix:"one"))
+        using (var database = await instance.Build(databaseSuffix:"one"))
         {
+            await database.Delete();
         }
-        using (await instance.Build(databaseSuffix:"two"))
+        using (var database = await instance.Build(databaseSuffix:"two"))
         {
+            await database.Delete();
         }
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
     }
