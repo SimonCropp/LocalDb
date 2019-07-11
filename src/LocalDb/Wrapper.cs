@@ -65,12 +65,6 @@ set @command = ''
 select @command = @command
 + '
 
-begin try
-  alter database [' + [name] + '] set single_user with rollback immediate;
-end try
-begin catch
-end catch;
-
 drop database [' + [name] + '];
 
 '
