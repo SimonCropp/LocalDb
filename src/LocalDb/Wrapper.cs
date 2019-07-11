@@ -4,6 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using MethodTimer;
+#if EF
+using EfLocalDb;
+#else
+using LocalDb;
+#endif
 
 class Wrapper
 {
@@ -29,7 +34,6 @@ class Wrapper
         TemplateLogFile = Path.Combine(directory, "template_log.ldf");
         Directory.CreateDirectory(directory);
         ServerName = $@"(LocalDb)\{instance}";
-        Trace.WriteLine($"Creating LocalDb instance. Server Name: {ServerName}");
     }
 
     string TemplateDataFile;
@@ -97,6 +101,7 @@ execute sp_executesql @command";
     [Time]
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
+        var stopwatch = Stopwatch.StartNew();
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("The database name 'template' is reserved.");
@@ -123,7 +128,9 @@ alter database [{name}]
     modify file (name=template_log, newname='{name}_log')
 ";
         await ExecuteOnMasterAsync(commandText);
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
+        var connection = $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
+        Trace.WriteLine($"Create DB ({stopwatch.ElapsedMilliseconds}ms). Connection: {connection}", "LocalDb");
+        return connection;
     }
 
     [Time]
@@ -143,35 +150,6 @@ begin
 end;
 ";
         ExecuteOnMaster(commandText);
-    }
-
-    [Time]
-    async Task<string> CreateDatabaseFromFile(string name, Task fileCopyTask)
-    {
-        var dataFile2 = Path.Combine(directory, $"{name}.mdf");
-        var commandText = $@"
-create database [{name}] on
-(
-    name = [{name}],
-    filename = '{dataFile2}'
-)
-for attach;
-
-alter database [{name}]
-    modify file (name=template, newname='{name}')
-alter database [{name}]
-    modify file (name=template_log, newname='{name}_log')
-";
-        using (var connection = new SqlConnection(MasterConnectionString))
-        {
-            await connection.OpenAsync();
-            var startNew = Stopwatch.StartNew();
-            await fileCopyTask;
-            Trace.WriteLine(startNew.ElapsedMilliseconds);
-            await connection.ExecuteCommandAsync(commandText);
-        }
-
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True";
     }
 
     [Time]
@@ -200,7 +178,9 @@ log on
     {
         try
         {
+            var stopwatch = Stopwatch.StartNew();
             InnerStart(requiresRebuild, timestamp, buildTemplate);
+            Trace.WriteLine($"Start instance ({stopwatch.ElapsedMilliseconds}ms). Server Name: {ServerName}. Connection: {MasterConnectionString}","LocalDb");
         }
         catch (Exception exception)
         {
@@ -248,7 +228,7 @@ log on
                 var templateLastMod = File.GetCreationTime(TemplateDataFile);
                 if (timestamp == templateLastMod)
                 {
-                    Trace.WriteLine("Not modified so skipping rebuild");
+                    Logging.Log("Not modified so skipping rebuild");
                     return;
                 }
             }

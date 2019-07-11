@@ -1,4 +1,6 @@
-﻿#if EF
+﻿using System.Diagnostics;
+
+#if EF
 namespace EfLocalDb
 #else
 namespace LocalDb
@@ -12,5 +14,12 @@ namespace LocalDb
         }
 
         public static bool Enabled { get; private set; }
+        public static void Log(string message)
+        {
+            if (Enabled)
+            {
+                Trace.WriteLine(message, "LocalDb");
+            }
+        }
     }
 }
