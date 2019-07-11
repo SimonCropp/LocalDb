@@ -14,6 +14,7 @@ namespace LocalDb
         }
 
         public static bool Enabled { get; private set; }
+
         public static void Log(string message)
         {
             if (Enabled)

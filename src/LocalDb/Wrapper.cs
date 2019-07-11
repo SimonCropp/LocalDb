@@ -180,7 +180,7 @@ log on
         {
             var stopwatch = Stopwatch.StartNew();
             InnerStart(requiresRebuild, timestamp, buildTemplate);
-            Trace.WriteLine($"Start instance ({stopwatch.ElapsedMilliseconds}ms). Server Name: {ServerName}. Connection: {MasterConnectionString}","LocalDb");
+            Trace.WriteLine($"Start ({stopwatch.ElapsedMilliseconds}ms). Server Name: {ServerName}. Connection: {MasterConnectionString}","LocalDb");
         }
         catch (Exception exception)
         {
