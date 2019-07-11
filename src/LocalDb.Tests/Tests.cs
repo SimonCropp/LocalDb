@@ -26,8 +26,9 @@ public class Tests :
     [Fact]
     public async Task Multiple()
     {
+        var lastModified = GetType().Assembly.LastModified();
         var stopwatch = Stopwatch.StartNew();
-        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable,timestamp:lastModified);
 
         using ( await instance.Build(databaseSuffix:"one"))
         {
