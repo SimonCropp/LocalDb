@@ -190,6 +190,20 @@ log on
 
     public void Start(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
     {
+        try
+        {
+            var stopwatch = Stopwatch.StartNew();
+            InnerStart(requiresRebuild, timestamp, buildTemplate);
+            Trace.WriteLine($"LocalDb initialization: {stopwatch.ElapsedMilliseconds}ms");
+        }
+        catch (Exception exception)
+        {
+            throw ExceptionBuilder.WrapLocalDbFailure(instance, directory, exception);
+        }
+    }
+
+    void InnerStart(Func<SqlConnection, bool> requiresRebuild, DateTime? timestamp, Action<SqlConnection> buildTemplate)
+    {
         void CleanStart()
         {
             FileExtensions.FlushDirectory(directory);

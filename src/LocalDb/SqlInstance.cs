@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -21,15 +20,6 @@ namespace LocalDb
             ushort templateSize = 3)
         {
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
-            Init(name, buildTemplate, directory, requiresRebuild, templateSize);
-        }
-
-        void Init(
-            string name,
-            Action<SqlConnection> buildTemplate, string directory,
-            Func<SqlConnection, bool> requiresRebuild,
-            ushort templateSize)
-        {
             Guard.AgainstWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             if (directory == null)
@@ -37,17 +27,8 @@ namespace LocalDb
                 directory = DirectoryFinder.Find(name);
             }
 
-            try
-            {
-                var stopwatch = Stopwatch.StartNew();
-                wrapper = new Wrapper(name, directory, templateSize);
-                wrapper.Start(requiresRebuild, null, buildTemplate);
-                Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
-            }
-            catch (Exception exception)
-            {
-                throw ExceptionBuilder.WrapLocalDbFailure(name, directory, exception);
-            }
+            wrapper = new Wrapper(name, directory, templateSize);
+            wrapper.Start(requiresRebuild, null, buildTemplate);
         }
 
         public void Cleanup()

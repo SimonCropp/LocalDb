@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -110,25 +109,6 @@ namespace EfLocalDb
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
-            try
-            {
-                var stopwatch = Stopwatch.StartNew();
-                InnerInit(buildTemplate, name, directory, requiresRebuild, templateSize);
-                Trace.WriteLine($"SqlInstance initialization: {stopwatch.ElapsedMilliseconds}ms");
-            }
-            catch (Exception exception)
-            {
-               throw ExceptionBuilder.WrapLocalDbFailure(name, directory, exception);
-            }
-        }
-
-        void InnerInit(
-            Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
-            string name,
-            string directory,
-            Func<TDbContext, bool> requiresRebuild,
-            ushort templateSize)
-        {
             Func<SqlConnection, bool> wrappedRequiresRebuild = null;
             if (requiresRebuild != null)
             {
@@ -136,7 +116,7 @@ namespace EfLocalDb
                 {
                     var builder = new DbContextOptionsBuilder<TDbContext>();
                     builder.UseSqlServer(templateConnection);
-                    using (var dbContext = constructInstance(builder))
+                    using (var dbContext = this.constructInstance(builder))
                     {
                         return requiresRebuild(dbContext);
                     }

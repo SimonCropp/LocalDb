@@ -189,7 +189,7 @@ public Task<SqlDatabase> Build(
     string databaseSuffix = null,
     [CallerMemberName] string memberName = null)
 ```
-<sup>[snippet source](/src/LocalDb/SqlInstance.cs#L63-L74)</sup>
+<sup>[snippet source](/src/LocalDb/SqlInstance.cs#L44-L55)</sup>
 <!-- endsnippet -->
 
 

@@ -176,7 +176,7 @@ public Task<SqlDatabase<TDbContext>> Build(
     string databaseSuffix = null,
     [CallerMemberName] string memberName = null)
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L209-L221)</sup>
+<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L189-L201)</sup>
 <!-- endsnippet -->
 
 
