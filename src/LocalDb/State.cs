@@ -1,4 +1,4 @@
-internal enum State
+enum State
 {
     Running,
     Stopped,
