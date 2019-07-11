@@ -5,6 +5,7 @@
     <GeneratePackageOnBuild Condition="$(Configuration) == 'Release'">true</GeneratePackageOnBuild>
     <GenerateDocumentationFile Condition="$(Configuration) == 'Release'">true</GenerateDocumentationFile>
     <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB, Testing</PackageTags>
+    <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\LocalDb\DbNamer.cs" />
@@ -16,11 +17,14 @@
     <Compile Include="..\LocalDb\LocalDbRegistryReader.cs" />
     <Compile Include="..\LocalDb\LocalDbInstanceInfo.cs" />
     <Compile Include="..\LocalDb\LocalDbApi.cs" />
+    <Compile Include="..\LocalDb\Logging.cs" Link="Logging.cs" />
+    <Compile Include="..\LocalDb\MethodTimeLogger.cs" Link="MethodTimeLogger.cs" />
     <Compile Include="..\LocalDb\SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\State.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MethodTimer.Fody" Version="3.0.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.5.0" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.1.0" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="5.1.1" PrivateAssets="All" />

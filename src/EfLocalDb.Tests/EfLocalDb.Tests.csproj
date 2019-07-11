@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <Optimize>false</Optimize>
+    <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\LocalDb.Tests\ModuleInitializer.cs" Link="ModuleInitializer.cs" />
