@@ -104,11 +104,11 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 ```cs
 public class TestBase
 {
-    static SqlInstance<TheDbContext> instance;
+    static SqlInstance<TheDbContext> sqlInstance;
 
     static TestBase()
     {
-        instance = new SqlInstance<TheDbContext>(
+        sqlInstance = new SqlInstance<TheDbContext>(
             constructInstance: builder => new TheDbContext(builder.Options));
     }
 
@@ -116,7 +116,7 @@ public class TestBase
         string databaseSuffix = null,
         [CallerMemberName] string memberName = null)
     {
-        return instance.Build(GetType().Name, databaseSuffix, memberName);
+        return sqlInstance.Build(GetType().Name, databaseSuffix, memberName);
     }
 }
 

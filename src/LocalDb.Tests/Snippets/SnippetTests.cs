@@ -4,11 +4,11 @@ using Xunit;
 
 public class SnippetTests
 {
-    static SqlInstance instance;
+    static SqlInstance sqlInstance;
 
     static SnippetTests()
     {
-        instance = new SqlInstance(
+        sqlInstance = new SqlInstance(
             name: "Snippets",
             buildTemplate: TestDbBuilder.CreateTable);
     }
@@ -18,7 +18,7 @@ public class SnippetTests
     public async Task TheTest()
     {
         #region BuildLocalDbInstance
-        using (var database = await instance.Build())
+        using (var database = await sqlInstance.Build())
         {
             #region BuildContext
             await TestDbBuilder.AddData(database.Connection);
@@ -33,7 +33,7 @@ public class SnippetTests
     public async Task TheTestWithDbName()
     {
         #region WithDbName
-        using (var database = await instance.Build("TheTestWithDbName"))
+        using (var database = await sqlInstance.Build("TheTestWithDbName"))
         {
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
