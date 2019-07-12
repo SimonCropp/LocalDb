@@ -162,7 +162,7 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```md
-using (var database = await instance.Build())
+using (var database = await sqlInstance.Build())
 {
     await TestDbBuilder.AddData(database.Connection);
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
@@ -220,7 +220,7 @@ There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
 ```md
-using (var database = await instance.Build("TheTestWithDbName"))
+using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
     await TestDbBuilder.AddData(database.Connection);
     Assert.Single(await TestDbBuilder.GetData(database.Connection));

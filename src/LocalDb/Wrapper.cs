@@ -182,7 +182,7 @@ log on
         var templateLastMod = File.GetCreationTime(TemplateDataFile);
         if (timestamp == templateLastMod)
         {
-            Logging.Log("Not modified so skipping rebuild");
+            LocalDbLogging.Log("Not modified so skipping rebuild");
             return;
         }
 

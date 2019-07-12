@@ -39,7 +39,7 @@ var sqlInstance = new SqlInstance(
     directory: @"C:\LocalDb\theInstance"
 );
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L7-L13)</sup>
 <!-- endsnippet -->
 
 
