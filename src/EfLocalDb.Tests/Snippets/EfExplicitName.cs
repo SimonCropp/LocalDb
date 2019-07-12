@@ -1,16 +1,14 @@
 ﻿using EfLocalDb;
 
-class EfRegisterExplicit
+class EfExplicitName
 {
-    EfRegisterExplicit()
+    EfExplicitName()
     {
-        #region EfRegisterExplicit
-
-        SqlInstanceService<TheDbContext>.Register(
+        #region EfExplicitName
+        var sqlInstance = new SqlInstance<TheDbContext>(
             constructInstance: builder => new TheDbContext(builder.Options),
-            instanceName: "theInstanceName",
+            name: "theInstanceName",
             directory: @"C:\LocalDb\theInstance");
-
         #endregion
     }
 }

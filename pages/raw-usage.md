@@ -162,13 +162,13 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: BuildLocalDbInstance -->
 ```cs
-using (var database = await SqlInstanceService.Build())
+using (var database = await instance.Build())
 {
     await TestDbBuilder.AddData(database.Connection);
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L11-L19)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L28)</sup>
 <!-- endsnippet -->
 
 
@@ -212,13 +212,13 @@ There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
 ```cs
-using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
+using (var database = await instance.Build("TheTestWithDbName"))
 {
     await TestDbBuilder.AddData(database.Connection);
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L26-L32)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L35-L41)</sup>
 <!-- endsnippet -->
 
 
@@ -229,7 +229,7 @@ using (var database = await SqlInstanceService.Build("TheTestWithDbName"))
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L14-L17)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L23-L26)</sup>
 <!-- endsnippet -->
 
 
@@ -237,16 +237,115 @@ Assert.Single(await TestDbBuilder.GetData(database.Connection));
 
 The above are combined in a full test:
 
-<!-- snippet: Test -->
+<!-- snippet: SnippetTests.cs -->
 ```cs
-public async Task TheTest()
+using System.Threading.Tasks;
+using EfLocalDb;
+using Xunit;
+
+public class EfSnippetTests
 {
-    using (var database = await SqlInstanceService.Build())
+    static SqlInstance<MyDbContext> sqlInstance;
+    static EfSnippetTests()
     {
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        sqlInstance = new SqlInstance<MyDbContext>(
+            builder => new MyDbContext(builder.Options));
+    }
+
+    #region EfTest
+
+    [Fact]
+    public async Task TheTest()
+    {
+        #region EfBuildLocalDbInstance
+        using (var database = await sqlInstance.Build())
+        {
+            #endregion
+
+            #region EfBuildContext
+            using (var dbContext = database.NewDbContext())
+            {
+                #endregion
+                var entity = new TheEntity
+                {
+                    Property = "prop"
+                };
+                dbContext.Add(entity);
+                dbContext.SaveChanges();
+            }
+
+            using (var dbContext = database.NewDbContext())
+            {
+                Assert.Single(dbContext.TestEntities);
+            }
+        }
+    }
+
+    #endregion
+
+    [Fact]
+    public async Task TheTestWithDbName()
+    {
+        #region EfWithDbName
+        using (var database = await sqlInstance.Build("TheTestWithDbName"))
+        {
+            #endregion
+            var entity = new TheEntity
+            {
+                Property = "prop"
+            };
+            await database.AddData(entity);
+
+            Assert.Single(database.Context.TestEntities);
+        }
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TheSnippets.cs#L7-L22)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L61)</sup>
+```cs
+using System.Threading.Tasks;
+using LocalDb;
+using Xunit;
+
+public class SnippetTests
+{
+    static SqlInstance instance;
+
+    static SnippetTests()
+    {
+        instance = new SqlInstance(
+            name: "Snippets",
+            buildTemplate: TestDbBuilder.CreateTable);
+    }
+
+    #region Test
+
+    public async Task TheTest()
+    {
+        #region BuildLocalDbInstance
+        using (var database = await instance.Build())
+        {
+            #region BuildContext
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
+            #endregion
+        }
+        #endregion
+    }
+
+    #endregion
+
+    public async Task TheTestWithDbName()
+    {
+        #region WithDbName
+        using (var database = await instance.Build("TheTestWithDbName"))
+        {
+            await TestDbBuilder.AddData(database.Connection);
+            Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        }
+        #endregion
+    }
+}
+```
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L43)</sup>
 <!-- endsnippet -->

@@ -2,11 +2,12 @@
 using EfLocalDb;
 using Xunit;
 
-public class SnippetTests
+public class EfSnippetTests
 {
-    static SnippetTests()
+    static SqlInstance<MyDbContext> sqlInstance;
+    static EfSnippetTests()
     {
-        SqlInstanceService<MyDbContext>.Register(
+        sqlInstance = new SqlInstance<MyDbContext>(
             builder => new MyDbContext(builder.Options));
     }
 
@@ -16,7 +17,7 @@ public class SnippetTests
     public async Task TheTest()
     {
         #region EfBuildLocalDbInstance
-        using (var database = await SqlInstanceService<MyDbContext>.Build())
+        using (var database = await sqlInstance.Build())
         {
             #endregion
 
@@ -45,7 +46,7 @@ public class SnippetTests
     public async Task TheTestWithDbName()
     {
         #region EfWithDbName
-        using (var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName"))
+        using (var database = await sqlInstance.Build("TheTestWithDbName"))
         {
             #endregion
             var entity = new TheEntity

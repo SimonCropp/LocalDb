@@ -35,13 +35,13 @@ namespace EfLocalDb
         public static void Register(
             Action<SqlConnection, DbContextOptionsBuilder<TDbContext>> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceName,
+            string name,
             string directory,
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, instanceName, directory, timestamp, templateSize);
+            instance = new SqlInstance<TDbContext>(buildTemplate, constructInstance, name, directory, timestamp, templateSize);
         }
 
         public static void Register(
@@ -57,14 +57,14 @@ namespace EfLocalDb
 
         public static void Register(
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceName,
+            string name,
             string directory,
             Action<TDbContext> buildTemplate = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
             ThrowIfInstanceNotNull();
-            instance = new SqlInstance<TDbContext>(constructInstance, instanceName, directory, buildTemplate, timestamp, templateSize);
+            instance = new SqlInstance<TDbContext>(constructInstance, name, directory, buildTemplate, timestamp, templateSize);
         }
 
         static void ThrowIfInstanceNull()

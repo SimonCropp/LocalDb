@@ -152,10 +152,10 @@ Usage inside a test consists of two parts:
 
 <!-- snippet: EfBuildLocalDbInstance -->
 ```cs
-using (var database = await SqlInstanceService<MyDbContext>.Build())
+using (var database = await sqlInstance.Build())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L18-L21)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22)</sup>
 <!-- endsnippet -->
 
 
@@ -199,10 +199,10 @@ There is also an override that takes an explicit dbName:
 
 <!-- snippet: EfWithDbName -->
 ```cs
-using (var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDbName"))
+using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L47-L50)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L48-L51)</sup>
 <!-- endsnippet -->
 
 
@@ -213,7 +213,7 @@ using (var database = await SqlInstanceService<MyDbContext>.Build("TheTestWithDb
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L23-L26)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L24-L27)</sup>
 <!-- endsnippet -->
 
 
@@ -221,32 +221,71 @@ using (var dbContext = database.NewDbContext())
 
 The above are combined in a full test:
 
-<!-- snippet: EfTest -->
+<!-- snippet: EfSnippetTests.cs -->
 ```cs
-[Fact]
-public async Task TheTest()
-{
-    using (var database = await SqlInstanceService<MyDbContext>.Build())
-    {
+using System.Threading.Tasks;
+using EfLocalDb;
+using Xunit;
 
-        using (var dbContext = database.NewDbContext())
+public class EfSnippetTests
+{
+    static SqlInstance<MyDbContext> sqlInstance;
+    static EfSnippetTests()
+    {
+        sqlInstance = new SqlInstance<MyDbContext>(
+            builder => new MyDbContext(builder.Options));
+    }
+
+    #region EfTest
+
+    [Fact]
+    public async Task TheTest()
+    {
+        #region EfBuildLocalDbInstance
+        using (var database = await sqlInstance.Build())
         {
+            #endregion
+
+            #region EfBuildContext
+            using (var dbContext = database.NewDbContext())
+            {
+                #endregion
+                var entity = new TheEntity
+                {
+                    Property = "prop"
+                };
+                dbContext.Add(entity);
+                dbContext.SaveChanges();
+            }
+
+            using (var dbContext = database.NewDbContext())
+            {
+                Assert.Single(dbContext.TestEntities);
+            }
+        }
+    }
+
+    #endregion
+
+    [Fact]
+    public async Task TheTestWithDbName()
+    {
+        #region EfWithDbName
+        using (var database = await sqlInstance.Build("TheTestWithDbName"))
+        {
+            #endregion
             var entity = new TheEntity
             {
                 Property = "prop"
             };
-            dbContext.Add(entity);
-            dbContext.SaveChanges();
-        }
+            await database.AddData(entity);
 
-        using (var dbContext = database.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(database.Context.TestEntities);
         }
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/SnippetTests.cs#L13-L42)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L61)</sup>
 <!-- endsnippet -->
 
 

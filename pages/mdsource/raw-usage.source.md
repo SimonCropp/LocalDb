@@ -75,4 +75,4 @@ snippet: BuildContext
 
 The above are combined in a full test:
 
-snippet: Test
+snippet: SnippetTests.cs

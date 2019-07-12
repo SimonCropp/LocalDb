@@ -1,17 +1,15 @@
 ﻿using LocalDb;
 
-class RegisterExplicit
+class ExplicitName
 {
-    RegisterExplicit()
+    ExplicitName()
     {
-        #region RegisterExplicit
-
-        SqlInstanceService.Register(
+        #region ExplicitName
+        var sqlInstance = new SqlInstance(
             name: "theInstanceName",
             buildTemplate: TestDbBuilder.CreateTable,
             directory: @"C:\LocalDb\theInstance"
         );
-
         #endregion
     }
 }

@@ -77,7 +77,7 @@ snippet: EfBuildContext
 
 The above are combined in a full test:
 
-snippet: EfTest
+snippet: EfSnippetTests.cs
 
 
 ### EF DefaultOptionsBuilder

@@ -15,10 +15,10 @@ There is an explicit registration override that takes an instance name and a dir
 
 ## For SQL:
 
-snippet: RegisterExplicit
+snippet: ExplicitName
 
 
 ## For EF:
 
-snippet: EfRegisterExplicit
+snippet: EfExplicitName
 

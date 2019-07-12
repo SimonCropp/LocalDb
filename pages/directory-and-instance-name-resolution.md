@@ -31,27 +31,27 @@ There is an explicit registration override that takes an instance name and a dir
 
 ## For SQL:
 
-<!-- snippet: RegisterExplicit -->
+<!-- snippet: ExplicitName -->
 ```cs
-SqlInstanceService.Register(
+var sqlInstance = new SqlInstance(
     name: "theInstanceName",
     buildTemplate: TestDbBuilder.CreateTable,
     directory: @"C:\LocalDb\theInstance"
 );
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/RegisterExplicit.cs#L7-L15)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13)</sup>
 <!-- endsnippet -->
 
 
 ## For EF:
 
-<!-- snippet: EfRegisterExplicit -->
+<!-- snippet: EfExplicitName -->
 ```cs
-SqlInstanceService<TheDbContext>.Register(
+var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new TheDbContext(builder.Options),
-    instanceName: "theInstanceName",
+    name: "theInstanceName",
     directory: @"C:\LocalDb\theInstance");
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfRegisterExplicit.cs#L7-L14)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L12)</sup>
 <!-- endsnippet -->
 
