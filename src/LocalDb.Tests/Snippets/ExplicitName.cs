@@ -5,7 +5,7 @@ class LocalDbLoggingUsage
     LocalDbLoggingUsage()
     {
         #region LocalDbLoggingUsage
-        LocalDbLogging.Enable();
+        LocalDbLogging.EnableVerbose();
         #endregion
     }
 }

@@ -16,6 +16,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
  * [EntityFramework Usage](/pages/ef-usage.md)
  * [EntityFramework Migrations](/pages/efmigrations.md)
  * [Directory and instance name resolution](/pages/directory-and-instance-name-resolution.md)
+ * [Logging](/pages/logging.md)
 
 
 ## Why
@@ -81,9 +82,9 @@ Interactions with SqlLocalDB via [Entity Framework](https://docs.microsoft.com/e
 
 To connect to a SqlLocalDB instance using [SQL Server Management Studio ](https://docs.microsoft.com/en-us/sql/ssms/sql-server-management-studio-ssms?view=sql-server-2017) use a server name with the following convention `(LocalDb)\INSTANCENAME`.
 
-So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if a `name` or `instanceSuffix` have been defined for SqlInstance.
+So for a instance named `MyDb` the server name would be `(LocalDb)\MyDb`. Note that the name will be different if a `name` or `instanceSuffix` have been defined for SqlInstance.
 
-The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed programmatically from `SqlInstance.ServerName`.
+The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed programmatically from `SqlInstance.ServerName`. See [Logging](/pages/logging.md).
 
 
 ## SqlLocalDb
