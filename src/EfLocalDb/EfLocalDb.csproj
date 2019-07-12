@@ -8,6 +8,7 @@
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\LocalDb\LocalDbLogging.cs" />
     <Compile Include="..\LocalDb\DbNamer.cs" />
     <Compile Include="..\LocalDb\AssemblyExtensions.cs" />
     <Compile Include="..\LocalDb\DirectoryFinder.cs" />
@@ -17,7 +18,6 @@
     <Compile Include="..\LocalDb\LocalDbRegistryReader.cs" />
     <Compile Include="..\LocalDb\LocalDbInstanceInfo.cs" />
     <Compile Include="..\LocalDb\LocalDbApi.cs" />
-    <Compile Include="..\LocalDb\LocalDbLogging.cs" />
     <Compile Include="..\LocalDb\MethodTimeLogger.cs" />
     <Compile Include="..\LocalDb\SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" />
