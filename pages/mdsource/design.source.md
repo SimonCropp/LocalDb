@@ -36,16 +36,3 @@ The usual approach for consuming the API in a test project is as follows.
  * One or more DbContexts/SqlConnections used within a test.
 
 This assumes that there is a schema and data (and DbContext in the EF context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
-
-
-## Template database size
-
-When doing a [create database](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql) that new database is created based on the [model database](https://docs.microsoft.com/en-us/sql/relational-databases/databases/model-database). See [The model Database and Creating New Databases](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql#the-model-database-and-creating-new-databases). When [defining a size](https://docs.microsoft.com/en-us/sql/t-sql/statements/create-database-transact-sql#arguments) for a new database, that size is ignored if it is smaller than the model database size:
-
-> The size specified for the primary file must be at least as large as the primary file of the model database.
-
-Since the model database is 8MB, the default (and smallest) size for any new database is also 8MB. This is not ideal when using LocalDB for unit tests, since a database is created for each test, is means an 8MB file needs to be created for each test, with the resulting cost in IO time and disk usage.
-
-To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/sql/t-sql/database-console-commands/dbcc-shrinkfile-transact-sql) is performed on the model database at the time a new SqlLocalDB instance is created. The smallest size allowed is 3MB.
-
-snippet: ShrinkModelDb
