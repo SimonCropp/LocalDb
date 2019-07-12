@@ -48,7 +48,7 @@ class Wrapper
 if db_id('template') is not null
 begin
   alter database [template] set single_user with rollback immediate;
-  exec sp_detach_db 'template', 'true';
+  execute sp_detach_db 'template', 'true';
 end;";
 
         ExecuteOnMaster(commandText);
@@ -151,7 +151,7 @@ log on
             FileExtensions.FlushDirectory(directory);
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
-            ShrinkModelDb();
+            RunOnceOfOptimizations();
             CreateTemplate();
             ExecuteBuildTemplate(buildTemplate);
             DetachTemplate(timestamp);
@@ -217,9 +217,14 @@ log on
     }
 
     [Time]
-    void ShrinkModelDb()
+    void RunOnceOfOptimizations()
     {
         var commandText = $@"
+execute sp_configure 'show advanced options', 1;
+reconfigure;
+execute sp_configure 'user instance timeout', 30;
+reconfigure;
+
 -- begin-snippet: ShrinkModelDb
 use model;
 dbcc shrinkfile(modeldev, {size})
