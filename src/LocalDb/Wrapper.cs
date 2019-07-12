@@ -132,16 +132,20 @@ log on
     [Time]
     public void Start(DateTime timestamp, Action<SqlConnection> buildTemplate)
     {
+#if RELEASE
         try
         {
+#endif
             var stopwatch = Stopwatch.StartNew();
             InnerStart(timestamp, buildTemplate);
             Trace.WriteLine($"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
+#if RELEASE
         }
         catch (Exception exception)
         {
             throw ExceptionBuilder.WrapLocalDbFailure(instance, directory, exception);
         }
+#endif
     }
 
     void InnerStart(DateTime timestamp, Action<SqlConnection> buildTemplate)
