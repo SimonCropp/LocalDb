@@ -77,7 +77,7 @@ To connect to a SqlLocalDB instance using [SQL Server Management Studio ](https:
 
 So for a DbContext named `MyDbContext` the server name would be `(LocalDb)\MyDbContext`. Note that the name will be different if a `name` or `instanceSuffix` have been defined for SqlInstance.
 
-The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed programmatically from `SqlInstanceService.ServerName` or `SqlInstance.ServerName`.
+The server name will be written to [Trace.WriteLine](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.writeline) when a SqlInstance is constructed. It can be accessed programmatically from `SqlInstance.ServerName`.
 
 
 ## SqlLocalDb

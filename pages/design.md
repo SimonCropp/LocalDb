@@ -43,8 +43,6 @@ The usual approach for consuming the API in a test project is as follows.
 
 This assumes that there is a schema and data (and DbContext in the EF context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
 
-As the most common usage scenario is "Single SqlInstance per test project" there is a simplified static API to support it. To take this approach use `EFLocalDb.SqlInstanceService<TDbContext>` or `LocalDb.SqlInstanceService`.
-
 
 ## Template database size
 

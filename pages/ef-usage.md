@@ -151,6 +151,16 @@ Usage inside a test consists of two parts:
 ### Build a SqlInstance
 
 <!-- snippet: EfBuildLocalDbInstance -->
+```md
+using (var database = await sqlInstance.Build())
+{
+```
+<sup>[snippet source](/pages/ef-usage.md#L274-L277)</sup>
+```md
+using (var database = await sqlInstance.Build())
+{
+```
+<sup>[snippet source](/pages/raw-usage.md#L281-L284)</sup>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -198,6 +208,16 @@ if (databaseSuffix != null)
 There is also an override that takes an explicit dbName:
 
 <!-- snippet: EfWithDbName -->
+```md
+using (var database = await sqlInstance.Build("TheTestWithDbName"))
+{
+```
+<sup>[snippet source](/pages/ef-usage.md#L303-L306)</sup>
+```md
+using (var database = await sqlInstance.Build("TheTestWithDbName"))
+{
+```
+<sup>[snippet source](/pages/raw-usage.md#L310-L313)</sup>
 ```cs
 using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
@@ -209,6 +229,16 @@ using (var database = await sqlInstance.Build("TheTestWithDbName"))
 ### Using DbContexts
 
 <!-- snippet: EfBuildContext -->
+```md
+using (var dbContext = database.NewDbContext())
+{
+```
+<sup>[snippet source](/pages/ef-usage.md#L279-L282)</sup>
+```md
+using (var dbContext = database.NewDbContext())
+{
+```
+<sup>[snippet source](/pages/raw-usage.md#L286-L289)</sup>
 ```cs
 using (var dbContext = database.NewDbContext())
 {

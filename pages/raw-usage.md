@@ -161,6 +161,14 @@ Usage inside a test consists of two parts:
 ### Build a SqlInstance
 
 <!-- snippet: BuildLocalDbInstance -->
+```md
+using (var database = await instance.Build())
+{
+    await TestDbBuilder.AddData(database.Connection);
+    Assert.Single(await TestDbBuilder.GetData(database.Connection));
+}
+```
+<sup>[snippet source](/pages/raw-usage.md#L346-L354)</sup>
 ```cs
 using (var database = await instance.Build())
 {
@@ -211,6 +219,14 @@ if (databaseSuffix != null)
 There is also an override that takes an explicit dbName:
 
 <!-- snippet: WithDbName -->
+```md
+using (var database = await instance.Build("TheTestWithDbName"))
+{
+    await TestDbBuilder.AddData(database.Connection);
+    Assert.Single(await TestDbBuilder.GetData(database.Connection));
+}
+```
+<sup>[snippet source](/pages/raw-usage.md#L361-L367)</sup>
 ```cs
 using (var database = await instance.Build("TheTestWithDbName"))
 {
@@ -225,6 +241,11 @@ using (var database = await instance.Build("TheTestWithDbName"))
 ### Using SQLConnection
 
 <!-- snippet: BuildContext -->
+```md
+await TestDbBuilder.AddData(database.Connection);
+Assert.Single(await TestDbBuilder.GetData(database.Connection));
+```
+<sup>[snippet source](/pages/raw-usage.md#L349-L352)</sup>
 ```cs
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
