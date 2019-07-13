@@ -45,27 +45,11 @@ snippet: EfTestBase
 Usage inside a test consists of two parts:
 
 
-### Build a SqlInstance
+### Build a SqlDatabase
 
-snippet: EfBuildLocalDbInstance
+snippet: EfBuildDatabase
 
-
-### Build Signature
-
-The signature is as follows:
-
-snippet: EfBuildSignature
-
-
-### Database Name
-
-The database name is the derived as follows:
-
-snippet: DeriveName
-
-There is also an override that takes an explicit dbName:
-
-snippet: EfWithDbName
+See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
 
 
 ### Using DbContexts

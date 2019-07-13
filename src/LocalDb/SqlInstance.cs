@@ -51,11 +51,11 @@ namespace LocalDb
             return wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
-        #region BuildSignature
+        #region ConventionBuildSignature
         /// <summary>
-        ///   Build DB with a name based on the calling Method.
+        ///   Build database with a name based on the calling Method.
         /// </summary>
-        /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
+        /// <param name="testFile">The path to the test class. Used to make the database name unique per test type.</param>
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
         public Task<SqlDatabase> Build(
@@ -75,7 +75,12 @@ namespace LocalDb
             return Build(dbName);
         }
 
+        #region ExplicitBuildSignature
+        /// <summary>
+        ///   Build database with an explicit name.
+        /// </summary>
         public async Task<SqlDatabase> Build(string dbName)
+        #endregion
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connectionString = await BuildContext(dbName);

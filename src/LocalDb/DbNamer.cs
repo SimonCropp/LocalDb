@@ -1,17 +1,13 @@
 ﻿static class DbNamer
 {
+    #region DeriveName
     public static string DeriveDbName(string databaseSuffix, string memberName, string testClass)
     {
-        #region DeriveName
-
-        var dbName = $"{testClass}_{memberName}";
-        if (databaseSuffix != null)
+        if (databaseSuffix == null)
         {
-            dbName = $"{dbName}_{databaseSuffix}";
+            return $"{testClass}_{memberName}";
         }
-
-        #endregion
-
-        return dbName;
+        return $"{testClass}_{memberName}_{databaseSuffix}";
     }
+    #endregion
 }

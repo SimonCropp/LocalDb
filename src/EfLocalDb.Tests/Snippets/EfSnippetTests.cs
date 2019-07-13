@@ -16,7 +16,7 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTest()
     {
-        #region EfBuildLocalDbInstance
+        #region EfBuildDatabase
         using (var database = await sqlInstance.Build())
         {
             #endregion

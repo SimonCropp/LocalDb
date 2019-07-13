@@ -17,7 +17,7 @@ public class SnippetTests
 
     public async Task TheTest()
     {
-        #region BuildLocalDbInstance
+        #region BuildDatabase
         using (var database = await sqlInstance.Build())
         {
             #region BuildContext

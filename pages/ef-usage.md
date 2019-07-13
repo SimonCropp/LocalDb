@@ -148,19 +148,19 @@ public class Tests :
 Usage inside a test consists of two parts:
 
 
-### Build a SqlInstance
+### Build a SqlDatabase
 
-<!-- snippet: EfBuildLocalDbInstance -->
+<!-- snippet: EfBuildDatabase -->
 ```md
 using (var database = await sqlInstance.Build())
 {
 ```
-<sup>[snippet source](/pages/ef-usage.md#L274-L277)</sup>
+<sup>[snippet source](/pages/ef-usage.md#L219-L222)</sup>
 ```md
 using (var database = await sqlInstance.Build())
 {
 ```
-<sup>[snippet source](/pages/raw-usage.md#L281-L284)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L209-L212)</sup>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -168,62 +168,7 @@ using (var database = await sqlInstance.Build())
 <sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22)</sup>
 <!-- endsnippet -->
 
-
-### Build Signature
-
-The signature is as follows:
-
-<!-- snippet: EfBuildSignature -->
-```cs
-/// <summary>
-///   Build DB with a name based on the calling Method.
-/// </summary>
-/// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
-/// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
-/// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-public Task<SqlDatabase<TDbContext>> Build(
-    [CallerFilePath] string testFile = null,
-    string databaseSuffix = null,
-    [CallerMemberName] string memberName = null)
-```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L176-L188)</sup>
-<!-- endsnippet -->
-
-
-### Database Name
-
-The database name is the derived as follows:
-
-<!-- snippet: DeriveName -->
-```cs
-var dbName = $"{testClass}_{memberName}";
-if (databaseSuffix != null)
-{
-    dbName = $"{dbName}_{databaseSuffix}";
-}
-```
-<sup>[snippet source](/src/LocalDb/DbNamer.cs#L5-L13)</sup>
-<!-- endsnippet -->
-
-There is also an override that takes an explicit dbName:
-
-<!-- snippet: EfWithDbName -->
-```md
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-```
-<sup>[snippet source](/pages/ef-usage.md#L303-L306)</sup>
-```md
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-```
-<sup>[snippet source](/pages/raw-usage.md#L310-L313)</sup>
-```cs
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L48-L51)</sup>
-<!-- endsnippet -->
+See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
 
 
 ### Using DbContexts
@@ -233,12 +178,12 @@ using (var database = await sqlInstance.Build("TheTestWithDbName"))
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/pages/ef-usage.md#L279-L282)</sup>
+<sup>[snippet source](/pages/ef-usage.md#L224-L227)</sup>
 ```md
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/pages/raw-usage.md#L286-L289)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L214-L217)</sup>
 ```cs
 using (var dbContext = database.NewDbContext())
 {
@@ -271,7 +216,7 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTest()
     {
-        #region EfBuildLocalDbInstance
+        #region EfBuildDatabase
         using (var database = await sqlInstance.Build())
         {
             #endregion

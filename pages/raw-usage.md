@@ -158,9 +158,9 @@ public class Tests:
 Usage inside a test consists of two parts:
 
 
-### Build a SqlInstance
+### Build a SqlDatabase
 
-<!-- snippet: BuildLocalDbInstance -->
+<!-- snippet: BuildDatabase -->
 ```md
 using (var database = await sqlInstance.Build())
 {
@@ -168,7 +168,7 @@ using (var database = await sqlInstance.Build())
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/pages/raw-usage.md#L346-L354)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L274-L282)</sup>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -179,63 +179,7 @@ using (var database = await sqlInstance.Build())
 <sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L28)</sup>
 <!-- endsnippet -->
 
-
-### Build Signature
-
-The signature is as follows:
-
-<!-- snippet: BuildSignature -->
-```cs
-/// <summary>
-///   Build DB with a name based on the calling Method.
-/// </summary>
-/// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
-/// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
-/// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
-public Task<SqlDatabase> Build(
-    [CallerFilePath] string testFile = null,
-    string databaseSuffix = null,
-    [CallerMemberName] string memberName = null)
-```
-<sup>[snippet source](/src/LocalDb/SqlInstance.cs#L54-L65)</sup>
-<!-- endsnippet -->
-
-
-### Database Name
-
-The database name is the derived as follows:
-
-<!-- snippet: DeriveName -->
-```cs
-var dbName = $"{testClass}_{memberName}";
-if (databaseSuffix != null)
-{
-    dbName = $"{dbName}_{databaseSuffix}";
-}
-```
-<sup>[snippet source](/src/LocalDb/DbNamer.cs#L5-L13)</sup>
-<!-- endsnippet -->
-
-There is also an override that takes an explicit dbName:
-
-<!-- snippet: WithDbName -->
-```md
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-    await TestDbBuilder.AddData(database.Connection);
-    Assert.Single(await TestDbBuilder.GetData(database.Connection));
-}
-```
-<sup>[snippet source](/pages/raw-usage.md#L361-L367)</sup>
-```cs
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-    await TestDbBuilder.AddData(database.Connection);
-    Assert.Single(await TestDbBuilder.GetData(database.Connection));
-}
-```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L35-L41)</sup>
-<!-- endsnippet -->
+See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
 
 
 ### Using SQLConnection
@@ -245,7 +189,7 @@ using (var database = await sqlInstance.Build("TheTestWithDbName"))
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/pages/raw-usage.md#L349-L352)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L277-L280)</sup>
 ```cs
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
@@ -278,7 +222,7 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTest()
     {
-        #region EfBuildLocalDbInstance
+        #region EfBuildDatabase
         using (var database = await sqlInstance.Build())
         {
             #endregion
@@ -343,7 +287,7 @@ public class SnippetTests
 
     public async Task TheTest()
     {
-        #region BuildLocalDbInstance
+        #region BuildDatabase
         using (var database = await sqlInstance.Build())
         {
             #region BuildContext

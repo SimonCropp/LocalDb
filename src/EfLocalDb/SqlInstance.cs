@@ -173,8 +173,6 @@ namespace EfLocalDb
             return Build(dbName, data);
         }
 
-        #region EfBuildSignature
-
         /// <summary>
         ///   Build DB with a name based on the calling Method.
         /// </summary>
@@ -185,7 +183,6 @@ namespace EfLocalDb
             [CallerFilePath] string testFile = null,
             string databaseSuffix = null,
             [CallerMemberName] string memberName = null)
-            #endregion
         {
             return Build(null, testFile, databaseSuffix, memberName);
         }

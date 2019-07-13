@@ -26,7 +26,7 @@ For SQL:
 
 For EF:
 
-`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`
+`SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`/`SqlConnection`
 
 
 Multiple SqlDatabases can exist inside each SqlInstance. Multiple DbContexts/SqlConnections can be created to talk to a SqlDatabase.
