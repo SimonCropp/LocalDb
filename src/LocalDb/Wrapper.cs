@@ -17,6 +17,12 @@ class Wrapper
     ushort size;
     public readonly string MasterConnectionString;
     string instance;
+    string TemplateDataFile;
+    string TemplateLogFile;
+    string TemplateConnectionString;
+    public readonly string ServerName;
+    Task<Guid> createDatabaseTask;
+    Task startupTask;
 
     public Wrapper(string instance, string directory, ushort size)
     {
@@ -28,7 +34,7 @@ class Wrapper
 
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";
-        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
+        TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
         this.directory = directory;
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
@@ -37,24 +43,14 @@ class Wrapper
         ServerName = $@"(LocalDb)\{instance}";
     }
 
-    string TemplateDataFile;
-    string TemplateLogFile;
-    string TemplateConnection;
-    public readonly string ServerName;
-    Task<Guid> createDatabaseTask;
-
-    [Time]
-    void DetachTemplate(DateTime timestamp)
+    static string GetDetachTemplateCommand()
     {
-        var commandText = @"
+        return @"
 if db_id('template') is not null
 begin
   alter database [template] set single_user with rollback immediate;
   execute sp_detach_db 'template', 'true';
 end;";
-
-        ExecuteOnMaster(commandText);
-        File.SetCreationTime(TemplateDataFile, timestamp);
     }
 
     [Time]
@@ -78,6 +74,7 @@ execute sp_executesql @command";
 
     async Task<Guid> CreateDatabaseTask()
     {
+        await startupTask;
         var name = Guid.NewGuid();
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         File.Copy(TemplateDataFile, dataFile);
@@ -118,10 +115,9 @@ alter database [{name}]
         return ($"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false",guid);
     }
 
-    [Time]
-    void CreateTemplate()
+    string GetCreateTemplateCommand()
     {
-        var commandText = $@"
+        return $@"
 create database template on
 (
     name = template,
@@ -136,7 +132,6 @@ log on
     filegrowth = 100KB
 );
 ";
-        ExecuteOnMaster(commandText);
     }
 
     [Time]
@@ -175,9 +170,7 @@ log on
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
             RunOnceOffOptimizations();
-            CreateTemplate();
-            ExecuteBuildTemplate(buildTemplate);
-            DetachTemplate(timestamp);
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate);
             createDatabaseTask = CreateDatabaseTask();
         }
 
@@ -203,24 +196,31 @@ log on
         if (timestamp == templateLastMod)
         {
             LocalDbLogging.Log("Not modified so skipping rebuild");
+            startupTask = Task.CompletedTask;
             createDatabaseTask = CreateDatabaseTask();
             return;
         }
 
         DeleteTemplateFiles();
-        CreateTemplate();
-        ExecuteBuildTemplate(buildTemplate);
-        DetachTemplate(timestamp);
+        startupTask = CreateAndDetachTemplate(timestamp, buildTemplate);
         createDatabaseTask = CreateDatabaseTask();
     }
 
-    [Time]
-    void ExecuteBuildTemplate(Action<SqlConnection> buildTemplate)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Action<SqlConnection> buildTemplate)
     {
-        using (var connection = new SqlConnection(TemplateConnection))
+        using (var masterConnection = new SqlConnection(MasterConnectionString))
         {
-            connection.Open();
-            buildTemplate(connection);
+            await masterConnection.OpenAsync();
+            await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
+
+            using (var templateConnection = new SqlConnection(TemplateConnectionString))
+            {
+                await templateConnection.OpenAsync();
+                buildTemplate(templateConnection);
+            }
+
+            await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());
+            File.SetCreationTime(TemplateDataFile, timestamp);
         }
     }
 
