@@ -122,11 +122,8 @@ Which can be used as follows:
 ```cs
 using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
-    await TestDbBuilder.AddData(database.Connection);
-    Assert.Single(await TestDbBuilder.GetData(database.Connection));
-}
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L35-L41)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L35-L38)</sup>
 <!-- endsnippet -->
 
 

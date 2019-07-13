@@ -35,9 +35,9 @@ public class SnippetTests
         #region WithDbName
         using (var database = await sqlInstance.Build("TheTestWithDbName"))
         {
+            #endregion
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
-        #endregion
     }
 }
