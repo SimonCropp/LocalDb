@@ -39,11 +39,12 @@ public static class Timestamp
     {
         return File.GetLastWriteTime(assembly.Path());
     }
+
     public static DateTime LastModified<T>()
     {
         return File.GetLastWriteTime(typeof(T).Assembly.Path());
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/Timestamp.cs#L11-L32)</sup>
+<sup>[snippet source](/src/LocalDb/Timestamp.cs#L11-L33)</sup>
 <!-- endsnippet -->

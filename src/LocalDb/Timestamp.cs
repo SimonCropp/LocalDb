@@ -24,6 +24,7 @@ namespace LocalDb
         {
             return File.GetLastWriteTime(assembly.Path());
         }
+
         public static DateTime LastModified<T>()
         {
             return File.GetLastWriteTime(typeof(T).Assembly.Path());
