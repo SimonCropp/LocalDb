@@ -13,7 +13,7 @@ Template re-generating performs the following action
  * Apply the default schema and data as defined by the `buildTemplate` parameter in the `SqlInstance` constructor.
  * Detach the database
 
-Re-generating the template database is a relatively expensive operation. Ideally, it should only be performed when the default schema and data requires a change. To enable this a timestamp convention is used. When the template re-generating, its file creation time is set to a timestamp. On the next run, that timestamp is compared to avoid re-generation on a match. The timestamp can be controlled via `timestamp` parameter in the `SqlInstance` constructor.
+Re-generating the template database is a relatively expensive operation. Ideally, it should only be performed when the default schema and data requires a change. To enable this a timestamp convention is used. When the template is re-generating, its file creation time is set to a timestamp. On the next run, that timestamp is compared to avoid re-generation on a match. The timestamp can be controlled via `timestamp` parameter in the `SqlInstance` constructor.
 
 If `timestamp` parameter is not defined the following conventions are used:
 
