@@ -26,18 +26,19 @@ public class Tests :
     [Fact]
     public async Task Multiple()
     {
-        var lastModified = GetType().Assembly.LastModified();
         var stopwatch = Stopwatch.StartNew();
-        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable,timestamp:lastModified);
+        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
 
-        using (var database = await instance.Build(databaseSuffix:"one"))
+        using (var database = await instance.Build(databaseSuffix: "one"))
         {
             await database.Delete();
         }
-        using (var database = await instance.Build(databaseSuffix:"two"))
+
+        using (var database = await instance.Build(databaseSuffix: "two"))
         {
             await database.Delete();
         }
+
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
     }
 

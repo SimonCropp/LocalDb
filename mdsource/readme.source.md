@@ -12,6 +12,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
  * [Directory and instance name resolution](/pages/directory-and-instance-name-resolution.md)
  * [Logging](/pages/logging.md)
  * [Template database size](/pages/template-database-size.md)
+ * [Template Re-generation](/pages/template-regen.md)
 
 
 ## Why

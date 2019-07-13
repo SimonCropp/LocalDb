@@ -117,7 +117,7 @@ namespace EfLocalDb
                 buildTemplate(connection, builder);
             }
 
-            var resultTimestamp = timestamp.GetValueOrDefault(typeof(TDbContext).Assembly.LastModified());
+            var resultTimestamp = timestamp.GetValueOrDefault(Timestamp.LastModified<TDbContext>());
 
             wrapper = new Wrapper(name, directory, templateSize);
 

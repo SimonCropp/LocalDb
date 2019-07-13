@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -26,9 +27,18 @@ namespace LocalDb
             {
                 directory = DirectoryFinder.Find(name);
             }
-
+            DateTime resultTimestamp;
+            if (timestamp == null)
+            {
+                var callingAssembly = Assembly.GetCallingAssembly();
+                resultTimestamp = Timestamp.LastModified(callingAssembly);
+            }
+            else
+            {
+                resultTimestamp = timestamp.Value;
+            }
             wrapper = new Wrapper(name, directory, templateSize);
-            wrapper.Start(timestamp.GetValueOrDefault(DateTime.Now), buildTemplate);
+            wrapper.Start(resultTimestamp, buildTemplate);
         }
 
         public void Cleanup()
@@ -74,9 +84,6 @@ namespace LocalDb
             return sqlDatabase;
         }
 
-        public string MasterConnectionString
-        {
-            get => wrapper.MasterConnectionString;
-        }
+        public string MasterConnectionString => wrapper.MasterConnectionString;
     }
 }

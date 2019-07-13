@@ -8,9 +8,9 @@
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\LocalDb\Timestamp.cs" />
     <Compile Include="..\LocalDb\LocalDbLogging.cs" />
     <Compile Include="..\LocalDb\DbNamer.cs" />
-    <Compile Include="..\LocalDb\AssemblyExtensions.cs" />
     <Compile Include="..\LocalDb\DirectoryFinder.cs" />
     <Compile Include="..\LocalDb\ExceptionBuilder.cs" />
     <Compile Include="..\LocalDb\FileExtensions.cs" />
