@@ -17,7 +17,7 @@ Re-generating the template database is a relatively expensive operation. Ideally
 
 If `timestamp` parameter is not defined the following conventions are used:
 
- * For Raw SQL the last modified time of the calling Assembly (Assembly.GetCallingAssembly)[https://docs.microsoft.com/en-us/dotnet/api/system.reflection.assembly.getcallingassembly]. This will usually result in the last modified time of the unit test assembly, and hence avoid re-generation unless a solution build has occurred.
+ * For Raw SQL the last modified time of the calling Assembly [Assembly.GetCallingAssembly](https://docs.microsoft.com/en-us/dotnet/api/system.reflection.assembly.getcallingassembly). This will usually result in the last modified time of the unit test assembly, and hence avoid re-generation unless a solution build has occurred.
  * For EntityFramework the last modified time of the Assembly containing the DataContext.
 
 There is a timestamp helper class to help derive last modified time of an Assembly (if the above conventions do not suffice):
