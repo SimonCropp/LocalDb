@@ -160,7 +160,7 @@ using (var database = await sqlInstance.Build())
 using (var database = await sqlInstance.Build())
 {
 ```
-<sup>[snippet source](/pages/raw-usage.md#L209-L212)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L225-L228)</sup>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -183,7 +183,7 @@ using (var dbContext = database.NewDbContext())
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/pages/raw-usage.md#L214-L217)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L230-L233)</sup>
 ```cs
 using (var dbContext = database.NewDbContext())
 {
@@ -219,12 +219,10 @@ public class EfSnippetTests
         #region EfBuildDatabase
         using (var database = await sqlInstance.Build())
         {
-            #endregion
 
             #region EfBuildContext
             using (var dbContext = database.NewDbContext())
             {
-                #endregion
                 var entity = new TheEntity
                 {
                     Property = "prop"
@@ -240,7 +238,6 @@ public class EfSnippetTests
         }
     }
 
-    #endregion
 
     [Fact]
     public async Task TheTestWithDbName()
@@ -248,7 +245,6 @@ public class EfSnippetTests
         #region EfWithDbName
         using (var database = await sqlInstance.Build("TheTestWithDbName"))
         {
-            #endregion
             var entity = new TheEntity
             {
                 Property = "prop"
@@ -260,7 +256,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L61)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L57)</sup>
 <!-- endsnippet -->
 
 

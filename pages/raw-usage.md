@@ -168,7 +168,7 @@ using (var database = await sqlInstance.Build())
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/pages/raw-usage.md#L274-L282)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L290-L298)</sup>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -189,7 +189,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/pages/raw-usage.md#L277-L280)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L293-L296)</sup>
 ```cs
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
@@ -203,70 +203,6 @@ Assert.Single(await TestDbBuilder.GetData(database.Connection));
 The above are combined in a full test:
 
 <!-- snippet: SnippetTests.cs -->
-```cs
-using System.Threading.Tasks;
-using EfLocalDb;
-using Xunit;
-
-public class EfSnippetTests
-{
-    static SqlInstance<MyDbContext> sqlInstance;
-    static EfSnippetTests()
-    {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            builder => new MyDbContext(builder.Options));
-    }
-
-    #region EfTest
-
-    [Fact]
-    public async Task TheTest()
-    {
-        #region EfBuildDatabase
-        using (var database = await sqlInstance.Build())
-        {
-            #endregion
-
-            #region EfBuildContext
-            using (var dbContext = database.NewDbContext())
-            {
-                #endregion
-                var entity = new TheEntity
-                {
-                    Property = "prop"
-                };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
-            }
-
-            using (var dbContext = database.NewDbContext())
-            {
-                Assert.Single(dbContext.TestEntities);
-            }
-        }
-    }
-
-    #endregion
-
-    [Fact]
-    public async Task TheTestWithDbName()
-    {
-        #region EfWithDbName
-        using (var database = await sqlInstance.Build("TheTestWithDbName"))
-        {
-            #endregion
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            await database.AddData(entity);
-
-            Assert.Single(database.Context.TestEntities);
-        }
-    }
-}
-```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L61)</sup>
 ```cs
 using System.Threading.Tasks;
 using LocalDb;
@@ -293,12 +229,9 @@ public class SnippetTests
             #region BuildContext
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
-            #endregion
         }
-        #endregion
     }
 
-    #endregion
 
     public async Task TheTestWithDbName()
     {
@@ -308,9 +241,8 @@ public class SnippetTests
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
-        #endregion
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L43)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L39)</sup>
 <!-- endsnippet -->

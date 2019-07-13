@@ -126,7 +126,7 @@ using (var database = await sqlInstance.Build("TheTestWithDbName"))
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/pages/raw-usage.md#L289-L295)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L305-L311)</sup>
 ```cs
 using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
@@ -150,7 +150,7 @@ using (var database = await sqlInstance.Build("TheTestWithDbName"))
 using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
 ```
-<sup>[snippet source](/pages/raw-usage.md#L238-L241)</sup>
+<sup>[snippet source](/pages/raw-usage.md#L254-L257)</sup>
 ```cs
 using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
