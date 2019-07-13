@@ -164,7 +164,7 @@ log on
             FileExtensions.FlushDirectory(directory);
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
-            RunOnceOfOptimizations();
+            RunOnceOffOptimizations();
             CreateTemplate();
             ExecuteBuildTemplate(buildTemplate);
             DetachTemplate(timestamp);
@@ -230,7 +230,7 @@ log on
     }
 
     [Time]
-    void RunOnceOfOptimizations()
+    void RunOnceOffOptimizations()
     {
         var commandText = $@"
 execute sp_configure 'show advanced options', 1;
