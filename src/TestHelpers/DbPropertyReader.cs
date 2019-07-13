@@ -1,25 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 
 public static class DbPropertyReader
 {
-    public static DbSettings Read(SqlConnection connection, string name)
+    public static DbSettings Read(SqlConnection connection, Guid id)
     {
         return new DbSettings
         {
-            Files = ReadFileSettings(connection, name).ToList()
+            Files = ReadFileSettings(connection, id).ToList()
         };
     }
 
-    static IEnumerable<DbFileSettings> ReadFileSettings(SqlConnection connection, string name)
+    static IEnumerable<DbFileSettings> ReadFileSettings(SqlConnection connection, Guid id)
     {
         using (var command = connection.CreateCommand())
         {
             command.CommandText = $@"
 select name, filename
 from master.sys.sysaltfiles
-where name like '{name}%'";
+where name like '{id}%'";
             var reader = command.ExecuteReader();
             while (reader.Read())
             {

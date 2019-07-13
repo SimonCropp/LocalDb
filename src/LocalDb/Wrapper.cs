@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using MethodTimer;
 #if EF
@@ -40,6 +41,7 @@ class Wrapper
     string TemplateLogFile;
     string TemplateConnection;
     public readonly string ServerName;
+    Task<Guid> createDatabaseTask;
 
     [Time]
     void DetachTemplate(DateTime timestamp)
@@ -65,7 +67,7 @@ set @command = ''
 select @command = @command
 + '
 
-drop database [' + [name] + '];
+EXEC sp_detach_db ''' + [name] + ''', ''true'';
 
 '
 from master.sys.databases
@@ -74,21 +76,10 @@ execute sp_executesql @command";
         ExecuteOnMaster(commandText);
     }
 
-    [Time]
-    public async Task<string> CreateDatabaseFromTemplate(string name)
+    async Task<Guid> CreateDatabaseTask()
     {
-        var stopwatch = Stopwatch.StartNew();
-        if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new Exception("The database name 'template' is reserved.");
-        }
-
+        var name = Guid.NewGuid();
         var dataFile = Path.Combine(directory, $"{name}.mdf");
-        if (File.Exists(dataFile))
-        {
-            throw new Exception($"The database name '{name}' has already been used.");
-        }
-
         File.Copy(TemplateDataFile, dataFile);
         var commandText = $@"
 create database [{name}] on
@@ -104,8 +95,27 @@ alter database [{name}]
     modify file (name=template_log, newname='{name}_log')
 ";
         await ExecuteOnMasterAsync(commandText);
+        return name;
+    }
+
+    [Time]
+    public async Task<(string connection, Guid id)> CreateDatabaseFromTemplate(string name)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new Exception("The database name 'template' is reserved.");
+        }
+
+        var newTask = CreateDatabaseTask();
+        var result = Interlocked.Exchange(ref createDatabaseTask,newTask);
+
+        var guid = await result;
+
+        var commandText = $"alter database [{guid}] modify name = [{name}];";
+        await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
+        return ($"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false",guid);
     }
 
     [Time]
@@ -168,6 +178,7 @@ log on
             CreateTemplate();
             ExecuteBuildTemplate(buildTemplate);
             DetachTemplate(timestamp);
+            createDatabaseTask = CreateDatabaseTask();
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -192,6 +203,7 @@ log on
         if (timestamp == templateLastMod)
         {
             LocalDbLogging.Log("Not modified so skipping rebuild");
+            createDatabaseTask = CreateDatabaseTask();
             return;
         }
 
@@ -199,6 +211,7 @@ log on
         CreateTemplate();
         ExecuteBuildTemplate(buildTemplate);
         DetachTemplate(timestamp);
+        createDatabaseTask = CreateDatabaseTask();
     }
 
     [Time]
@@ -247,8 +260,9 @@ dbcc shrinkfile(modeldev, {size})
     }
 
     [Time]
-    public void DeleteInstance()
+    public async Task DeleteInstance()
     {
+        await createDatabaseTask;
         LocalDbApi.StopAndDelete(instance);
         Directory.Delete(directory, true);
     }

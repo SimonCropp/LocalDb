@@ -18,7 +18,7 @@ public class Tests :
             var connection = database.Connection;
             var data = await TestDbBuilder.AddData(connection);
             Assert.Contains(data, await TestDbBuilder.GetData(connection));
-            var settings = DbPropertyReader.Read(connection, "Tests_Simple");
+            var settings = DbPropertyReader.Read(connection, database.Id);
             Assert.NotEmpty(settings.Files);
         }
     }
@@ -56,8 +56,8 @@ public class Tests :
     [Fact]
     public async Task WithFileAndNoInstance()
     {
-        new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
-        LocalDbApi.StopAndDelete("WithFileAndNoInstance");
+        var sqlInstance = new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
+        await sqlInstance.Cleanup();
         var instance = new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
 
         await AddAndVerifyData(instance);

@@ -20,13 +20,13 @@ public class WrapperTests :
     [Fact]
     public async Task Delete()
     {
-        await instance.CreateDatabaseFromTemplate("ToDelete");
+        var (connection, id) = await instance.CreateDatabaseFromTemplate("ToDelete");
         await instance.DeleteDatabase("ToDelete");
 
         using (var sqlConnection = new SqlConnection(instance.MasterConnectionString))
         {
             await sqlConnection.OpenAsync();
-            var settings = DbPropertyReader.Read(sqlConnection, "ToDelete");
+            var settings = DbPropertyReader.Read(sqlConnection, id);
             Assert.Empty(settings.Files);
         }
     }
