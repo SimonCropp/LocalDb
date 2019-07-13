@@ -43,7 +43,7 @@ var sqlInstance = new SqlInstance(
 <!-- endsnippet -->
 
 
-## For EF:
+## For EntityFramework:
 
 <!-- snippet: EfExplicitName -->
 ```cs
@@ -130,7 +130,7 @@ using (var database = await sqlInstance.Build("TheTestWithDbName"))
 <!-- endsnippet -->
 
 
-### For EF:
+### For EntityFramework:
 
 <!-- snippet: EFWithDbName -->
 ```cs

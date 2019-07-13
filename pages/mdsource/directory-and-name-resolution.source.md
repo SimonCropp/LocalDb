@@ -18,7 +18,7 @@ There is an explicit registration override that takes an instance name and a dir
 snippet: ExplicitName
 
 
-## For EF:
+## For EntityFramework:
 
 snippet: EfExplicitName
 
@@ -54,6 +54,6 @@ Which can be used as follows:
 snippet: WithDbName
 
 
-### For EF:
+### For EntityFramework:
 
 snippet: EFWithDbName

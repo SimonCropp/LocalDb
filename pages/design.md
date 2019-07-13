@@ -12,7 +12,7 @@ For SQL:
 
 SqlInstance > SqlDatabase > Connection
 
-For EF:
+For EntityFramework:
 
 SqlInstance > SqlDatabase > EfContext
 
@@ -24,7 +24,7 @@ For SQL:
 
 `SqlInstance` > `SqlDatabase` > `SqlConnection`
 
-For EF:
+For EntityFramework:
 
 `SqlInstance<TDbContext>` > `SqlDatabase<TDbContext>` > `TDbContext`/`SqlConnection`
 
@@ -41,4 +41,9 @@ The usual approach for consuming the API in a test project is as follows.
  * Single SqlDatabase per test (or instance of a parameterized test).
  * One or more DbContexts/SqlConnections used within a test.
 
-This assumes that there is a schema and data (and DbContext in the EF context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
+This assumes that there is a schema and data (and DbContext in the EntityFramework context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
+
+More information:
+
+ * [Raw SqlConnection Usage](/pages/raw-usage.md)
+ * [EntityFramework Usage](/pages/ef-usage.md)

@@ -64,7 +64,7 @@ The above are combined in a full test:
 snippet: EfSnippetTests.cs
 
 
-### EF DefaultOptionsBuilder
+### EntityFramework DefaultOptionsBuilder
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 

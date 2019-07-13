@@ -236,7 +236,7 @@ public class EfSnippetTests
 <!-- endsnippet -->
 
 
-### EF DefaultOptionsBuilder
+### EntityFramework DefaultOptionsBuilder
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
