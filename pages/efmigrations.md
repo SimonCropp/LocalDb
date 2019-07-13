@@ -11,12 +11,12 @@ To change this file edit the source file and then run MarkdownSnippets.
 <!-- snippet: Migrations -->
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
-    buildTemplate: (connection, optionsBuilder) =>
+    buildTemplate: async (connection, optionsBuilder) =>
     {
         optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
         using (var dbContext = new MyDbContext(optionsBuilder.Options))
         {
-            dbContext.Database.Migrate();
+            await dbContext.Database.MigrateAsync();
         }
     },
     constructInstance: builder =>
@@ -50,7 +50,7 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 ```cs
 using (var dbContext = new MyDbContext(optionsBuilder.Options))
 {
-    dbContext.Database.Migrate();
+    await dbContext.Database.MigrateAsync();
 }
 ```
 <sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L26)</sup>

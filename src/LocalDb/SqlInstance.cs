@@ -15,7 +15,7 @@ namespace LocalDb
 
         public SqlInstance(
             string name,
-            Action<SqlConnection> buildTemplate,
+            Func<SqlConnection, Task> buildTemplate,
             string directory = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)

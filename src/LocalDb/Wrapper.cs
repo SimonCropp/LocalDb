@@ -135,7 +135,7 @@ log on
     }
 
     [Time]
-    public void Start(DateTime timestamp, Action<SqlConnection> buildTemplate)
+    public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
 #if RELEASE
         try
@@ -162,7 +162,7 @@ log on
 #endif
     }
 
-    void InnerStart(DateTime timestamp, Action<SqlConnection> buildTemplate)
+    void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
         void CleanStart()
         {
@@ -206,7 +206,7 @@ log on
         createDatabaseTask = CreateDatabaseTask();
     }
 
-    async Task CreateAndDetachTemplate(DateTime timestamp, Action<SqlConnection> buildTemplate)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
         using (var masterConnection = new SqlConnection(MasterConnectionString))
         {
@@ -216,7 +216,7 @@ log on
             using (var templateConnection = new SqlConnection(TemplateConnectionString))
             {
                 await templateConnection.OpenAsync();
-                buildTemplate(templateConnection);
+                await buildTemplate(templateConnection);
             }
 
             await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());

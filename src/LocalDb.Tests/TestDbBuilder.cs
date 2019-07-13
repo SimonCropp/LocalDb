@@ -5,12 +5,12 @@ using XunitLogger;
 
 public class TestDbBuilder
 {
-    public static void CreateTable(SqlConnection connection)
+    public static async Task CreateTable(SqlConnection connection)
     {
         using (var command = connection.CreateCommand())
         {
             command.CommandText = "create table MyTable (Value int);";
-            command.ExecuteNonQuery();
+            await command.ExecuteNonQueryAsync();
         }
     }
 

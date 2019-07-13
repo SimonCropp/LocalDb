@@ -13,7 +13,7 @@ public class Migrations
         #region Migrations
 
         var sqlInstance = new SqlInstance<MyDbContext>(
-            buildTemplate: (connection, optionsBuilder) =>
+            buildTemplate: async (connection, optionsBuilder) =>
             {
                 #region IMigrationsSqlGenerator
                 optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
@@ -21,7 +21,7 @@ public class Migrations
                 #region Migrate
                 using (var dbContext = new MyDbContext(optionsBuilder.Options))
                 {
-                    dbContext.Database.Migrate();
+                    await dbContext.Database.MigrateAsync();
                 }
                 #endregion
             },
