@@ -119,14 +119,6 @@ Which can be used as follows:
 ### For SQL:
 
 <!-- snippet: WithDbName -->
-```md
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-    await TestDbBuilder.AddData(database.Connection);
-    Assert.Single(await TestDbBuilder.GetData(database.Connection));
-}
-```
-<sup>[snippet source](/pages/raw-usage.md#L305-L311)</sup>
 ```cs
 using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {
@@ -141,16 +133,6 @@ using (var database = await sqlInstance.Build("TheTestWithDbName"))
 ### For EF:
 
 <!-- snippet: EFWithDbName -->
-```md
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-```
-<sup>[snippet source](/pages/ef-usage.md#L248-L251)</sup>
-```md
-using (var database = await sqlInstance.Build("TheTestWithDbName"))
-{
-```
-<sup>[snippet source](/pages/raw-usage.md#L254-L257)</sup>
 ```cs
 using (var database = await sqlInstance.Build("TheTestWithDbName"))
 {

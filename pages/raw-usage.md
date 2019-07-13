@@ -161,14 +161,6 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: BuildDatabase -->
-```md
-using (var database = await sqlInstance.Build())
-{
-    await TestDbBuilder.AddData(database.Connection);
-    Assert.Single(await TestDbBuilder.GetData(database.Connection));
-}
-```
-<sup>[snippet source](/pages/raw-usage.md#L290-L298)</sup>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -185,11 +177,6 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using SQLConnection
 
 <!-- snippet: BuildContext -->
-```md
-await TestDbBuilder.AddData(database.Connection);
-Assert.Single(await TestDbBuilder.GetData(database.Connection));
-```
-<sup>[snippet source](/pages/raw-usage.md#L293-L296)</sup>
 ```cs
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
@@ -219,14 +206,11 @@ public class SnippetTests
             buildTemplate: TestDbBuilder.CreateTable);
     }
 
-    #region Test
 
     public async Task TheTest()
     {
-        #region BuildDatabase
         using (var database = await sqlInstance.Build())
         {
-            #region BuildContext
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }
@@ -235,7 +219,6 @@ public class SnippetTests
 
     public async Task TheTestWithDbName()
     {
-        #region WithDbName
         using (var database = await sqlInstance.Build("TheTestWithDbName"))
         {
             await TestDbBuilder.AddData(database.Connection);
@@ -244,5 +227,5 @@ public class SnippetTests
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L39)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35)</sup>
 <!-- endsnippet -->

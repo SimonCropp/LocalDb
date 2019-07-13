@@ -151,16 +151,6 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: EfBuildDatabase -->
-```md
-using (var database = await sqlInstance.Build())
-{
-```
-<sup>[snippet source](/pages/ef-usage.md#L219-L222)</sup>
-```md
-using (var database = await sqlInstance.Build())
-{
-```
-<sup>[snippet source](/pages/raw-usage.md#L225-L228)</sup>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -174,16 +164,6 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using DbContexts
 
 <!-- snippet: EfBuildContext -->
-```md
-using (var dbContext = database.NewDbContext())
-{
-```
-<sup>[snippet source](/pages/ef-usage.md#L224-L227)</sup>
-```md
-using (var dbContext = database.NewDbContext())
-{
-```
-<sup>[snippet source](/pages/raw-usage.md#L230-L233)</sup>
 ```cs
 using (var dbContext = database.NewDbContext())
 {
@@ -211,16 +191,13 @@ public class EfSnippetTests
             builder => new MyDbContext(builder.Options));
     }
 
-    #region EfTest
 
     [Fact]
     public async Task TheTest()
     {
-        #region EfBuildDatabase
         using (var database = await sqlInstance.Build())
         {
 
-            #region EfBuildContext
             using (var dbContext = database.NewDbContext())
             {
                 var entity = new TheEntity
@@ -242,7 +219,6 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTestWithDbName()
     {
-        #region EfWithDbName
         using (var database = await sqlInstance.Build("TheTestWithDbName"))
         {
             var entity = new TheEntity
@@ -256,7 +232,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L57)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L53)</sup>
 <!-- endsnippet -->
 
 
