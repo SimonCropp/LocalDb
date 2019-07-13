@@ -22,6 +22,7 @@ namespace LocalDb
 
         public static DateTime LastModified(Assembly assembly)
         {
+            Guard.AgainstNull(nameof(assembly), assembly);
             return File.GetLastWriteTime(assembly.Path());
         }
 

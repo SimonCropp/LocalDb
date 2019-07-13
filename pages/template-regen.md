@@ -37,6 +37,7 @@ public static class Timestamp
 
     public static DateTime LastModified(Assembly assembly)
     {
+        Guard.AgainstNull(nameof(assembly), assembly);
         return File.GetLastWriteTime(assembly.Path());
     }
 
@@ -46,5 +47,5 @@ public static class Timestamp
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/Timestamp.cs#L11-L33)</sup>
+<sup>[snippet source](/src/LocalDb/Timestamp.cs#L11-L34)</sup>
 <!-- endsnippet -->
