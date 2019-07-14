@@ -1,9 +1,8 @@
 ﻿﻿using System;
- using System.Collections.Generic;
- using System.ComponentModel;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
- using MethodTimer;
 
  static class LocalDbApi
  {
