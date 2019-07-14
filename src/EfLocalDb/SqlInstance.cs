@@ -140,12 +140,12 @@ namespace EfLocalDb
             #endregion
         }
 
-        public Task Cleanup()
+        public void Cleanup()
         {
-           return wrapper.DeleteInstance();
+            wrapper.DeleteInstance();
         }
 
-        Task<(string connection, Guid id)> BuildDatabase(string dbName)
+        Task<string> BuildDatabase(string dbName)
         {
             return wrapper.CreateDatabaseFromTemplate(dbName);
         }
@@ -192,8 +192,8 @@ namespace EfLocalDb
             IEnumerable<object> data)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            var (connection, id) = await BuildDatabase(dbName);
-            var database = new SqlDatabase<TDbContext>(connection,id, constructInstance, () => wrapper.DeleteDatabase(dbName, id), data);
+            var connection = await BuildDatabase(dbName);
+            var database = new SqlDatabase<TDbContext>(connection,dbName, constructInstance, () => wrapper.DeleteDatabase(dbName), data);
             await database.Start();
             return database;
         }

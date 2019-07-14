@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using MethodTimer;
 #if EF
@@ -21,7 +20,6 @@ class Wrapper
     string TemplateLogFile;
     string TemplateConnectionString;
     public readonly string ServerName;
-    Task<Guid> createDatabaseTask;
     Task startupTask;
     SqlConnection masterConnection;
 
@@ -72,47 +70,52 @@ where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
     }
 
-    async Task<Guid> CreateDatabaseTask()
-    {
-        await startupTask;
-        var id = Guid.NewGuid();
-        var dataFile = Path.Combine(directory, $"{id}.mdf");
-        File.Copy(TemplateDataFile, dataFile);
-        var commandText = $@"
-create database [{id}] on
-(
-    name = [{id}],
-    filename = '{dataFile}'
-)
-for attach;
-
-alter database [{id}]
-    modify file (name=template, newname='{id}')
-alter database [{id}]
-    modify file (name=template_log, newname='{id}_log')
-";
-        await ExecuteOnMasterAsync(commandText);
-        return id;
-    }
-
     [Time]
-    public async Task<(string connection, Guid id)> CreateDatabaseFromTemplate(string name)
+    public async Task<string> CreateDatabaseFromTemplate(string name)
     {
-        var stopwatch = Stopwatch.StartNew();
+        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var logFile = Path.Combine(directory, $"{name}_log.ldf");
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("The database name 'template' is reserved.");
         }
 
-        var newTask = CreateDatabaseTask();
-        var result = Interlocked.Exchange(ref createDatabaseTask, newTask);
+        var takeOfflineIfExistsText = $@"
+if db_id('{name}') is not null
+    alter database [{name}] set offline;
+";
+        var takeOfflineTask = ExecuteOnMasterAsync(takeOfflineIfExistsText);
+        var stopwatch2 = Stopwatch.StartNew();
+        await takeOfflineTask;
+        Trace.WriteLine($"offline.  {stopwatch2.ElapsedMilliseconds}ms.", "LocalDb");
+        await startupTask;
+        File.Copy(TemplateDataFile, dataFile,true);
+        File.Copy(TemplateLogFile, logFile,true);
 
-        var guid = await result;
+        var commandText = $@"
+if db_id('{name}') is null
+    begin
+        create database [{name}] on
+        (
+            name = [{name}],
+            filename = '{dataFile}'
+        )
+        for attach;
 
-        var commandText = $"alter database [{guid}] modify name = [{name}];";
+        alter database [{name}]
+            modify file (name=template, newname='{name}')
+        alter database [{name}]
+            modify file (name=template_log, newname='{name}_log')
+    end;
+else
+    begin
+        alter database [{name}] set online;
+    end;
+";
+        var stopwatch = Stopwatch.StartNew();
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
-        return ($"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false", guid);
+        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
     string GetCreateTemplateCommand()
@@ -167,7 +170,6 @@ log on
                 buildTemplate,
                 rebuildTemplate: true,
                 performOptimizations: true);
-            createDatabaseTask = CreateDatabaseTask();
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -195,28 +197,26 @@ log on
         {
             startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true, false);
         }
-
-        createDatabaseTask = CreateDatabaseTask();
     }
 
     [Time]
     async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate, bool performOptimizations)
     {
         masterConnection = new SqlConnection(MasterConnectionString);
-        await masterConnection.OpenAsync();
+        masterConnection.Open();
 
         if (performOptimizations)
         {
             await masterConnection.ExecuteCommandAsync(GetOptimizationCommand());
         }
-        await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
-
-        DeleteNonTemplateFiles();
         if (!rebuildTemplate)
         {
             return;
         }
 
+        await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
+
+        DeleteNonTemplateFiles();
         DeleteTemplateFiles();
         await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
 
@@ -251,9 +251,8 @@ dbcc shrinkfile(modeldev, {size})
     }
 
     [Time]
-    public async Task DeleteInstance()
+    public void DeleteInstance()
     {
-        await createDatabaseTask;
         LocalDbApi.StopAndDelete(instance);
         Directory.Delete(directory, true);
     }
@@ -285,12 +284,12 @@ dbcc shrinkfile(modeldev, {size})
     }
 
     [Time]
-    public async Task DeleteDatabase(string dbName, Guid id)
+    public async Task DeleteDatabase(string dbName)
     {
         var commandText = $"drop database [{dbName}];";
         await ExecuteOnMasterAsync(commandText);
-        var dataFile = Path.Combine(directory, $"{id}.mdf");
-        var logFile = Path.Combine(directory, $"{id}_log.ldf");
+        var dataFile = Path.Combine(directory, $"{dbName}.mdf");
+        var logFile = Path.Combine(directory, $"{dbName}_log.ldf");
         File.Delete(dataFile);
         File.Delete(logFile);
     }

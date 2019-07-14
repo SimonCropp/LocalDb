@@ -9,17 +9,17 @@ namespace LocalDb
     {
         Func<Task> delete;
 
-        public SqlDatabase(string connectionString, Guid id, Func<Task> delete)
+        public SqlDatabase(string connectionString, string name, Func<Task> delete)
         {
             this.delete = delete;
             Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);
             ConnectionString = connectionString;
-            Id = id;
+            Name = name;
             Connection = new SqlConnection(connectionString);
         }
 
         public string ConnectionString { get; }
-        public Guid Id { get; }
+        public string Name { get; }
 
         public SqlConnection Connection { get; }
 

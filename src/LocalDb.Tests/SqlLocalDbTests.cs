@@ -42,15 +42,15 @@ public class SqlLocalDbTests :
         LocalDbApi.StopAndDelete("InfoTest");
     }
 
-    //[Fact]
-    //public void DeleteAll()
-    //{
-    //    foreach (var instance in LocalDbApi.GetInstanceNames())
-    //    {
-    //        Trace.WriteLine(instance);
-    //        LocalDbApi.StopAndDelete(instance);
-    //    }
-    //}
+    [Fact]
+    public void DeleteAll()
+    {
+        foreach (var instance in LocalDbApi.GetInstanceNames())
+        {
+            Trace.WriteLine(instance);
+            LocalDbApi.StopAndDelete(instance);
+        }
+    }
 
     public SqlLocalDbTests(ITestOutputHelper output) :
         base(output)

@@ -18,7 +18,7 @@ public class Tests :
             var connection = database.Connection;
             var data = await TestDbBuilder.AddData(connection);
             Assert.Contains(data, await TestDbBuilder.GetData(connection));
-            var settings = DbPropertyReader.Read(connection, database.Id);
+            var settings = DbPropertyReader.Read(connection, database.Name);
             Assert.NotEmpty(settings.Files);
         }
     }
@@ -31,18 +31,19 @@ public class Tests :
 
         using (var database = await instance.Build(databaseSuffix: "one"))
         {
-            await database.Delete();
+           // await database.Delete();
         }
 
-        using (var database = await instance.Build(databaseSuffix: "two"))
-        {
-            await database.Delete();
-        }
+        //await Task.Delay(200);
+        //using (var database = await instance.Build(databaseSuffix: "two"))
+        //{
+        //    // await database.Delete();
+        //}
 
-        using (var database = await instance.Build(databaseSuffix: "three"))
-        {
-            await database.Delete();
-        }
+        //using (var database = await instance.Build(databaseSuffix: "three"))
+        //{
+        //    //await database.Delete();
+        //}
 
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
     }
@@ -62,7 +63,7 @@ public class Tests :
     public async Task WithFileAndNoInstance()
     {
         var sqlInstance = new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
-        await sqlInstance.Cleanup();
+        sqlInstance.Cleanup();
         var instance = new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
 
         await AddAndVerifyData(instance);

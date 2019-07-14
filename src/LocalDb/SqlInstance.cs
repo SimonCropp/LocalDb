@@ -41,12 +41,12 @@ namespace LocalDb
             wrapper.Start(resultTimestamp, buildTemplate);
         }
 
-        public Task Cleanup()
+        public void Cleanup()
         {
-            return wrapper.DeleteInstance();
+            wrapper.DeleteInstance();
         }
 
-        Task<(string connection, Guid id)> BuildContext(string dbName)
+        Task<string> BuildContext(string dbName)
         {
             return wrapper.CreateDatabaseFromTemplate(dbName);
         }
@@ -83,8 +83,8 @@ namespace LocalDb
         #endregion
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            var (connection, id) = await BuildContext(dbName);
-            var sqlDatabase = new SqlDatabase(connection, id, () => wrapper.DeleteDatabase(dbName, id));
+            var connection = await BuildContext(dbName);
+            var sqlDatabase = new SqlDatabase(connection, dbName, () => wrapper.DeleteDatabase(dbName));
             await sqlDatabase.Start();
             return sqlDatabase;
         }
