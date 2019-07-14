@@ -23,6 +23,7 @@ class Wrapper
     public readonly string ServerName;
     Task<Guid> createDatabaseTask;
     Task startupTask;
+    SqlConnection masterConnection;
 
     public Wrapper(string instance, string directory, ushort size)
     {
@@ -195,49 +196,40 @@ log on
         createDatabaseTask = CreateDatabaseTask();
     }
 
+    [Time]
     async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate)
     {
-        using (var masterConnection = new SqlConnection(MasterConnectionString))
+        masterConnection = new SqlConnection(MasterConnectionString);
+        await masterConnection.OpenAsync();
+        await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
+
+        DeleteNonTemplateFiles();
+        if (!rebuildTemplate)
         {
-            await masterConnection.OpenAsync();
-            await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
-
-            DeleteNonTemplateFiles();
-            if (!rebuildTemplate)
-            {
-                return;
-            }
-
-            DeleteTemplateFiles();
-            await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
-
-            using (var templateConnection = new SqlConnection(TemplateConnectionString))
-            {
-                await templateConnection.OpenAsync();
-                await buildTemplate(templateConnection);
-            }
-
-            await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());
-            File.SetCreationTime(TemplateDataFile, timestamp);
+            return;
         }
+
+        DeleteTemplateFiles();
+        await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
+
+        using (var templateConnection = new SqlConnection(TemplateConnectionString))
+        {
+            await templateConnection.OpenAsync();
+            await buildTemplate(templateConnection);
+        }
+
+        await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());
+        File.SetCreationTime(TemplateDataFile, timestamp);
     }
 
-    async Task ExecuteOnMasterAsync(string command)
+    Task ExecuteOnMasterAsync(string command)
     {
-        using (var connection = new SqlConnection(MasterConnectionString))
-        {
-            await connection.OpenAsync();
-            await connection.ExecuteCommandAsync(command);
-        }
+        return masterConnection.ExecuteCommandAsync(command);
     }
 
     void ExecuteOnMaster(string command)
     {
-        using (var connection = new SqlConnection(MasterConnectionString))
-        {
-            connection.Open();
-            connection.ExecuteCommand(command);
-        }
+        masterConnection.ExecuteCommand(command);
     }
 
     [Time]
