@@ -30,7 +30,8 @@ class Wrapper
         {
             throw new ArgumentOutOfRangeException(nameof(size), size, "3MB is the min allowed value");
         }
-        Guard.AgainstInvalidFileNameCharacters(nameof(instance),instance);
+
+        Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";
@@ -53,10 +54,9 @@ begin
 end;";
     }
 
-    [Time]
-    void PurgeDbs()
+    static string GetPurgeDbsCommand()
     {
-        var commandText = @"
+        return @"
 declare @command nvarchar(max)
 set @command = ''
 
@@ -69,30 +69,29 @@ EXEC sp_detach_db ''' + [name] + ''', ''true'';
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
-        ExecuteOnMaster(commandText);
     }
 
     async Task<Guid> CreateDatabaseTask()
     {
         await startupTask;
-        var name = Guid.NewGuid();
-        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var id = Guid.NewGuid();
+        var dataFile = Path.Combine(directory, $"{id}.mdf");
         File.Copy(TemplateDataFile, dataFile);
         var commandText = $@"
-create database [{name}] on
+create database [{id}] on
 (
-    name = [{name}],
+    name = [{id}],
     filename = '{dataFile}'
 )
 for attach;
 
-alter database [{name}]
-    modify file (name=template, newname='{name}')
-alter database [{name}]
-    modify file (name=template_log, newname='{name}_log')
+alter database [{id}]
+    modify file (name=template, newname='{id}')
+alter database [{id}]
+    modify file (name=template_log, newname='{id}_log')
 ";
         await ExecuteOnMasterAsync(commandText);
-        return name;
+        return id;
     }
 
     [Time]
@@ -105,14 +104,14 @@ alter database [{name}]
         }
 
         var newTask = CreateDatabaseTask();
-        var result = Interlocked.Exchange(ref createDatabaseTask,newTask);
+        var result = Interlocked.Exchange(ref createDatabaseTask, newTask);
 
         var guid = await result;
 
         var commandText = $"alter database [{guid}] modify name = [{name}];";
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
-        return ($"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false",guid);
+        return ($"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false", guid);
     }
 
     string GetCreateTemplateCommand()
@@ -141,18 +140,19 @@ log on
         try
         {
 #endif
-            var stopwatch = Stopwatch.StartNew();
-            InnerStart(timestamp, buildTemplate);
-            var message = $"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.";
-            if (LocalDbLogging.Enabled)
+        var stopwatch = Stopwatch.StartNew();
+        InnerStart(timestamp, buildTemplate);
+        var message = $"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.";
+        if (LocalDbLogging.Enabled)
+        {
+            using (var connection = new SqlConnection(MasterConnectionString))
             {
-                using (var connection = new SqlConnection(MasterConnectionString))
-                {
-                    connection.Open();
-                    message += $"{Environment.NewLine} ServerVersion: {connection.ServerVersion}";
-                }
+                connection.Open();
+                message += $"{Environment.NewLine} ServerVersion: {connection.ServerVersion}";
             }
-            Trace.WriteLine(message, "LocalDb");
+        }
+
+        Trace.WriteLine(message, "LocalDb");
 #if RELEASE
         }
         catch (Exception exception)
@@ -170,7 +170,7 @@ log on
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
             RunOnceOffOptimizations();
-            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate);
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true);
             createDatabaseTask = CreateDatabaseTask();
         }
 
@@ -189,28 +189,34 @@ log on
             return;
         }
 
-        PurgeDbs();
-        DeleteNonTemplateFiles();
-
         var templateLastMod = File.GetCreationTime(TemplateDataFile);
         if (timestamp == templateLastMod)
         {
             LocalDbLogging.Log("Not modified so skipping rebuild");
-            startupTask = Task.CompletedTask;
-            createDatabaseTask = CreateDatabaseTask();
-            return;
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, false);
+        }
+        else
+        {
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true);
         }
 
-        DeleteTemplateFiles();
-        startupTask = CreateAndDetachTemplate(timestamp, buildTemplate);
         createDatabaseTask = CreateDatabaseTask();
     }
 
-    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate)
     {
         using (var masterConnection = new SqlConnection(MasterConnectionString))
         {
             await masterConnection.OpenAsync();
+            await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
+
+            DeleteNonTemplateFiles();
+            if (!rebuildTemplate)
+            {
+                return;
+            }
+
+            DeleteTemplateFiles();
             await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
 
             using (var templateConnection = new SqlConnection(TemplateConnectionString))
@@ -277,6 +283,7 @@ dbcc shrinkfile(modeldev, {size})
             {
                 continue;
             }
+
             if (nameWithoutExtension == "template_log")
             {
                 continue;
@@ -293,12 +300,12 @@ dbcc shrinkfile(modeldev, {size})
     }
 
     [Time]
-    public async Task DeleteDatabase(string dbName)
+    public async Task DeleteDatabase(string dbName, Guid id)
     {
         var commandText = $"drop database [{dbName}];";
         await ExecuteOnMasterAsync(commandText);
-        var dataFile = Path.Combine(directory, $"{dbName}.mdf");
-        var logFile = Path.Combine(directory, $"{dbName}_log.ldf");
+        var dataFile = Path.Combine(directory, $"{id}.mdf");
+        var logFile = Path.Combine(directory, $"{id}_log.ldf");
         File.Delete(dataFile);
         File.Delete(logFile);
     }

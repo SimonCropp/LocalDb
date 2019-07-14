@@ -21,7 +21,7 @@ public class WrapperTests :
     public async Task Delete()
     {
         var (connection, id) = await instance.CreateDatabaseFromTemplate("ToDelete");
-        await instance.DeleteDatabase("ToDelete");
+        await instance.DeleteDatabase("ToDelete", id);
 
         using (var sqlConnection = new SqlConnection(instance.MasterConnectionString))
         {
