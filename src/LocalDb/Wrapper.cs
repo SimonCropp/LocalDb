@@ -35,7 +35,7 @@ class Wrapper
         Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
         this.instance = instance;
-        MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";
+        MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
         TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
         this.directory = directory;
         this.size = size;
@@ -162,8 +162,11 @@ log on
             FileExtensions.FlushDirectory(directory);
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
-            RunOnceOffOptimizations();
-            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true);
+            startupTask = CreateAndDetachTemplate(
+                timestamp,
+                buildTemplate,
+                rebuildTemplate: true,
+                performOptimizations: true);
             createDatabaseTask = CreateDatabaseTask();
         }
 
@@ -186,21 +189,26 @@ log on
         if (timestamp == templateLastMod)
         {
             LocalDbLogging.Log("Not modified so skipping rebuild");
-            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, false);
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, false, false);
         }
         else
         {
-            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true);
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true, false);
         }
 
         createDatabaseTask = CreateDatabaseTask();
     }
 
     [Time]
-    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate, bool performOptimizations)
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         await masterConnection.OpenAsync();
+
+        if (performOptimizations)
+        {
+            await masterConnection.ExecuteCommandAsync(GetOptimizationCommand());
+        }
         await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
 
         DeleteNonTemplateFiles();
@@ -227,15 +235,9 @@ log on
         return masterConnection.ExecuteCommandAsync(command);
     }
 
-    void ExecuteOnMaster(string command)
+    string GetOptimizationCommand()
     {
-        masterConnection.ExecuteCommand(command);
-    }
-
-    [Time]
-    void RunOnceOffOptimizations()
-    {
-        var commandText = $@"
+        return $@"
 execute sp_configure 'show advanced options', 1;
 reconfigure;
 execute sp_configure 'user instance timeout', 30;
@@ -246,7 +248,6 @@ use model;
 dbcc shrinkfile(modeldev, {size})
 -- end-snippet
 ";
-        ExecuteOnMaster(commandText);
     }
 
     [Time]
