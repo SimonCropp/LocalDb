@@ -143,14 +143,6 @@ log on
         var stopwatch = Stopwatch.StartNew();
         InnerStart(timestamp, buildTemplate);
         var message = $"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.";
-        if (LocalDbLogging.Enabled)
-        {
-            using (var connection = new SqlConnection(MasterConnectionString))
-            {
-                connection.Open();
-                message += $"{Environment.NewLine} ServerVersion: {connection.ServerVersion}";
-            }
-        }
 
         Trace.WriteLine(message, "LocalDb");
 #if RELEASE

@@ -3,6 +3,7 @@
  using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
+ using MethodTimer;
 
  static class LocalDbApi
  {
