@@ -34,10 +34,15 @@ public static class LocalDbLogging
     /// </summary>
     public static void EnableVerbose()
     {
+        if (WrapperCreated)
+        {
+            throw new Exception("`LocalDbLogging.EnableVerbose()` must be called prior to any `SqlInstance` being created.");
+        }
         Enabled = true;
     }
 
     internal static bool Enabled;
+    internal static bool WrapperCreated;
 
     internal static void Log(string message)
     {
@@ -48,7 +53,7 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/LocalDbLogging.cs#L9-L33)</sup>
+<sup>[snippet source](/src/LocalDb/LocalDbLogging.cs#L10-L39)</sup>
 <!-- endsnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 #if EF
 namespace EfLocalDb
@@ -17,10 +18,15 @@ namespace LocalDb
         /// </summary>
         public static void EnableVerbose()
         {
+            if (WrapperCreated)
+            {
+                throw new Exception("`LocalDbLogging.EnableVerbose()` must be called prior to any `SqlInstance` being created.");
+            }
             Enabled = true;
         }
 
         internal static bool Enabled;
+        internal static bool WrapperCreated;
 
         internal static void Log(string message)
         {

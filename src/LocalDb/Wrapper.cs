@@ -32,6 +32,7 @@ class Wrapper
 
         Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
+        LocalDbLogging.WrapperCreated = true;
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
         TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
