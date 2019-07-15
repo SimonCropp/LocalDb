@@ -27,6 +27,13 @@ public class WrapperTests :
     }
 
     [Fact]
+    public async Task CreateDatabase()
+    {
+        await instance.CreateDatabaseFromTemplate("CreateDatabase");
+        ObjectApprover.VerifyWithJson(instance.ReadDatabaseState("CreateDatabase"));
+    }
+
+    [Fact]
     public async Task DeleteDatabaseWithOpenConnection()
     {
         var connection = await instance.CreateDatabaseFromTemplate("ToDelete");
