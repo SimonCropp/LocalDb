@@ -204,6 +204,10 @@ log on
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         masterConnection.Open();
+        if (LocalDbLogging.Enabled)
+        {
+            Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}");
+        }
 
         if (performOptimizations)
         {
