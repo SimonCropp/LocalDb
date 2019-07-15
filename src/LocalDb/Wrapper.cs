@@ -277,4 +277,19 @@ dbcc shrinkfile(modeldev, {size})
         File.Delete(dataFile);
         File.Delete(logFile);
     }
+
+    public DatabaseState ReadDatabaseState(string dbName)
+    {
+        var dataFile = Path.Combine(directory, $"{dbName}.mdf");
+        var logFile = Path.Combine(directory, $"{dbName}_log.ldf");
+        var dbFileInfo = masterConnection.ReadFileInfo(dbName);
+
+        return new DatabaseState
+        {
+            DataFileExists = File.Exists(dataFile),
+            LogFileExists = File.Exists(logFile),
+            DbDataFileName = dbFileInfo.data,
+            DbLogFileName = dbFileInfo.log,
+         };
+    }
 }

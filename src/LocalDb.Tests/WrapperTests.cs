@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
 using ApprovalTests;
+using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -18,17 +18,11 @@ public class WrapperTests :
     }
 
     [Fact]
-    public async Task Delete()
+    public async Task DeleteDatabase()
     {
-        var connection = await instance.CreateDatabaseFromTemplate("ToDelete");
+        await instance.CreateDatabaseFromTemplate("ToDelete");
         await instance.DeleteDatabase("ToDelete");
-
-        using (var sqlConnection = new SqlConnection(instance.MasterConnectionString))
-        {
-            await sqlConnection.OpenAsync();
-            var settings = DbPropertyReader.Read(sqlConnection,"ToDelete");
-            Assert.Empty(settings.Files);
-        }
+        ObjectApprover.VerifyWithJson(instance.ReadDatabaseState("ToDelete"));
     }
 
     public WrapperTests(ITestOutputHelper output) :
