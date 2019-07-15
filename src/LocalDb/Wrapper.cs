@@ -217,7 +217,6 @@ log on
 
         await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
 
-        DeleteNonTemplateFiles();
         DeleteTemplateFiles();
         await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
 
@@ -256,26 +255,6 @@ dbcc shrinkfile(modeldev, {size})
     {
         LocalDbApi.StopAndDelete(instance);
         Directory.Delete(directory, true);
-    }
-
-    [Time]
-    void DeleteNonTemplateFiles()
-    {
-        foreach (var file in Directory.EnumerateFiles(directory))
-        {
-            var nameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-            if (nameWithoutExtension == "template")
-            {
-                continue;
-            }
-
-            if (nameWithoutExtension == "template_log")
-            {
-                continue;
-            }
-
-            File.Delete(file);
-        }
     }
 
     void DeleteTemplateFiles()
