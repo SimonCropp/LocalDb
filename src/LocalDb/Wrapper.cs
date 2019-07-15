@@ -105,8 +105,8 @@ else
         {
             throw new Exception("The database name 'template' is reserved.");
         }
-        await takeOfflineTask;
         await startupTask;
+        await takeOfflineTask;
         File.Copy(TemplateDataFile, dataFile,true);
         File.Copy(TemplateLogFile, logFile,true);
 
