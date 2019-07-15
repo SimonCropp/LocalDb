@@ -9,15 +9,14 @@ namespace StaticConstructor
 
     public class Tests
     {
-        static SqlInstance<DbContextUsedInStatic> sqlInstance;
+        static SqlInstance<TheDbContext> sqlInstance;
 
         static Tests()
         {
-            sqlInstance = new SqlInstance<DbContextUsedInStatic>(
-                builder => new DbContextUsedInStatic(builder.Options));
+            sqlInstance = new SqlInstance<TheDbContext>(
+                builder => new TheDbContext(builder.Options));
         }
 
-        [Fact]
         public async Task Test()
         {
             var entity = new TheEntity
