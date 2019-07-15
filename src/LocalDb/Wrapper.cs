@@ -138,7 +138,6 @@ log on
 ";
     }
 
-    [Time]
     public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
 #if RELEASE
