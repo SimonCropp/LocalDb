@@ -27,6 +27,14 @@ public class WrapperTests :
     }
 
     [Fact]
+    public Task WithRebuild()
+    {
+        var instance2 = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"), 4);
+        instance2.Start(timestamp, connection => throw new Exception());
+        return instance2.AwaitStart();
+    }
+
+    [Fact]
     public async Task CreateDatabase()
     {
         await instance.CreateDatabaseFromTemplate("CreateDatabase");
@@ -42,6 +50,7 @@ public class WrapperTests :
             await sqlConnection.OpenAsync();
             await instance.DeleteDatabase("ToDelete");
         }
+
         ObjectApprover.VerifyWithJson(instance.ReadDatabaseState("ToDelete"));
     }
 
@@ -50,9 +59,12 @@ public class WrapperTests :
     {
     }
 
+    static DateTime timestamp = new DateTime(2000, 1, 1);
+
     static WrapperTests()
     {
         instance = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"), 4);
-        instance.Start(DateTime.Now, TestDbBuilder.CreateTable);
+        instance.Start(timestamp, TestDbBuilder.CreateTable);
+        instance.AwaitStart().GetAwaiter().GetResult();
     }
 }

@@ -94,31 +94,6 @@ public class Tests :
     //    new SqlInstance("LocalDbDuplicate", TestDbBuilder.CreateTable);
     //}
 
-    [Fact]
-    public async Task WithRebuild()
-    {
-        var dateTime = DateTime.Now;
-        var instance1 = new SqlInstance(
-            "rebuild",
-            TestDbBuilder.CreateTable,
-            timestamp: dateTime);
-        int data;
-        using (var database1 = await instance1.Build())
-        {
-            data = await TestDbBuilder.AddData(database1.Connection);
-        }
-
-        var instance2 = new SqlInstance(
-            "rebuild",
-            connection => throw new Exception(),
-            timestamp: dateTime);
-        using (var database = await instance2.Build())
-        {
-            var connection1 = database.Connection;
-            Assert.DoesNotContain(data, await TestDbBuilder.GetData(connection1));
-        }
-    }
-
     static async Task AddAndVerifyData(SqlInstance instance)
     {
         using (var database = await instance.Build())

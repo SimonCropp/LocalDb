@@ -106,10 +106,11 @@ else
         {
             throw new Exception("The database name 'template' is reserved.");
         }
+
         await startupTask;
         await takeOfflineTask;
-        File.Copy(TemplateDataFile, dataFile,true);
-        File.Copy(TemplateLogFile, logFile,true);
+        File.Copy(TemplateDataFile, dataFile, true);
+        File.Copy(TemplateLogFile, logFile, true);
 
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
@@ -157,6 +158,11 @@ log on
             throw ExceptionBuilder.WrapLocalDbFailure(instance, directory, exception);
         }
 #endif
+    }
+
+    public Task AwaitStart()
+    {
+        return startupTask;
     }
 
     void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
@@ -214,6 +220,7 @@ log on
         {
             await masterConnection.ExecuteCommandAsync(GetOptimizationCommand());
         }
+
         if (!rebuildTemplate)
         {
             return;
@@ -292,6 +299,6 @@ drop database [{dbName}];";
             LogFileExists = File.Exists(logFile),
             DbDataFileName = dbFileInfo.data,
             DbLogFileName = dbFileInfo.log,
-         };
+        };
     }
 }

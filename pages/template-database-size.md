@@ -19,7 +19,7 @@ To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/s
 use model;
 dbcc shrinkfile(modeldev, {size})
 ```
-<sup>[snippet source](/src/LocalDb/Wrapper.cs#L250-L253)</sup>
+<sup>[snippet source](/src/LocalDb/Wrapper.cs#L257-L260)</sup>
 <!-- endsnippet -->
 
 
