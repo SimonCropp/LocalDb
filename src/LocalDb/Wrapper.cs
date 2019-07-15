@@ -16,6 +16,12 @@ class Wrapper
     ushort size;
     public readonly string MasterConnectionString;
     string instance;
+    string TemplateDataFile;
+    string TemplateLogFile;
+    string TemplateConnectionString;
+    public readonly string ServerName;
+    Task startupTask;
+    SqlConnection masterConnection;
 
     public Wrapper(string instance, string directory, ushort size)
     {
@@ -23,11 +29,12 @@ class Wrapper
         {
             throw new ArgumentOutOfRangeException(nameof(size), size, "3MB is the min allowed value");
         }
-        Guard.AgainstInvalidFileNameCharacters(nameof(instance),instance);
+
+        Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
         this.instance = instance;
-        MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master";
-        TemplateConnection = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
+        MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
+        TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
         this.directory = directory;
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
@@ -36,82 +43,85 @@ class Wrapper
         ServerName = $@"(LocalDb)\{instance}";
     }
 
-    string TemplateDataFile;
-    string TemplateLogFile;
-    string TemplateConnection;
-    public readonly string ServerName;
-
-    [Time]
-    void DetachTemplate(DateTime timestamp)
+    static string GetDetachTemplateCommand()
     {
-        var commandText = @"
+        return @"
 if db_id('template') is not null
 begin
   alter database [template] set single_user with rollback immediate;
   execute sp_detach_db 'template', 'true';
 end;";
-
-        ExecuteOnMaster(commandText);
-        File.SetCreationTime(TemplateDataFile, timestamp);
     }
 
-    [Time]
-    void PurgeDbs()
+    static string GetPurgeDbsCommand()
     {
-        var commandText = @"
+        return @"
 declare @command nvarchar(max)
 set @command = ''
 
 select @command = @command
 + '
 
-drop database [' + [name] + '];
+EXEC sp_detach_db ''' + [name] + ''', ''true'';
 
 '
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
-        ExecuteOnMaster(commandText);
     }
 
-    [Time]
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
         var stopwatch = Stopwatch.StartNew();
+
+        var takeOfflineIfExistsText = $@"
+if db_id('{name}') is not null
+    alter database [{name}] set offline;
+";
+        var takeOfflineTask = ExecuteOnMasterAsync(takeOfflineIfExistsText);
+        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var logFile = Path.Combine(directory, $"{name}_log.ldf");
+        var commandText = $@"
+if db_id('{name}') is null
+    begin
+        create database [{name}] on
+        (
+            name = [{name}],
+            filename = '{dataFile}'
+        )
+        for attach;
+
+        alter database [{name}]
+            modify file (name=template, newname='{name}')
+        alter database [{name}]
+            modify file (name=template_log, newname='{name}_log')
+    end;
+else
+    begin
+        alter database [{name}] set online;
+    end;
+";
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("The database name 'template' is reserved.");
         }
+        await startupTask;
+        await takeOfflineTask;
+        File.Copy(TemplateDataFile, dataFile,true);
+        File.Copy(TemplateLogFile, logFile,true);
 
-        var dataFile = Path.Combine(directory, $"{name}.mdf");
-        if (File.Exists(dataFile))
-        {
-            throw new Exception($"The database name '{name}' has already been used.");
-        }
-
-        File.Copy(TemplateDataFile, dataFile);
-        var commandText = $@"
-create database [{name}] on
-(
-    name = [{name}],
-    filename = '{dataFile}'
-)
-for attach;
-
-alter database [{name}]
-    modify file (name=template, newname='{name}')
-alter database [{name}]
-    modify file (name=template_log, newname='{name}_log')
-";
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
-    [Time]
-    void CreateTemplate()
+    string GetCreateTemplateCommand()
     {
-        var commandText = $@"
+        return $@"
+if db_id('template') is not null
+begin
+  execute sp_detach_db 'template', 'true';
+end;
 create database template on
 (
     name = template,
@@ -126,28 +136,19 @@ log on
     filegrowth = 100KB
 );
 ";
-        ExecuteOnMaster(commandText);
     }
 
-    [Time]
-    public void Start(DateTime timestamp, Action<SqlConnection> buildTemplate)
+    public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
 #if RELEASE
         try
         {
 #endif
-            var stopwatch = Stopwatch.StartNew();
-            InnerStart(timestamp, buildTemplate);
-            var message = $"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.";
-            if (LocalDbLogging.Enabled)
-            {
-                using (var connection = new SqlConnection(MasterConnectionString))
-                {
-                    connection.Open();
-                    message += $"{Environment.NewLine} ServerVersion: {connection.ServerVersion}";
-                }
-            }
-            Trace.WriteLine(message, "LocalDb");
+        var stopwatch = Stopwatch.StartNew();
+        InnerStart(timestamp, buildTemplate);
+        var message = $"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.";
+
+        Trace.WriteLine(message, "LocalDb");
 #if RELEASE
         }
         catch (Exception exception)
@@ -157,17 +158,18 @@ log on
 #endif
     }
 
-    void InnerStart(DateTime timestamp, Action<SqlConnection> buildTemplate)
+    void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
         void CleanStart()
         {
             FileExtensions.FlushDirectory(directory);
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
-            RunOnceOffOptimizations();
-            CreateTemplate();
-            ExecuteBuildTemplate(buildTemplate);
-            DetachTemplate(timestamp);
+            startupTask = CreateAndDetachTemplate(
+                timestamp,
+                buildTemplate,
+                rebuildTemplate: true,
+                performOptimizations: true);
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -185,54 +187,60 @@ log on
             return;
         }
 
-        PurgeDbs();
-        DeleteNonTemplateFiles();
-
         var templateLastMod = File.GetCreationTime(TemplateDataFile);
         if (timestamp == templateLastMod)
         {
             LocalDbLogging.Log("Not modified so skipping rebuild");
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, false, false);
+        }
+        else
+        {
+            startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true, false);
+        }
+    }
+
+    [Time]
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate, bool performOptimizations)
+    {
+        masterConnection = new SqlConnection(MasterConnectionString);
+        masterConnection.Open();
+        if (LocalDbLogging.Enabled)
+        {
+            Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}");
+        }
+
+        if (performOptimizations)
+        {
+            await masterConnection.ExecuteCommandAsync(GetOptimizationCommand());
+        }
+        if (!rebuildTemplate)
+        {
             return;
         }
 
+        await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
+
         DeleteTemplateFiles();
-        CreateTemplate();
-        ExecuteBuildTemplate(buildTemplate);
-        DetachTemplate(timestamp);
-    }
+        await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
 
-    [Time]
-    void ExecuteBuildTemplate(Action<SqlConnection> buildTemplate)
-    {
-        using (var connection = new SqlConnection(TemplateConnection))
+        using (var templateConnection = new SqlConnection(TemplateConnectionString))
         {
-            connection.Open();
-            buildTemplate(connection);
+            await templateConnection.OpenAsync();
+            await buildTemplate(templateConnection);
         }
+
+        await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());
+        File.SetCreationTime(TemplateDataFile, timestamp);
     }
 
-    async Task ExecuteOnMasterAsync(string command)
+    Task ExecuteOnMasterAsync(string command)
     {
-        using (var connection = new SqlConnection(MasterConnectionString))
-        {
-            await connection.OpenAsync();
-            await connection.ExecuteCommandAsync(command);
-        }
+        return masterConnection.ExecuteCommandAsync(command);
     }
 
-    void ExecuteOnMaster(string command)
+    string GetOptimizationCommand()
     {
-        using (var connection = new SqlConnection(MasterConnectionString))
-        {
-            connection.Open();
-            connection.ExecuteCommand(command);
-        }
-    }
-
-    [Time]
-    void RunOnceOffOptimizations()
-    {
-        var commandText = $@"
+        return $@"
 execute sp_configure 'show advanced options', 1;
 reconfigure;
 execute sp_configure 'user instance timeout', 30;
@@ -243,7 +251,6 @@ use model;
 dbcc shrinkfile(modeldev, {size})
 -- end-snippet
 ";
-        ExecuteOnMaster(commandText);
     }
 
     [Time]
@@ -251,25 +258,6 @@ dbcc shrinkfile(modeldev, {size})
     {
         LocalDbApi.StopAndDelete(instance);
         Directory.Delete(directory, true);
-    }
-
-    [Time]
-    void DeleteNonTemplateFiles()
-    {
-        foreach (var file in Directory.EnumerateFiles(directory))
-        {
-            var nameWithoutExtension = Path.GetFileNameWithoutExtension(file);
-            if (nameWithoutExtension == "template")
-            {
-                continue;
-            }
-            if (nameWithoutExtension == "template_log")
-            {
-                continue;
-            }
-
-            File.Delete(file);
-        }
     }
 
     void DeleteTemplateFiles()

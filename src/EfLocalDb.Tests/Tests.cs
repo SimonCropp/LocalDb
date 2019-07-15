@@ -211,7 +211,7 @@ public class Tests :
         using (var database = await instance.Build(new List<object> {entity}))
         {
             Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
-            var settings = DbPropertyReader.Read(database.Connection, "Tests_Simple");
+            var settings = DbPropertyReader.Read(database.Connection, database.Name);
             Assert.NotEmpty(settings.Files);
         }
     }

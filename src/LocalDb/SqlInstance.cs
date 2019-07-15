@@ -15,7 +15,7 @@ namespace LocalDb
 
         public SqlInstance(
             string name,
-            Action<SqlConnection> buildTemplate,
+            Func<SqlConnection, Task> buildTemplate,
             string directory = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)
@@ -83,8 +83,8 @@ namespace LocalDb
         #endregion
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
-            var connectionString = await BuildContext(dbName);
-            var sqlDatabase = new SqlDatabase(connectionString, () => wrapper.DeleteDatabase(dbName));
+            var connection = await BuildContext(dbName);
+            var sqlDatabase = new SqlDatabase(connection, dbName, () => wrapper.DeleteDatabase(dbName));
             await sqlDatabase.Start();
             return sqlDatabase;
         }

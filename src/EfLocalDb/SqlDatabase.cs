@@ -16,17 +16,21 @@ namespace EfLocalDb
 
         public SqlDatabase(
             string connectionString,
+            string name,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             Func<Task> delete,
             IEnumerable<object> data)
         {
             Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);
+            Name = name;
             this.constructInstance = constructInstance;
             this.delete = delete;
             this.data = data;
             ConnectionString = connectionString;
             Connection = new SqlConnection(connectionString);
         }
+
+        public string Name { get; }
 
         public SqlConnection Connection { get; }
         public string ConnectionString { get; }
