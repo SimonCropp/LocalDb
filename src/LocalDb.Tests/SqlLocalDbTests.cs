@@ -25,14 +25,6 @@ public class SqlLocalDbTests :
     }
 
     [Fact]
-    public void DeleteInstance()
-    {
-        LocalDbApi.CreateAndStart("DeleteInstance");
-        LocalDbApi.StopAndDelete("DeleteInstance");
-        Assert.False(LocalDbApi.GetInstance("DeleteInstance").Exists);
-    }
-
-    [Fact]
     public void Info()
     {
         LocalDbApi.CreateAndStart("InfoTest");
@@ -40,6 +32,7 @@ public class SqlLocalDbTests :
 
         ObjectApprover.VerifyWithJson(info);
         LocalDbApi.StopAndDelete("InfoTest");
+        Assert.False(LocalDbApi.GetInstance("InfoTest").Exists);
     }
 
     //[Fact]
