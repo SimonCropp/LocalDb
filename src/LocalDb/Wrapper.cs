@@ -120,7 +120,6 @@ else
         return $@"
 if db_id('template') is not null
 begin
-  alter database [template] set single_user with rollback immediate;
   execute sp_detach_db 'template', 'true';
 end;
 create database template on
