@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using ApprovalTests;
 using ObjectApproval;
@@ -22,6 +23,18 @@ public class WrapperTests :
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
         await instance.DeleteDatabase("ToDelete");
+        ObjectApprover.VerifyWithJson(instance.ReadDatabaseState("ToDelete"));
+    }
+
+    [Fact]
+    public async Task DeleteDatabaseWithOpenConnection()
+    {
+        var connection = await instance.CreateDatabaseFromTemplate("ToDelete");
+        using (var sqlConnection = new SqlConnection(connection))
+        {
+            await sqlConnection.OpenAsync();
+            await instance.DeleteDatabase("ToDelete");
+        }
         ObjectApprover.VerifyWithJson(instance.ReadDatabaseState("ToDelete"));
     }
 
