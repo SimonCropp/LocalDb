@@ -70,28 +70,17 @@ where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
     }
 
-    [Time]
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
-        var dataFile = Path.Combine(directory, $"{name}.mdf");
-        var logFile = Path.Combine(directory, $"{name}_log.ldf");
-        if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new Exception("The database name 'template' is reserved.");
-        }
+        var stopwatch = Stopwatch.StartNew();
 
         var takeOfflineIfExistsText = $@"
 if db_id('{name}') is not null
     alter database [{name}] set offline;
 ";
         var takeOfflineTask = ExecuteOnMasterAsync(takeOfflineIfExistsText);
-        var stopwatch2 = Stopwatch.StartNew();
-        await takeOfflineTask;
-        Trace.WriteLine($"offline.  {stopwatch2.ElapsedMilliseconds}ms.", "LocalDb");
-        await startupTask;
-        File.Copy(TemplateDataFile, dataFile,true);
-        File.Copy(TemplateLogFile, logFile,true);
-
+        var dataFile = Path.Combine(directory, $"{name}.mdf");
+        var logFile = Path.Combine(directory, $"{name}_log.ldf");
         var commandText = $@"
 if db_id('{name}') is null
     begin
@@ -112,7 +101,15 @@ else
         alter database [{name}] set online;
     end;
 ";
-        var stopwatch = Stopwatch.StartNew();
+        if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new Exception("The database name 'template' is reserved.");
+        }
+        await takeOfflineTask;
+        await startupTask;
+        File.Copy(TemplateDataFile, dataFile,true);
+        File.Copy(TemplateLogFile, logFile,true);
+
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
