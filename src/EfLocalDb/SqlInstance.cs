@@ -187,15 +187,6 @@ namespace EfLocalDb
             return Build(null, testFile, databaseSuffix, memberName);
         }
 
-        /// <summary>
-        ///   Build DB with a transaction that is rolled back when disposed.
-        /// </summary>
-        /// <param name="data">The seed data.</param>
-        public Task<SqlDatabase<TDbContext>> BuildWithRollback(params object[] data)
-        {
-            return BuildWithRollback((IEnumerable<object>)data);
-        }
-
         public async Task<SqlDatabase<TDbContext>> Build(
             string dbName,
             IEnumerable<object> data)
