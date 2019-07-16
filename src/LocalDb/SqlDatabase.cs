@@ -9,7 +9,7 @@ namespace LocalDb
     {
         Func<Task> delete;
 
-        public SqlDatabase(string connectionString, string name, Func<Task> delete)
+        internal SqlDatabase(string connectionString, string name, Func<Task> delete)
         {
             this.delete = delete;
             Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);

@@ -19,9 +19,11 @@ class Wrapper
     string TemplateDataFile;
     string TemplateLogFile;
     string TemplateConnectionString;
+    public readonly string WithRollbackConnectionString;
     public readonly string ServerName;
     Task startupTask;
     SqlConnection masterConnection;
+    Lazy<Task> withRollbackTask;
 
     public Wrapper(string instance, string directory, ushort size)
     {
@@ -36,6 +38,7 @@ class Wrapper
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
         TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
+        WithRollbackConnectionString = $"Data Source=(LocalDb)\\{instance};Database=withRollback;Pooling=false";
         this.directory = directory;
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
@@ -69,6 +72,12 @@ EXEC sp_detach_db ''' + [name] + ''', ''true'';
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
+    }
+
+    public async Task CreateWithRollbackDatabase()
+    {
+        await startupTask;
+        await withRollbackTask.Value;
     }
 
     public async Task<string> CreateDatabaseFromTemplate(string name)
@@ -177,6 +186,7 @@ log on
                 buildTemplate,
                 rebuildTemplate: true,
                 performOptimizations: true);
+            InitRollbackTask();
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -204,6 +214,12 @@ log on
         {
             startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true, false);
         }
+        InitRollbackTask();
+    }
+
+    void InitRollbackTask()
+    {
+        withRollbackTask = new Lazy<Task>(() => CreateDatabaseFromTemplate("withRollback"));
     }
 
     [Time]
@@ -238,6 +254,7 @@ log on
         }
 
         await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());
+
         File.SetCreationTime(TemplateDataFile, timestamp);
     }
 

@@ -70,15 +70,14 @@ If all tests that need to use the SqlInstance existing in the same test class, t
 ```cs
 public class Tests
 {
-    static SqlInstance<DbContextUsedInStatic> sqlInstance;
+    static SqlInstance<TheDbContext> sqlInstance;
 
     static Tests()
     {
-        sqlInstance = new SqlInstance<DbContextUsedInStatic>(
-            builder => new DbContextUsedInStatic(builder.Options));
+        sqlInstance = new SqlInstance<TheDbContext>(
+            builder => new TheDbContext(builder.Options));
     }
 
-    [Fact]
     public async Task Test()
     {
         var entity = new TheEntity
@@ -92,7 +91,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L34)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L33)</sup>
 <!-- endsnippet -->
 
 

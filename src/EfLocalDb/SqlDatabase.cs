@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
@@ -13,18 +14,33 @@ namespace EfLocalDb
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
         Func<Task> delete;
         IEnumerable<object> data;
+        bool withRollback;
+        TransactionScope transaction;
 
-        public SqlDatabase(
+        internal SqlDatabase(
             string connectionString,
             string name,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             Func<Task> delete,
             IEnumerable<object> data)
         {
-            Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);
             Name = name;
             this.constructInstance = constructInstance;
             this.delete = delete;
+            this.data = data;
+            ConnectionString = connectionString;
+            Connection = new SqlConnection(connectionString);
+        }
+
+        internal SqlDatabase(
+            string connectionString,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            IEnumerable<object> data)
+        {
+            Name = "withRollback";
+            withRollback = true;
+            transaction = new TransactionScope(TransactionScopeOption.Required, TransactionScopeAsyncFlowOption.Enabled);
+            this.constructInstance = constructInstance;
             this.data = data;
             ConnectionString = connectionString;
             Connection = new SqlConnection(connectionString);
@@ -104,9 +120,15 @@ namespace EfLocalDb
         {
             Context?.Dispose();
             Connection.Dispose();
+            transaction?.Dispose();
         }
+
         public Task Delete()
         {
+            if (withRollback)
+            {
+                throw new Exception("Delete cannot be used when using with rollback.");
+            }
             Dispose();
             return delete();
         }
