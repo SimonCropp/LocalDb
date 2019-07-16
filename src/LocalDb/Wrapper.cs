@@ -23,7 +23,7 @@ class Wrapper
     Task startupTask;
     SqlConnection masterConnection;
 
-    public Wrapper(string instance, string directory, ushort size)
+    public Wrapper(string instance, string directory, ushort size = 3)
     {
         if (size < 3)
         {

@@ -14,8 +14,33 @@ public class WrapperTests :
     [Fact]
     public void InvalidInstanceName()
     {
-        var exception = Assert.Throws<ArgumentException>(() => new Wrapper("<", "s", 4));
+        var exception = Assert.Throws<ArgumentException>(() => new Wrapper("<", "s"));
         Approvals.Verify(exception.Message);
+    }
+
+    [Fact]
+    public async Task NoFileAndNoInstance()
+    {
+        LocalDbApi.StopAndDelete("NoFileAndNoInstance");
+        DirectoryFinder.Delete("NoFileAndNoInstance");
+
+        var wrapper = new Wrapper("NoFileAndNoInstance", DirectoryFinder.Find("NoFileAndNoInstance"));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+        ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+    }
+
+    [Fact]
+    public async Task WithFileAndNoInstance()
+    {
+        var wrapper = new Wrapper("WithFileAndNoInstance", DirectoryFinder.Find("WithFileAndNoInstance"));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+        wrapper.DeleteInstance();
+        wrapper = new Wrapper("WithFileAndNoInstance", DirectoryFinder.Find("WithFileAndNoInstance"));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+        ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
     }
 
     [Fact]
@@ -29,7 +54,7 @@ public class WrapperTests :
     [Fact]
     public Task WithRebuild()
     {
-        var instance2 = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"), 4);
+        var instance2 = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"));
         instance2.Start(timestamp, connection => throw new Exception());
         return instance2.AwaitStart();
     }
@@ -63,7 +88,7 @@ public class WrapperTests :
 
     static WrapperTests()
     {
-        instance = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"), 4);
+        instance = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"));
         instance.Start(timestamp, TestDbBuilder.CreateTable);
         instance.AwaitStart().GetAwaiter().GetResult();
     }

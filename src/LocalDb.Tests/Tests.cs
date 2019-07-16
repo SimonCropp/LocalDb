@@ -48,27 +48,6 @@ public class Tests :
     }
 
     [Fact]
-    public async Task NoFileAndNoInstance()
-    {
-        LocalDbApi.StopAndDelete("NoFileAndNoInstance");
-        DirectoryFinder.Delete("NoFileAndNoInstance");
-
-        var instance = new SqlInstance("NoFileAndNoInstance", TestDbBuilder.CreateTable);
-
-        await AddAndVerifyData(instance);
-    }
-
-    [Fact]
-    public async Task WithFileAndNoInstance()
-    {
-        var sqlInstance = new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
-        sqlInstance.Cleanup();
-        var instance = new SqlInstance("WithFileAndNoInstance", TestDbBuilder.CreateTable);
-
-        await AddAndVerifyData(instance);
-    }
-
-    [Fact]
     public async Task NoFileAndWithInstance()
     {
         LocalDbApi.CreateInstance("NoFileAndWithInstance");
