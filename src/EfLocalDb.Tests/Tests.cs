@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
@@ -34,79 +33,6 @@ public class Tests :
         using (var database = await instance.Build())
         {
             await database.AddData(entity);
-            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
-        }
-    }
-
-    [Fact]
-    public async Task WithFileAndNoDb()
-    {
-        new SqlInstance<TestDbContext>(
-            constructInstance: builder => new TestDbContext(builder.Options),
-            instanceSuffix: "EfWithFileAndNoDb");
-        LocalDbApi.StopAndDelete("TestDbContext_EfWithFileAndNoDb");
-
-        var instance = new SqlInstance<TestDbContext>(
-            constructInstance: builder => new TestDbContext(builder.Options),
-            instanceSuffix: "EfWithFileAndNoDb");
-
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        using (var database = await instance.Build(new List<object> {entity}))
-        {
-            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
-        }
-    }
-
-    [Fact]
-    public async Task NoFileAndWithDb()
-    {
-        LocalDbApi.CreateInstance("TestDbContext_EfNoFileAndWithDb");
-        var directory = DirectoryFinder.Find("EfNoFileAndWithDb");
-
-        if (Directory.Exists(directory))
-        {
-            Directory.Delete(directory, true);
-        }
-
-        var instance = new SqlInstance<TestDbContext>(
-            constructInstance: builder => new TestDbContext(builder.Options),
-            instanceSuffix: "EfNoFileAndWithDb");
-
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        using (var database = await instance.Build(new List<object> {entity}))
-        {
-            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
-        }
-    }
-
-
-    [Fact]
-    public async Task NoFileAndNoDb()
-    {
-        LocalDbApi.StopAndDelete("TestDbContext_EfNoFileAndNoDb");
-        var directory = DirectoryFinder.Find("TestDbContext_EfNoFileAndNoDb");
-
-        if (Directory.Exists(directory))
-        {
-            Directory.Delete(directory, true);
-        }
-
-        var instance = new SqlInstance<TestDbContext>(
-            constructInstance: builder => new TestDbContext(builder.Options),
-            instanceSuffix: "EfNoFileAndNoDb");
-
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        using (var database = await instance.Build(new List<object> {entity}))
-        {
             Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
         }
     }
@@ -211,8 +137,6 @@ public class Tests :
         using (var database = await instance.Build(new List<object> {entity}))
         {
             Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
-            var settings = DbPropertyReader.Read(database.Connection, database.Name);
-            Assert.NotEmpty(settings.Files);
         }
     }
 

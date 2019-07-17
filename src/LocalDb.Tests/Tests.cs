@@ -17,8 +17,6 @@ public class Tests :
             var connection = database.Connection;
             var data = await TestDbBuilder.AddData(connection);
             Assert.Contains(data, await TestDbBuilder.GetData(connection));
-            var settings = DbPropertyReader.Read(connection, database.Name);
-            Assert.NotEmpty(settings.Files);
         }
     }
 
@@ -47,17 +45,6 @@ public class Tests :
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
     }
 
-    [Fact]
-    public async Task NoFileAndWithInstance()
-    {
-        LocalDbApi.CreateInstance("NoFileAndWithInstance");
-        DirectoryFinder.Delete("NoFileAndWithInstance");
-
-        var instance = new SqlInstance("NoFileAndWithInstance", TestDbBuilder.CreateTable);
-
-        await AddAndVerifyData(instance);
-    }
-
     //TODO: should duplicate instances throw?
     //[Fact]
     //public void Duplicate()
@@ -71,16 +58,6 @@ public class Tests :
     //{
     //    new SqlInstance("LocalDbDuplicate", TestDbBuilder.CreateTable);
     //}
-
-    static async Task AddAndVerifyData(SqlInstance instance)
-    {
-        using (var database = await instance.Build())
-        {
-            var connection = database.Connection;
-            var data = await TestDbBuilder.AddData(connection);
-            Assert.Contains(data, await TestDbBuilder.GetData(connection));
-        }
-    }
 
     public Tests(ITestOutputHelper output) :
         base(output)

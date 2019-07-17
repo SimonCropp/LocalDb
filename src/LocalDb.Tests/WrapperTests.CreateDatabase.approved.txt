@@ -1,6 +1,4 @@
 ﻿{
   DataFileExists: true,
-  LogFileExists: true,
-  DbDataFileName: 'CreateDatabase.mdf',
-  DbLogFileName: 'CreateDatabase_log.ldf'
+  LogFileExists: true
 }

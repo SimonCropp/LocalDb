@@ -44,6 +44,18 @@ public class WrapperTests :
     }
 
     [Fact]
+    public async Task NoFileAndWithInstance()
+    {
+        LocalDbApi.CreateInstance("NoFileAndWithInstance");
+        DirectoryFinder.Delete("NoFileAndWithInstance");
+        var wrapper = new Wrapper("NoFileAndWithInstance", DirectoryFinder.Find("NoFileAndWithInstance"));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+        ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+    }
+
+    [Fact]
     public async Task DeleteDatabase()
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
