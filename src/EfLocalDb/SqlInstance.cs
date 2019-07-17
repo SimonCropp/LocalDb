@@ -28,13 +28,7 @@ namespace EfLocalDb
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
 
-            Init(
-                ConvertBuildTemplate(constructInstance, buildTemplate),
-                constructInstance,
-                instanceName,
-                directory,
-                timestamp,
-                templateSize);
+            Init(ConvertBuildTemplate(constructInstance, buildTemplate), constructInstance, instanceName, directory, timestamp, templateSize);
         }
 
         public SqlInstance(
@@ -45,33 +39,7 @@ namespace EfLocalDb
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
-            Init(
-                ConvertBuildTemplate(constructInstance, buildTemplate),
-                constructInstance,
-                name,
-                directory,
-                timestamp,
-                templateSize);
-        }
-
-        static Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, Task> ConvertBuildTemplate(
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            Func<TDbContext, Task> buildTemplate)
-        {
-            return async (connection, builder) =>
-            {
-                using (var dbContext = constructInstance(builder))
-                {
-                    if (buildTemplate == null)
-                    {
-                        await dbContext.Database.EnsureCreatedAsync();
-                    }
-                    else
-                    {
-                        await buildTemplate(dbContext);
-                    }
-                }
-            };
+            Init(ConvertBuildTemplate(constructInstance, buildTemplate), constructInstance, name, directory, timestamp, templateSize);
         }
 
         public SqlInstance(
@@ -95,6 +63,26 @@ namespace EfLocalDb
             ushort templateSize = 3)
         {
             Init(buildTemplate, constructInstance, name, directory, timestamp, templateSize);
+        }
+
+        static Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, Task> ConvertBuildTemplate(
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            Func<TDbContext, Task> buildTemplate)
+        {
+            return async (connection, builder) =>
+            {
+                using (var dbContext = constructInstance(builder))
+                {
+                    if (buildTemplate == null)
+                    {
+                        await dbContext.Database.EnsureCreatedAsync();
+                    }
+                    else
+                    {
+                        await buildTemplate(dbContext);
+                    }
+                }
+            };
         }
 
         void Init(
