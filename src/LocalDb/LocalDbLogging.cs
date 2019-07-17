@@ -16,15 +16,17 @@ namespace LocalDb
         /// <summary>
         /// Enable verbose logging to <see cref="Trace.WriteLine(string)"/>
         /// </summary>
-        public static void EnableVerbose()
+        public static void EnableVerbose(bool sqlLogging = false)
         {
             if (WrapperCreated)
             {
                 throw new Exception("`LocalDbLogging.EnableVerbose()` must be called prior to any `SqlInstance` being created.");
             }
             Enabled = true;
+            SqlLoggingEnabled = sqlLogging;
         }
 
+        internal static bool SqlLoggingEnabled;
         internal static bool Enabled;
         internal static bool WrapperCreated;
 

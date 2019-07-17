@@ -1,7 +1,13 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+#if EF
+using EfLocalDb;
+#else
+using LocalDb;
+#endif
 
 static class SqlExtensions
 {
@@ -9,6 +15,11 @@ static class SqlExtensions
     {
         try
         {
+            if (LocalDbLogging.SqlLoggingEnabled)
+            {
+                Trace.WriteLine($@"Executing SQL:
+{commandText}");
+            }
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = commandText;
