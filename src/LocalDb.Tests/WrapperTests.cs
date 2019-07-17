@@ -43,9 +43,13 @@ public class WrapperTests :
         ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
     }
 
+    //TODO: new test with a named db existing, but no file existing
+
+
     [Fact]
     public async Task NoFileAndWithInstance()
     {
+        LocalDbApi.StopAndDelete("NoFileAndWithInstance");
         LocalDbApi.CreateInstance("NoFileAndWithInstance");
         DirectoryFinder.Delete("NoFileAndWithInstance");
         var wrapper = new Wrapper("NoFileAndWithInstance", DirectoryFinder.Find("NoFileAndWithInstance"));
@@ -100,6 +104,7 @@ public class WrapperTests :
 
     static WrapperTests()
     {
+        LocalDbApi.StopAndDelete("WrapperTests");
         instance = new Wrapper("WrapperTests", DirectoryFinder.Find("WrapperTests"));
         instance.Start(timestamp, TestDbBuilder.CreateTable);
         instance.AwaitStart().GetAwaiter().GetResult();
