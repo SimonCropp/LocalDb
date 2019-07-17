@@ -196,7 +196,7 @@ log on
         masterConnection.Open();
         if (LocalDbLogging.Enabled)
         {
-            Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}");
+            Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}","LocalDb");
         }
 
         if (performOptimizations)

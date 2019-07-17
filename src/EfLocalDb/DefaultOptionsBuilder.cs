@@ -1,3 +1,4 @@
+using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -7,6 +8,10 @@ static class DefaultOptionsBuilder
         where TDbContext : DbContext
     {
         var builder = new DbContextOptionsBuilder<TDbContext>();
+        if (LocalDbLogging.SqlLoggingEnabled)
+        {
+            builder.UseLoggerFactory(LoggingProvider.LoggerFactory);
+        }
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
         builder.ConfigureWarnings(warnings =>
