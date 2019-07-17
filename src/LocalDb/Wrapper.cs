@@ -54,23 +54,6 @@ begin
 end;";
     }
 
-    static string GetPurgeDbsCommand()
-    {
-        return @"
-declare @command nvarchar(max)
-set @command = ''
-
-select @command = @command
-+ '
-
-EXEC sp_detach_db ''' + [name] + ''', ''true'';
-
-'
-from master.sys.databases
-where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
-execute sp_executesql @command";
-    }
-
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
         var stopwatch = Stopwatch.StartNew();
@@ -225,8 +208,6 @@ log on
         {
             return;
         }
-
-        await masterConnection.ExecuteCommandAsync(GetPurgeDbsCommand());
 
         DeleteTemplateFiles();
         await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
