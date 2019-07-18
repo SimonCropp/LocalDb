@@ -241,7 +241,6 @@ When building a `DbContextOptionsBuilder` the default configuration is as follow
 
 <!-- snippet: DefaultOptionsBuilder.cs -->
 ```cs
-using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -266,5 +265,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L24)</sup>
+<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L23)</sup>
 <!-- endsnippet -->

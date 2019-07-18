@@ -17,7 +17,7 @@ To enable verbose logging use `LocalDbLogging`:
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L9)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L5-L7)</sup>
 <!-- endsnippet -->
 
 The full implementation is:
@@ -55,7 +55,7 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/LocalDbLogging.cs#L10-L41)</sup>
+<sup>[snippet source](/src/LocalDb/LocalDbLogging.cs#L4-L35)</sup>
 <!-- endsnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
@@ -73,7 +73,7 @@ static class MethodTimeLogger
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/MethodTimeLogger.cs#L9-L20)</sup>
+<sup>[snippet source](/src/LocalDb/MethodTimeLogger.cs#L4-L15)</sup>
 <!-- endsnippet -->
 
 
