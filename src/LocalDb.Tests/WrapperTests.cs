@@ -38,7 +38,9 @@ public class WrapperTests :
         }
 
         ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+        LocalDbApi.StopInstance("RecreateWithOpenConnection");
     }
+
     [Fact]
     public async Task NoFileAndNoInstance()
     {
@@ -49,6 +51,7 @@ public class WrapperTests :
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
         ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+        LocalDbApi.StopInstance("NoFileAndNoInstance");
     }
 
     [Fact]
@@ -62,6 +65,7 @@ public class WrapperTests :
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
         ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+        LocalDbApi.StopInstance("WithFileAndNoInstance");
     }
 
     //TODO: new test with a named db existing, but no file existing
@@ -78,6 +82,7 @@ public class WrapperTests :
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
         ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+        LocalDbApi.StopInstance("NoFileAndWithInstance");
     }
 
     [Fact]
