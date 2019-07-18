@@ -1,1 +1,9 @@
-﻿{}
+﻿{
+  deletedState: {},
+  createdState: {
+    DataFileExists: true,
+    LogFileExists: true,
+    DbDataFileName: 'ToDelete.mdf',
+    DbLogFileName: 'ToDelete_log.ldf'
+  }
+}

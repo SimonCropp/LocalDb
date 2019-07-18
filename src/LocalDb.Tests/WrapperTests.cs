@@ -19,6 +19,27 @@ public class WrapperTests :
     }
 
     [Fact]
+    public async Task RecreateWithOpenConnection()
+    {
+        LocalDbApi.StopAndDelete("RecreateWithOpenConnection");
+        DirectoryFinder.Delete("RecreateWithOpenConnection");
+
+        var wrapper = new Wrapper("RecreateWithOpenConnection", DirectoryFinder.Find("RecreateWithOpenConnection"));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
+        using (var connection = new SqlConnection(connectionString))
+        {
+             await connection.OpenAsync();
+             await wrapper.CreateDatabaseFromTemplate("Simple");
+
+             wrapper = new Wrapper("RecreateWithOpenConnection", DirectoryFinder.Find("RecreateWithOpenConnection"));
+             wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+             await wrapper.CreateDatabaseFromTemplate("Simple");
+        }
+
+        ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+    }
+    [Fact]
     public async Task NoFileAndNoInstance()
     {
         LocalDbApi.StopAndDelete("NoFileAndNoInstance");
@@ -90,9 +111,15 @@ public class WrapperTests :
         {
             await sqlConnection.OpenAsync();
             await instance.DeleteDatabase("ToDelete");
+            var deletedState = instance.ReadDatabaseState("ToDelete");
+            await instance.CreateDatabaseFromTemplate("ToDelete");
+            var createdState = instance.ReadDatabaseState("ToDelete");
+            ObjectApprover.VerifyWithJson(new
+            {
+                deletedState,
+                createdState
+            });
         }
-
-        ObjectApprover.VerifyWithJson(instance.ReadDatabaseState("ToDelete"));
     }
 
     public WrapperTests(ITestOutputHelper output) :
