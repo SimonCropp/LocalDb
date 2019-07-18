@@ -33,15 +33,9 @@ class LoggingProvider :
 {state.ToString().IndentLines()}", "LocalDB");
     }
 
-    public bool IsEnabled(LogLevel logLevel)
-    {
-        return true;
-    }
+    public bool IsEnabled(LogLevel logLevel) => true;
 
-    public IDisposable BeginScope<TState>(TState state)
-    {
-        return null;
-    }
+    public IDisposable BeginScope<TState>(TState state) => null;
 
     public void Dispose()
     {

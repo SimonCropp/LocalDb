@@ -2,7 +2,7 @@ static class StringExtensions
 {
     public static string IndentLines(this string input)
     {
-        var indent = "    ";
+        const string indent = "    ";
         return $"{indent}{input.Replace("\n", $"\n{indent}")}";
     }
 }

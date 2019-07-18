@@ -77,6 +77,20 @@ static class MethodTimeLogger
 <!-- endsnippet -->
 
 
+## SQL statements
+
+SQL statements can be logged:
+
+<!-- snippet: LocalDbLoggingUsageSqlLogging -->
+```cs
+LocalDbLogging.EnableVerbose(sqlLogging: true);
+```
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L8-L10)</sup>
+<!-- endsnippet -->
+
+In EfLocalDb this will also EntityFramework SQL statements.
+
+
 ## Logging in xUnit
 
 xUnit does not route `Trace.WriteLine` to [ITestOutputHelper](https://xunit.net/docs/capturing-output). Tracking issue: [3.0: Console / Trace / Debugger capture support ](https://github.com/xunit/xunit/issues/1730).

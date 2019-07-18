@@ -110,10 +110,7 @@ namespace EfLocalDb
             #endregion
         }
 
-        public void Cleanup()
-        {
-            wrapper.DeleteInstance();
-        }
+        public void Cleanup() => wrapper.DeleteInstance();
 
         Task<string> BuildDatabase(string dbName)
         {
@@ -173,9 +170,6 @@ namespace EfLocalDb
             return Build(dbName, (IEnumerable<object>) null);
         }
 
-        public string MasterConnectionString
-        {
-            get => wrapper.MasterConnectionString;
-        }
+        public string MasterConnectionString => wrapper.MasterConnectionString;
     }
 }
