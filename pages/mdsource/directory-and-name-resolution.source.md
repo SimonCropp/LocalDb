@@ -22,6 +22,13 @@ snippet: ExplicitName
 snippet: EfExplicitName
 
 
+## Building using Azure machines
+
+When using azure hosted machines for build agents, it makes sense to use the agent temp directory as defined by the `AGENT_TEMPDIRECTORY` environment variable. The reason is that the temp directory is located on a secondary drive. However this drive has some strange permissions that will cause run time errors, usually manifesting as a SqlException with `Could not open new database...`. To work around this run the following script at machine startup:
+
+snippet: Set-D-Drive-Permissions.ps1
+
+
 # Database Name Resolution
 
 A design goal is to have an isolated database per test. To facilitate this the `SqlInstance.Build` method has a convention based approach. It contains the following parameters:
