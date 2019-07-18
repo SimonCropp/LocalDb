@@ -9,18 +9,19 @@ static class SqlExtensions
     public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
     {
         commandText = commandText.Trim();
-        if (LocalDbLogging.SqlLoggingEnabled)
-        {
-            Trace.WriteLine($@"Executing SQL:
-{commandText.IndentLines()}", "LocalDB");
-        }
 
         try
         {
+            var stopwatch = Stopwatch.StartNew();
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = commandText;
                 await command.ExecuteNonQueryAsync();
+            }
+            if (LocalDbLogging.SqlLoggingEnabled)
+            {
+                Trace.WriteLine($@"Executed SQL ({stopwatch.ElapsedMilliseconds}.ms):
+{commandText.IndentLines()}", "LocalDB");
             }
         }
         catch (SqlException exception)
