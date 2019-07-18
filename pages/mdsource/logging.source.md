@@ -18,6 +18,15 @@ Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTim
 snippet: MethodTimeLogger
 
 
+## SQL statements
+
+SQL statements can be logged:
+
+snippet: LocalDbLoggingUsageSqlLogging
+
+In EfLocalDb this will also EntityFramework SQL statements.
+
+
 ## Logging in xUnit
 
 xUnit does not route `Trace.WriteLine` to [ITestOutputHelper](https://xunit.net/docs/capturing-output). Tracking issue: [3.0: Console / Trace / Debugger capture support ](https://github.com/xunit/xunit/issues/1730).
