@@ -1,6 +1,4 @@
-﻿using LocalDb;
-
-class LocalDbLoggingUsage
+﻿class LocalDbLoggingUsage
 {
     LocalDbLoggingUsage()
     {

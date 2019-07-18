@@ -1,42 +1,35 @@
 ﻿using System;
 using System.Diagnostics;
 
-#if EF
-namespace EfLocalDb
-#else
-namespace LocalDb
-#endif
+#region LocalDbLogging
+/// <summary>
+/// Controls the logging level.
+/// </summary>
+public static class LocalDbLogging
 {
-    #region LocalDbLogging
     /// <summary>
-    /// Controls the logging level.
+    /// Enable verbose logging to <see cref="Trace.WriteLine(string)"/>
     /// </summary>
-    public static class LocalDbLogging
+    public static void EnableVerbose(bool sqlLogging = false)
     {
-        /// <summary>
-        /// Enable verbose logging to <see cref="Trace.WriteLine(string)"/>
-        /// </summary>
-        public static void EnableVerbose(bool sqlLogging = false)
+        if (WrapperCreated)
         {
-            if (WrapperCreated)
-            {
-                throw new Exception("`LocalDbLogging.EnableVerbose()` must be called prior to any `SqlInstance` being created.");
-            }
-            Enabled = true;
-            SqlLoggingEnabled = sqlLogging;
+            throw new Exception("`LocalDbLogging.EnableVerbose()` must be called prior to any `SqlInstance` being created.");
         }
+        Enabled = true;
+        SqlLoggingEnabled = sqlLogging;
+    }
 
-        internal static bool SqlLoggingEnabled;
-        internal static bool Enabled;
-        internal static bool WrapperCreated;
+    internal static bool SqlLoggingEnabled;
+    internal static bool Enabled;
+    internal static bool WrapperCreated;
 
-        internal static void Log(string message)
+    internal static void Log(string message)
+    {
+        if (Enabled)
         {
-            if (Enabled)
-            {
-                Trace.WriteLine(message, "LocalDb");
-            }
+            Trace.WriteLine(message, "LocalDb");
         }
     }
-    #endregion
 }
+#endregion

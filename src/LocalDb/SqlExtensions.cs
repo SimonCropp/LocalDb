@@ -3,11 +3,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
-#if EF
-using EfLocalDb;
-#else
-using LocalDb;
-#endif
 
 static class SqlExtensions
 {

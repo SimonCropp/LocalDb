@@ -4,11 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using MethodTimer;
-#if EF
-using EfLocalDb;
-#else
-using LocalDb;
-#endif
 
 class Wrapper
 {

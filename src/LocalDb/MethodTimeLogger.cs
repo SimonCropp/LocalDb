@@ -1,10 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-#if EF
-using EfLocalDb;
-#else
-using LocalDb;
-#endif
 
 #region MethodTimeLogger
 static class MethodTimeLogger
