@@ -71,13 +71,11 @@ if db_id('{name}') is null
         (
             name = [{name}],
             filename = '{dataFile}'
+        ),
+        (
+            filename = '{logFile}'
         )
         for attach;
-
-        alter database [{name}]
-            modify file (name=template, newname='{name}')
-        alter database [{name}]
-            modify file (name=template_log, newname='{name}_log')
     end;
 else
     begin

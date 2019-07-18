@@ -28,19 +28,15 @@ public class Tests :
 
         using (var database = await instance.Build(databaseSuffix: "one"))
         {
-           // await database.Delete();
         }
 
-        //await Task.Delay(200);
-        //using (var database = await instance.Build(databaseSuffix: "two"))
-        //{
-        //    // await database.Delete();
-        //}
+        using (var database = await instance.Build(databaseSuffix: "two"))
+        {
+        }
 
-        //using (var database = await instance.Build(databaseSuffix: "three"))
-        //{
-        //    //await database.Delete();
-        //}
+        using (var database = await instance.Build(databaseSuffix: "three"))
+        {
+        }
 
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
     }

@@ -88,7 +88,7 @@ LocalDbLogging.EnableVerbose(sqlLogging: true);
 <sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L8-L10)</sup>
 <!-- endsnippet -->
 
-In EfLocalDb this will also EntityFramework SQL statements.
+In EfLocalDb this will also log EntityFramework SQL statements.
 
 
 ## Logging in xUnit

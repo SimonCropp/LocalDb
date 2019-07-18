@@ -24,7 +24,7 @@ SQL statements can be logged:
 
 snippet: LocalDbLoggingUsageSqlLogging
 
-In EfLocalDb this will also EntityFramework SQL statements.
+In EfLocalDb this will also log EntityFramework SQL statements.
 
 
 ## Logging in xUnit
