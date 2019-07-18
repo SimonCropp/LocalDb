@@ -13,13 +13,15 @@ static class SqlExtensions
 {
     public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
     {
+        commandText = commandText.Trim();
+        if (LocalDbLogging.SqlLoggingEnabled)
+        {
+            Trace.WriteLine($@"Executing SQL:
+{commandText.IndentLines()}", "LocalDB");
+        }
+
         try
         {
-            if (LocalDbLogging.SqlLoggingEnabled)
-            {
-                Trace.WriteLine($@"Executing SQL:
-{commandText}");
-            }
             using (var command = connection.CreateCommand())
             {
                 command.CommandText = commandText;
@@ -53,6 +55,7 @@ connectionString: {connection.ConnectionString}
         {
             return;
         }
+
         builder.AppendLine("Errors:");
         foreach (SqlError sqlError in errors)
         {

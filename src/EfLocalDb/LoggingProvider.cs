@@ -30,7 +30,7 @@ class LoggingProvider :
         }
 
         Trace.WriteLine($@"Executing EF SQL command:
-{state}", "LocalDB");
+{state.ToString().IndentLines()}", "LocalDB");
     }
 
     public bool IsEnabled(LogLevel logLevel)

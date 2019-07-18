@@ -241,6 +241,7 @@ When building a `DbContextOptionsBuilder` the default configuration is as follow
 
 <!-- snippet: DefaultOptionsBuilder.cs -->
 ```cs
+using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -250,6 +251,10 @@ static class DefaultOptionsBuilder
         where TDbContext : DbContext
     {
         var builder = new DbContextOptionsBuilder<TDbContext>();
+        if (LocalDbLogging.SqlLoggingEnabled)
+        {
+            builder.UseLoggerFactory(LoggingProvider.LoggerFactory);
+        }
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
         builder.ConfigureWarnings(warnings =>
@@ -261,5 +266,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19)</sup>
+<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L24)</sup>
 <!-- endsnippet -->
