@@ -51,8 +51,8 @@ end;";
 
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
+        //TODO: if dataFile doesnt exists do a drop and recreate
         var stopwatch = Stopwatch.StartNew();
-        //todo: do a is offline test
         var takeOfflineIfExistsText = $@"
 if db_id('{name}') is not null
 begin
