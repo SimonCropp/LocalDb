@@ -52,7 +52,7 @@ end;";
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
         var stopwatch = Stopwatch.StartNew();
-
+        //todo: do a is offline test
         var takeOfflineIfExistsText = $@"
 if db_id('{name}') is not null
 begin
@@ -191,6 +191,7 @@ log on
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         masterConnection.Open();
+        var takeDbsOffline = masterConnection.ExecuteCommandAsync(GetTakeDbsOfflineCommand());
         if (LocalDbLogging.Enabled)
         {
             Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}","LocalDb");
@@ -203,6 +204,7 @@ log on
 
         if (!rebuildTemplate)
         {
+            await takeDbsOffline;
             return;
         }
 
@@ -218,6 +220,7 @@ log on
         await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());
 
         File.SetCreationTime(TemplateDataFile, timestamp);
+        await takeDbsOffline;
     }
 
     Task ExecuteOnMasterAsync(string command)
@@ -279,5 +282,22 @@ drop database [{dbName}];";
             DbDataFileName = dbFileInfo.data,
             DbLogFileName = dbFileInfo.log,
         };
+    }
+
+    static string GetTakeDbsOfflineCommand()
+    {
+        return @"
+declare @command nvarchar(max)
+set @command = ''
+
+select @command = @command
++ '
+    alter database [' + [name] + '] set single_user with rollback immediate;
+    alter database [' + [name] + '] set multi_user;
+    alter database [' + [name] + '] set offline;
+'
+from master.sys.databases
+where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
+execute sp_executesql @command";
     }
 }
