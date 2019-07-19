@@ -31,4 +31,6 @@ In EfLocalDb this will also log EntityFramework SQL statements.
 
 xUnit does not route `Trace.WriteLine` to [ITestOutputHelper](https://xunit.net/docs/capturing-output). Tracking issue: [3.0: Console / Trace / Debugger capture support ](https://github.com/xunit/xunit/issues/1730).
 
-This can be worked around by [adding a Trace Listener(https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.listeners) that writes to `ITestOutputHelper`. Or alternatively use [XunitLogger](https://github.com/SimonCropp/XunitLogger).
+This can be worked around by [adding a Trace Listener](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.listeners) that writes to `ITestOutputHelper`. 
+
+Or alternatively use XunitLogger: https://github.com/SimonCropp/XunitLogger.
