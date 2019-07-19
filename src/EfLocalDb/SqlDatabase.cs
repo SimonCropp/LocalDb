@@ -30,7 +30,6 @@ namespace EfLocalDb
         }
 
         public string Name { get; }
-
         public SqlConnection Connection { get; }
         public string ConnectionString { get; }
 
