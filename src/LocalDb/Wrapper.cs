@@ -53,15 +53,8 @@ end;";
     {
         //TODO: if dataFile doesnt exists do a drop and recreate
         var stopwatch = Stopwatch.StartNew();
-        var takeOfflineIfExistsText = $@"
-if db_id('{name}') is not null
-begin
-    alter database [{name}] set single_user with rollback immediate;
-    alter database [{name}] set multi_user;
-    alter database [{name}] set offline;
-end;
-";
-        var takeOfflineTask = ExecuteOnMasterAsync(takeOfflineIfExistsText);
+
+        // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         var logFile = Path.Combine(directory, $"{name}_log.ldf");
         var commandText = $@"
@@ -88,7 +81,6 @@ else
         }
 
         await startupTask;
-        await takeOfflineTask;
         File.Copy(TemplateDataFile, dataFile, true);
         File.Copy(TemplateLogFile, logFile, true);
 

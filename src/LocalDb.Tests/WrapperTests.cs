@@ -18,6 +18,40 @@ public class WrapperTests :
         Approvals.Verify(exception.Message);
     }
 
+    [Fact(Skip = "no supported")]
+    public async Task RecreateWithOpenConnectionAfterStartup()
+    {
+        /*
+could be supported by running the following in wrapper CreateDatabaseFromTemplate
+but it is fairly unlikely to happen and not doing the offline saves time in tests
+
+if db_id('{name}') is not null
+begin
+    alter database [{name}] set single_user with rollback immediate;
+    alter database [{name}] set multi_user;
+    alter database [{name}] set offline;
+end;
+         */
+        LocalDbApi.StopAndDelete("RecreateWithOpenConnectionAfterStartup");
+        DirectoryFinder.Delete("RecreateWithOpenConnectionAfterStartup");
+
+        var wrapper = new Wrapper("RecreateWithOpenConnectionAfterStartup", DirectoryFinder.Find("RecreateWithOpenConnectionAfterStartup"));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
+        using (var connection = new SqlConnection(connectionString))
+        {
+             await connection.OpenAsync();
+             await wrapper.CreateDatabaseFromTemplate("Simple");
+
+             wrapper = new Wrapper("RecreateWithOpenConnectionAfterStartup", DirectoryFinder.Find("RecreateWithOpenConnection"));
+             wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+             await wrapper.CreateDatabaseFromTemplate("Simple");
+        }
+
+        ObjectApprover.VerifyWithJson(wrapper.ReadDatabaseState("Simple"));
+        LocalDbApi.StopInstance("RecreateWithOpenConnectionAfterStartup");
+    }
+
     [Fact]
     public async Task RecreateWithOpenConnection()
     {
@@ -30,8 +64,6 @@ public class WrapperTests :
         using (var connection = new SqlConnection(connectionString))
         {
              await connection.OpenAsync();
-             await wrapper.CreateDatabaseFromTemplate("Simple");
-
              wrapper = new Wrapper("RecreateWithOpenConnection", DirectoryFinder.Find("RecreateWithOpenConnection"));
              wrapper.Start(timestamp, TestDbBuilder.CreateTable);
              await wrapper.CreateDatabaseFromTemplate("Simple");
