@@ -75,7 +75,7 @@ class Wrapper
         }
         catch (Exception exception)
         {
-            throw ExceptionBuilder.WrapLocalDbFailure(instance, directory, exception);
+            throw ExceptionBuilder.WrapLocalDbFailure(instance, Directory, exception);
         }
 #endif
     }
