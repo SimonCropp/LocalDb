@@ -33,10 +33,12 @@ select
 from sys.master_files f
 inner join sys.databases d on d.database_id = f.database_id
 where d.name = '{dbName}' and f.type_desc = '{type}'";
-            var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            using (var reader = await command.ExecuteReaderAsync())
             {
-                return (string) reader["physical_name"];
+                while (await reader.ReadAsync())
+                {
+                    return (string) reader["physical_name"];
+                }
             }
         }
 
