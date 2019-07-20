@@ -14,24 +14,34 @@ public class TestDbBuilder
         }
     }
 
-    public static async Task<int> AddData(SqlConnection connection)
+    public static async Task<int> AddData(SqlConnection connection, SqlTransaction transaction = null)
     {
         var nextInt = Counters.NextInt();
         using (var command = connection.CreateCommand())
         {
+            if (transaction != null)
+            {
+                command.Transaction = transaction;
+            }
             command.CommandText = $@"
 insert into MyTable (Value)
 values ({nextInt});";
             await command.ExecuteNonQueryAsync();
         }
+
         return nextInt;
     }
 
-    public static async Task<List<int>> GetData(SqlConnection connection)
+    public static async Task<List<int>> GetData(SqlConnection connection, SqlTransaction transaction = null)
     {
         var values = new List<int>();
         using (var command = connection.CreateCommand())
         {
+            if (transaction != null)
+            {
+                command.Transaction = transaction;
+            }
+
             command.CommandText = "select Value from MyTable";
             using (var reader = await command.ExecuteReaderAsync())
             {
