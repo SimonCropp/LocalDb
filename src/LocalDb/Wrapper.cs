@@ -7,7 +7,7 @@ using MethodTimer;
 
 class Wrapper
 {
-    string directory;
+    public readonly string Directory;
     ushort size;
     public readonly string MasterConnectionString;
     string instance;
@@ -27,11 +27,11 @@ class Wrapper
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
         TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
-        this.directory = directory;
+        Directory = directory;
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
         TemplateLogFile = Path.Combine(directory, "template_log.ldf");
-        Directory.CreateDirectory(directory);
+        System.IO.Directory.CreateDirectory(directory);
         ServerName = $@"(LocalDb)\{instance}";
     }
 
@@ -41,8 +41,8 @@ class Wrapper
         var stopwatch = Stopwatch.StartNew();
 
         // Explicitly dont take offline here, since that is done at startup
-        var dataFile = Path.Combine(directory, $"{name}.mdf");
-        var logFile = Path.Combine(directory, $"{name}_log.ldf");
+        var dataFile = Path.Combine(Directory, $"{name}.mdf");
+        var logFile = Path.Combine(Directory, $"{name}_log.ldf");
         var commandText = SqlCommandBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -87,7 +87,7 @@ class Wrapper
     {
         void CleanStart()
         {
-            FileExtensions.FlushDirectory(directory);
+            FileExtensions.FlushDirectory(Directory);
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
             startupTask = CreateAndDetachTemplate(
@@ -170,7 +170,7 @@ class Wrapper
     public void DeleteInstance()
     {
         LocalDbApi.StopAndDelete(instance);
-        Directory.Delete(directory, true);
+        System.IO.Directory.Delete(Directory, true);
     }
 
     void DeleteTemplateFiles()
@@ -184,24 +184,9 @@ class Wrapper
     {
         var commandText = SqlCommandBuilder.BuildDeleteDbCommand(dbName);
         await ExecuteOnMasterAsync(commandText);
-        var dataFile = Path.Combine(directory, $"{dbName}.mdf");
-        var logFile = Path.Combine(directory, $"{dbName}_log.ldf");
+        var dataFile = Path.Combine(Directory, $"{dbName}.mdf");
+        var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");
         File.Delete(dataFile);
         File.Delete(logFile);
-    }
-
-    public DatabaseState ReadDatabaseState(string dbName)
-    {
-        var dataFile = Path.Combine(directory, $"{dbName}.mdf");
-        var logFile = Path.Combine(directory, $"{dbName}_log.ldf");
-        var dbFileInfo = masterConnection.ReadFileInfo(dbName);
-
-        return new DatabaseState
-        {
-            DataFileExists = File.Exists(dataFile),
-            LogFileExists = File.Exists(logFile),
-            DbDataFileName = dbFileInfo.data,
-            DbLogFileName = dbFileInfo.log,
-        };
     }
 }

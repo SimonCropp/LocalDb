@@ -1,12 +1,13 @@
 ﻿using System.Data.SqlClient;
 using System.IO;
+using System.Threading.Tasks;
 
 static class DbFileNameReader
 {
-    public static (string data, string log) ReadFileInfo(this SqlConnection connection, string dbName)
+    public static async Task<(string data, string log)> ReadFileInfo(this SqlConnection connection, string dbName)
     {
-        var datafileName = connection.ReadFileName(dbName, "ROWS");
-        var logFileName = connection.ReadFileName(dbName, "LOG");
+        var datafileName =await  connection.ReadFileName(dbName, "ROWS");
+        var logFileName = await connection.ReadFileName(dbName, "LOG");
         if (datafileName != null)
         {
             datafileName = Path.GetFileName(datafileName);
@@ -20,7 +21,7 @@ static class DbFileNameReader
         return (datafileName, logFileName);
     }
 
-    static string ReadFileName(this SqlConnection connection, string dbName, string type)
+    static async Task<string> ReadFileName(this SqlConnection connection, string dbName, string type)
     {
         using (var command = connection.CreateCommand())
         {
@@ -32,8 +33,8 @@ select
 from sys.master_files f
 inner join sys.databases d on d.database_id = f.database_id
 where d.name = '{dbName}' and f.type_desc = '{type}'";
-            var reader = command.ExecuteReader();
-            while (reader.Read())
+            var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
                 return (string) reader["physical_name"];
             }
