@@ -21,6 +21,46 @@ public class Tests :
     }
 
     [Fact]
+    public async Task WithRollback()
+    {
+        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
+
+        using (var database1 = await instance.BuildWithRollback())
+        using (var database2 = await instance.BuildWithRollback())
+        {
+            var data = await TestDbBuilder.AddData(database1.Connection, database1.Transaction);
+            Assert.Contains(data, await TestDbBuilder.GetData(database1.Connection, database1.Transaction));
+            Assert.Empty(await TestDbBuilder.GetData(database2.Connection, database2.Transaction));
+        }
+    }
+
+    [Fact]
+    public async Task WithRollbackPerf()
+    {
+        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
+
+        using (await instance.BuildWithRollback())
+        {
+        }
+
+        SqlDatabase database = null;
+
+        try
+        {
+            var stopwatch = Stopwatch.StartNew();
+            database = await instance.BuildWithRollback();
+            Trace.WriteLine(stopwatch.ElapsedMilliseconds);
+            await TestDbBuilder.AddData(database.Connection, database.Transaction);
+        }
+        finally
+        {
+            var stopwatch = Stopwatch.StartNew();
+            database.Dispose();
+            Trace.WriteLine(stopwatch.ElapsedMilliseconds);
+        }
+    }
+
+    [Fact]
     public async Task Multiple()
     {
         var stopwatch = Stopwatch.StartNew();

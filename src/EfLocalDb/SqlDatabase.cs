@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace EfLocalDb
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
         Func<Task> delete;
         IEnumerable<object> data;
+        bool withRollback;
 
         internal SqlDatabase(
             string connectionString,
@@ -24,6 +26,19 @@ namespace EfLocalDb
             Name = name;
             this.constructInstance = constructInstance;
             this.delete = delete;
+            this.data = data;
+            ConnectionString = connectionString;
+            Connection = new SqlConnection(connectionString);
+        }
+
+        internal SqlDatabase(
+            string connectionString,
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            IEnumerable<object> data)
+        {
+            Name = "withRollback";
+            withRollback = true;
+            this.constructInstance = constructInstance;
             this.data = data;
             ConnectionString = connectionString;
             Connection = new SqlConnection(connectionString);
@@ -55,12 +70,19 @@ namespace EfLocalDb
         public async Task Start()
         {
             await Connection.OpenAsync();
+            if (withRollback)
+            {
+                Transaction = Connection.BeginTransaction(IsolationLevel.Snapshot);
+            }
+
             Context = NewDbContext();
             if (data != null)
             {
                 await AddData(data);
             }
         }
+
+        public SqlTransaction Transaction { get; private set; }
 
         public TDbContext Context { get; private set; }
 
@@ -95,17 +117,29 @@ namespace EfLocalDb
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection);
-            return constructInstance(builder);
+            var context = constructInstance(builder);
+            if (Transaction != null)
+            {
+                context.Database.UseTransaction(Transaction);
+            }
+
+            return context;
         }
 
         public void Dispose()
         {
+            Transaction?.Dispose();
             Context?.Dispose();
             Connection.Dispose();
         }
 
         public Task Delete()
         {
+            if (withRollback)
+            {
+                throw new Exception("Delete cannot be used when using with rollback.");
+            }
+
             Dispose();
             return delete();
         }

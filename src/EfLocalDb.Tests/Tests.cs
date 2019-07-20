@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
@@ -137,6 +139,48 @@ public class Tests :
         using (var database = await instance.Build(new List<object> {entity}))
         {
             Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
+        }
+    }
+
+    [Fact]
+    public async Task WithRollback()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        using (var database1 = await instance.BuildWithRollback(new List<object> {entity}))
+        using (var database2 = await instance.BuildWithRollback())
+        {
+            Assert.NotNull(database1.Context.TestEntities.FindAsync(entity.Id));
+            Assert.Empty(database2.Context.TestEntities.ToList());
+        }
+    }
+
+    [Fact]
+    public async Task WithRollbackPerf()
+    {
+        using (await instance.BuildWithRollback())
+        {
+        }
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        SqlDatabase<TestDbContext> database2 = null;
+        try
+        {
+            var stopwatch1 = Stopwatch.StartNew();
+            database2 = await instance.BuildWithRollback();
+            Trace.WriteLine(stopwatch1.ElapsedMilliseconds);
+            await database2.AddData(entity);
+        }
+        finally
+        {
+            var stopwatch2 = Stopwatch.StartNew();
+            database2.Dispose();
+            Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
         }
     }
 

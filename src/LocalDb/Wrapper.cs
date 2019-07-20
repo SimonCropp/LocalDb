@@ -10,6 +10,7 @@ class Wrapper
     public readonly string Directory;
     ushort size;
     public readonly string MasterConnectionString;
+    public readonly string WithRollbackConnectionString;
     string instance;
     string TemplateDataFile;
     string TemplateLogFile;
@@ -27,6 +28,7 @@ class Wrapper
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
         TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
+        WithRollbackConnectionString = $"Data Source=(LocalDb)\\{instance};Database=withRollback;Pooling=false";
         Directory = directory;
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
@@ -35,7 +37,7 @@ class Wrapper
         ServerName = $@"(LocalDb)\{instance}";
     }
 
-    public async Task<string> CreateDatabaseFromTemplate(string name)
+    public async Task<string> CreateDatabaseFromTemplate(string name, bool withRollback = false)
     {
         //TODO: if dataFile doesnt exists do a drop and recreate
         var stopwatch = Stopwatch.StartNew();
@@ -43,7 +45,7 @@ class Wrapper
         // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
-        var commandText = SqlCommandBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
+        var commandText = SqlCommandBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("The database name 'template' is reserved.");
@@ -95,6 +97,7 @@ class Wrapper
                 buildTemplate,
                 rebuildTemplate: true,
                 performOptimizations: true);
+            InitRollbackTask();
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -122,6 +125,7 @@ class Wrapper
         {
             startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true, false);
         }
+        InitRollbackTask();
     }
 
     [Time]
@@ -189,4 +193,15 @@ class Wrapper
         File.Delete(dataFile);
         File.Delete(logFile);
     }
+    Lazy<Task> withRollbackTask;
+    void InitRollbackTask()
+    {
+        withRollbackTask = new Lazy<Task>(() => CreateDatabaseFromTemplate("withRollback", true));
+    }
+    public async Task CreateWithRollbackDatabase()
+    {
+        await startupTask;
+        await withRollbackTask.Value;
+    }
+
 }

@@ -114,7 +114,7 @@ namespace EfLocalDb
 
         Task<string> BuildDatabase(string dbName)
         {
-            return wrapper.CreateDatabaseFromTemplate(dbName);
+            return wrapper.CreateDatabaseFromTemplate(dbName, false);
         }
 
         /// <summary>
@@ -168,6 +168,33 @@ namespace EfLocalDb
         public Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
             return Build(dbName, (IEnumerable<object>) null);
+        }
+
+        /// <summary>
+        ///   Build DB with a transaction that is rolled back when disposed.
+        /// </summary>
+        /// <param name="data">The seed data.</param>
+        public Task<SqlDatabase<TDbContext>> BuildWithRollback(params object[] data)
+        {
+            return BuildWithRollback((IEnumerable<object>)data);
+        }
+
+        /// <summary>
+        ///   Build DB with a transaction that is rolled back when disposed.
+        /// </summary>
+        /// <param name="data">The seed data.</param>
+        public async Task<SqlDatabase<TDbContext>> BuildWithRollback(IEnumerable<object> data)
+        {
+            var connection = await BuildWithRollbackDatabase();
+            var database = new SqlDatabase<TDbContext>(connection, constructInstance, data);
+            await database.Start();
+            return database;
+        }
+
+        async Task<string> BuildWithRollbackDatabase()
+        {
+            await wrapper.CreateWithRollbackDatabase();
+            return wrapper.WithRollbackConnectionString;
         }
 
         public string MasterConnectionString => wrapper.MasterConnectionString;

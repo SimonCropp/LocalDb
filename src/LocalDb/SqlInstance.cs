@@ -89,6 +89,23 @@ namespace LocalDb
             return sqlDatabase;
         }
 
+        /// <summary>
+        ///   Build DB with a transaction that is rolled back when disposed.
+        /// </summary>
+        public async Task<SqlDatabase> BuildWithRollback()
+        {
+            var connection = await BuildWithRollbackDatabase();
+            var database = new SqlDatabase(connection);
+            await database.Start();
+            return database;
+        }
+
+        async Task<string> BuildWithRollbackDatabase()
+        {
+            await wrapper.CreateWithRollbackDatabase();
+            return wrapper.WithRollbackConnectionString;
+        }
+
         public string MasterConnectionString => wrapper.MasterConnectionString;
     }
 }

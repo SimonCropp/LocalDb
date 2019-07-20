@@ -8,13 +8,21 @@ namespace LocalDb
         IDisposable
     {
         Func<Task> delete;
+        bool withRollback;
 
         internal SqlDatabase(string connectionString, string name, Func<Task> delete)
         {
             this.delete = delete;
-            Guard.AgainstNullWhiteSpace(nameof(connectionString), connectionString);
             ConnectionString = connectionString;
             Name = name;
+            Connection = new SqlConnection(connectionString);
+        }
+
+        internal SqlDatabase(string connectionString)
+        {
+            ConnectionString = connectionString;
+            Name = "withRollback";
+            withRollback = true;
             Connection = new SqlConnection(connectionString);
         }
 
@@ -36,18 +44,30 @@ namespace LocalDb
             return sqlConnection;
         }
 
-        public Task Start()
+        public async Task Start()
         {
-            return Connection.OpenAsync();
+            await Connection.OpenAsync();
+            if (withRollback)
+            {
+                Transaction = Connection.BeginTransaction();
+            }
         }
+
+        public SqlTransaction Transaction { get; private set; }
 
         public void Dispose()
         {
+            Transaction?.Dispose();
             Connection.Dispose();
         }
 
         public Task Delete()
         {
+            if (withRollback)
+            {
+                throw new Exception("Delete cannot be used when using with rollback.");
+            }
+
             Dispose();
             return delete();
         }
