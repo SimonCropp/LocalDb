@@ -39,7 +39,6 @@ class Wrapper
         ServerName = $@"(LocalDb)\{instance}";
     }
 
-
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
         //TODO: if dataFile doesnt exists do a drop and recreate
@@ -134,15 +133,15 @@ class Wrapper
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         masterConnection.Open();
-        var takeDbsOffline = masterConnection.ExecuteCommandAsync(SqlCommandBuilder.TakeDbsOfflineCommand);
+        var takeDbsOffline = ExecuteOnMasterAsync(SqlCommandBuilder.TakeDbsOfflineCommand);
         if (LocalDbLogging.Enabled)
         {
-            Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}","LocalDb");
+            Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}", "LocalDb");
         }
 
         if (performOptimizations)
         {
-            await masterConnection.ExecuteCommandAsync(SqlCommandBuilder.GetOptimizationCommand(size));
+            await ExecuteOnMasterAsync(SqlCommandBuilder.GetOptimizationCommand(size));
         }
 
         if (!rebuildTemplate)
@@ -152,7 +151,7 @@ class Wrapper
         }
 
         DeleteTemplateFiles();
-        await masterConnection.ExecuteCommandAsync(SqlCommandBuilder.GetCreateTemplateCommand(TemplateDataFile,TemplateLogFile));
+        await ExecuteOnMasterAsync(SqlCommandBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
 
         using (var templateConnection = new SqlConnection(TemplateConnectionString))
         {
@@ -160,7 +159,7 @@ class Wrapper
             await buildTemplate(templateConnection);
         }
 
-        await masterConnection.ExecuteCommandAsync(SqlCommandBuilder.DetachTemplateCommand);
+        await ExecuteOnMasterAsync(SqlCommandBuilder.DetachTemplateCommand);
 
         File.SetCreationTime(TemplateDataFile, timestamp);
         await takeDbsOffline;
