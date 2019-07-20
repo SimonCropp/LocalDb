@@ -5,7 +5,7 @@ public static class ModuleInitializer
     public static void Initialize()
     {
         XunitLogging.Init();
-        LocalDbLogging.EnableVerbose(true);
+        LocalDbLogging.EnableVerbose();
         SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
         SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
         SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
