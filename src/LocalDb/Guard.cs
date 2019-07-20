@@ -21,6 +21,14 @@ static class Guard
         }
     }
 
+    public static void AgainstDatabaseSize(string argumentName, ushort size)
+    {
+        if (size < 3)
+        {
+            throw new ArgumentOutOfRangeException(argumentName, size, "3MB is the min allowed value");
+        }
+    }
+
     public static void AgainstNullWhiteSpace(string argumentName, string value)
     {
         if (string.IsNullOrWhiteSpace(value))

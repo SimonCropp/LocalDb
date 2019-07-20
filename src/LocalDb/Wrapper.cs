@@ -20,11 +20,7 @@ class Wrapper
 
     public Wrapper(string instance, string directory, ushort size = 3)
     {
-        if (size < 3)
-        {
-            throw new ArgumentOutOfRangeException(nameof(size), size, "3MB is the min allowed value");
-        }
-
+        Guard.AgainstDatabaseSize(nameof(size), size);
         Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
         LocalDbLogging.WrapperCreated = true;
