@@ -33,12 +33,15 @@ values ({nextInt});";
         using (var command = connection.CreateCommand())
         {
             command.CommandText = "select Value from MyTable";
-            var reader = await command.ExecuteReaderAsync();
-            while (reader.Read())
+            using (var reader = await command.ExecuteReaderAsync())
             {
-                values.Add(reader.GetInt32(0));
+                while (reader.Read())
+                {
+                    values.Add(reader.GetInt32(0));
+                }
             }
         }
+
         return values;
     }
 }
