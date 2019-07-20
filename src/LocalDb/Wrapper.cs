@@ -39,15 +39,6 @@ class Wrapper
         ServerName = $@"(LocalDb)\{instance}";
     }
 
-    static string GetDetachTemplateCommand()
-    {
-        return @"
-if db_id('template') is not null
-begin
-    alter database [template] set single_user with rollback immediate;
-    execute sp_detach_db 'template', 'true';
-end;";
-    }
 
     public async Task<string> CreateDatabaseFromTemplate(string name)
     {
@@ -57,24 +48,7 @@ end;";
         // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(directory, $"{name}.mdf");
         var logFile = Path.Combine(directory, $"{name}_log.ldf");
-        var commandText = $@"
-if db_id('{name}') is null
-    begin
-        create database [{name}] on
-        (
-            name = [{name}],
-            filename = '{dataFile}'
-        ),
-        (
-            filename = '{logFile}'
-        )
-        for attach;
-    end;
-else
-    begin
-        alter database [{name}] set online;
-    end;
-";
+        var commandText = SqlCommandBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("The database name 'template' is reserved.");
@@ -87,29 +61,6 @@ else
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
-    }
-
-    string GetCreateTemplateCommand()
-    {
-        return $@"
-if db_id('template') is not null
-begin
-  execute sp_detach_db 'template', 'true';
-end;
-create database template on
-(
-    name = template,
-    filename = '{TemplateDataFile}',
-    fileGrowth = 100KB
-)
-log on
-(
-    name = template_log,
-    filename = '{TemplateLogFile}',
-    size = 512KB,
-    filegrowth = 100KB
-);
-";
     }
 
     public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
@@ -183,7 +134,7 @@ log on
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         masterConnection.Open();
-        var takeDbsOffline = masterConnection.ExecuteCommandAsync(GetTakeDbsOfflineCommand());
+        var takeDbsOffline = masterConnection.ExecuteCommandAsync(SqlCommandBuilder.TakeDbsOfflineCommand);
         if (LocalDbLogging.Enabled)
         {
             Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}","LocalDb");
@@ -191,7 +142,7 @@ log on
 
         if (performOptimizations)
         {
-            await masterConnection.ExecuteCommandAsync(GetOptimizationCommand());
+            await masterConnection.ExecuteCommandAsync(SqlCommandBuilder.GetOptimizationCommand(size));
         }
 
         if (!rebuildTemplate)
@@ -201,7 +152,7 @@ log on
         }
 
         DeleteTemplateFiles();
-        await masterConnection.ExecuteCommandAsync(GetCreateTemplateCommand());
+        await masterConnection.ExecuteCommandAsync(SqlCommandBuilder.GetCreateTemplateCommand(TemplateDataFile,TemplateLogFile));
 
         using (var templateConnection = new SqlConnection(TemplateConnectionString))
         {
@@ -209,7 +160,7 @@ log on
             await buildTemplate(templateConnection);
         }
 
-        await masterConnection.ExecuteCommandAsync(GetDetachTemplateCommand());
+        await masterConnection.ExecuteCommandAsync(SqlCommandBuilder.DetachTemplateCommand);
 
         File.SetCreationTime(TemplateDataFile, timestamp);
         await takeDbsOffline;
@@ -218,21 +169,6 @@ log on
     Task ExecuteOnMasterAsync(string command)
     {
         return masterConnection.ExecuteCommandAsync(command);
-    }
-
-    string GetOptimizationCommand()
-    {
-        return $@"
-execute sp_configure 'show advanced options', 1;
-reconfigure;
-execute sp_configure 'user instance timeout', 30;
-reconfigure;
-
--- begin-snippet: ShrinkModelDb
-use model;
-dbcc shrinkfile(modeldev, {size})
--- end-snippet
-";
     }
 
     [Time]
@@ -251,9 +187,7 @@ dbcc shrinkfile(modeldev, {size})
     [Time]
     public async Task DeleteDatabase(string dbName)
     {
-        var commandText = $@"
-alter database [{dbName}] set single_user with rollback immediate;
-drop database [{dbName}];";
+        var commandText = SqlCommandBuilder.BuildDeleteDbCommand(dbName);
         await ExecuteOnMasterAsync(commandText);
         var dataFile = Path.Combine(directory, $"{dbName}.mdf");
         var logFile = Path.Combine(directory, $"{dbName}_log.ldf");
@@ -274,22 +208,5 @@ drop database [{dbName}];";
             DbDataFileName = dbFileInfo.data,
             DbLogFileName = dbFileInfo.log,
         };
-    }
-
-    static string GetTakeDbsOfflineCommand()
-    {
-        return @"
-declare @command nvarchar(max)
-set @command = ''
-
-select @command = @command
-+ '
-    alter database [' + [name] + '] set single_user with rollback immediate;
-    alter database [' + [name] + '] set multi_user;
-    alter database [' + [name] + '] set offline;
-'
-from master.sys.databases
-where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
-execute sp_executesql @command";
     }
 }
