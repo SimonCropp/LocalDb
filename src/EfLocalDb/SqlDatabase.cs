@@ -72,8 +72,7 @@ namespace EfLocalDb
             {
                 var transactionOptions = new TransactionOptions
                 {
-                    IsolationLevel = IsolationLevel.Snapshot,
-                    Timeout = TimeSpan.FromSeconds(10)
+                    IsolationLevel = IsolationLevel.Snapshot
                 };
                 Transaction = new CommittableTransaction(transactionOptions);
             }
