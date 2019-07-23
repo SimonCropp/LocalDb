@@ -128,7 +128,12 @@ namespace EfLocalDb
 
         public void Dispose()
         {
-            Transaction?.Dispose();
+            if (Transaction != null)
+            {
+                Transaction.Rollback();
+                Transaction.Dispose();
+            }
+
             Context?.Dispose();
             Connection.Dispose();
         }
