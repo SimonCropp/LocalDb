@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
@@ -41,11 +41,10 @@ namespace EfLocalDb
             this.constructInstance = constructInstance;
             this.data = data;
             ConnectionString = connectionString;
-            Connection = new SqlConnection(connectionString);
         }
 
         public string Name { get; }
-        public SqlConnection Connection { get; }
+        public SqlConnection Connection { get; private set; }
         public string ConnectionString { get; }
 
         public async Task<SqlConnection> OpenNewConnection()
@@ -69,11 +68,17 @@ namespace EfLocalDb
 
         public async Task Start()
         {
-            await Connection.OpenAsync();
             if (withRollback)
             {
-                Transaction = Connection.BeginTransaction(IsolationLevel.Snapshot);
+                var transactionOptions = new TransactionOptions
+                {
+                    IsolationLevel = IsolationLevel.Snapshot,
+                    Timeout = TimeSpan.FromSeconds(10)
+                };
+                Transaction = new CommittableTransaction(transactionOptions);
             }
+            Connection = new SqlConnection(ConnectionString);
+            await Connection.OpenAsync();
 
             Context = NewDbContext();
             if (data != null)
@@ -82,7 +87,7 @@ namespace EfLocalDb
             }
         }
 
-        public SqlTransaction Transaction { get; private set; }
+        public CommittableTransaction Transaction { get; private set; }
 
         public TDbContext Context { get; private set; }
 
@@ -117,13 +122,13 @@ namespace EfLocalDb
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection);
-            var context = constructInstance(builder);
-            if (Transaction != null)
+            var dbContext = constructInstance(builder);
+            if (withRollback)
             {
-                context.Database.UseTransaction(Transaction);
+                dbContext.Database.EnlistTransaction(Transaction);
             }
 
-            return context;
+            return dbContext;
         }
 
         public void Dispose()
@@ -133,7 +138,6 @@ namespace EfLocalDb
                 Transaction.Rollback();
                 Transaction.Dispose();
             }
-
             Context?.Dispose();
             Connection.Dispose();
         }
