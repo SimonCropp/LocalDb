@@ -1,0 +1,8 @@
+﻿{
+  Message: 'Failed to setup a LocalDB instance.\r\nname: InstanceName\r\ndirectory: c:\LocalDBData\InstanceName:\r\n\r\nTo cleanup perform the following actions:\r\n * Execute \'sqllocaldb stop InstanceName\'\r\n * Execute \'sqllocaldb delete InstanceName\'\r\n * Delete the directory c:\LocalDBData\InstanceName\'\r\n',
+  Data: {},
+  InnerException: {
+    Message: 'Exception of type \'System.Exception\' was thrown.',
+    Data: {}
+  }
+}
