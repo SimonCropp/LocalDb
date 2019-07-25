@@ -86,7 +86,7 @@ namespace EfLocalDb
             }
         }
 
-        public CommittableTransaction Transaction { get; private set; }
+        public Transaction Transaction { get; private set; }
 
         public TDbContext Context { get; private set; }
 

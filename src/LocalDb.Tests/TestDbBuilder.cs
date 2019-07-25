@@ -14,15 +14,11 @@ public class TestDbBuilder
         }
     }
 
-    public static async Task<int> AddData(SqlConnection connection, SqlTransaction transaction = null)
+    public static async Task<int> AddData(SqlConnection connection)
     {
         var nextInt = Counters.NextInt();
         using (var command = connection.CreateCommand())
         {
-            if (transaction != null)
-            {
-                command.Transaction = transaction;
-            }
             command.CommandText = $@"
 insert into MyTable (Value)
 values ({nextInt});";
@@ -32,16 +28,11 @@ values ({nextInt});";
         return nextInt;
     }
 
-    public static async Task<List<int>> GetData(SqlConnection connection, SqlTransaction transaction = null)
+    public static async Task<List<int>> GetData(SqlConnection connection)
     {
         var values = new List<int>();
         using (var command = connection.CreateCommand())
         {
-            if (transaction != null)
-            {
-                command.Transaction = transaction;
-            }
-
             command.CommandText = "select Value from MyTable";
             using (var reader = await command.ExecuteReaderAsync())
             {

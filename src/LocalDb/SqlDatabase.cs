@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace LocalDb
 {
@@ -41,6 +42,7 @@ namespace LocalDb
         {
             var sqlConnection = new SqlConnection(ConnectionString);
             await sqlConnection.OpenAsync();
+            Connection.EnlistTransaction(Transaction);
             return sqlConnection;
         }
 
@@ -49,11 +51,16 @@ namespace LocalDb
             await Connection.OpenAsync();
             if (withRollback)
             {
-                Transaction = Connection.BeginTransaction();
+                var transactionOptions = new TransactionOptions
+                {
+                    IsolationLevel = IsolationLevel.Snapshot
+                };
+                Transaction = new CommittableTransaction(transactionOptions);
+                Connection.EnlistTransaction(Transaction);
             }
         }
 
-        public SqlTransaction Transaction { get; private set; }
+        public Transaction Transaction { get; private set; }
 
         public void Dispose()
         {

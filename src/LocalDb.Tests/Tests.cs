@@ -28,9 +28,9 @@ public class Tests :
         using (var database1 = await instance.BuildWithRollback())
         using (var database2 = await instance.BuildWithRollback())
         {
-            var data = await TestDbBuilder.AddData(database1.Connection, database1.Transaction);
-            Assert.Contains(data, await TestDbBuilder.GetData(database1.Connection, database1.Transaction));
-            Assert.Empty(await TestDbBuilder.GetData(database2.Connection, database2.Transaction));
+            var data = await TestDbBuilder.AddData(database1.Connection);
+            Assert.Contains(data, await TestDbBuilder.GetData(database1.Connection));
+            Assert.Empty(await TestDbBuilder.GetData(database2.Connection));
         }
     }
 
@@ -50,7 +50,7 @@ public class Tests :
             var stopwatch = Stopwatch.StartNew();
             database = await instance.BuildWithRollback();
             Trace.WriteLine(stopwatch.ElapsedMilliseconds);
-            await TestDbBuilder.AddData(database.Connection, database.Transaction);
+            await TestDbBuilder.AddData(database.Connection);
         }
         finally
         {
