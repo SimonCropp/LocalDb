@@ -42,7 +42,11 @@ namespace LocalDb
         {
             var sqlConnection = new SqlConnection(ConnectionString);
             await sqlConnection.OpenAsync();
-            Connection.EnlistTransaction(Transaction);
+            if (withRollback)
+            {
+                Connection.EnlistTransaction(Transaction);
+            }
+
             return sqlConnection;
         }
 

@@ -51,6 +51,11 @@ namespace EfLocalDb
         {
             var sqlConnection = new SqlConnection(ConnectionString);
             await sqlConnection.OpenAsync();
+            if (withRollback)
+            {
+                Connection.EnlistTransaction(Transaction);
+            }
+
             return sqlConnection;
         }
 
