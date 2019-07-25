@@ -16,6 +16,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
  * [Raw SqlConnection Usage](/pages/raw-usage.md)
  * [EntityFramework Usage](/pages/ef-usage.md)
  * [EntityFramework Migrations](/pages/efmigrations.md)
+ * [With Rollback Usage](/pages/with-rollback.md)
  * [Directory and name resolution](/pages/directory-and-name-resolution.md)
  * [Sql Management Studio](/pages/sql-management-studio.md)
  * [Logging](/pages/logging.md)
