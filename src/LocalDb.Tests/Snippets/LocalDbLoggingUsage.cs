@@ -1,15 +1,12 @@
-﻿using LocalDb;
-
-class ExplicitName
+﻿class LocalDbLoggingUsage
 {
-    ExplicitName()
+    LocalDbLoggingUsage()
     {
-        #region ExplicitName
-        var sqlInstance = new SqlInstance(
-            name: "theInstanceName",
-            buildTemplate: TestDbBuilder.CreateTable,
-            directory: @"C:\LocalDb\theInstance"
-        );
+        #region LocalDbLoggingUsage
+        LocalDbLogging.EnableVerbose();
+        #endregion
+        #region LocalDbLoggingUsageSqlLogging
+        LocalDbLogging.EnableVerbose(sqlLogging: true);
         #endregion
     }
 }

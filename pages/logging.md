@@ -17,7 +17,7 @@ To enable verbose logging use `LocalDbLogging`:
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L5-L7)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7)</sup>
 <!-- endsnippet -->
 
 The full implementation is:
@@ -85,7 +85,7 @@ SQL statements can be logged:
 ```cs
 LocalDbLogging.EnableVerbose(sqlLogging: true);
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L8-L10)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10)</sup>
 <!-- endsnippet -->
 
 In EfLocalDb this will also log EntityFramework SQL statements.
