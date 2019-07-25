@@ -1,5 +1,5 @@
 ﻿using System;
-using ObjectApproval;
+using ApprovalTests;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,13 +10,7 @@ public class ExceptionBuilderTests :
     public void WrapLocalDbFailure()
     {
         var wrapped = ExceptionBuilder.WrapLocalDbFailure("InstanceName", @"c:\LocalDBData\InstanceName", new Exception());
-        ObjectApprover.VerifyWithJson(wrapped);
-    }
-    [Fact]
-    public void WrapLocalDbFailure_message()
-    {
-        var wrapped = ExceptionBuilder.WrapLocalDbFailure("InstanceName", @"c:\LocalDBData\InstanceName", new Exception());
-        ApprovalTests.Approvals.Verify(wrapped.Message);
+        Approvals.Verify(wrapped.Message);
     }
 
     public ExceptionBuilderTests(ITestOutputHelper output) :
