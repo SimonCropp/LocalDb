@@ -88,13 +88,48 @@ LocalDbLogging.EnableVerbose(sqlLogging: true);
 <sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10)</sup>
 <!-- endsnippet -->
 
+And an example database creation message would be:
+
+```
+LocalDB: Executed SQL (87.ms):
+    if db_id('Tests_SeedData') is null
+        begin
+            create database [Tests_SeedData] on
+            (
+                name = [Tests_SeedData],
+                filename = 'D:\LocalDBData\TestDbContext\Tests_SeedData.mdf'
+            ),
+            (
+                filename = 'D:\LocalDBData\TestDbContext\Tests_SeedData_log.ldf'
+            )
+            for attach;
+        end;
+    else
+        begin
+            alter database [Tests_SeedData] set online;
+        end;
+```
+
 In EfLocalDb this will also log EntityFramework SQL statements.
+
+So performing a `DbSet.FindAsync()` would result in:
+
+```
+LocalDB: Executed EF SQL command:
+    Executed DbCommand (73ms) [Parameters=[@p0='prop' (Size = 4000)], CommandType='Text', CommandTimeout='30']
+    SET NOCOUNT ON;
+    INSERT INTO [TestEntities] ([Property])
+    VALUES (@p0);
+    SELECT [Id]
+    FROM [TestEntities]
+    WHERE @@ROWCOUNT = 1 AND [Id] = scope_identity();
+```
 
 
 ## Logging in xUnit
 
 xUnit does not route `Trace.WriteLine` to [ITestOutputHelper](https://xunit.net/docs/capturing-output). Tracking issue: [3.0: Console / Trace / Debugger capture support ](https://github.com/xunit/xunit/issues/1730).
 
-This can be worked around by [adding a Trace Listener](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.listeners) that writes to `ITestOutputHelper`. 
+This can be worked around by [adding a Trace Listener](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.trace.listeners) that writes to `ITestOutputHelper`.
 
 Or alternatively use XunitLogger: https://github.com/SimonCropp/XunitLogger.
