@@ -30,7 +30,7 @@ public class SqlLocalDbTests :
         LocalDbApi.CreateAndStart("InfoTest");
         var info = LocalDbApi.GetInstance("InfoTest");
 
-        ObjectApprover.VerifyWithJson(info);
+        ObjectApprover.Verify(info);
         LocalDbApi.StopAndDelete("InfoTest");
         Assert.False(LocalDbApi.GetInstance("InfoTest").Exists);
     }

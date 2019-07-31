@@ -48,7 +48,7 @@ end;
              await wrapper.CreateDatabaseFromTemplate("Simple");
         }
 
-        ObjectApprover.VerifyWithJson(await wrapper.ReadDatabaseState("Simple"));
+        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("RecreateWithOpenConnectionAfterStartup");
     }
 
@@ -69,7 +69,7 @@ end;
              await wrapper.CreateDatabaseFromTemplate("Simple");
         }
 
-        ObjectApprover.VerifyWithJson(await wrapper.ReadDatabaseState("Simple"));
+        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("RecreateWithOpenConnection");
     }
 
@@ -82,7 +82,7 @@ end;
         var wrapper = new Wrapper("NoFileAndNoInstance", DirectoryFinder.Find("NoFileAndNoInstance"));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        ObjectApprover.VerifyWithJson(await wrapper.ReadDatabaseState("Simple"));
+        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("NoFileAndNoInstance");
     }
 
@@ -96,7 +96,7 @@ end;
         wrapper = new Wrapper("WithFileAndNoInstance", DirectoryFinder.Find("WithFileAndNoInstance"));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        ObjectApprover.VerifyWithJson(await wrapper.ReadDatabaseState("Simple"));
+        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("WithFileAndNoInstance");
     }
 
@@ -113,7 +113,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        ObjectApprover.VerifyWithJson(await wrapper.ReadDatabaseState("Simple"));
+        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("NoFileAndWithInstance");
     }
 
@@ -122,7 +122,7 @@ end;
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
         await instance.DeleteDatabase("ToDelete");
-        ObjectApprover.VerifyWithJson(await instance.ReadDatabaseState("ToDelete"));
+        ObjectApprover.Verify(await instance.ReadDatabaseState("ToDelete"));
     }
 
     [Fact]
@@ -137,7 +137,7 @@ end;
     public async Task CreateDatabase()
     {
         await instance.CreateDatabaseFromTemplate("CreateDatabase");
-        ObjectApprover.VerifyWithJson(await instance.ReadDatabaseState("CreateDatabase"));
+        ObjectApprover.Verify(await instance.ReadDatabaseState("CreateDatabase"));
     }
 
     [Fact]
@@ -151,7 +151,7 @@ end;
             var deletedState = await instance.ReadDatabaseState("ToDelete");
             await instance.CreateDatabaseFromTemplate("ToDelete");
             var createdState = await instance.ReadDatabaseState("ToDelete");
-            ObjectApprover.VerifyWithJson(new
+            ObjectApprover.Verify(new
             {
                 deletedState,
                 createdState
