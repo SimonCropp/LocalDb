@@ -1,4 +1,4 @@
-﻿static class SqlCommandBuilder
+﻿static class SqlBuilder
 {
     public static string GetCreateOrMakeOnlineCommand(string name, string dataFile, string logFile, bool withRollback)
     {

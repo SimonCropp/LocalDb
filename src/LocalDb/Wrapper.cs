@@ -45,7 +45,7 @@ class Wrapper
         // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
-        var commandText = SqlCommandBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
+        var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("The database name 'template' is reserved.");
@@ -95,8 +95,8 @@ class Wrapper
             startupTask = CreateAndDetachTemplate(
                 timestamp,
                 buildTemplate,
-                rebuildTemplate: true,
-                performOptimizations: true);
+                rebuild: true,
+                optimize: true);
             InitRollbackTask();
         }
 
@@ -129,29 +129,29 @@ class Wrapper
     }
 
     [Time]
-    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate, bool performOptimizations)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuild, bool optimize)
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         masterConnection.Open();
-        var takeDbsOffline = ExecuteOnMasterAsync(SqlCommandBuilder.TakeDbsOfflineCommand);
+        var takeDbsOffline = ExecuteOnMasterAsync(SqlBuilder.TakeDbsOfflineCommand);
         if (LocalDbLogging.Enabled)
         {
             Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}", "LocalDb");
         }
 
-        if (performOptimizations)
+        if (optimize)
         {
-            await ExecuteOnMasterAsync(SqlCommandBuilder.GetOptimizationCommand(size));
+            await ExecuteOnMasterAsync(SqlBuilder.GetOptimizationCommand(size));
         }
 
-        if (!rebuildTemplate)
+        if (!rebuild)
         {
             await takeDbsOffline;
             return;
         }
 
         DeleteTemplateFiles();
-        await ExecuteOnMasterAsync(SqlCommandBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
+        await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
 
         using (var templateConnection = new SqlConnection(TemplateConnectionString))
         {
@@ -159,7 +159,7 @@ class Wrapper
             await buildTemplate(templateConnection);
         }
 
-        await ExecuteOnMasterAsync(SqlCommandBuilder.DetachTemplateCommand);
+        await ExecuteOnMasterAsync(SqlBuilder.DetachTemplateCommand);
 
         File.SetCreationTime(TemplateDataFile, timestamp);
         await takeDbsOffline;
@@ -186,7 +186,7 @@ class Wrapper
     [Time]
     public async Task DeleteDatabase(string dbName)
     {
-        var commandText = SqlCommandBuilder.BuildDeleteDbCommand(dbName);
+        var commandText = SqlBuilder.BuildDeleteDbCommand(dbName);
         await ExecuteOnMasterAsync(commandText);
         var dataFile = Path.Combine(Directory, $"{dbName}.mdf");
         var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");
