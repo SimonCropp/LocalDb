@@ -95,7 +95,7 @@ class Wrapper
             startupTask = CreateAndDetachTemplate(
                 timestamp,
                 buildTemplate,
-                rebuildTemplate: true,
+                rebuild: true,
                 optimize: true);
             InitRollbackTask();
         }
@@ -129,7 +129,7 @@ class Wrapper
     }
 
     [Time]
-    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate, bool optimize)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuild, bool optimize)
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         masterConnection.Open();
@@ -144,7 +144,7 @@ class Wrapper
             await ExecuteOnMasterAsync(SqlCommandBuilder.GetOptimizationCommand(size));
         }
 
-        if (!rebuildTemplate)
+        if (!rebuild)
         {
             await takeDbsOffline;
             return;
