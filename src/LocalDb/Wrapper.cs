@@ -96,7 +96,7 @@ class Wrapper
                 timestamp,
                 buildTemplate,
                 rebuildTemplate: true,
-                performOptimizations: true);
+                optimize: true);
             InitRollbackTask();
         }
 
@@ -129,7 +129,7 @@ class Wrapper
     }
 
     [Time]
-    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate, bool performOptimizations)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuildTemplate, bool optimize)
     {
         masterConnection = new SqlConnection(MasterConnectionString);
         masterConnection.Open();
@@ -139,7 +139,7 @@ class Wrapper
             Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}", "LocalDb");
         }
 
-        if (performOptimizations)
+        if (optimize)
         {
             await ExecuteOnMasterAsync(SqlCommandBuilder.GetOptimizationCommand(size));
         }
