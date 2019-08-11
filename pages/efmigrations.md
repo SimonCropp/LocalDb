@@ -10,6 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 [EntityFramework Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
 
 <!-- snippet: Migrations -->
+<a id='snippet-migrations'/></a>
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
     buildTemplate: async (connection, optionsBuilder) =>
@@ -25,7 +26,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
         return new MyDbContext(builder.Options);
     });
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L33)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L33) / [anchor](#snippet-migrations)</sup>
 <!-- endsnippet -->
 
 The above performs the following actions:
@@ -36,10 +37,11 @@ The above performs the following actions:
 Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/operations).
 
 <!-- snippet: IMigrationsSqlGenerator -->
+<a id='snippet-imigrationssqlgenerator'/></a>
 ```cs
 optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L20)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L20) / [anchor](#snippet-imigrationssqlgenerator)</sup>
 <!-- endsnippet -->
 
 
@@ -48,11 +50,12 @@ optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenera
 Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/#apply-migrations-at-runtime).
 
 <!-- snippet: Migrate -->
+<a id='snippet-migrate'/></a>
 ```cs
 using (var dbContext = new MyDbContext(optionsBuilder.Options))
 {
     await dbContext.Database.MigrateAsync();
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L26)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L26) / [anchor](#snippet-migrate)</sup>
 <!-- endsnippet -->

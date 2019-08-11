@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using ApprovalTests;
-using ObjectApproval;
 using Xunit;
 using Xunit.Abstractions;
 

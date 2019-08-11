@@ -20,6 +20,7 @@ https://nuget.org/packages/LocalDb/
 The snippets use the following helper class:
 
 <!-- snippet: TestDbBuilder.cs -->
+<a id='snippet-TestDbBuilder.cs'/></a>
 ```cs
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -70,7 +71,7 @@ values ({nextInt});";
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/TestDbBuilder.cs#L1-L48)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/TestDbBuilder.cs#L1-L48) / [anchor](#snippet-TestDbBuilder.cs)</sup>
 <!-- endsnippet -->
 
 
@@ -88,6 +89,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: StaticConstructor -->
+<a id='snippet-staticconstructor'/></a>
 ```cs
 public class Tests
 {
@@ -111,7 +113,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L7-L31)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L7-L31) / [anchor](#snippet-staticconstructor)</sup>
 <!-- endsnippet -->
 
 
@@ -120,6 +122,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: TestBase -->
+<a id='snippet-testbase'/></a>
 ```cs
 public class TestBase
 {
@@ -154,7 +157,7 @@ public class Tests:
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L43)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L43) / [anchor](#snippet-testbase)</sup>
 <!-- endsnippet -->
 
 
@@ -166,6 +169,7 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: BuildDatabase -->
+<a id='snippet-builddatabase'/></a>
 ```cs
 using (var database = await sqlInstance.Build())
 {
@@ -173,7 +177,7 @@ using (var database = await sqlInstance.Build())
     Assert.Single(await TestDbBuilder.GetData(database.Connection));
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L28)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L28) / [anchor](#snippet-builddatabase)</sup>
 <!-- endsnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -182,11 +186,12 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using SQLConnection
 
 <!-- snippet: BuildContext -->
+<a id='snippet-buildcontext'/></a>
 ```cs
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L23-L26)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L23-L26) / [anchor](#snippet-buildcontext)</sup>
 <!-- endsnippet -->
 
 
@@ -195,6 +200,7 @@ Assert.Single(await TestDbBuilder.GetData(database.Connection));
 The above are combined in a full test:
 
 <!-- snippet: SnippetTests.cs -->
+<a id='snippet-SnippetTests.cs'/></a>
 ```cs
 using System.Threading.Tasks;
 using LocalDb;
@@ -232,5 +238,5 @@ public class SnippetTests
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35) / [anchor](#snippet-SnippetTests.cs)</sup>
 <!-- endsnippet -->

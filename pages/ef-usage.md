@@ -20,6 +20,7 @@ https://nuget.org/packages/EfLocalDb/
 The snippets use a DbContext of the following form:
 
 <!-- snippet: TheDbContext.cs -->
+<a id='snippet-TheDbContext.cs'/></a>
 ```cs
 using Microsoft.EntityFrameworkCore;
 
@@ -39,10 +40,11 @@ public class TheDbContext :
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17) / [anchor](#snippet-TheDbContext.cs)</sup>
 <!-- endsnippet -->
 
 <!-- snippet: TheEntity.cs -->
+<a id='snippet-TheEntity.cs'/></a>
 ```cs
 public class TheEntity
 {
@@ -50,7 +52,7 @@ public class TheEntity
     public string Property { get; set; }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5) / [anchor](#snippet-TheEntity.cs)</sup>
 <!-- endsnippet -->
 
 
@@ -68,6 +70,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: EfStaticConstructor -->
+<a id='snippet-efstaticconstructor'/></a>
 ```cs
 public class Tests
 {
@@ -92,7 +95,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L33)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L33) / [anchor](#snippet-efstaticconstructor)</sup>
 <!-- endsnippet -->
 
 
@@ -101,6 +104,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: EfTestBase -->
+<a id='snippet-eftestbase'/></a>
 ```cs
 public class TestBase
 {
@@ -139,7 +143,7 @@ public class Tests :
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L47)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L47) / [anchor](#snippet-eftestbase)</sup>
 <!-- endsnippet -->
 
 
@@ -151,11 +155,12 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: EfBuildDatabase -->
+<a id='snippet-efbuilddatabase'/></a>
 ```cs
 using (var database = await sqlInstance.Build())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22) / [anchor](#snippet-efbuilddatabase)</sup>
 <!-- endsnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -164,11 +169,12 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using DbContexts
 
 <!-- snippet: EfBuildContext -->
+<a id='snippet-efbuildcontext'/></a>
 ```cs
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L24-L27)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L24-L27) / [anchor](#snippet-efbuildcontext)</sup>
 <!-- endsnippet -->
 
 
@@ -177,6 +183,7 @@ using (var dbContext = database.NewDbContext())
 The above are combined in a full test:
 
 <!-- snippet: EfSnippetTests.cs -->
+<a id='snippet-EfSnippetTests.cs'/></a>
 ```cs
 using System.Threading.Tasks;
 using EfLocalDb;
@@ -232,7 +239,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L53)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L53) / [anchor](#snippet-EfSnippetTests.cs)</sup>
 <!-- endsnippet -->
 
 
@@ -241,6 +248,7 @@ public class EfSnippetTests
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
 <!-- snippet: DefaultOptionsBuilder.cs -->
+<a id='snippet-DefaultOptionsBuilder.cs'/></a>
 ```cs
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -266,5 +274,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L23)</sup>
+<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L23) / [anchor](#snippet-DefaultOptionsBuilder.cs)</sup>
 <!-- endsnippet -->

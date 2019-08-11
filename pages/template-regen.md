@@ -24,6 +24,7 @@ If `timestamp` parameter is not defined the following conventions are used:
 There is a timestamp helper class to help derive last modified time of an Assembly (if the above conventions do not suffice):
 
 <!-- snippet: Timestamp -->
+<a id='snippet-timestamp'/></a>
 ```cs
 public static class Timestamp
 {
@@ -48,5 +49,5 @@ public static class Timestamp
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/Timestamp.cs#L11-L34)</sup>
+<sup>[snippet source](/src/LocalDb/Timestamp.cs#L11-L34) / [anchor](#snippet-timestamp)</sup>
 <!-- endsnippet -->

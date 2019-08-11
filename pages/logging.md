@@ -15,15 +15,17 @@ By default some information is written to [Trace.WriteLine](https://docs.microso
 To enable verbose logging use `LocalDbLogging`:
 
 <!-- snippet: LocalDbLoggingUsage -->
+<a id='snippet-localdbloggingusage'/></a>
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7) / [anchor](#snippet-localdbloggingusage)</sup>
 <!-- endsnippet -->
 
 The full implementation is:
 
 <!-- snippet: LocalDbLogging -->
+<a id='snippet-localdblogging'/></a>
 ```cs
 /// <summary>
 /// Controls the logging level.
@@ -56,12 +58,13 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/LocalDbLogging.cs#L4-L35)</sup>
+<sup>[snippet source](/src/LocalDb/LocalDbLogging.cs#L4-L35) / [anchor](#snippet-localdblogging)</sup>
 <!-- endsnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
 
 <!-- snippet: MethodTimeLogger -->
+<a id='snippet-methodtimelogger'/></a>
 ```cs
 static class MethodTimeLogger
 {
@@ -74,7 +77,7 @@ static class MethodTimeLogger
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/MethodTimeLogger.cs#L4-L15)</sup>
+<sup>[snippet source](/src/LocalDb/MethodTimeLogger.cs#L4-L15) / [anchor](#snippet-methodtimelogger)</sup>
 <!-- endsnippet -->
 
 
@@ -83,10 +86,11 @@ static class MethodTimeLogger
 SQL statements can be logged:
 
 <!-- snippet: LocalDbLoggingUsageSqlLogging -->
+<a id='snippet-localdbloggingusagesqllogging'/></a>
 ```cs
 LocalDbLogging.EnableVerbose(sqlLogging: true);
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10) / [anchor](#snippet-localdbloggingusagesqllogging)</sup>
 <!-- endsnippet -->
 
 And an example database creation message would be:
