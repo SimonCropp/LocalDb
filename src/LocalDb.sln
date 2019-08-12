@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfLocalDb.Tests", "EfLocalD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalDb.Tests", "LocalDb.Tests\LocalDb.Tests.csproj", "{8E80940A-8FD0-4C4F-AD5C-97F8D2944FEF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHelpers", "TestHelpers\TestHelpers.csproj", "{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Helpers\Helpers.csproj", "{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

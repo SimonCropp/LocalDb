@@ -18,7 +18,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="16.2.0" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
-    <ProjectReference Include="..\TestHelpers\TestHelpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.10" PrivateAssets="All" />
+    <ProjectReference Include="..\Helpers\Helpers.csproj" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.15" PrivateAssets="All" />
   </ItemGroup>
 </Project>
