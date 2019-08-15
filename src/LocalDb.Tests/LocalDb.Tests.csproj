@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ApprovalTests" Version="4.0.0" />
+    <PackageReference Include="ApprovalTests" Version="4.1.0" />
     <PackageReference Include="Fody" Version="5.1.1" />
     <PackageReference Include="ModuleInit.Fody" Version="2.0.0" />
     <PackageReference Include="ObjectApproval" Version="11.0.0" />
