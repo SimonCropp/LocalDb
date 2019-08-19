@@ -13,6 +13,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.18" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.19" PrivateAssets="All" />
   </ItemGroup>
 </Project>
