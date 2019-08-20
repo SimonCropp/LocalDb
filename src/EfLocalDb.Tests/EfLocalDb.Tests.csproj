@@ -16,7 +16,7 @@
     <PackageReference Include="XunitLogger" Version="2.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
-    <PackageReference Include="MarkdownSnippets.MsBuild" Version="16.3.0" />
+    <PackageReference Include="MarkdownSnippets.MsBuild" Version="16.3.1" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" Version="1.0.19" PrivateAssets="All" />
