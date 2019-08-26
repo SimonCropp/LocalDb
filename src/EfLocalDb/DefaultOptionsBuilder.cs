@@ -15,8 +15,8 @@ static class DefaultOptionsBuilder
         builder.EnableDetailedErrors();
         builder.ConfigureWarnings(warnings =>
         {
-            warnings.Throw(CoreEventId.IncludeIgnoredWarning);
-            warnings.Throw(RelationalEventId.QueryClientEvaluationWarning);
+            warnings.Log(CoreEventId.IncludeIgnoredWarning);
+            warnings.Log(RelationalEventId.QueryClientEvaluationWarning);
         });
         return builder;
     }
