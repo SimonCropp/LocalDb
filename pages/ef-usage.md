@@ -10,7 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 Interactions with SqlLocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
 
 
-## EfLocalDb package [![NuGet Status](http://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)
+## EfLocalDb package [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)
 
 https://nuget.org/packages/EfLocalDb/
 

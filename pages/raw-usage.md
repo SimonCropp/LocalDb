@@ -10,7 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 Interactions with SqlLocalDB via a [SqlConnection](https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection).
 
 
-## LocalDb package [![NuGet Status](http://img.shields.io/nuget/v/LocalDb.svg)](https://www.nuget.org/packages/LocalDb/)
+## LocalDb package [![NuGet Status](https://img.shields.io/nuget/v/LocalDb.svg)](https://www.nuget.org/packages/LocalDb/)
 
 https://nuget.org/packages/LocalDb/
 

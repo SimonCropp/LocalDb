@@ -1,8 +1,13 @@
-# LocalDb
+# <img src="/src/icon.png" height="30px"> LocalDb
+
+[![Build status](https://ci.appveyor.com/api/projects/status/0shdndxc7xd14d41/branch/master?svg=true)](https://ci.appveyor.com/project/SimonCropp/LocalDb) [![NuGet Status](https://img.shields.io/nuget/v/LocalDb.svg?cacheSeconds=86400)](https://www.nuget.org/packages/LocalDb/) [![NuGet Status](https://img.shields.io/nuget/v/LocalDb.svg?cacheSeconds=86400)](https://www.nuget.org/packages/LocalDb/)
 
 Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
 **SqlLocalDB is only supported on Windows**
+
+toc
+
 
 ## More info
 
