@@ -6,10 +6,17 @@ static class MethodTimeLogger
 {
     public static void Log(MethodBase methodBase, long milliseconds, string message)
     {
-        if (LocalDbLogging.Enabled)
+        if (!LocalDbLogging.Enabled)
+        {
+            return;
+        }
+        if (message == null)
         {
             Trace.WriteLine($"{methodBase.Name} {milliseconds}ms", "LocalDb");
+            return;
         }
+
+        Trace.WriteLine($"{methodBase.Name} {milliseconds}ms {message}", "LocalDb");
     }
 }
 #endregion

@@ -27,7 +27,7 @@ using System.Text;
          stopInstance = GetFunction<LocalDBStopInstance>();
      }
 
-     public static string ApiVersion;
+     static string ApiVersion;
      public const int MaxPath = 260;
      public const int MaxName = 129;
      public const int MaxSid = 187;
@@ -54,13 +54,13 @@ using System.Text;
      }
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBDeleteInstance(
+     delegate int LocalDBDeleteInstance(
          [MarshalAs(UnmanagedType.LPWStr)]
          string pInstanceName,
          int dwFlags);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBCreateInstance(
+     delegate int LocalDBCreateInstance(
          [MarshalAs(UnmanagedType.LPWStr)]
          string wszVersion,
          [MarshalAs(UnmanagedType.LPWStr)]
@@ -68,19 +68,19 @@ using System.Text;
          int dwFlags);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBGetInstanceInfo(
+     delegate int LocalDBGetInstanceInfo(
          [MarshalAs(UnmanagedType.LPWStr)]
          string wszInstanceName,
          ref LocalDbInstanceInfo pInstanceInfo,
          int dwInstanceInfoSize);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBGetInstances(
+     delegate int LocalDBGetInstances(
          IntPtr pInstanceNames,
          ref int lpdwNumberOfInstances);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBStartInstance(
+     delegate int LocalDBStartInstance(
          [MarshalAs(UnmanagedType.LPWStr)]
          string pInstanceName,
          int dwFlags,
@@ -89,11 +89,17 @@ using System.Text;
          ref int lpcchSqlConnection);
 
      [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-     public delegate int LocalDBStopInstance(
+     delegate int LocalDBStopInstance(
          [MarshalAs(UnmanagedType.LPWStr)]
          string pInstanceName,
          int dwFlags,
          int ulTimeout);
+
+     [DllImport("kernel32", SetLastError = true)]
+     static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+     [DllImport("kernel32", SetLastError = true)]
+     static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, uint dwFlags);
 
      public static List<string> GetInstanceNames()
      {
@@ -161,7 +167,6 @@ using System.Text;
          return State.Running;
      }
 
-
      public static void StartInstance(string instanceName)
      {
          var connection = new StringBuilder(MaxPath);
@@ -174,10 +179,4 @@ using System.Text;
      {
          stopInstance(instanceName, 0, 10000);
      }
-
-     [DllImport("kernel32", SetLastError = true)]
-     static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
-
-     [DllImport("kernel32", SetLastError = true)]
-     static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, uint dwFlags);
  }

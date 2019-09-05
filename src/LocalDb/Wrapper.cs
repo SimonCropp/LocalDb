@@ -125,6 +125,7 @@ class Wrapper
         {
             startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true, false);
         }
+
         InitRollbackTask();
     }
 
@@ -193,15 +194,17 @@ class Wrapper
         File.Delete(dataFile);
         File.Delete(logFile);
     }
+
     Lazy<Task> withRollbackTask;
+
     void InitRollbackTask()
     {
         withRollbackTask = new Lazy<Task>(() => CreateDatabaseFromTemplate("withRollback", true));
     }
+
     public async Task CreateWithRollbackDatabase()
     {
         await startupTask;
         await withRollbackTask.Value;
     }
-
 }
