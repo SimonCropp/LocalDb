@@ -3,12 +3,13 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ApprovalTests" Version="4.2.0" />
+    <PackageReference Include="ApprovalTests" Version="4.2.2" />
     <PackageReference Include="Fody" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="ObjectApproval" Version="11.1.0" />
     <PackageReference Include="Xunit" Version="2.4.1" />
-    <PackageReference Include="XunitLogger" Version="2.5.0" />
+    <PackageReference Include="XunitLogger" Version="3.0.2" />
+    <PackageReference Include="Xunit.ApprovalTests" Version="3.0.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />

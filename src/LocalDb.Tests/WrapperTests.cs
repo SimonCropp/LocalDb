@@ -6,7 +6,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 public class WrapperTests :
-    XunitLoggingBase
+    XunitApprovalBase
 {
     static Wrapper instance;
 

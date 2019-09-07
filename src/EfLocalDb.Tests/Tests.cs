@@ -8,7 +8,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 public class Tests :
-    XunitLoggingBase
+    XunitApprovalBase
 {
     SqlInstance<TestDbContext> instance;
 

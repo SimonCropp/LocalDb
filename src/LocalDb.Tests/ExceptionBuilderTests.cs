@@ -4,7 +4,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 public class ExceptionBuilderTests :
-    XunitLoggingBase
+    XunitApprovalBase
 {
     [Fact]
     public void WrapLocalDbFailure()
