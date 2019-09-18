@@ -21,7 +21,7 @@ public class Tests :
         };
         using (var database = await instance.Build(new List<object> {entity}))
         {
-            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
+            Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -35,7 +35,7 @@ public class Tests :
         using (var database = await instance.Build())
         {
             await database.AddData(entity);
-            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
+            Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -99,7 +99,7 @@ public class Tests :
 
             using (var dbContext = database.NewDbContext())
             {
-                Assert.NotNull(dbContext.TestEntities.FindAsync(entity.Id));
+                Assert.NotNull(await dbContext.TestEntities.FindAsync(entity.Id));
             }
         }
     }
@@ -138,7 +138,7 @@ public class Tests :
         };
         using (var database = await instance.Build(new List<object> {entity}))
         {
-            Assert.NotNull(database.Context.TestEntities.FindAsync(entity.Id));
+            Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -152,7 +152,7 @@ public class Tests :
         using (var database1 = await instance.BuildWithRollback(new List<object> {entity}))
         using (var database2 = await instance.BuildWithRollback())
         {
-            Assert.NotNull(database1.Context.TestEntities.FindAsync(entity.Id));
+            Assert.NotNull(await database1.Context.TestEntities.FindAsync(entity.Id));
             Assert.Empty(database2.Context.TestEntities.ToList());
         }
     }
