@@ -70,14 +70,21 @@ static class MethodTimeLogger
 {
     public static void Log(MethodBase methodBase, long milliseconds, string message)
     {
-        if (LocalDbLogging.Enabled)
+        if (!LocalDbLogging.Enabled)
+        {
+            return;
+        }
+        if (message == null)
         {
             Trace.WriteLine($"{methodBase.Name} {milliseconds}ms", "LocalDb");
+            return;
         }
+
+        Trace.WriteLine($"{methodBase.Name} {milliseconds}ms {message}", "LocalDb");
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/MethodTimeLogger.cs#L4-L15) / [anchor](#snippet-methodtimelogger)</sup>
+<sup>[snippet source](/src/LocalDb/MethodTimeLogger.cs#L4-L22) / [anchor](#snippet-methodtimelogger)</sup>
 <!-- endsnippet -->
 
 

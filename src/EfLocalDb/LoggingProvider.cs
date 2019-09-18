@@ -24,10 +24,10 @@ class LoggingProvider :
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
     {
-        if (eventId.Id != RelationalStrings.LogRelationalLoggerExecutedCommand.EventId.Id)
-        {
-            return;
-        }
+        //if (eventId.Id != RelationalStrings.LogRelationalLoggerExecutedCommand.EventId.Id)
+        //{
+        //    return;
+        //}
 
         Trace.WriteLine($@"Executed EF SQL command:
 {state.ToString().IndentLines()}", "LocalDB");

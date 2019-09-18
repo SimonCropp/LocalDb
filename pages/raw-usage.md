@@ -23,8 +23,8 @@ The snippets use the following helper class:
 <a id='snippet-TestDbBuilder.cs'/></a>
 ```cs
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using XunitLogger;
 
 public class TestDbBuilder

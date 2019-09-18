@@ -1,6 +1,6 @@
-﻿using System.Data.SqlClient;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 static class DbFileNameReader
 {
