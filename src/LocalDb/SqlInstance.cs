@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 namespace LocalDb
 {

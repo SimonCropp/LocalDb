@@ -265,14 +265,9 @@ static class DefaultOptionsBuilder
         }
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
-        builder.ConfigureWarnings(warnings =>
-        {
-            warnings.Log(CoreEventId.IncludeIgnoredWarning);
-            warnings.Log(RelationalEventId.QueryClientEvaluationWarning);
-        });
         return builder;
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L23) / [anchor](#snippet-DefaultOptionsBuilder.cs)</sup>
+<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L18) / [anchor](#snippet-DefaultOptionsBuilder.cs)</sup>
 <!-- endsnippet -->

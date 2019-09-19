@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 
 public static class DbPropertyReader
 {

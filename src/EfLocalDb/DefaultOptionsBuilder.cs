@@ -13,11 +13,6 @@ static class DefaultOptionsBuilder
         }
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
-        builder.ConfigureWarnings(warnings =>
-        {
-            warnings.Log(CoreEventId.IncludeIgnoredWarning);
-            warnings.Log(RelationalEventId.QueryClientEvaluationWarning);
-        });
         return builder;
     }
 }
