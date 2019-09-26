@@ -28,6 +28,10 @@ class LoggingProvider :
         {
             return;
         }
+        if (state == null)
+        {
+            return;
+        }
 
         Trace.WriteLine($@"Executed EF SQL command:
 {state.ToString().IndentLines()}", "LocalDB");
@@ -35,7 +39,7 @@ class LoggingProvider :
 
     public bool IsEnabled(LogLevel logLevel) => true;
 
-    public IDisposable BeginScope<TState>(TState state) => null;
+    public IDisposable? BeginScope<TState>(TState state) => null;
 
     public void Dispose()
     {

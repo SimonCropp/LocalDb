@@ -36,7 +36,7 @@ public class Migrations
     class CustomMigrationsSqlGenerator:
         IMigrationsSqlGenerator
     {
-        public IReadOnlyList<MigrationCommand> Generate(IReadOnlyList<MigrationOperation> operations, IModel model = null)
+        public IReadOnlyList<MigrationCommand> Generate(IReadOnlyList<MigrationOperation> operations, IModel? model = null)
         {
             throw new NotImplementedException();
         }
@@ -45,7 +45,7 @@ public class Migrations
     class MyDbContext:
         DbContext
     {
-        public DbSet<TheEntity> TestEntities { get; set; }
+        public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
         public MyDbContext(DbContextOptions options) :
             base(options)

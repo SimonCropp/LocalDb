@@ -8,7 +8,7 @@ namespace LocalDb
     public class SqlDatabase :
         IDisposable
     {
-        Func<Task> delete;
+        Func<Task> delete = () => Task.CompletedTask;
         bool withRollback;
 
         internal SqlDatabase(string connectionString, string name, Func<Task> delete)
@@ -64,7 +64,7 @@ namespace LocalDb
             }
         }
 
-        public Transaction Transaction { get; private set; }
+        public Transaction? Transaction { get; private set; }
 
         public void Dispose()
         {

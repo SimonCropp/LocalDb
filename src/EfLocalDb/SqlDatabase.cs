@@ -12,8 +12,8 @@ namespace EfLocalDb
         where TDbContext : DbContext
     {
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
-        Func<Task> delete;
-        IEnumerable<object> data;
+        Func<Task> delete = () => Task.CompletedTask;
+        IEnumerable<object>? data;
         bool withRollback;
 
         internal SqlDatabase(
@@ -21,7 +21,7 @@ namespace EfLocalDb
             string name,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             Func<Task> delete,
-            IEnumerable<object> data)
+            IEnumerable<object>? data)
         {
             Name = name;
             this.constructInstance = constructInstance;
@@ -44,7 +44,7 @@ namespace EfLocalDb
         }
 
         public string Name { get; }
-        public SqlConnection Connection { get; private set; }
+        public SqlConnection Connection { get; private set; } = null!;
         public string ConnectionString { get; }
 
         public async Task<SqlConnection> OpenNewConnection()
@@ -91,9 +91,9 @@ namespace EfLocalDb
             }
         }
 
-        public Transaction Transaction { get; private set; }
+        public Transaction? Transaction { get; private set; }
 
-        public TDbContext Context { get; private set; }
+        public TDbContext Context { get; private set; } = null!;
 
         public Task AddData(IEnumerable<object> entities)
         {
@@ -110,11 +110,9 @@ namespace EfLocalDb
         public async Task AddDataUntracked(IEnumerable<object> entities)
         {
             Guard.AgainstNull(nameof(entities), entities);
-            using (var context = NewDbContext())
-            {
-                context.AddRange(entities);
-                await context.SaveChangesAsync();
-            }
+            await using var context = NewDbContext();
+            context.AddRange(entities);
+            await context.SaveChangesAsync();
         }
 
         public Task AddDataUntracked(params object[] entities)

@@ -1,7 +1,7 @@
 ﻿static class DbNamer
 {
     #region DeriveName
-    public static string DeriveDbName(string databaseSuffix, string memberName, string testClass)
+    public static string DeriveDbName(string? databaseSuffix, string memberName, string testClass)
     {
         if (databaseSuffix == null)
         {

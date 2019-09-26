@@ -27,7 +27,7 @@ using Microsoft.EntityFrameworkCore;
 public class TheDbContext :
     DbContext
 {
-    public DbSet<TheEntity> TestEntities { get; set; }
+    public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
     public TheDbContext(DbContextOptions options) :
         base(options)
@@ -49,7 +49,7 @@ public class TheDbContext :
 public class TheEntity
 {
     public int Id { get; set; }
-    public string Property { get; set; }
+    public string? Property { get; set; }
 }
 ```
 <sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5) / [anchor](#snippet-TheEntity.cs)</sup>
@@ -117,8 +117,8 @@ public class TestBase
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
-        string databaseSuffix = null,
-        [CallerMemberName] string memberName = null)
+        string? databaseSuffix = null,
+        [CallerMemberName] string memberName = "")
     {
         return sqlInstance.Build(GetType().Name, databaseSuffix, memberName);
     }

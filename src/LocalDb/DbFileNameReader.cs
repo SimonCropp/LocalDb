@@ -4,9 +4,9 @@ using Microsoft.Data.SqlClient;
 
 static class DbFileNameReader
 {
-    public static async Task<(string data, string log)> ReadFileInfo(this SqlConnection connection, string dbName)
+    public static async Task<(string? data, string? log)> ReadFileInfo(this SqlConnection connection, string dbName)
     {
-        var datafileName =await  connection.ReadFileName(dbName, "ROWS");
+        var datafileName =await connection.ReadFileName(dbName, "ROWS");
         var logFileName = await connection.ReadFileName(dbName, "LOG");
         if (datafileName != null)
         {
@@ -21,7 +21,7 @@ static class DbFileNameReader
         return (datafileName, logFileName);
     }
 
-    static async Task<string> ReadFileName(this SqlConnection connection, string dbName, string type)
+    static async Task<string?> ReadFileName(this SqlConnection connection, string dbName, string type)
     {
         using (var command = connection.CreateCommand())
         {

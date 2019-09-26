@@ -13,11 +13,11 @@ static class InfoReader
         var dbFileInfo = await connection.ReadFileInfo(dbName);
 
         return new DatabaseState
-        {
-            DataFileExists = File.Exists(dataFile),
-            LogFileExists = File.Exists(logFile),
-            DbDataFileName = dbFileInfo.data,
-            DbLogFileName = dbFileInfo.log,
-        };
+        (
+            dataFileExists: File.Exists(dataFile),
+            logFileExists: File.Exists(logFile),
+            dbDataFileName: dbFileInfo.data,
+            dbLogFileName: dbFileInfo.log
+        );
     }
 }

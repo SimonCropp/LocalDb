@@ -6,10 +6,7 @@ public static class DbPropertyReader
 {
     public static DbSettings Read(SqlConnection connection, string name)
     {
-        return new DbSettings
-        {
-            Files = ReadFileSettings(connection, name).ToList()
-        };
+        return new DbSettings(ReadFileSettings(connection, name).ToList());
     }
 
     static IEnumerable<DbFileSettings> ReadFileSettings(SqlConnection connection, string name)
@@ -24,10 +21,10 @@ where name like '{name}%'";
             while (reader.Read())
             {
                 yield return new DbFileSettings
-                {
-                    Name =(string) reader["name"],
-                    Filename =(string) reader["filename"]
-                };
+                (
+                    name: (string) reader["name"],
+                    filename: (string) reader["filename"]
+                );
             }
         }
     }

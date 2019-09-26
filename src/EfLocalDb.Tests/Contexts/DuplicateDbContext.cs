@@ -3,9 +3,9 @@
 public class DuplicateDbContext :
     DbContext
 {
-    public DbSet<TestEntity> TestEntities { get; set; }
+    public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
-    public DuplicateDbContext (DbContextOptions options) :
+    public DuplicateDbContext(DbContextOptions options) :
         base(options)
     {
     }

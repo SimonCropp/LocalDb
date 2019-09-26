@@ -3,7 +3,7 @@
 public class TestDbContext :
     DbContext
 {
-    public DbSet<TestEntity> TestEntities { get; set; }
+    public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
     public TestDbContext(DbContextOptions options) :
         base(options)

@@ -16,7 +16,7 @@ namespace LocalDb
         public SqlInstance(
             string name,
             Func<SqlConnection, Task> buildTemplate,
-            string directory = null,
+            string? directory = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
@@ -59,9 +59,9 @@ namespace LocalDb
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
         public Task<SqlDatabase> Build(
-            [CallerFilePath] string testFile = null,
-            string databaseSuffix = null,
-            [CallerMemberName] string memberName = null)
+            [CallerFilePath] string testFile = "",
+            string? databaseSuffix = null,
+            [CallerMemberName] string memberName = "")
         #endregion
         {
             Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);

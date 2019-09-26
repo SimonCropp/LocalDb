@@ -168,7 +168,7 @@ public class Tests :
         {
             Property = "prop"
         };
-        SqlDatabase<TestDbContext> database2 = null;
+        SqlDatabase<TestDbContext>? database2 = null;
         try
         {
             var stopwatch1 = Stopwatch.StartNew();
@@ -179,7 +179,7 @@ public class Tests :
         finally
         {
             var stopwatch2 = Stopwatch.StartNew();
-            database2.Dispose();
+            database2?.Dispose();
             Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
         }
     }

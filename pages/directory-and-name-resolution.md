@@ -100,9 +100,9 @@ The convention signature is as follows:
 /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
 /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
 public Task<SqlDatabase> Build(
-    [CallerFilePath] string testFile = null,
-    string databaseSuffix = null,
-    [CallerMemberName] string memberName = null)
+    [CallerFilePath] string testFile = "",
+    string? databaseSuffix = null,
+    [CallerMemberName] string memberName = "")
 ```
 <sup>[snippet source](/src/LocalDb/SqlInstance.cs#L54-L65) / [anchor](#snippet-conventionbuildsignature)</sup>
 <!-- endsnippet -->
@@ -112,7 +112,7 @@ With these parameters the database name is the derived as follows:
 <!-- snippet: DeriveName -->
 <a id='snippet-derivename'/></a>
 ```cs
-public static string DeriveDbName(string databaseSuffix, string memberName, string testClass)
+public static string DeriveDbName(string? databaseSuffix, string memberName, string testClass)
 {
     if (databaseSuffix == null)
     {

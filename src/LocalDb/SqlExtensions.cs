@@ -34,7 +34,7 @@ static class SqlExtensions
         }
     }
 
-    static Exception BuildException(SqlConnection connection, string commandText, Exception exception, SqlErrorCollection errors = null)
+    static Exception BuildException(SqlConnection connection, string commandText, Exception exception, SqlErrorCollection? errors = null)
     {
         var builder = new StringBuilder($@"Failed to execute SQL command.
 {nameof(commandText)}: {commandText}
@@ -45,7 +45,7 @@ connectionString: {connection.ConnectionString}
         return new Exception(builder.ToString(), exception);
     }
 
-    static void AppendErrors(SqlErrorCollection errors, StringBuilder builder)
+    static void AppendErrors(SqlErrorCollection? errors, StringBuilder builder)
     {
         if (errors == null)
         {

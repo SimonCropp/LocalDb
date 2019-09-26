@@ -16,8 +16,8 @@ class Wrapper
     string TemplateLogFile;
     string TemplateConnectionString;
     public readonly string ServerName;
-    Task startupTask;
-    SqlConnection masterConnection;
+    Task startupTask = null!;
+    SqlConnection masterConnection = null!;
 
     public Wrapper(string instance, string directory, ushort size = 3)
     {
@@ -195,7 +195,7 @@ class Wrapper
         File.Delete(logFile);
     }
 
-    Lazy<Task> withRollbackTask;
+    Lazy<Task> withRollbackTask = null!;
 
     void InitRollbackTask()
     {

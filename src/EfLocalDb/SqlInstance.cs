@@ -11,15 +11,15 @@ namespace EfLocalDb
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
-        Wrapper wrapper;
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        Wrapper wrapper = null!;
+        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance = null!;
 
         public string ServerName => wrapper.ServerName;
 
         public SqlInstance(
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            Func<TDbContext, Task> buildTemplate = null,
-            string instanceSuffix = null,
+            Func<TDbContext, Task>? buildTemplate = null,
+            string? instanceSuffix = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
@@ -36,7 +36,7 @@ namespace EfLocalDb
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
-            Func<TDbContext, Task> buildTemplate = null,
+            Func<TDbContext, Task>? buildTemplate = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
@@ -47,7 +47,7 @@ namespace EfLocalDb
         public SqlInstance(
             Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string instanceSuffix = null,
+            string? instanceSuffix = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
@@ -94,7 +94,7 @@ namespace EfLocalDb
             wrapper.Start(resultTimestamp, BuildTemplate);
         }
 
-        static string GetInstanceName(string scopeSuffix)
+        static string GetInstanceName(string? scopeSuffix)
         {
             Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
 
@@ -125,10 +125,10 @@ namespace EfLocalDb
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
         public Task<SqlDatabase<TDbContext>> Build(
-            IEnumerable<object> data,
-            [CallerFilePath] string testFile = null,
-            string databaseSuffix = null,
-            [CallerMemberName] string memberName = null)
+            IEnumerable<object>? data,
+            [CallerFilePath] string testFile = "",
+            string? databaseSuffix = null,
+            [CallerMemberName] string memberName = "")
         {
             Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
             Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
@@ -147,16 +147,16 @@ namespace EfLocalDb
         /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
         /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
         public Task<SqlDatabase<TDbContext>> Build(
-            [CallerFilePath] string testFile = null,
-            string databaseSuffix = null,
-            [CallerMemberName] string memberName = null)
+            [CallerFilePath] string testFile = "",
+            string? databaseSuffix = null,
+            [CallerMemberName] string memberName = "")
         {
             return Build(null, testFile, databaseSuffix, memberName);
         }
 
         public async Task<SqlDatabase<TDbContext>> Build(
             string dbName,
-            IEnumerable<object> data)
+            IEnumerable<object>? data)
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
@@ -167,7 +167,7 @@ namespace EfLocalDb
 
         public Task<SqlDatabase<TDbContext>> Build(string dbName)
         {
-            return Build(dbName, (IEnumerable<object>) null);
+            return Build(dbName, (IEnumerable<object>?) null);
         }
 
         /// <summary>

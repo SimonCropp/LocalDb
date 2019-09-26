@@ -29,7 +29,7 @@ static class Guard
         }
     }
 
-    public static void AgainstNullWhiteSpace(string argumentName, string value)
+    public static void AgainstNullWhiteSpace(string argumentName, string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -37,7 +37,7 @@ static class Guard
         }
     }
 
-    public static void AgainstWhiteSpace(string argumentName, string value)
+    public static void AgainstWhiteSpace(string argumentName, string? value)
     {
         if (value == null)
         {

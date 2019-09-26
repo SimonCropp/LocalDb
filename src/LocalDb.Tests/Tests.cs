@@ -43,7 +43,7 @@ public class Tests :
         {
         }
 
-        SqlDatabase database = null;
+        SqlDatabase? database = null;
 
         try
         {
@@ -55,7 +55,7 @@ public class Tests :
         finally
         {
             var stopwatch = Stopwatch.StartNew();
-            database.Dispose();
+            database?.Dispose();
             Trace.WriteLine(stopwatch.ElapsedMilliseconds);
         }
     }

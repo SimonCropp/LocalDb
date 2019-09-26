@@ -3,7 +3,7 @@
 public class WithRebuildDbContext :
     DbContext
 {
-    public DbSet<TestEntity> TestEntities { get; set; }
+    public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
     public WithRebuildDbContext(DbContextOptions options) :
         base(options)
