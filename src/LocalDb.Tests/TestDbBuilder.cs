@@ -7,11 +7,9 @@ public class TestDbBuilder
 {
     public static async Task CreateTable(SqlConnection connection)
     {
-        using (var command = connection.CreateCommand())
-        {
-            command.CommandText = "create table MyTable (Value int);";
-            await command.ExecuteNonQueryAsync();
-        }
+        using var command = connection.CreateCommand();
+        command.CommandText = "create table MyTable (Value int);";
+        await command.ExecuteNonQueryAsync();
     }
 
     public static async Task<int> AddData(SqlConnection connection)
@@ -34,12 +32,10 @@ values ({nextInt});";
         using (var command = connection.CreateCommand())
         {
             command.CommandText = "select Value from MyTable";
-            using (var reader = await command.ExecuteReaderAsync())
+            using var reader = await command.ExecuteReaderAsync();
+            while (reader.Read())
             {
-                while (reader.Read())
-                {
-                    values.Add(reader.GetInt32(0));
-                }
+                values.Add(reader.GetInt32(0));
             }
         }
 

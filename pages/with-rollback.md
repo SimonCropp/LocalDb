@@ -27,13 +27,11 @@ var sqlInstance = new SqlInstance(
     buildTemplate: TestDbBuilder.CreateTable
 );
 
-using (var sqlDatabase = await sqlInstance.BuildWithRollback())
-{
-    var sqlConnection = sqlDatabase.Connection;
-    //Use the SqlConnection
-}
+using var sqlDatabase = await sqlInstance.BuildWithRollback();
+var sqlConnection = sqlDatabase.Connection;
+//Use the SqlConnection
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L19) / [anchor](#snippet-withrollback)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L17) / [anchor](#snippet-withrollback)</sup>
 <!-- endsnippet -->
 
 
@@ -45,12 +43,10 @@ using (var sqlDatabase = await sqlInstance.BuildWithRollback())
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new TheDbContext(builder.Options));
 
-using (var sqlDatabase = await sqlInstance.BuildWithRollback())
-{
-    var sqlConnection = sqlDatabase.Connection;
-    var dbContext = sqlDatabase.Context;
-    //Use the SqlConnection or TheDbContext
-}
+using var sqlDatabase = await sqlInstance.BuildWithRollback();
+var sqlConnection = sqlDatabase.Connection;
+var dbContext = sqlDatabase.Context;
+//Use the SqlConnection or TheDbContext
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L18) / [anchor](#snippet-efwithrollback)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16) / [anchor](#snippet-efwithrollback)</sup>
 <!-- endsnippet -->

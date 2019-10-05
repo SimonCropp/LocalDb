@@ -18,13 +18,11 @@ public class SnippetTests
     public async Task TheTest()
     {
         #region BuildDatabase
-        using (var database = await sqlInstance.Build())
-        {
-            #region BuildContext
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-            #endregion
-        }
+        using var database = await sqlInstance.Build();
+        #region BuildContext
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        #endregion
         #endregion
     }
 
@@ -33,11 +31,9 @@ public class SnippetTests
     public async Task TheTestWithDbName()
     {
         #region WithDbName
-        using (var database = await sqlInstance.Build("TheTestWithDbName"))
-        {
-            #endregion
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-        }
+        using var database = await sqlInstance.Build("TheTestWithDbName");
+        #endregion
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
 }

@@ -12,12 +12,10 @@ public class Tests :
     {
         var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
-        using (var database = await instance.Build())
-        {
-            var connection = database.Connection;
-            var data = await TestDbBuilder.AddData(connection);
-            Assert.Contains(data, await TestDbBuilder.GetData(connection));
-        }
+        using var database = await instance.Build();
+        var connection = database.Connection;
+        var data = await TestDbBuilder.AddData(connection);
+        Assert.Contains(data, await TestDbBuilder.GetData(connection));
     }
 
     [Fact]
@@ -25,13 +23,11 @@ public class Tests :
     {
         var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
-        using (var database1 = await instance.BuildWithRollback())
-        using (var database2 = await instance.BuildWithRollback())
-        {
-            var data = await TestDbBuilder.AddData(database1.Connection);
-            Assert.Contains(data, await TestDbBuilder.GetData(database1.Connection));
-            Assert.Empty(await TestDbBuilder.GetData(database2.Connection));
-        }
+        using var database1 = await instance.BuildWithRollback();
+        using var database2 = await instance.BuildWithRollback();
+        var data = await TestDbBuilder.AddData(database1.Connection);
+        Assert.Contains(data, await TestDbBuilder.GetData(database1.Connection));
+        Assert.Empty(await TestDbBuilder.GetData(database2.Connection));
     }
 
     [Fact]

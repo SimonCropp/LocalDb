@@ -143,19 +143,17 @@ end;
     public async Task DeleteDatabaseWithOpenConnection()
     {
         var connection = await instance.CreateDatabaseFromTemplate("ToDelete");
-        using (var sqlConnection = new SqlConnection(connection))
+        using var sqlConnection = new SqlConnection(connection);
+        await sqlConnection.OpenAsync();
+        await instance.DeleteDatabase("ToDelete");
+        var deletedState = await instance.ReadDatabaseState("ToDelete");
+        await instance.CreateDatabaseFromTemplate("ToDelete");
+        var createdState = await instance.ReadDatabaseState("ToDelete");
+        ObjectApprover.Verify(new
         {
-            await sqlConnection.OpenAsync();
-            await instance.DeleteDatabase("ToDelete");
-            var deletedState = await instance.ReadDatabaseState("ToDelete");
-            await instance.CreateDatabaseFromTemplate("ToDelete");
-            var createdState = await instance.ReadDatabaseState("ToDelete");
-            ObjectApprover.Verify(new
-            {
-                deletedState,
-                createdState
-            });
-        }
+            deletedState,
+            createdState
+        });
     }
 
     public WrapperTests(ITestOutputHelper output) :

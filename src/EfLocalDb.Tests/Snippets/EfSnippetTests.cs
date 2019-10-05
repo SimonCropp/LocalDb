@@ -17,26 +17,24 @@ public class EfSnippetTests
     public async Task TheTest()
     {
         #region EfBuildDatabase
-        using (var database = await sqlInstance.Build())
+        using var database = await sqlInstance.Build();
+        #endregion
+
+        #region EfBuildContext
+        using (var dbContext = database.NewDbContext())
         {
             #endregion
-
-            #region EfBuildContext
-            using (var dbContext = database.NewDbContext())
+            var entity = new TheEntity
             {
-                #endregion
-                var entity = new TheEntity
-                {
-                    Property = "prop"
-                };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
-            }
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
 
-            using (var dbContext = database.NewDbContext())
-            {
-                Assert.Single(dbContext.TestEntities);
-            }
+        using (var dbContext = database.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
         }
     }
 
@@ -46,16 +44,14 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         #region EfWithDbName
-        using (var database = await sqlInstance.Build("TheTestWithDbName"))
+        using var database = await sqlInstance.Build("TheTestWithDbName");
+        #endregion
+        var entity = new TheEntity
         {
-            #endregion
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            await database.AddData(entity);
+            Property = "prop"
+        };
+        await database.AddData(entity);
 
-            Assert.Single(database.Context.TestEntities);
-        }
+        Assert.Single(database.Context.TestEntities);
     }
 }

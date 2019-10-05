@@ -88,14 +88,12 @@ public class Tests
         {
             Property = "prop"
         };
-        using (var database = await sqlInstance.Build(new List<object> {entity}))
-        {
-            Assert.Single(database.Context.TestEntities);
-        }
+        using var database = await sqlInstance.Build(new List<object> {entity});
+        Assert.Single(database.Context.TestEntities);
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L33) / [anchor](#snippet-efstaticconstructor)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L31) / [anchor](#snippet-efstaticconstructor)</sup>
 <!-- endsnippet -->
 
 
@@ -130,20 +128,18 @@ public class Tests :
     [Fact]
     public async Task Test()
     {
-        using (var database = await LocalDb())
+        using var database = await LocalDb();
+        var entity = new TheEntity
         {
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            await database.AddData(entity);
+            Property = "prop"
+        };
+        await database.AddData(entity);
 
-            Assert.Single(database.Context.TestEntities);
-        }
+        Assert.Single(database.Context.TestEntities);
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L47) / [anchor](#snippet-eftestbase)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45) / [anchor](#snippet-eftestbase)</sup>
 <!-- endsnippet -->
 
 
@@ -157,10 +153,9 @@ Usage inside a test consists of two parts:
 <!-- snippet: EfBuildDatabase -->
 <a id='snippet-efbuilddatabase'/></a>
 ```cs
-using (var database = await sqlInstance.Build())
-{
+using var database = await sqlInstance.Build();
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22) / [anchor](#snippet-efbuilddatabase)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L21) / [anchor](#snippet-efbuilddatabase)</sup>
 <!-- endsnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -174,7 +169,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L24-L27) / [anchor](#snippet-efbuildcontext)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L23-L26) / [anchor](#snippet-efbuildcontext)</sup>
 <!-- endsnippet -->
 
 
@@ -202,23 +197,21 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTest()
     {
-        using (var database = await sqlInstance.Build())
+        using var database = await sqlInstance.Build();
+
+        using (var dbContext = database.NewDbContext())
         {
-
-            using (var dbContext = database.NewDbContext())
+            var entity = new TheEntity
             {
-                var entity = new TheEntity
-                {
-                    Property = "prop"
-                };
-                dbContext.Add(entity);
-                dbContext.SaveChanges();
-            }
+                Property = "prop"
+            };
+            dbContext.Add(entity);
+            dbContext.SaveChanges();
+        }
 
-            using (var dbContext = database.NewDbContext())
-            {
-                Assert.Single(dbContext.TestEntities);
-            }
+        using (var dbContext = database.NewDbContext())
+        {
+            Assert.Single(dbContext.TestEntities);
         }
     }
 
@@ -226,20 +219,18 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTestWithDbName()
     {
-        using (var database = await sqlInstance.Build("TheTestWithDbName"))
+        using var database = await sqlInstance.Build("TheTestWithDbName");
+        var entity = new TheEntity
         {
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            await database.AddData(entity);
+            Property = "prop"
+        };
+        await database.AddData(entity);
 
-            Assert.Single(database.Context.TestEntities);
-        }
+        Assert.Single(database.Context.TestEntities);
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L53) / [anchor](#snippet-EfSnippetTests.cs)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L49) / [anchor](#snippet-EfSnippetTests.cs)</sup>
 <!-- endsnippet -->
 
 

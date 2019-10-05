@@ -31,11 +31,9 @@ public class TestDbBuilder
 {
     public static async Task CreateTable(SqlConnection connection)
     {
-        using (var command = connection.CreateCommand())
-        {
-            command.CommandText = "create table MyTable (Value int);";
-            await command.ExecuteNonQueryAsync();
-        }
+        using var command = connection.CreateCommand();
+        command.CommandText = "create table MyTable (Value int);";
+        await command.ExecuteNonQueryAsync();
     }
 
     public static async Task<int> AddData(SqlConnection connection)
@@ -58,12 +56,10 @@ values ({nextInt});";
         using (var command = connection.CreateCommand())
         {
             command.CommandText = "select Value from MyTable";
-            using (var reader = await command.ExecuteReaderAsync())
+            using var reader = await command.ExecuteReaderAsync();
+            while (reader.Read())
             {
-                while (reader.Read())
-                {
-                    values.Add(reader.GetInt32(0));
-                }
+                values.Add(reader.GetInt32(0));
             }
         }
 
@@ -71,7 +67,7 @@ values ({nextInt});";
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/TestDbBuilder.cs#L1-L48) / [anchor](#snippet-TestDbBuilder.cs)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/TestDbBuilder.cs#L1-L44) / [anchor](#snippet-TestDbBuilder.cs)</sup>
 <!-- endsnippet -->
 
 
@@ -105,15 +101,13 @@ public class Tests
     [Fact]
     public async Task Test()
     {
-        using (var database = await sqlInstance.Build())
-        {
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-        }
+        using var database = await sqlInstance.Build();
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L7-L31) / [anchor](#snippet-staticconstructor)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L7-L29) / [anchor](#snippet-staticconstructor)</sup>
 <!-- endsnippet -->
 
 
@@ -149,15 +143,13 @@ public class Tests:
     [Fact]
     public async Task Test()
     {
-        using (var database = await LocalDb())
-        {
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-        }
+        using var database = await LocalDb();
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L43) / [anchor](#snippet-testbase)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L41) / [anchor](#snippet-testbase)</sup>
 <!-- endsnippet -->
 
 
@@ -171,13 +163,11 @@ Usage inside a test consists of two parts:
 <!-- snippet: BuildDatabase -->
 <a id='snippet-builddatabase'/></a>
 ```cs
-using (var database = await sqlInstance.Build())
-{
-    await TestDbBuilder.AddData(database.Connection);
-    Assert.Single(await TestDbBuilder.GetData(database.Connection));
-}
+using var database = await sqlInstance.Build();
+await TestDbBuilder.AddData(database.Connection);
+Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L28) / [anchor](#snippet-builddatabase)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L26) / [anchor](#snippet-builddatabase)</sup>
 <!-- endsnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -191,7 +181,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L23-L26) / [anchor](#snippet-buildcontext)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L22-L25) / [anchor](#snippet-buildcontext)</sup>
 <!-- endsnippet -->
 
 
@@ -220,23 +210,19 @@ public class SnippetTests
 
     public async Task TheTest()
     {
-        using (var database = await sqlInstance.Build())
-        {
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-        }
+        using var database = await sqlInstance.Build();
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
 
 
     public async Task TheTestWithDbName()
     {
-        using (var database = await sqlInstance.Build("TheTestWithDbName"))
-        {
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-        }
+        using var database = await sqlInstance.Build("TheTestWithDbName");
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35) / [anchor](#snippet-SnippetTests.cs)</sup>
+<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L31) / [anchor](#snippet-SnippetTests.cs)</sup>
 <!-- endsnippet -->

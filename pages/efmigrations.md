@@ -16,17 +16,15 @@ var sqlInstance = new SqlInstance<MyDbContext>(
     buildTemplate: async (connection, optionsBuilder) =>
     {
         optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
-        using (var dbContext = new MyDbContext(optionsBuilder.Options))
-        {
-            await dbContext.Database.MigrateAsync();
-        }
+        using var dbContext = new MyDbContext(optionsBuilder.Options);
+        await dbContext.Database.MigrateAsync();
     },
     constructInstance: builder =>
     {
         return new MyDbContext(builder.Options);
     });
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L33) / [anchor](#snippet-migrations)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L31) / [anchor](#snippet-migrations)</sup>
 <!-- endsnippet -->
 
 The above performs the following actions:
@@ -52,10 +50,8 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 <!-- snippet: Migrate -->
 <a id='snippet-migrate'/></a>
 ```cs
-using (var dbContext = new MyDbContext(optionsBuilder.Options))
-{
-    await dbContext.Database.MigrateAsync();
-}
+using var dbContext = new MyDbContext(optionsBuilder.Options);
+await dbContext.Database.MigrateAsync();
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L26) / [anchor](#snippet-migrate)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L24) / [anchor](#snippet-migrate)</sup>
 <!-- endsnippet -->

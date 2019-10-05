@@ -11,11 +11,9 @@ class WithRollback
             buildTemplate: TestDbBuilder.CreateTable
         );
 
-        using (var sqlDatabase = await sqlInstance.BuildWithRollback())
-        {
-            var sqlConnection = sqlDatabase.Connection;
-            //Use the SqlConnection
-        }
+        using var sqlDatabase = await sqlInstance.BuildWithRollback();
+        var sqlConnection = sqlDatabase.Connection;
+        //Use the SqlConnection
         #endregion
     }
 }

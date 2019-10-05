@@ -31,16 +31,14 @@ namespace TestBase
         [Fact]
         public async Task Test()
         {
-            using (var database = await LocalDb())
+            using var database = await LocalDb();
+            var entity = new TheEntity
             {
-                var entity = new TheEntity
-                {
-                    Property = "prop"
-                };
-                await database.AddData(entity);
+                Property = "prop"
+            };
+            await database.AddData(entity);
 
-                Assert.Single(database.Context.TestEntities);
-            }
+            Assert.Single(database.Context.TestEntities);
         }
     }
 
