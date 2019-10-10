@@ -9,7 +9,7 @@ static class DefaultOptionsBuilder
         var builder = new DbContextOptionsBuilder<TDbContext>();
         if (LocalDbLogging.SqlLoggingEnabled)
         {
-            builder.UseLoggerFactory(LoggingProvider.LoggerFactory);
+            builder.AddInterceptors(new LogCommandInterceptor());
         }
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
