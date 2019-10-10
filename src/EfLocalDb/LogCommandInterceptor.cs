@@ -1,6 +1,5 @@
 ﻿using System.Data.Common;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -8,45 +7,55 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 class LogCommandInterceptor :
     DbCommandInterceptor
 {
-    static void WriteLine(DbCommand command, [CallerMemberName] string member = "")
+    static void WriteLine(CommandEventData data)
     {
-        Trace.WriteLine($@"EF {member}:
-{command.CommandText}", "LocalDB");
+        Trace.WriteLine($@"EF {data}", "LocalDB");
     }
 
-    public override InterceptionResult<DbDataReader> ReaderExecuting(DbCommand command, CommandEventData data, InterceptionResult<DbDataReader> result)
+    public override void CommandFailed(DbCommand command, CommandErrorEventData data)
     {
-        WriteLine(command);
+        WriteLine(data);
+    }
+
+    public override Task CommandFailedAsync(DbCommand command, CommandErrorEventData data, CancellationToken cancellation)
+    {
+        WriteLine(data);
+        return Task.CompletedTask;
+    }
+
+    public override DbDataReader ReaderExecuted(DbCommand command, CommandExecutedEventData data, DbDataReader result)
+    {
+        WriteLine(data);
         return result;
     }
 
-    public override InterceptionResult<object> ScalarExecuting(DbCommand command, CommandEventData data, InterceptionResult<object> result)
+    public override object ScalarExecuted(DbCommand command, CommandExecutedEventData data, object result)
     {
-        WriteLine(command);
+        WriteLine(data);
         return result;
     }
 
-    public override InterceptionResult<int> NonQueryExecuting(DbCommand command, CommandEventData data, InterceptionResult<int> result)
+    public override int NonQueryExecuted(DbCommand command, CommandExecutedEventData data, int result)
     {
-        WriteLine(command);
+        WriteLine(data);
         return result;
     }
 
-    public override Task<InterceptionResult<DbDataReader>> ReaderExecutingAsync(DbCommand command, CommandEventData data, InterceptionResult<DbDataReader> result, CancellationToken cancellation)
+    public override Task<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData data, DbDataReader result, CancellationToken cancellation)
     {
-        WriteLine(command);
+        WriteLine(data);
         return Task.FromResult(result);
     }
 
-    public override Task<InterceptionResult<object>> ScalarExecutingAsync(DbCommand command, CommandEventData data, InterceptionResult<object> result, CancellationToken cancellation)
+    public override Task<object> ScalarExecutedAsync(DbCommand command, CommandExecutedEventData data, object result, CancellationToken cancellation)
     {
-        WriteLine(command);
+        WriteLine(data);
         return Task.FromResult(result);
     }
 
-    public override Task<InterceptionResult<int>> NonQueryExecutingAsync(DbCommand command, CommandEventData data, InterceptionResult<int> result, CancellationToken cancellation)
+    public override Task<int> NonQueryExecutedAsync(DbCommand command, CommandExecutedEventData data, int result, CancellationToken cancellation)
     {
-        WriteLine(command);
+        WriteLine(data);
         return Task.FromResult(result);
     }
 }
