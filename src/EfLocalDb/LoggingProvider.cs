@@ -24,7 +24,7 @@ class LoggingProvider :
 
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
     {
-        if (eventId.Id != RelationalEventId.CommandExecuting)
+        if (eventId != RelationalEventId.CommandExecuting)
         {
             return;
         }
