@@ -32,7 +32,7 @@ namespace TestBase
         [Fact]
         public async Task Test()
         {
-            using var database = await LocalDb();
+            await using var database = await LocalDb();
             await TestDbBuilder.AddData(database.Connection);
             Assert.Single(await TestDbBuilder.GetData(database.Connection));
         }

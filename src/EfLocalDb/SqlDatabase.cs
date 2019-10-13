@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EfLocalDb
 {
     public class SqlDatabase<TDbContext> :
+        IAsyncDisposable,
         IDisposable
         where TDbContext : DbContext
     {
@@ -142,6 +143,21 @@ namespace EfLocalDb
             }
             Context?.Dispose();
             Connection.Dispose();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (Transaction != null)
+            {
+                Transaction.Rollback();
+                Transaction.Dispose();
+            }
+
+            if (Context != null)
+            {
+                await Context.DisposeAsync();
+            }
+            await Connection.DisposeAsync();
         }
 
         public Task Delete()

@@ -19,7 +19,8 @@ public class Migrations
                 optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
                 #endregion
                 #region Migrate
-                using var dbContext = new MyDbContext(optionsBuilder.Options);
+
+                await using var dbContext = new MyDbContext(optionsBuilder.Options);
                 await dbContext.Database.MigrateAsync();
                 #endregion
             },

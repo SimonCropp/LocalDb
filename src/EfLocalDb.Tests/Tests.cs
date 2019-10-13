@@ -19,7 +19,7 @@ public class Tests :
         {
             Property = "prop"
         };
-        using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
@@ -30,7 +30,7 @@ public class Tests :
         {
             Property = "prop"
         };
-        using var database = await instance.Build();
+        await using var database = await instance.Build();
         await database.AddData(entity);
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
@@ -46,7 +46,7 @@ public class Tests :
         {
             Property = "prop"
         };
-        using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
@@ -57,7 +57,7 @@ public class Tests :
         var instance1 = new SqlInstance<WithRebuildDbContext>(
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
             timestamp: dateTime);
-        using (var database1 = await instance1.Build())
+        await using (var database1 = await instance1.Build())
         {
             var entity = new TestEntity
             {
@@ -70,7 +70,7 @@ public class Tests :
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
             buildTemplate: x => throw new Exception(),
             timestamp: dateTime);
-        using var database2 = await instance2.Build();
+        await using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
     }
 
@@ -81,14 +81,14 @@ public class Tests :
         {
             Property = "prop"
         };
-        using var database = await instance.Build();
-        using (var dbContext = database.NewDbContext())
+        await using var database = await instance.Build();
+        await using (var dbContext = database.NewDbContext())
         {
             dbContext.Add(entity);
             await dbContext.SaveChangesAsync();
         }
 
-        using (var dbContext = database.NewDbContext())
+        await using (var dbContext = database.NewDbContext())
         {
             Assert.NotNull(await dbContext.TestEntities.FindAsync(entity.Id));
         }
@@ -112,8 +112,8 @@ public class Tests :
     [Fact]
     public async Task NewDbContext()
     {
-        using var database = await instance.Build();
-        using var dbContext = database.NewDbContext();
+        await using var database = await instance.Build();
+        await using var dbContext = database.NewDbContext();
         Assert.NotSame(database.Context, dbContext);
     }
 
@@ -124,7 +124,7 @@ public class Tests :
         {
             Property = "Item1"
         };
-        using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
@@ -135,8 +135,8 @@ public class Tests :
         {
             Property = "prop"
         };
-        using var database1 = await instance.BuildWithRollback(new List<object> {entity});
-        using var database2 = await instance.BuildWithRollback();
+        await using var database1 = await instance.BuildWithRollback(new List<object> {entity});
+        await using var database2 = await instance.BuildWithRollback();
         Assert.NotNull(await database1.Context.TestEntities.FindAsync(entity.Id));
         Assert.Empty(database2.Context.TestEntities.ToList());
     }
@@ -144,7 +144,7 @@ public class Tests :
     [Fact]
     public async Task WithRollbackPerf()
     {
-        using (await instance.BuildWithRollback())
+        await using (await instance.BuildWithRollback())
         {
         }
 

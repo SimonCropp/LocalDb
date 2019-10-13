@@ -148,7 +148,7 @@ Which can be used as follows:
 <!-- snippet: WithDbName -->
 <a id='snippet-withdbname'/></a>
 ```cs
-using var database = await sqlInstance.Build("TheTestWithDbName");
+await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
 <sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L35) / [anchor](#snippet-withdbname)</sup>
 <!-- endsnippet -->
@@ -159,7 +159,7 @@ using var database = await sqlInstance.Build("TheTestWithDbName");
 <!-- snippet: EFWithDbName -->
 <a id='snippet-efwithdbname'/></a>
 ```cs
-using var database = await sqlInstance.Build("TheTestWithDbName");
+await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L46-L48) / [anchor](#snippet-efwithdbname)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L52-L54) / [anchor](#snippet-efwithdbname)</sup>
 <!-- endsnippet -->

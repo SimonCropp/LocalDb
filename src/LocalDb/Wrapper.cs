@@ -154,7 +154,7 @@ class Wrapper
         DeleteTemplateFiles();
         await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
 
-        using (var templateConnection = new SqlConnection(TemplateConnectionString))
+        await using (var templateConnection = new SqlConnection(TemplateConnectionString))
         {
             await templateConnection.OpenAsync();
             await buildTemplate(templateConnection);

@@ -37,7 +37,7 @@ end;
         var wrapper = new Wrapper("RecreateWithOpenConnectionAfterStartup", DirectoryFinder.Find("RecreateWithOpenConnectionAfterStartup"));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
-        using (var connection = new SqlConnection(connectionString))
+        await using (var connection = new SqlConnection(connectionString))
         {
              await connection.OpenAsync();
              await wrapper.CreateDatabaseFromTemplate("Simple");
@@ -60,7 +60,7 @@ end;
         var wrapper = new Wrapper("RecreateWithOpenConnection", DirectoryFinder.Find("RecreateWithOpenConnection"));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
-        using (var connection = new SqlConnection(connectionString))
+        await using (var connection = new SqlConnection(connectionString))
         {
              await connection.OpenAsync();
              wrapper = new Wrapper("RecreateWithOpenConnection", DirectoryFinder.Find("RecreateWithOpenConnection"));
@@ -143,7 +143,7 @@ end;
     public async Task DeleteDatabaseWithOpenConnection()
     {
         var connection = await instance.CreateDatabaseFromTemplate("ToDelete");
-        using var sqlConnection = new SqlConnection(connection);
+        await using var sqlConnection = new SqlConnection(connection);
         await sqlConnection.OpenAsync();
         await instance.DeleteDatabase("ToDelete");
         var deletedState = await instance.ReadDatabaseState("ToDelete");

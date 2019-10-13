@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 namespace LocalDb
 {
     public class SqlDatabase :
+        IAsyncDisposable,
         IDisposable
     {
         Func<Task> delete = () => Task.CompletedTask;
@@ -70,6 +71,12 @@ namespace LocalDb
         {
             Transaction?.Dispose();
             Connection.Dispose();
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            Transaction?.Dispose();
+            return Connection.DisposeAsync();
         }
 
         public Task Delete()

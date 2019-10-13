@@ -12,7 +12,7 @@ public class Tests :
     {
         var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
-        using var database = await instance.Build();
+        await using var database = await instance.Build();
         var connection = database.Connection;
         var data = await TestDbBuilder.AddData(connection);
         Assert.Contains(data, await TestDbBuilder.GetData(connection));
@@ -23,8 +23,8 @@ public class Tests :
     {
         var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
-        using var database1 = await instance.BuildWithRollback();
-        using var database2 = await instance.BuildWithRollback();
+        await using var database1 = await instance.BuildWithRollback();
+        await using var database2 = await instance.BuildWithRollback();
         var data = await TestDbBuilder.AddData(database1.Connection);
         Assert.Contains(data, await TestDbBuilder.GetData(database1.Connection));
         Assert.Empty(await TestDbBuilder.GetData(database2.Connection));
@@ -35,7 +35,7 @@ public class Tests :
     {
         var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
-        using (await instance.BuildWithRollback())
+        await using (await instance.BuildWithRollback())
         {
         }
 
@@ -62,15 +62,15 @@ public class Tests :
         var stopwatch = Stopwatch.StartNew();
         var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
 
-        using (var database = await instance.Build(databaseSuffix: "one"))
+        await using (var database = await instance.Build(databaseSuffix: "one"))
         {
         }
 
-        using (var database = await instance.Build(databaseSuffix: "two"))
+        await using (var database = await instance.Build(databaseSuffix: "two"))
         {
         }
 
-        using (var database = await instance.Build(databaseSuffix: "three"))
+        await using (var database = await instance.Build(databaseSuffix: "three"))
         {
         }
 

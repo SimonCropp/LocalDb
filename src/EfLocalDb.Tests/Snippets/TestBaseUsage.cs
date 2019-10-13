@@ -31,7 +31,7 @@ namespace TestBase
         [Fact]
         public async Task Test()
         {
-            using var database = await LocalDb();
+            await using var database = await LocalDb();
             var entity = new TheEntity
             {
                 Property = "prop"

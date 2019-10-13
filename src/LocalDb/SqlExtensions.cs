@@ -13,7 +13,7 @@ static class SqlExtensions
         try
         {
             var stopwatch = Stopwatch.StartNew();
-            using (var command = connection.CreateCommand())
+            await using (var command = connection.CreateCommand())
             {
                 command.CommandText = commandText;
                 await command.ExecuteNonQueryAsync();

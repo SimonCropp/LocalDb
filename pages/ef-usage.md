@@ -88,7 +88,7 @@ public class Tests
         {
             Property = "prop"
         };
-        using var database = await sqlInstance.Build(new List<object> {entity});
+        await using var database = await sqlInstance.Build(new List<object> {entity});
         Assert.Single(database.Context.TestEntities);
     }
 }
@@ -128,7 +128,7 @@ public class Tests :
     [Fact]
     public async Task Test()
     {
-        using var database = await LocalDb();
+        await using var database = await LocalDb();
         var entity = new TheEntity
         {
             Property = "prop"
@@ -153,9 +153,9 @@ Usage inside a test consists of two parts:
 <!-- snippet: EfBuildDatabase -->
 <a id='snippet-efbuilddatabase'/></a>
 ```cs
-using var database = await sqlInstance.Build();
+await using var database = await sqlInstance.Build();
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L21) / [anchor](#snippet-efbuilddatabase)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L23) / [anchor](#snippet-efbuilddatabase)</sup>
 <!-- endsnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -166,10 +166,10 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 <!-- snippet: EfBuildContext -->
 <a id='snippet-efbuildcontext'/></a>
 ```cs
-using (var dbContext = database.NewDbContext())
+await using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L23-L26) / [anchor](#snippet-efbuildcontext)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L25-L30) / [anchor](#snippet-efbuildcontext)</sup>
 <!-- endsnippet -->
 
 
@@ -197,10 +197,15 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTest()
     {
-        using var database = await sqlInstance.Build();
 
-        using (var dbContext = database.NewDbContext())
+        await using var database = await sqlInstance.Build();
+
+
+
+        await using (var dbContext = database.NewDbContext())
         {
+
+
             var entity = new TheEntity
             {
                 Property = "prop"
@@ -209,17 +214,18 @@ public class EfSnippetTests
             dbContext.SaveChanges();
         }
 
-        using (var dbContext = database.NewDbContext())
+        await using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
+
     }
 
 
     [Fact]
     public async Task TheTestWithDbName()
     {
-        using var database = await sqlInstance.Build("TheTestWithDbName");
+        await using var database = await sqlInstance.Build("TheTestWithDbName");
         var entity = new TheEntity
         {
             Property = "prop"
@@ -230,7 +236,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L49) / [anchor](#snippet-EfSnippetTests.cs)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L55) / [anchor](#snippet-EfSnippetTests.cs)</sup>
 <!-- endsnippet -->
 
 
@@ -242,17 +248,18 @@ When building a `DbContextOptionsBuilder` the default configuration is as follow
 <a id='snippet-DefaultOptionsBuilder.cs'/></a>
 ```cs
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 static class DefaultOptionsBuilder
 {
+    static LogCommandInterceptor interceptor = new LogCommandInterceptor();
+
     public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
         where TDbContext : DbContext
     {
         var builder = new DbContextOptionsBuilder<TDbContext>();
         if (LocalDbLogging.SqlLoggingEnabled)
         {
-            builder.AddInterceptors(new LogCommandInterceptor());
+            builder.AddInterceptors(interceptor);
         }
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
@@ -260,5 +267,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L18) / [anchor](#snippet-DefaultOptionsBuilder.cs)</sup>
+<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19) / [anchor](#snippet-DefaultOptionsBuilder.cs)</sup>
 <!-- endsnippet -->

@@ -23,7 +23,7 @@ static class DbFileNameReader
 
     static async Task<string?> ReadFileName(this SqlConnection connection, string dbName, string type)
     {
-        using (var command = connection.CreateCommand())
+        await using (var command = connection.CreateCommand())
         {
             command.CommandText = $@"
 select
@@ -33,7 +33,7 @@ select
 from sys.master_files f
 inner join sys.databases d on d.database_id = f.database_id
 where d.name = '{dbName}' and f.type_desc = '{type}'";
-            using var reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 return (string) reader["physical_name"];

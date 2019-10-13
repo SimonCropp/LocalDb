@@ -18,7 +18,7 @@ public class SnippetTests
     public async Task TheTest()
     {
         #region BuildDatabase
-        using var database = await sqlInstance.Build();
+        await using var database = await sqlInstance.Build();
         #region BuildContext
         await TestDbBuilder.AddData(database.Connection);
         Assert.Single(await TestDbBuilder.GetData(database.Connection));
@@ -31,7 +31,7 @@ public class SnippetTests
     public async Task TheTestWithDbName()
     {
         #region WithDbName
-        using var database = await sqlInstance.Build("TheTestWithDbName");
+        await using var database = await sqlInstance.Build("TheTestWithDbName");
         #endregion
         await TestDbBuilder.AddData(database.Connection);
         Assert.Single(await TestDbBuilder.GetData(database.Connection));
