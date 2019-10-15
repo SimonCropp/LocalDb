@@ -114,7 +114,7 @@ namespace EfLocalDb
 
         Task<string> BuildDatabase(string dbName)
         {
-            return wrapper.CreateDatabaseFromTemplate(dbName, false);
+            return wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
         /// <summary>

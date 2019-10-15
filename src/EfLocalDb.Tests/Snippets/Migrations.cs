@@ -24,10 +24,7 @@ public class Migrations
                 await dbContext.Database.MigrateAsync();
                 #endregion
             },
-            constructInstance: builder =>
-            {
-                return new MyDbContext(builder.Options);
-            });
+            constructInstance: builder => new MyDbContext(builder.Options));
 
         #endregion
     }
