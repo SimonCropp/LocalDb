@@ -20,12 +20,9 @@ var sqlInstance = new SqlInstance<MyDbContext>(
         await using var dbContext = new MyDbContext(optionsBuilder.Options);
         await dbContext.Database.MigrateAsync();
     },
-    constructInstance: builder =>
-    {
-        return new MyDbContext(builder.Options);
-    });
+    constructInstance: builder => new MyDbContext(builder.Options));
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L32) / [anchor](#snippet-migrations)</sup>
+<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L29) / [anchor](#snippet-migrations)</sup>
 <!-- endsnippet -->
 
 The above performs the following actions:

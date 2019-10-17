@@ -23,20 +23,20 @@ The snippets use the following helper class:
 <a id='snippet-TestDbBuilder.cs'/></a>
 ```cs
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 using XunitLogger;
 
 public class TestDbBuilder
 {
-    public static async Task CreateTable(SqlConnection connection)
+    public static async Task CreateTable(DbConnection connection)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "create table MyTable (Value int);";
         await command.ExecuteNonQueryAsync();
     }
 
-    public static async Task<int> AddData(SqlConnection connection)
+    public static async Task<int> AddData(DbConnection connection)
     {
         var nextInt = Counters.NextInt();
         await using (var command = connection.CreateCommand())
@@ -50,7 +50,7 @@ values ({nextInt});";
         return nextInt;
     }
 
-    public static async Task<List<int>> GetData(SqlConnection connection)
+    public static async Task<List<int>> GetData(DbConnection connection)
     {
         var values = new List<int>();
         await using (var command = connection.CreateCommand())
