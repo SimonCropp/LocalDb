@@ -9,7 +9,7 @@ static class LocalDbRegistryReader
     {
         var registryView = GetRegistryView();
         using var rootKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView);
-        var versions = rootKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions");
+        using var versions = rootKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions");
         if (versions == null)
         {
             throw new InvalidOperationException("LocalDb not installed.");
