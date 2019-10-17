@@ -8,16 +8,8 @@ static class DbFileNameReader
     {
         var datafileName =await connection.ReadFileName(dbName, "ROWS");
         var logFileName = await connection.ReadFileName(dbName, "LOG");
-        if (datafileName != null)
-        {
-            datafileName = Path.GetFileName(datafileName);
-        }
-
-        if (logFileName != null)
-        {
-            logFileName = Path.GetFileName(logFileName);
-        }
-
+        datafileName = Path.GetFileName(datafileName);
+        logFileName = Path.GetFileName(logFileName);
         return (datafileName, logFileName);
     }
 
