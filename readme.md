@@ -141,6 +141,10 @@ Ensure that the latests SQL Server Cumulative Update is being used.
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
 
+## Release Notes
+
+See [closed milestones](../../milestones?state=closed).
+
 ## Icon
 
 [Robot](https://thenounproject.com/term/robot/960055/) designed by [Creaticca Creative Agency](https://thenounproject.com/creaticca/) from [The Noun Project](https://thenounproject.com/).
