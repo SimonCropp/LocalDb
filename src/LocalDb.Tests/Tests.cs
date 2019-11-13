@@ -39,7 +39,7 @@ public class Tests :
         {
         }
 
-        SqlDatabase? database = null;
+        SqlDatabaseWithRollback? database = null;
 
         try
         {

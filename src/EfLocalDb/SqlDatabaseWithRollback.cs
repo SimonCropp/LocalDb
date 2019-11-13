@@ -1,32 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
-    public class SqlDatabase<TDbContext> :
+    public class SqlDatabaseWithRollback<TDbContext> :
         ISqlDatabase<TDbContext>
         where TDbContext : DbContext
     {
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
-        Func<Task> delete;
         IEnumerable<object>? data;
 
-        internal SqlDatabase(
+        internal SqlDatabaseWithRollback(
             string connectionString,
-            string name,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            Func<Task> delete,
-            IEnumerable<object>? data)
+            IEnumerable<object> data)
         {
-            Name = name;
+            Name = "withRollback";
             this.constructInstance = constructInstance;
-            this.delete = delete;
             this.data = data;
             ConnectionString = connectionString;
-            Connection = new SqlConnection(connectionString);
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.Snapshot
+            };
+            Transaction = new CommittableTransaction(transactionOptions);
+            Connection = new SqlConnection(ConnectionString);
         }
 
         public string Name { get; }
@@ -37,16 +39,18 @@ namespace EfLocalDb
         {
             var sqlConnection = new SqlConnection(ConnectionString);
             await sqlConnection.OpenAsync();
+            Connection.EnlistTransaction(Transaction);
+
             return sqlConnection;
         }
 
-        public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
+        public static implicit operator TDbContext(SqlDatabaseWithRollback<TDbContext> instance)
         {
             Guard.AgainstNull(nameof(instance), instance);
             return instance.Context;
         }
 
-        public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance)
+        public static implicit operator SqlConnection(SqlDatabaseWithRollback<TDbContext> instance)
         {
             Guard.AgainstNull(nameof(instance), instance);
             return instance.Connection;
@@ -55,13 +59,14 @@ namespace EfLocalDb
         public async Task Start()
         {
             await Connection.OpenAsync();
-
             Context = NewDbContext();
             if (data != null)
             {
                 await this.AddData(data);
             }
         }
+
+        public Transaction Transaction { get; }
 
         public TDbContext Context { get; private set; } = null!;
 
@@ -70,28 +75,30 @@ namespace EfLocalDb
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection);
             var dbContext = constructInstance(builder);
+            dbContext.Database.EnlistTransaction(Transaction);
             return dbContext;
         }
 
         public void Dispose()
         {
+            Transaction.Rollback();
+            Transaction.Dispose();
+
             Context?.Dispose();
             Connection.Dispose();
         }
 
         public async ValueTask DisposeAsync()
         {
+            Transaction.Rollback();
+            Transaction.Dispose();
+
             if (Context != null)
             {
                 await Context.DisposeAsync();
             }
-            await Connection.DisposeAsync();
-        }
 
-        public async Task Delete()
-        {
-            await DisposeAsync();
-            await delete();
+            await Connection.DisposeAsync();
         }
     }
 }

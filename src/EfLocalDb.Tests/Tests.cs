@@ -152,7 +152,7 @@ public class Tests :
         {
             Property = "prop"
         };
-        SqlDatabase<TestDbContext>? database2 = null;
+        SqlDatabaseWithRollback<TestDbContext>? database2 = null;
         try
         {
             var stopwatch1 = Stopwatch.StartNew();

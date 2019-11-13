@@ -174,7 +174,7 @@ namespace EfLocalDb
         ///   Build DB with a transaction that is rolled back when disposed.
         /// </summary>
         /// <param name="data">The seed data.</param>
-        public Task<SqlDatabase<TDbContext>> BuildWithRollback(params object[] data)
+        public Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(params object[] data)
         {
             return BuildWithRollback((IEnumerable<object>)data);
         }
@@ -183,10 +183,10 @@ namespace EfLocalDb
         ///   Build DB with a transaction that is rolled back when disposed.
         /// </summary>
         /// <param name="data">The seed data.</param>
-        public async Task<SqlDatabase<TDbContext>> BuildWithRollback(IEnumerable<object> data)
+        public async Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(IEnumerable<object> data)
         {
             var connection = await BuildWithRollbackDatabase();
-            var database = new SqlDatabase<TDbContext>(connection, constructInstance, data);
+            var database = new SqlDatabaseWithRollback<TDbContext>(connection, constructInstance, data);
             await database.Start();
             return database;
         }

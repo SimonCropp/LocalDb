@@ -1,20 +1,22 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using System.Transactions;
 using Microsoft.Data.SqlClient;
 
 namespace LocalDb
 {
-    public class SqlDatabase :
+    public class SqlDatabaseWithRollback :
         ISqlDatabase
     {
-        Func<Task> delete;
-
-        internal SqlDatabase(string connectionString, string name, Func<Task> delete)
+        internal SqlDatabaseWithRollback(string connectionString)
         {
-            this.delete = delete;
             ConnectionString = connectionString;
-            Name = name;
+            Name = "withRollback";
             Connection = new SqlConnection(connectionString);
+            var transactionOptions = new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.Snapshot
+            };
+            Transaction = new CommittableTransaction(transactionOptions);
         }
 
         public string ConnectionString { get; }
@@ -22,7 +24,7 @@ namespace LocalDb
 
         public SqlConnection Connection { get; }
 
-        public static implicit operator SqlConnection(SqlDatabase instance)
+        public static implicit operator SqlConnection(SqlDatabaseWithRollback instance)
         {
             Guard.AgainstNull(nameof(instance), instance);
             return instance.Connection;
@@ -32,28 +34,30 @@ namespace LocalDb
         {
             var sqlConnection = new SqlConnection(ConnectionString);
             await sqlConnection.OpenAsync();
+            Connection.EnlistTransaction(Transaction);
             return sqlConnection;
         }
 
         public async Task Start()
         {
             await Connection.OpenAsync();
+            Connection.EnlistTransaction(Transaction);
         }
+
+        public Transaction Transaction { get; }
 
         public void Dispose()
         {
+            Transaction.Rollback();
+            Transaction.Dispose();
             Connection.Dispose();
         }
 
         public ValueTask DisposeAsync()
         {
+            Transaction.Rollback();
+            Transaction.Dispose();
             return Connection.DisposeAsync();
-        }
-
-        public async Task Delete()
-        {
-            await DisposeAsync();
-            await delete();
         }
     }
 }
