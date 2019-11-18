@@ -69,8 +69,7 @@ namespace EfLocalDb
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection);
-            var dbContext = constructInstance(builder);
-            return dbContext;
+            return constructInstance(builder);
         }
 
         public void Dispose()
