@@ -2,15 +2,16 @@
 {
     public static string GetCreateOrMakeOnlineCommand(string name, string dataFile, string logFile, bool withRollback)
     {
-        var createCommand = $@" create database [{name}] on
-        (
-            name = [{name}],
-            filename = '{dataFile}'
-        ),
-        (
-            filename = '{logFile}'
-        )
-        for attach;";
+        var createCommand = $@"
+create database [{name}] on
+(
+    name = [{name}],
+    filename = '{dataFile}'
+),
+(
+    filename = '{logFile}'
+)
+for attach;";
         if (withRollback)
         {
             createCommand += $@"
@@ -97,5 +98,4 @@ select @command = @command
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command";
-
 }
