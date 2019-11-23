@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ApprovalTests;
+using VerifyXunit;
 using Microsoft.Data.SqlClient;
 using Xunit;
 using Xunit.Abstractions;
 
 public class WrapperTests :
-    XunitApprovalBase
+    VerifyBase
 {
     static Wrapper instance;
 
     [Fact]
-    public void InvalidInstanceName()
+    public Task InvalidInstanceName()
     {
         var exception = Assert.Throws<ArgumentException>(() => new Wrapper("<", "s"));
-        Approvals.Verify(exception.Message);
+        return Verify(exception.Message);
     }
 
     [Fact(Skip = "no supported")]
@@ -47,7 +47,7 @@ end;
              await wrapper.CreateDatabaseFromTemplate("Simple");
         }
 
-        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("RecreateWithOpenConnectionAfterStartup");
     }
 
@@ -68,7 +68,7 @@ end;
              await wrapper.CreateDatabaseFromTemplate("Simple");
         }
 
-        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("RecreateWithOpenConnection");
     }
 
@@ -81,7 +81,7 @@ end;
         var wrapper = new Wrapper("NoFileAndNoInstance", DirectoryFinder.Find("NoFileAndNoInstance"));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("NoFileAndNoInstance");
     }
 
@@ -95,7 +95,7 @@ end;
         wrapper = new Wrapper("WithFileAndNoInstance", DirectoryFinder.Find("WithFileAndNoInstance"));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("WithFileAndNoInstance");
     }
 
@@ -112,7 +112,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        ObjectApprover.Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance("NoFileAndWithInstance");
     }
 
@@ -121,7 +121,7 @@ end;
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
         await instance.DeleteDatabase("ToDelete");
-        ObjectApprover.Verify(await instance.ReadDatabaseState("ToDelete"));
+        await Verify(await instance.ReadDatabaseState("ToDelete"));
     }
 
     [Fact]
@@ -136,7 +136,7 @@ end;
     public async Task CreateDatabase()
     {
         await instance.CreateDatabaseFromTemplate("CreateDatabase");
-        ObjectApprover.Verify(await instance.ReadDatabaseState("CreateDatabase"));
+        await Verify(await instance.ReadDatabaseState("CreateDatabase"));
     }
 
     [Fact]
@@ -149,7 +149,7 @@ end;
         var deletedState = await instance.ReadDatabaseState("ToDelete");
         await instance.CreateDatabaseFromTemplate("ToDelete");
         var createdState = await instance.ReadDatabaseState("ToDelete");
-        ObjectApprover.Verify(new
+        await Verify(new
         {
             deletedState,
             createdState

@@ -1,4 +1,4 @@
-﻿{
+{
   DataFileExists: true,
   LogFileExists: true,
   DbDataFileName: 'CreateDatabase.mdf',

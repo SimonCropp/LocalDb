@@ -1,17 +1,19 @@
-﻿using ObjectApproval;
+﻿
+using VerifyXunit;
+using Xunit;
 
 public static class ModuleInitializer
 {
     public static void Initialize()
     {
-        XunitLogging.Init();
+        XunitContext.Init();
         LocalDbLogging.EnableVerbose();
-        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
-        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
-        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
-        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Build);
-        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Major);
-        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Minor);
-        SerializerBuilder.IgnoreMember<LocalDbInstanceInfo>(x => x.Revision);
+        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
+        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
+        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
+        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Build);
+        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Major);
+        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Minor);
+        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Revision);
     }
 }

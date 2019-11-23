@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using LocalDb;
+using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;
 
 public class Tests :
-    XunitApprovalBase
+    VerifyBase
 {
     [Fact]
     public async Task Simple()
@@ -83,7 +84,7 @@ public class Tests :
     //{
     //    Register();
     //    var exception = Assert.Throws<Exception>(Register);
-    //    Approvals.Verify(exception.Message);
+    //    await Verify(exception.Message);
     //}
 
     //static void Register()

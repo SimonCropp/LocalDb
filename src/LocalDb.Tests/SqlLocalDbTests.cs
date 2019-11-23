@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
+using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;
 
 public class SqlLocalDbTests :
-    XunitApprovalBase
+    VerifyBase
 {
     [Fact]
     public void Instances()
@@ -24,12 +26,12 @@ public class SqlLocalDbTests :
     }
 
     [Fact]
-    public void Info()
+    public async Task Info()
     {
         LocalDbApi.CreateAndStart("InfoTest");
         var info = LocalDbApi.GetInstance("InfoTest");
 
-        ObjectApprover.Verify(info);
+        await Verify(info);
         LocalDbApi.StopAndDelete("InfoTest");
         Assert.False(LocalDbApi.GetInstance("InfoTest").Exists);
     }

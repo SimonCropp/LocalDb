@@ -4,11 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using EfLocalDb;
+using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;
 
 public class Tests :
-    XunitApprovalBase
+    VerifyBase
 {
     SqlInstance<TestDbContext> instance;
 
@@ -100,7 +101,7 @@ public class Tests :
     //{
     //    Register();
     //    var exception = Assert.Throws<Exception>(Register);
-    //    Approvals.Verify(exception.Message);
+    //    await Verify(exception.Message);
     //}
 
     //static void Register()

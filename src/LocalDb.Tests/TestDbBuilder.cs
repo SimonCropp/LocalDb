@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
-using XunitLogger;
+using Xunit;
 
 public class TestDbBuilder
 {

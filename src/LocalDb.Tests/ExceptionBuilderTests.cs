@@ -1,16 +1,17 @@
 ﻿using System;
-using ApprovalTests;
+using System.Threading.Tasks;
+using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;
 
 public class ExceptionBuilderTests :
-    XunitApprovalBase
+    VerifyBase
 {
     [Fact]
-    public void WrapLocalDbFailure()
+    public Task WrapLocalDbFailure()
     {
         var wrapped = ExceptionBuilder.WrapLocalDbFailure("InstanceName", @"c:\LocalDBData\InstanceName", new Exception());
-        Approvals.Verify(wrapped.Message);
+        return Verify(wrapped.Message);
     }
 
     public ExceptionBuilderTests(ITestOutputHelper output) :

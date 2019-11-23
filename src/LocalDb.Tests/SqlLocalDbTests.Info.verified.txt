@@ -1,4 +1,4 @@
-﻿{
+{
   Size: 1460,
   InstanceName: 'InfoTest',
   Exists: true,

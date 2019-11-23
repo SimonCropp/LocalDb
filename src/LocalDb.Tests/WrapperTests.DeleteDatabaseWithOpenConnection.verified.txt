@@ -1,4 +1,4 @@
-﻿{
+{
   deletedState: {},
   createdState: {
     DataFileExists: true,
