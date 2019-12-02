@@ -7,13 +7,15 @@ public static class ModuleInitializer
     public static void Initialize()
     {
         XunitContext.Init();
-        LocalDbLogging.EnableVerbose();
-        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
-        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
-        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
-        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Build);
-        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Major);
-        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Minor);
-        Global.IgnoreMember<LocalDbInstanceInfo>(x => x.Revision);
+        LocalDbLogging.EnableVerbose();  Global.ModifySerialization(settings =>
+        {
+            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
+            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
+            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
+            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Build);
+            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Major);
+            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Minor);
+            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Revision);
+        });
     }
 }
