@@ -17,7 +17,7 @@ static class LocalDbRegistryReader
 
         var latest = versions.GetSubKeyNames()
             .Select(s => new Version(s))
-            .OrderBy(s => s)
+            .OrderByDescending(s => s)
             .FirstOrDefault();
         if (latest == null)
         {
