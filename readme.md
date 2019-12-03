@@ -16,7 +16,6 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 <!-- toc -->
 ## Contents
 
-  * [More info](#more-info)
   * [Why](#why)
     * [Goals:](#goals)
     * [Why not SQLite](#why-not-sqlite)
@@ -29,23 +28,17 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
   * [SQL Server Updates](#sql-server-updates)
-  * [Simple.LocalDb](#simplelocaldb)
-<!-- endtoc -->
-
-
-
-## More info
-
- * [Design](/pages/design.md)
- * [Raw SqlConnection Usage](/pages/raw-usage.md)
- * [EntityFramework Usage](/pages/ef-usage.md)
- * [EntityFramework Migrations](/pages/efmigrations.md)
- * [With Rollback Usage](/pages/with-rollback.md)
- * [Directory and name resolution](/pages/directory-and-name-resolution.md)
- * [Sql Management Studio](/pages/sql-management-studio.md)
- * [Logging](/pages/logging.md)
- * [Template database size](/pages/template-database-size.md)
- * [Template Re-generation](/pages/template-regen.md)
+  * [Simple.LocalDb](#simplelocaldb)<!-- endtoc -->
+  * [Design](/pages/design.md)
+  * [Raw SqlConnection Usage](/pages/raw-usage.md)
+  * [EntityFramework Usage](/pages/ef-usage.md)
+  * [EntityFramework Migrations](/pages/efmigrations.md)
+  * [With Rollback Usage](/pages/with-rollback.md)
+  * [Directory and name resolution](/pages/directory-and-name-resolution.md)
+  * [Sql Management Studio](/pages/sql-management-studio.md)
+  * [Logging](/pages/logging.md)
+  * [Template database size](/pages/template-database-size.md)
+  * [Template Re-generation](/pages/template-regen.md)
 
 
 ## Why

@@ -7,20 +7,16 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 **SqlLocalDB is only supported on Windows**
 
 toc
-
-
-## More info
-
- * [Design](/pages/design.md)
- * [Raw SqlConnection Usage](/pages/raw-usage.md)
- * [EntityFramework Usage](/pages/ef-usage.md)
- * [EntityFramework Migrations](/pages/efmigrations.md)
- * [With Rollback Usage](/pages/with-rollback.md)
- * [Directory and name resolution](/pages/directory-and-name-resolution.md)
- * [Sql Management Studio](/pages/sql-management-studio.md)
- * [Logging](/pages/logging.md)
- * [Template database size](/pages/template-database-size.md)
- * [Template Re-generation](/pages/template-regen.md)
+  * [Design](/pages/design.md)
+  * [Raw SqlConnection Usage](/pages/raw-usage.md)
+  * [EntityFramework Usage](/pages/ef-usage.md)
+  * [EntityFramework Migrations](/pages/efmigrations.md)
+  * [With Rollback Usage](/pages/with-rollback.md)
+  * [Directory and name resolution](/pages/directory-and-name-resolution.md)
+  * [Sql Management Studio](/pages/sql-management-studio.md)
+  * [Logging](/pages/logging.md)
+  * [Template database size](/pages/template-database-size.md)
+  * [Template Re-generation](/pages/template-regen.md)
 
 
 ## Why
