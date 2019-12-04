@@ -154,7 +154,11 @@ class Wrapper
         DeleteTemplateFiles();
         await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
 
+#if(NETSTANDARD2_1)
         await using (var templateConnection = new SqlConnection(TemplateConnectionString))
+#else
+        using (var templateConnection = new SqlConnection(TemplateConnectionString))
+#endif
         {
             await templateConnection.OpenAsync();
             await buildTemplate(templateConnection);

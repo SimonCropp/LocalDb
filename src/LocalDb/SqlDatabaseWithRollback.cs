@@ -53,11 +53,13 @@ namespace LocalDb
             Connection.Dispose();
         }
 
+#if(NETSTANDARD2_1)
         public ValueTask DisposeAsync()
         {
             Transaction.Rollback();
             Transaction.Dispose();
             return Connection.DisposeAsync();
         }
+#endif
     }
 }

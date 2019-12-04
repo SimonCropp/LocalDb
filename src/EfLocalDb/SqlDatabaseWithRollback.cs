@@ -88,6 +88,7 @@ namespace EfLocalDb
             Connection.Dispose();
         }
 
+#if(NETSTANDARD2_1)
         public async ValueTask DisposeAsync()
         {
             Transaction.Rollback();
@@ -100,5 +101,6 @@ namespace EfLocalDb
 
             await Connection.DisposeAsync();
         }
+#endif
     }
 }

@@ -5,7 +5,9 @@ using Microsoft.Data.SqlClient;
 namespace LocalDb
 {
     public interface ISqlDatabase :
+#if(NETSTANDARD2_1)
         IAsyncDisposable,
+#endif
         IDisposable
     {
         string ConnectionString { get; }
