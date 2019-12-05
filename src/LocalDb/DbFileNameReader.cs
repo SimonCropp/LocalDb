@@ -16,26 +16,28 @@ static class DbFileNameReader
     static async Task<string?> ReadFileName(this SqlConnection connection, string dbName, string type)
     {
 #if(NETSTANDARD2_1)
-        await using var command = connection.CreateCommand();
+        await using (var command = connection.CreateCommand())
 #else
-        using var command = connection.CreateCommand();
+        using (var command = connection.CreateCommand())
 #endif
-        command.CommandText = $@"
+        {
+            command.CommandText = $@"
 select
-	d.name,
-	f.physical_name,
-	f.type_desc
+   d.name,
+   f.physical_name,
+   f.type_desc
 from sys.master_files f
 inner join sys.databases d on d.database_id = f.database_id
 where d.name = '{dbName}' and f.type_desc = '{type}'";
 #if(NETSTANDARD2_1)
-        await using var reader = await command.ExecuteReaderAsync();
+            await using var reader = await command.ExecuteReaderAsync();
 #else
             using var reader = await command.ExecuteReaderAsync();
 #endif
-        while (await reader.ReadAsync())
-        {
-            return (string) reader["physical_name"];
+            while (await reader.ReadAsync())
+            {
+                return (string) reader["physical_name"];
+            }
         }
         return null;
     }
