@@ -19,7 +19,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup>[snippet source](/src/EfLocalDb/SqlInstance.cs#L101-L110) / [anchor](#snippet-getinstancename)</sup>
+<sup><a href='/src/EfLocalDb/SqlInstance.cs#L101-L110' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -41,7 +41,7 @@ var sqlInstance = new SqlInstance(
     directory: @"C:\LocalDb\theInstance"
 );
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13) / [anchor](#snippet-explicitname)</sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13' title='File snippet `explicitname` was extracted from'>snippet source</a> | <a href='#snippet-explicitname' title='Navigate to start of snippet `explicitname`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -55,7 +55,7 @@ var sqlInstance = new SqlInstance<TheDbContext>(
     name: "theInstanceName",
     directory: @"C:\LocalDb\theInstance");
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L12) / [anchor](#snippet-efexplicitname)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L12' title='File snippet `efexplicitname` was extracted from'>snippet source</a> | <a href='#snippet-efexplicitname' title='Navigate to start of snippet `efexplicitname`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -76,7 +76,7 @@ $paths | % {
     Set-Acl $d.FullName -AclObject $acl
 }
 ```
-<sup>[snippet source](/src/StartUpScript/Set-D-Drive-Permissions.ps1#L1-L9) / [anchor](#snippet-Set-D-Drive-Permissions.ps1)</sup>
+<sup><a href='/src/StartUpScript/Set-D-Drive-Permissions.ps1#L1-L9' title='File snippet `Set-D-Drive-Permissions.ps1` was extracted from'>snippet source</a> | <a href='#snippet-Set-D-Drive-Permissions.ps1' title='Navigate to start of snippet `Set-D-Drive-Permissions.ps1`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -104,7 +104,7 @@ public Task<SqlDatabase> Build(
     string? databaseSuffix = null,
     [CallerMemberName] string memberName = "")
 ```
-<sup>[snippet source](/src/LocalDb/SqlInstance.cs#L54-L65) / [anchor](#snippet-conventionbuildsignature)</sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L54-L65' title='File snippet `conventionbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Navigate to start of snippet `conventionbuildsignature`'>anchor</a></sup>
 <!-- endsnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -121,7 +121,7 @@ public static string DeriveDbName(string? databaseSuffix, string memberName, str
     return $"{testClass}_{memberName}_{databaseSuffix}";
 }
 ```
-<sup>[snippet source](/src/LocalDb/DbNamer.cs#L3-L12) / [anchor](#snippet-derivename)</sup>
+<sup><a href='/src/LocalDb/DbNamer.cs#L3-L12' title='File snippet `derivename` was extracted from'>snippet source</a> | <a href='#snippet-derivename' title='Navigate to start of snippet `derivename`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -137,7 +137,7 @@ If full control over the database name is required, there is an overload that ta
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup>[snippet source](/src/LocalDb/SqlInstance.cs#L78-L83) / [anchor](#snippet-explicitbuildsignature)</sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L78-L83' title='File snippet `explicitbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Navigate to start of snippet `explicitbuildsignature`'>anchor</a></sup>
 <!-- endsnippet -->
 
 Which can be used as follows:
@@ -150,7 +150,7 @@ Which can be used as follows:
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L35) / [anchor](#snippet-withdbname)</sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L35' title='File snippet `withdbname` was extracted from'>snippet source</a> | <a href='#snippet-withdbname' title='Navigate to start of snippet `withdbname`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -161,5 +161,5 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L52-L54) / [anchor](#snippet-efwithdbname)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L52-L54' title='File snippet `efwithdbname` was extracted from'>snippet source</a> | <a href='#snippet-efwithdbname' title='Navigate to start of snippet `efwithdbname`'>anchor</a></sup>
 <!-- endsnippet -->

@@ -40,7 +40,7 @@ public class TheDbContext :
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17) / [anchor](#snippet-TheDbContext.cs)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17' title='File snippet `TheDbContext.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheDbContext.cs' title='Navigate to start of snippet `TheDbContext.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 <!-- snippet: TheEntity.cs -->
@@ -52,7 +52,7 @@ public class TheEntity
     public string? Property { get; set; }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5) / [anchor](#snippet-TheEntity.cs)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5' title='File snippet `TheEntity.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheEntity.cs' title='Navigate to start of snippet `TheEntity.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -93,7 +93,7 @@ public class Tests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L31) / [anchor](#snippet-efstaticconstructor)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L31' title='File snippet `efstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Navigate to start of snippet `efstaticconstructor`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -139,7 +139,7 @@ public class Tests :
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45) / [anchor](#snippet-eftestbase)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45' title='File snippet `eftestbase` was extracted from'>snippet source</a> | <a href='#snippet-eftestbase' title='Navigate to start of snippet `eftestbase`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -155,7 +155,7 @@ Usage inside a test consists of two parts:
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L23) / [anchor](#snippet-efbuilddatabase)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L23' title='File snippet `efbuilddatabase` was extracted from'>snippet source</a> | <a href='#snippet-efbuilddatabase' title='Navigate to start of snippet `efbuilddatabase`'>anchor</a></sup>
 <!-- endsnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -169,7 +169,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await using (var dbContext = database.NewDbContext())
 {
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L25-L30) / [anchor](#snippet-efbuildcontext)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L25-L30' title='File snippet `efbuildcontext` was extracted from'>snippet source</a> | <a href='#snippet-efbuildcontext' title='Navigate to start of snippet `efbuildcontext`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -236,7 +236,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L55) / [anchor](#snippet-EfSnippetTests.cs)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L55' title='File snippet `EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfSnippetTests.cs' title='Navigate to start of snippet `EfSnippetTests.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -267,5 +267,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup>[snippet source](/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19) / [anchor](#snippet-DefaultOptionsBuilder.cs)</sup>
+<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19' title='File snippet `DefaultOptionsBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-DefaultOptionsBuilder.cs' title='Navigate to start of snippet `DefaultOptionsBuilder.cs`'>anchor</a></sup>
 <!-- endsnippet -->

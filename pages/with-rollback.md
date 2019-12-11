@@ -31,7 +31,7 @@ await using var sqlDatabase = await sqlInstance.BuildWithRollback();
 var sqlConnection = sqlDatabase.Connection;
 //Use the SqlConnection
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L17) / [anchor](#snippet-withrollback)</sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L17' title='File snippet `withrollback` was extracted from'>snippet source</a> | <a href='#snippet-withrollback' title='Navigate to start of snippet `withrollback`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -48,5 +48,5 @@ var sqlConnection = sqlDatabase.Connection;
 var dbContext = sqlDatabase.Context;
 //Use the SqlConnection or TheDbContext
 ```
-<sup>[snippet source](/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16) / [anchor](#snippet-efwithrollback)</sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='File snippet `efwithrollback` was extracted from'>snippet source</a> | <a href='#snippet-efwithrollback' title='Navigate to start of snippet `efwithrollback`'>anchor</a></sup>
 <!-- endsnippet -->

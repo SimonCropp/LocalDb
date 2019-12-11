@@ -19,7 +19,7 @@ To enable verbose logging use `LocalDbLogging`:
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7) / [anchor](#snippet-localdbloggingusage)</sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7' title='File snippet `localdbloggingusage` was extracted from'>snippet source</a> | <a href='#snippet-localdbloggingusage' title='Navigate to start of snippet `localdbloggingusage`'>anchor</a></sup>
 <!-- endsnippet -->
 
 The full implementation is:
@@ -58,7 +58,7 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/LocalDbLogging.cs#L4-L35) / [anchor](#snippet-localdblogging)</sup>
+<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L35' title='File snippet `localdblogging` was extracted from'>snippet source</a> | <a href='#snippet-localdblogging' title='Navigate to start of snippet `localdblogging`'>anchor</a></sup>
 <!-- endsnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
@@ -84,7 +84,7 @@ static class MethodTimeLogger
     }
 }
 ```
-<sup>[snippet source](/src/LocalDb/MethodTimeLogger.cs#L4-L22) / [anchor](#snippet-methodtimelogger)</sup>
+<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L4-L22' title='File snippet `methodtimelogger` was extracted from'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Navigate to start of snippet `methodtimelogger`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -97,7 +97,7 @@ SQL statements can be logged:
 ```cs
 LocalDbLogging.EnableVerbose(sqlLogging: true);
 ```
-<sup>[snippet source](/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10) / [anchor](#snippet-localdbloggingusagesqllogging)</sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10' title='File snippet `localdbloggingusagesqllogging` was extracted from'>snippet source</a> | <a href='#snippet-localdbloggingusagesqllogging' title='Navigate to start of snippet `localdbloggingusagesqllogging`'>anchor</a></sup>
 <!-- endsnippet -->
 
 And an example database creation message would be:
