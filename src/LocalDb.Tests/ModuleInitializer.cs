@@ -7,7 +7,7 @@ public static class ModuleInitializer
     {
         XunitContext.Init();
         LocalDbLogging.EnableVerbose();
-        Global.ModifySerialization(settings =>
+        SharedVerifySettings.ModifySerialization(settings =>
         {
             settings.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
             settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
