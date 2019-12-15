@@ -8,13 +8,13 @@
 
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
     <PackageReference Include="XunitContext" Version="1.5.1" />
-    <PackageReference Include="Verify.Xunit" Version="1.0.0-beta.34" />
+    <PackageReference Include="Verify.Xunit" Version="1.0.0-beta.41" />
     <PackageReference Include="Fody" Version="6.0.5" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="MarkdownSnippets.MsBuild" Version="17.2.0" PrivateAssets="all" />
+    <PackageReference Include="MarkdownSnippets.MsBuild" Version="17.3.1" PrivateAssets="all" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" Version="1.0.37" PrivateAssets="All" />
