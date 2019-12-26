@@ -88,12 +88,13 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await sqlInstance.Build(new List<object> {entity});
+        var data = new List<object> {entity};
+        await using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L31' title='File snippet `efstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Navigate to start of snippet `efstaticconstructor`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L32' title='File snippet `efstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Navigate to start of snippet `efstaticconstructor`'>anchor</a></sup>
 <!-- endsnippet -->
 
 

@@ -39,7 +39,7 @@ public static class LocalDbLogging
     {
         if (WrapperCreated)
         {
-            throw new Exception("`LocalDbLogging.EnableVerbose()` must be called prior to any `SqlInstance` being created.");
+            throw new Exception("Must be called prior to `SqlInstance` being created.");
         }
         Enabled = true;
         SqlLoggingEnabled = sqlLogging;
@@ -68,7 +68,7 @@ Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTim
 ```cs
 static class MethodTimeLogger
 {
-    public static void Log(MethodBase methodBase, long milliseconds, string message)
+    public static void Log(MethodBase method, long milliseconds, string message)
     {
         if (!LocalDbLogging.Enabled)
         {
@@ -76,11 +76,11 @@ static class MethodTimeLogger
         }
         if (message == null)
         {
-            Trace.WriteLine($"{methodBase.Name} {milliseconds}ms", "LocalDb");
+            Trace.WriteLine($"{method.Name} {milliseconds}ms", "LocalDb");
             return;
         }
 
-        Trace.WriteLine($"{methodBase.Name} {milliseconds}ms {message}", "LocalDb");
+        Trace.WriteLine($"{method.Name} {milliseconds}ms {message}", "LocalDb");
     }
 }
 ```

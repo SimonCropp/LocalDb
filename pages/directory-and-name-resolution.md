@@ -96,15 +96,24 @@ The convention signature is as follows:
 /// <summary>
 ///   Build database with a name based on the calling Method.
 /// </summary>
-/// <param name="testFile">The path to the test class. Used to make the database name unique per test type.</param>
-/// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
-/// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
+/// <param name="testFile">
+/// The path to the test class.
+/// Used to make the database name unique per test type.
+/// </param>
+/// <param name="databaseSuffix">
+/// For Xunit theories add some text based on the inline data
+/// to make the db name unique.
+/// </param>
+/// <param name="memberName">
+/// Used to make the db name unique per method.
+/// Will default to the caller method name is used.
+/// </param>
 public Task<SqlDatabase> Build(
     [CallerFilePath] string testFile = "",
     string? databaseSuffix = null,
     [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L54-L65' title='File snippet `conventionbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Navigate to start of snippet `conventionbuildsignature`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L54-L74' title='File snippet `conventionbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Navigate to start of snippet `conventionbuildsignature`'>anchor</a></sup>
 <!-- endsnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -112,16 +121,19 @@ With these parameters the database name is the derived as follows:
 <!-- snippet: DeriveName -->
 <a id='snippet-derivename'/></a>
 ```cs
-public static string DeriveDbName(string? databaseSuffix, string memberName, string testClass)
+public static string DeriveDbName(
+    string? suffix,
+    string member,
+    string testClass)
 {
-    if (databaseSuffix == null)
+    if (suffix == null)
     {
-        return $"{testClass}_{memberName}";
+        return $"{testClass}_{member}";
     }
-    return $"{testClass}_{memberName}_{databaseSuffix}";
+    return $"{testClass}_{member}_{suffix}";
 }
 ```
-<sup><a href='/src/LocalDb/DbNamer.cs#L3-L12' title='File snippet `derivename` was extracted from'>snippet source</a> | <a href='#snippet-derivename' title='Navigate to start of snippet `derivename`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/DbNamer.cs#L3-L15' title='File snippet `derivename` was extracted from'>snippet source</a> | <a href='#snippet-derivename' title='Navigate to start of snippet `derivename`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -137,7 +149,7 @@ If full control over the database name is required, there is an overload that ta
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L78-L83' title='File snippet `explicitbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Navigate to start of snippet `explicitbuildsignature`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L87-L92' title='File snippet `explicitbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Navigate to start of snippet `explicitbuildsignature`'>anchor</a></sup>
 <!-- endsnippet -->
 
 Which can be used as follows:

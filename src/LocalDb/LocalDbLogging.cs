@@ -14,7 +14,7 @@ public static class LocalDbLogging
     {
         if (WrapperCreated)
         {
-            throw new Exception("`LocalDbLogging.EnableVerbose()` must be called prior to any `SqlInstance` being created.");
+            throw new Exception("Must be called prior to `SqlInstance` being created.");
         }
         Enabled = true;
         SqlLoggingEnabled = sqlLogging;

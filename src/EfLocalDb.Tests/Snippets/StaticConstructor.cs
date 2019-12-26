@@ -23,7 +23,8 @@ namespace StaticConstructor
             {
                 Property = "prop"
             };
-            await using var database = await sqlInstance.Build(new List<object> {entity});
+            var data = new List<object> {entity};
+            await using var database = await sqlInstance.Build(data);
             Assert.Single(database.Context.TestEntities);
         }
     }

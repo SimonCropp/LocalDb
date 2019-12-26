@@ -13,11 +13,11 @@ To change this file edit the source file and then run MarkdownSnippets.
 <a id='snippet-migrations'/></a>
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
-    buildTemplate: async (connection, optionsBuilder) =>
+    buildTemplate: async (connection, options) =>
     {
-        optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
+        options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 
-        await using var dbContext = new MyDbContext(optionsBuilder.Options);
+        await using var dbContext = new MyDbContext(options.Options);
         await dbContext.Database.MigrateAsync();
     },
     constructInstance: builder => new MyDbContext(builder.Options));
@@ -35,7 +35,7 @@ Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/e
 <!-- snippet: IMigrationsSqlGenerator -->
 <a id='snippet-imigrationssqlgenerator'/></a>
 ```cs
-optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
+options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L20' title='File snippet `imigrationssqlgenerator` was extracted from'>snippet source</a> | <a href='#snippet-imigrationssqlgenerator' title='Navigate to start of snippet `imigrationssqlgenerator`'>anchor</a></sup>
 <!-- endsnippet -->
@@ -48,7 +48,7 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 <!-- snippet: Migrate -->
 <a id='snippet-migrate'/></a>
 ```cs
-await using var dbContext = new MyDbContext(optionsBuilder.Options);
+await using var dbContext = new MyDbContext(options.Options);
 await dbContext.Database.MigrateAsync();
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L25' title='File snippet `migrate` was extracted from'>snippet source</a> | <a href='#snippet-migrate' title='Navigate to start of snippet `migrate`'>anchor</a></sup>

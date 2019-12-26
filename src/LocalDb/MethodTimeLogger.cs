@@ -4,7 +4,7 @@ using System.Reflection;
 #region MethodTimeLogger
 static class MethodTimeLogger
 {
-    public static void Log(MethodBase methodBase, long milliseconds, string message)
+    public static void Log(MethodBase method, long milliseconds, string message)
     {
         if (!LocalDbLogging.Enabled)
         {
@@ -12,11 +12,11 @@ static class MethodTimeLogger
         }
         if (message == null)
         {
-            Trace.WriteLine($"{methodBase.Name} {milliseconds}ms", "LocalDb");
+            Trace.WriteLine($"{method.Name} {milliseconds}ms", "LocalDb");
             return;
         }
 
-        Trace.WriteLine($"{methodBase.Name} {milliseconds}ms {message}", "LocalDb");
+        Trace.WriteLine($"{method.Name} {milliseconds}ms {message}", "LocalDb");
     }
 }
 #endregion

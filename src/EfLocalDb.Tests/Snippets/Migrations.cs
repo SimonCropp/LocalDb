@@ -13,14 +13,14 @@ public class Migrations
         #region Migrations
 
         var sqlInstance = new SqlInstance<MyDbContext>(
-            buildTemplate: async (connection, optionsBuilder) =>
+            buildTemplate: async (connection, options) =>
             {
                 #region IMigrationsSqlGenerator
-                optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMigrationsSqlGenerator>();
+                options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
                 #endregion
                 #region Migrate
 
-                await using var dbContext = new MyDbContext(optionsBuilder.Options);
+                await using var dbContext = new MyDbContext(options.Options);
                 await dbContext.Database.MigrateAsync();
                 #endregion
             },
@@ -29,10 +29,12 @@ public class Migrations
         #endregion
     }
 
-    class CustomMigrationsSqlGenerator:
+    class MigrationsGenerator:
         IMigrationsSqlGenerator
     {
-        public IReadOnlyList<MigrationCommand> Generate(IReadOnlyList<MigrationOperation> operations, IModel? model = null)
+        public IReadOnlyList<MigrationCommand> Generate(
+            IReadOnlyList<MigrationOperation> operations,
+            IModel? model = null)
         {
             throw new NotImplementedException();
         }

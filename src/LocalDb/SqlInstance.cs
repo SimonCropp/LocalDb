@@ -55,9 +55,18 @@ namespace LocalDb
         /// <summary>
         ///   Build database with a name based on the calling Method.
         /// </summary>
-        /// <param name="testFile">The path to the test class. Used to make the database name unique per test type.</param>
-        /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>
-        /// <param name="memberName">Used to make the db name unique per method. Will default to the caller method name is used.</param>
+        /// <param name="testFile">
+        /// The path to the test class.
+        /// Used to make the database name unique per test type.
+        /// </param>
+        /// <param name="databaseSuffix">
+        /// For Xunit theories add some text based on the inline data
+        /// to make the db name unique.
+        /// </param>
+        /// <param name="memberName">
+        /// Used to make the db name unique per method.
+        /// Will default to the caller method name is used.
+        /// </param>
         public Task<SqlDatabase> Build(
             [CallerFilePath] string testFile = "",
             string? databaseSuffix = null,
@@ -70,9 +79,9 @@ namespace LocalDb
 
             var testClass = Path.GetFileNameWithoutExtension(testFile);
 
-            var dbName = DbNamer.DeriveDbName(databaseSuffix, memberName, testClass);
+            var name = DbNamer.DeriveDbName(databaseSuffix, memberName, testClass);
 
-            return Build(dbName);
+            return Build(name);
         }
 
         #region ExplicitBuildSignature
@@ -84,9 +93,12 @@ namespace LocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildContext(dbName);
-            var sqlDatabase = new SqlDatabase(connection, dbName, () => wrapper.DeleteDatabase(dbName));
-            await sqlDatabase.Start();
-            return sqlDatabase;
+            var database = new SqlDatabase(
+                connection,
+                dbName,
+                () => wrapper.DeleteDatabase(dbName));
+            await database.Start();
+            return database;
         }
 
         /// <summary>
