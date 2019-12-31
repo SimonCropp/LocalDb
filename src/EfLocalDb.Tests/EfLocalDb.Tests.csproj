@@ -17,6 +17,6 @@
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="17.6.0" PrivateAssets="all" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.37" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.38" PrivateAssets="All" />
   </ItemGroup>
 </Project>
