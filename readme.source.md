@@ -21,6 +21,12 @@ toc
   * [Template Re-generation](/pages/template-regen.md)
 
 
+## NuGet packages
+
+  * https://www.nuget.org/packages/LocalDb/
+  * https://www.nuget.org/packages/EfLocalDb/
+
+
 ## Why
 
 

@@ -1,4 +1,4 @@
 ﻿{
-  "TocExcludes": [ "Release Notes", "Icon" ],
+  "TocExcludes": [ "NuGet packages", "Release Notes", "Icon" ],
   "MaxWidth": 90
 }

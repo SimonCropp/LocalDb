@@ -43,6 +43,12 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * [Template Re-generation](/pages/template-regen.md)
 
 
+## NuGet packages
+
+  * https://www.nuget.org/packages/LocalDb/
+  * https://www.nuget.org/packages/EfLocalDb/
+
+
 ## Why
 
 
