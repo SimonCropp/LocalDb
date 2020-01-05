@@ -7,8 +7,8 @@
     <Compile Include="..\LocalDb.Tests\ModuleInitializer.cs" Link="ModuleInitializer.cs" />
 
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
-    <PackageReference Include="XunitContext" Version="1.5.2" />
-    <PackageReference Include="Verify.Xunit" Version="1.7.1" />
+    <PackageReference Include="XunitContext" Version="1.6.0" />
+    <PackageReference Include="Verify.Xunit" Version="1.8.0" />
     <PackageReference Include="Fody" Version="6.0.6" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="Xunit" Version="2.4.1" />
@@ -17,6 +17,6 @@
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="17.6.0" PrivateAssets="all" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.39" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.40" PrivateAssets="All" />
   </ItemGroup>
 </Project>
