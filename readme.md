@@ -30,7 +30,8 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
   * [SQL Server Updates](#sql-server-updates)
-  * [Simple.LocalDb](#simplelocaldb)<!-- endtoc -->
+  * [Simple.LocalDb](#simplelocaldb)
+  * [Security contact information](#security-contact-information)<!-- endtoc -->
   * [Design](/pages/design.md)
   * [Raw SqlConnection Usage](/pages/raw-usage.md)
   * [EntityFramework Usage](/pages/ef-usage.md)
@@ -140,6 +141,11 @@ Ensure that the latests SQL Server Cumulative Update is being used.
 ## Simple.LocalDb
 
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
+
+
+## Security contact information
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
 
 
 ## Release Notes

@@ -120,6 +120,11 @@ Ensure that the latests SQL Server Cumulative Update is being used.
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
 
+## Security contact information
+
+To report a security vulnerability, please use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
+
+
 ## Release Notes
 
 See [closed milestones](../../milestones?state=closed).

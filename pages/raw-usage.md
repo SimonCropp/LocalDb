@@ -39,35 +39,29 @@ public class TestDbBuilder
     public static async Task<int> AddData(DbConnection connection)
     {
         var nextInt = Counters.NextInt();
-        await using (var command = connection.CreateCommand())
-        {
-            command.CommandText = $@"
+        await using var command = connection.CreateCommand();
+        command.CommandText = $@"
 insert into MyTable (Value)
 values ({nextInt});";
-            await command.ExecuteNonQueryAsync();
-        }
-
+        await command.ExecuteNonQueryAsync();
         return nextInt;
     }
 
     public static async Task<List<int>> GetData(DbConnection connection)
     {
         var values = new List<int>();
-        await using (var command = connection.CreateCommand())
+        await using var command = connection.CreateCommand();
+        command.CommandText = "select Value from MyTable";
+        await using var reader = await command.ExecuteReaderAsync();
+        while (reader.Read())
         {
-            command.CommandText = "select Value from MyTable";
-            await using var reader = await command.ExecuteReaderAsync();
-            while (reader.Read())
-            {
-                values.Add(reader.GetInt32(0));
-            }
+            values.Add(reader.GetInt32(0));
         }
-
         return values;
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L44' title='File snippet `TestDbBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Navigate to start of snippet `TestDbBuilder.cs`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L38' title='File snippet `TestDbBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Navigate to start of snippet `TestDbBuilder.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
