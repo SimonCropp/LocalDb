@@ -148,10 +148,6 @@ SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 To report a security vulnerability, use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
 
 
-## Release Notes
-
-See [closed milestones](../../milestones?state=closed).
-
 ## Icon
 
 [Robot](https://thenounproject.com/term/robot/960055/) designed by [Creaticca Creative Agency](https://thenounproject.com/creaticca/) from [The Noun Project](https://thenounproject.com/).
