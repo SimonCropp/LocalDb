@@ -6,6 +6,8 @@
 
 Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
+Support is available via a [Tidelift Subscription](https://tidelift.com/subscription/pkg/nuget-localdb?utm_source=nuget-localdb&utm_medium=referral&utm_campaign=enterprise).
+
 **SqlLocalDB is only supported on Windows**
 
 toc
