@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -6,7 +7,7 @@ using Microsoft.Data.SqlClient;
 
 static class SqlExtensions
 {
-    public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
+    public static async Task ExecuteCommandAsync(this DbConnection connection, string commandText)
     {
         commandText = commandText.Trim();
 
@@ -40,7 +41,7 @@ static class SqlExtensions
         }
     }
 
-    static Exception BuildException(SqlConnection connection, string commandText, Exception exception)
+    static Exception BuildException(DbConnection connection, string commandText, Exception exception)
     {
         var builder = new StringBuilder($@"Failed to execute SQL command.
 {nameof(commandText)}: {commandText}
