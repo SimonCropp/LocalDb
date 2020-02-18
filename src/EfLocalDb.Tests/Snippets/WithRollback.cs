@@ -10,7 +10,7 @@ class WithRollback
             constructInstance: builder => new TheDbContext(builder.Options));
 
         await using var sqlDatabase = await sqlInstance.BuildWithRollback();
-        var sqlConnection = sqlDatabase.Connection;
+        var connection = sqlDatabase.Connection;
         var dbContext = sqlDatabase.Context;
         //Use the SqlConnection or TheDbContext
         #endregion
