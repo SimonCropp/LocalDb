@@ -175,6 +175,7 @@ public class Tests :
         base(output)
     {
         instance = new SqlInstance<TestDbContext>(
-            connection => new TestDbContext(connection));
+            connection => new TestDbContext(connection),
+            instanceSuffix:"Classic");
     }
 }
