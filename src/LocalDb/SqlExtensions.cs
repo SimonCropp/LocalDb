@@ -23,6 +23,7 @@ static class SqlExtensions
                 command.CommandText = commandText;
                 await command.ExecuteNonQueryAsync();
             }
+
             if (LocalDbLogging.SqlLoggingEnabled)
             {
                 Trace.WriteLine($@"Executed SQL ({stopwatch.ElapsedMilliseconds}.ms):
@@ -39,28 +40,13 @@ static class SqlExtensions
         }
     }
 
-    static Exception BuildException(SqlConnection connection, string commandText, Exception exception, SqlErrorCollection? errors = null)
+    static Exception BuildException(SqlConnection connection, string commandText, Exception exception)
     {
         var builder = new StringBuilder($@"Failed to execute SQL command.
 {nameof(commandText)}: {commandText}
 connectionString: {connection.ConnectionString}
 ");
-        AppendErrors(errors, builder);
 
         return new Exception(builder.ToString(), exception);
-    }
-
-    static void AppendErrors(SqlErrorCollection? errors, StringBuilder builder)
-    {
-        if (errors == null)
-        {
-            return;
-        }
-
-        builder.AppendLine("Errors:");
-        foreach (SqlError sqlError in errors)
-        {
-            builder.AppendLine($" * ErrorNumber:{sqlError.Number}. LineNumber:{sqlError.LineNumber}. Message: {sqlError.Message}");
-        }
     }
 }
