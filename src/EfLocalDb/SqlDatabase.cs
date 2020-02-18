@@ -35,9 +35,9 @@ namespace EfLocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var sqlConnection = new SqlConnection(ConnectionString);
-            await sqlConnection.OpenAsync();
-            return sqlConnection;
+            var connection = new SqlConnection(ConnectionString);
+            await connection.OpenAsync();
+            return connection;
         }
 
         public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
