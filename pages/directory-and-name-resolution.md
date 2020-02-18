@@ -19,7 +19,17 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfLocalDb/SqlInstance.cs#L101-L110' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb/SqlInstance.cs#L101-L110' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
+<a id='snippet-getinstancename-1'/></a>
+```cs
+if (scopeSuffix == null)
+{
+    return typeof(TDbContext).Name;
+}
+
+return $"{typeof(TDbContext).Name}_{scopeSuffix}";
+```
+<sup><a href='/src/EfLocalDb/SqlInstance.cs#L101-L110' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename-1' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:

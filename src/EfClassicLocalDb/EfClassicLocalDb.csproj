@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
+    <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB, Testing</PackageTags>
+    <DefineConstants>$(DefineConstants);EF</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\LocalDb\DatabaseState.cs" />
+    <Compile Include="..\LocalDb\DbFileNameReader.cs" />
+    <Compile Include="..\LocalDb\SqlBuilder.cs" />
+    <Compile Include="..\LocalDb\StringExtensions.cs" />
+    <Compile Include="..\LocalDb\Timestamp.cs" />
+    <Compile Include="..\LocalDb\LocalDbLogging.cs" />
+    <Compile Include="..\LocalDb\DbNamer.cs" />
+    <Compile Include="..\LocalDb\DirectoryFinder.cs" />
+    <Compile Include="..\LocalDb\ExceptionBuilder.cs" />
+    <Compile Include="..\LocalDb\FileExtensions.cs" />
+    <Compile Include="..\LocalDb\Guard.cs" />
+    <Compile Include="..\LocalDb\LocalDbRegistryReader.cs" />
+    <Compile Include="..\LocalDb\LocalDbInstanceInfo.cs" />
+    <Compile Include="..\LocalDb\LocalDbApi.cs" />
+    <Compile Include="..\LocalDb\MethodTimeLogger.cs" />
+    <Compile Include="..\LocalDb\SqlExtensions.cs" />
+    <Compile Include="..\LocalDb\Wrapper.cs" />
+    <Compile Include="..\LocalDb\State.cs" />
+
+    <PackageReference Include="MethodTimer.Fody" Version="3.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="6.1.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.1" />
+    <PackageReference Include="Nullable" Version="1.2.0" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.41" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Condition="$(Configuration) == 'Release'" />
+  </ItemGroup>
+</Project>

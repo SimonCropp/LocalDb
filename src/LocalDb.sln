@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalDb.Tests", "LocalDb.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Helpers\Helpers.csproj", "{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfClassicLocalDb", "EfClassicLocalDb\EfClassicLocalDb.csproj", "{6DEA0C9F-7673-4D67-9E16-8F05F7673672}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfClassicLocalDb.Tests", "EfClassicLocalDb.Tests\EfClassicLocalDb.Tests.csproj", "{630F6530-4B3D-4A52-BC49-34B5B6C44AF1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,14 @@ Global
 		{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{165F4A44-6DB6-46DF-B3E7-F134CEEF5CB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DEA0C9F-7673-4D67-9E16-8F05F7673672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DEA0C9F-7673-4D67-9E16-8F05F7673672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DEA0C9F-7673-4D67-9E16-8F05F7673672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DEA0C9F-7673-4D67-9E16-8F05F7673672}.Release|Any CPU.Build.0 = Release|Any CPU
+		{630F6530-4B3D-4A52-BC49-34B5B6C44AF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{630F6530-4B3D-4A52-BC49-34B5B6C44AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{630F6530-4B3D-4A52-BC49-34B5B6C44AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{630F6530-4B3D-4A52-BC49-34B5B6C44AF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

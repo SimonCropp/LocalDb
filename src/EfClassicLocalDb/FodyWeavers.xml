@@ -1,0 +1,4 @@
+﻿<Weavers GenerateXsd="false">
+  <ConfigureAwait ContinueOnCapturedContext="false" />
+  <MethodTimer />
+</Weavers>
