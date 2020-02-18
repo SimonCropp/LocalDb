@@ -142,9 +142,9 @@ end;
     [Fact]
     public async Task DeleteDatabaseWithOpenConnection()
     {
-        var connection = await instance.CreateDatabaseFromTemplate("ToDelete");
-        await using var sqlConnection = new SqlConnection(connection);
-        await sqlConnection.OpenAsync();
+        var connectionString = await instance.CreateDatabaseFromTemplate("ToDelete");
+        await using var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync();
         await instance.DeleteDatabase("ToDelete");
         var deletedState = await instance.ReadDatabaseState("ToDelete");
         await instance.CreateDatabaseFromTemplate("ToDelete");
