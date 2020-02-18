@@ -16,7 +16,7 @@ public class EfSnippetTests
     {
         await using var database = await sqlInstance.Build();
 
-        await using (var dbContext = database.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             var entity = new TheEntity
             {
@@ -26,7 +26,7 @@ public class EfSnippetTests
             dbContext.SaveChanges();
         }
 
-        await using (var dbContext = database.NewDbContext())
+        using (var dbContext = database.NewDbContext())
         {
             Assert.Single(dbContext.TestEntities);
         }
