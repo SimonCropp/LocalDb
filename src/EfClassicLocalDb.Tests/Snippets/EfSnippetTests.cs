@@ -21,7 +21,7 @@ public class EfSnippetTests
             {
                 Property = "prop"
             };
-            dbContext.Add(entity);
+            dbContext.TestEntities.Add(entity);
             dbContext.SaveChanges();
         }
 
@@ -34,6 +34,7 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTestWithDbName()
     {
+        using var database = await sqlInstance.Build("TheTestWithDbName");
         var entity = new TheEntity
         {
             Property = "prop"
