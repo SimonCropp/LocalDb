@@ -174,32 +174,32 @@ namespace EfLocalDb
             return Build(dbName, (IEnumerable<object>?) null);
         }
 
-        /// <summary>
-        ///   Build DB with a transaction that is rolled back when disposed.
-        /// </summary>
-        /// <param name="data">The seed data.</param>
-        public Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(params object[] data)
-        {
-            return BuildWithRollback((IEnumerable<object>)data);
-        }
+        ///// <summary>
+        /////   Build DB with a transaction that is rolled back when disposed.
+        ///// </summary>
+        ///// <param name="data">The seed data.</param>
+        //public Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(params object[] data)
+        //{
+        //    return BuildWithRollback((IEnumerable<object>)data);
+        //}
 
-        /// <summary>
-        ///   Build DB with a transaction that is rolled back when disposed.
-        /// </summary>
-        /// <param name="data">The seed data.</param>
-        public async Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(IEnumerable<object> data)
-        {
-            var connection = await BuildWithRollbackDatabase();
-            var database = new SqlDatabaseWithRollback<TDbContext>(connection, constructInstance, data);
-            await database.Start();
-            return database;
-        }
+        ///// <summary>
+        /////   Build DB with a transaction that is rolled back when disposed.
+        ///// </summary>
+        ///// <param name="data">The seed data.</param>
+        //public async Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(IEnumerable<object> data)
+        //{
+        //    var connection = await BuildWithRollbackDatabase();
+        //    var database = new SqlDatabaseWithRollback<TDbContext>(connection, constructInstance, data);
+        //    await database.Start();
+        //    return database;
+        //}
 
-        async Task<string> BuildWithRollbackDatabase()
-        {
-            await wrapper.CreateWithRollbackDatabase();
-            return wrapper.WithRollbackConnectionString;
-        }
+        //async Task<string> BuildWithRollbackDatabase()
+        //{
+        //    await wrapper.CreateWithRollbackDatabase();
+        //    return wrapper.WithRollbackConnectionString;
+        //}
 
         public string MasterConnectionString => wrapper.MasterConnectionString;
     }

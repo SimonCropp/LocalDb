@@ -6,6 +6,9 @@
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="SqlDatabaseWithRollback.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\LocalDb\DatabaseState.cs" />
     <Compile Include="..\LocalDb\DbFileNameReader.cs" />
     <Compile Include="..\LocalDb\SqlBuilder.cs" />

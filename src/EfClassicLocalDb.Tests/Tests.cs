@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using EfLocalDb;
 using VerifyXunit;
@@ -51,31 +48,31 @@ public class Tests :
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
-    [Fact]
-    public async Task WithRebuildDbContext()
-    {
-        var dateTime = DateTime.Now;
-        var instance1 = new SqlInstance<WithRebuildDbContext>(
-            constructInstance: connection => new WithRebuildDbContext(connection),
-            timestamp: dateTime,
-            instanceSuffix: "Classic");
-        using (var database1 = await instance1.Build())
-        {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            await database1.AddData(entity);
-        }
+    //[Fact]
+    //public async Task WithRebuildDbContext()
+    //{
+    //    var dateTime = DateTime.Now;
+    //    var instance1 = new SqlInstance<WithRebuildDbContext>(
+    //        constructInstance: connection => new WithRebuildDbContext(connection),
+    //        timestamp: dateTime,
+    //        instanceSuffix: "Classic");
+    //    using (var database1 = await instance1.Build())
+    //    {
+    //        var entity = new TestEntity
+    //        {
+    //            Property = "prop"
+    //        };
+    //        await database1.AddData(entity);
+    //    }
 
-        var instance2 = new SqlInstance<WithRebuildDbContext>(
-            constructInstance: connection => new WithRebuildDbContext(connection),
-            buildTemplate: (WithRebuildDbContext x) => throw new Exception(),
-            timestamp: dateTime,
-            instanceSuffix: "Classic");
-        using var database2 = await instance2.Build();
-        Assert.Empty(database2.Context.TestEntities);
-    }
+    //    var instance2 = new SqlInstance<WithRebuildDbContext>(
+    //        constructInstance: connection => new WithRebuildDbContext(connection),
+    //        buildTemplate: (WithRebuildDbContext x) => throw new Exception(),
+    //        timestamp: dateTime,
+    //        instanceSuffix: "Classic");
+    //    using var database2 = await instance2.Build();
+    //    Assert.Empty(database2.Context.TestEntities);
+    //}
 
     [Fact]
     public async Task Secondary()
@@ -131,45 +128,45 @@ public class Tests :
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
-    [Fact]
-    public async Task WithRollback()
-    {
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        using var database1 = await instance.BuildWithRollback(new List<object> {entity});
-        using var database2 = await instance.BuildWithRollback();
-        Assert.NotNull(await database1.Context.TestEntities.FindAsync(entity.Id));
-        Assert.Empty(database2.Context.TestEntities.ToList());
-    }
+    //[Fact]
+    //public async Task WithRollback()
+    //{
+    //    var entity = new TestEntity
+    //    {
+    //        Property = "prop"
+    //    };
+    //    using var database1 = await instance.BuildWithRollback(new List<object> {entity});
+    //    using var database2 = await instance.BuildWithRollback();
+    //    Assert.NotNull(await database1.Context.TestEntities.FindAsync(entity.Id));
+    //    Assert.Empty(database2.Context.TestEntities.ToList());
+    //}
 
-    [Fact]
-    public async Task WithRollbackPerf()
-    {
-        using (await instance.BuildWithRollback())
-        {
-        }
+    //[Fact]
+    //public async Task WithRollbackPerf()
+    //{
+    //    using (await instance.BuildWithRollback())
+    //    {
+    //    }
 
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        SqlDatabaseWithRollback<TestDbContext>? database2 = null;
-        try
-        {
-            var stopwatch1 = Stopwatch.StartNew();
-            database2 = await instance.BuildWithRollback();
-            Trace.WriteLine(stopwatch1.ElapsedMilliseconds);
-            await database2.AddData(entity);
-        }
-        finally
-        {
-            var stopwatch2 = Stopwatch.StartNew();
-            database2?.Dispose();
-            Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
-        }
-    }
+    //    var entity = new TestEntity
+    //    {
+    //        Property = "prop"
+    //    };
+    //    SqlDatabaseWithRollback<TestDbContext>? database2 = null;
+    //    try
+    //    {
+    //        var stopwatch1 = Stopwatch.StartNew();
+    //        database2 = await instance.BuildWithRollback();
+    //        Trace.WriteLine(stopwatch1.ElapsedMilliseconds);
+    //        await database2.AddData(entity);
+    //    }
+    //    finally
+    //    {
+    //        var stopwatch2 = Stopwatch.StartNew();
+    //        database2?.Dispose();
+    //        Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
+    //    }
+    //}
 
     public Tests(ITestOutputHelper output) :
         base(output)

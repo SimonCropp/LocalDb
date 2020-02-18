@@ -73,6 +73,7 @@ namespace EfLocalDb
 
         public TDbContext NewDbContext()
         {
+            Transaction.Current = Transaction;
             return constructInstance(Connection);
         }
 
