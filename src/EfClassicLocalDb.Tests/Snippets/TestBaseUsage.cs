@@ -12,7 +12,7 @@ namespace TestBase
         static TestBase()
         {
             sqlInstance = new SqlInstance<TheDbContext>(
-                constructInstance: builder => new TheDbContext(builder.Options));
+                constructInstance: connection => new TheDbContext(connection));
         }
 
         public Task<SqlDatabase<TheDbContext>> LocalDb(

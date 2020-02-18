@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
@@ -10,7 +10,10 @@ namespace EfLocalDb
             where TDbContext : DbContext
         {
             Guard.AgainstNull(nameof(entities), entities);
-            database.Context.AddRange(entities);
+            foreach (var entity in entities)
+            {
+                database.Context.Set(entity.GetType()).Add(entity);
+            }
             return database.Context.SaveChangesAsync();
         }
 
@@ -25,7 +28,10 @@ namespace EfLocalDb
         {
             Guard.AgainstNull(nameof(entities), entities);
             using var context = database.NewDbContext();
-            context.AddRange(entities);
+            foreach (var entity in entities)
+            {
+                database.Context.Set(entity.GetType()).Add(entity);
+            }
             await context.SaveChangesAsync();
         }
 

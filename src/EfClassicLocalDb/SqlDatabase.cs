@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.Entity;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
@@ -10,14 +11,14 @@ namespace EfLocalDb
         ISqlDatabase<TDbContext>
         where TDbContext : DbContext
     {
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        Func<DbConnection, TDbContext> constructInstance;
         Func<Task> delete;
         IEnumerable<object>? data;
 
         internal SqlDatabase(
             string connectionString,
             string name,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            Func<DbConnection, TDbContext> constructInstance,
             Func<Task> delete,
             IEnumerable<object>? data)
         {
@@ -67,9 +68,7 @@ namespace EfLocalDb
 
         public TDbContext NewDbContext()
         {
-            var builder = DefaultOptionsBuilder.Build<TDbContext>();
-            builder.UseSqlServer(Connection);
-            return constructInstance(builder);
+            return constructInstance(Connection);
         }
 
         public void Dispose()
@@ -78,23 +77,9 @@ namespace EfLocalDb
             Connection.Dispose();
         }
 
-#if(NETSTANDARD2_1)
-        public async ValueTask DisposeAsync()
-        {
-            if (Context != null)
-            {
-                await Context.DisposeAsync();
-            }
-            await Connection.DisposeAsync();
-        }
-#endif
         public async Task Delete()
         {
-#if(NETSTANDARD2_1)
-            await DisposeAsync();
-#else
             Dispose();
-#endif
             await delete();
         }
     }

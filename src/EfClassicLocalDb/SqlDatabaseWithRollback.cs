@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.Entity;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
@@ -11,12 +12,12 @@ namespace EfLocalDb
         ISqlDatabase<TDbContext>
         where TDbContext : DbContext
     {
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        Func<DbConnection, TDbContext> constructInstance;
         IEnumerable<object>? data;
 
         internal SqlDatabaseWithRollback(
             string connectionString,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            Func<DbConnection, TDbContext> constructInstance,
             IEnumerable<object> data)
         {
             Name = "withRollback";
@@ -72,11 +73,7 @@ namespace EfLocalDb
 
         public TDbContext NewDbContext()
         {
-            var builder = DefaultOptionsBuilder.Build<TDbContext>();
-            builder.UseSqlServer(Connection);
-            var dbContext = constructInstance(builder);
-            dbContext.Database.EnlistTransaction(Transaction);
-            return dbContext;
+            return constructInstance(Connection);
         }
 
         public void Dispose()
@@ -88,19 +85,5 @@ namespace EfLocalDb
             Connection.Dispose();
         }
 
-#if(NETSTANDARD2_1)
-        public async ValueTask DisposeAsync()
-        {
-            Transaction.Rollback();
-            Transaction.Dispose();
-
-            if (Context != null)
-            {
-                await Context.DisposeAsync();
-            }
-
-            await Connection.DisposeAsync();
-        }
-#endif
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 struct LocalDbInstanceInfo
@@ -16,7 +15,7 @@ struct LocalDbInstanceInfo
     public uint Minor;
     public uint Build;
     public uint Revision;
-    public FILETIME LastStartUtc;
+    public System.Runtime.InteropServices.ComTypes.FILETIME LastStartUtc;
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = LocalDbApi.MaxPath)]
     public string Connection;

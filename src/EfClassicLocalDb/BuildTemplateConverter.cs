@@ -1,21 +1,21 @@
 using System;
+using System.Data.Common;
+using System.Data.Entity;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 
 static class BuildTemplateConverter
 {
-    public static Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, Task> Convert<TDbContext>(
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+    public static Func<DbConnection, Task> Convert<TDbContext>(
+        Func<DbConnection, TDbContext> constructInstance,
         Func<TDbContext, Task>? buildTemplate)
         where TDbContext : DbContext
     {
-        return async (connection, builder) =>
+        return async connection =>
         {
-            await using var dbContext = constructInstance(builder);
+            using var dbContext = constructInstance(connection);
             if (buildTemplate == null)
             {
-                await dbContext.Database.EnsureCreatedAsync();
+                dbContext.Database.CreateIfNotExists();
             }
             else
             {

@@ -1,16 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Data.Common;
+using System.Data.Entity;
 
 public class WithRebuildDbContext :
     DbContext
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
-    public WithRebuildDbContext(DbContextOptions options) :
-        base(options)
+    public WithRebuildDbContext(DbConnection connection) :
+        base(connection, false)
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder model)
+    protected override void OnModelCreating(DbModelBuilder model)
     {
         model.Entity<TestEntity>();
     }
