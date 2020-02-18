@@ -48,16 +48,5 @@ var sqlConnection = sqlDatabase.Connection;
 var dbContext = sqlDatabase.Context;
 //Use the SqlConnection or TheDbContext
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='File snippet `efwithrollback` was extracted from'>snippet source</a> | <a href='#snippet-efwithrollback' title='Navigate to start of snippet `efwithrollback`'>anchor</a></sup>
-<a id='snippet-efwithrollback-1'/></a>
-```cs
-var sqlInstance = new SqlInstance<TheDbContext>(
-    constructInstance: builder => new TheDbContext(builder.Options));
-
-await using var sqlDatabase = await sqlInstance.BuildWithRollback();
-var sqlConnection = sqlDatabase.Connection;
-var dbContext = sqlDatabase.Context;
-//Use the SqlConnection or TheDbContext
-```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='File snippet `efwithrollback` was extracted from'>snippet source</a> | <a href='#snippet-efwithrollback-1' title='Navigate to start of snippet `efwithrollback`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='File snippet `efwithrollback` was extracted from'>snippet source</a> | <a href='#snippet-efwithrollback' title='Navigate to start of snippet `efwithrollback`'>anchor</a></sup>
 <!-- endsnippet -->

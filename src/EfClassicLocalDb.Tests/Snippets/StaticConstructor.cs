@@ -5,8 +5,6 @@ using Xunit;
 
 namespace StaticConstructor
 {
-    #region EfStaticConstructor
-
     public class Tests
     {
         static SqlInstance<TheDbContext> sqlInstance;
@@ -28,6 +26,4 @@ namespace StaticConstructor
             Assert.Single(database.Context.TestEntities);
         }
     }
-
-    #endregion
 }
