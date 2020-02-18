@@ -6,8 +6,6 @@
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\EfLocalDb\DefaultOptionsBuilder.cs" Link="DefaultOptionsBuilder.cs" />
-    <Compile Include="..\EfLocalDb\SqlDatabaseExtensions.cs" Link="SqlDatabaseExtensions.cs" />
     <Compile Include="..\LocalDb\DatabaseState.cs" />
     <Compile Include="..\LocalDb\DbFileNameReader.cs" />
     <Compile Include="..\LocalDb\SqlBuilder.cs" />
