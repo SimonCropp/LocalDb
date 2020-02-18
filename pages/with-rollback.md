@@ -28,8 +28,8 @@ var sqlInstance = new SqlInstance(
 );
 
 await using var sqlDatabase = await sqlInstance.BuildWithRollback();
-var sqlConnection = sqlDatabase.Connection;
-//Use the SqlConnection
+var connection = sqlDatabase.Connection;
+//Use the connection
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L17' title='File snippet `withrollback` was extracted from'>snippet source</a> | <a href='#snippet-withrollback' title='Navigate to start of snippet `withrollback`'>anchor</a></sup>
 <!-- endsnippet -->
