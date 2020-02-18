@@ -13,7 +13,7 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
 
 toc
   * [Design](/pages/design.md)
-  * [Raw SqlConnection Usage](/pages/raw-usage.md)
+  * [Raw Connection Usage](/pages/raw-usage.md)
   * [EntityFramework Usage](/pages/ef-usage.md)
   * [EntityFramework Migrations](/pages/efmigrations.md)
   * [With Rollback Usage](/pages/with-rollback.md)
