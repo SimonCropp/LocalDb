@@ -10,6 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 [![Build status](https://ci.appveyor.com/api/projects/status/0shdndxc7xd14d41/branch/master?svg=true)](https://ci.appveyor.com/project/SimonCropp/LocalDb)
 [![NuGet Status](https://img.shields.io/nuget/v/LocalDb.svg?label=nuget:LocalDb)](https://www.nuget.org/packages/LocalDb/)
 [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.svg?label=nuget:EfLocalDb)](https://www.nuget.org/packages/EfLocalDb/)
+[![NuGet Status](https://img.shields.io/nuget/v/EfClassicLocalDb.svg?label=nuget:EfClassicLocalDb)](https://www.nuget.org/packages/EfClassicLocalDb/)
 
 Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
@@ -50,6 +51,7 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
 
   * https://www.nuget.org/packages/LocalDb/
   * https://www.nuget.org/packages/EfLocalDb/
+  * https://www.nuget.org/packages/EfClassicLocalDb/
 
 
 ## Why
