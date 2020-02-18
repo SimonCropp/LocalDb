@@ -40,28 +40,7 @@ public class TheDbContext :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17' title='File snippet `TheDbContext.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheDbContext.cs' title='Navigate to start of snippet `TheDbContext.cs`'>anchor</a></sup>
-<a id='snippet-TheDbContext.cs-1'/></a>
-```cs
-using Microsoft.EntityFrameworkCore;
-
-public class TheDbContext :
-    DbContext
-{
-    public DbSet<TheEntity> TestEntities { get; set; } = null!;
-
-    public TheDbContext(DbContextOptions options) :
-        base(options)
-    {
-    }
-
-    protected override void OnModelCreating(ModelBuilder model)
-    {
-        model.Entity<TheEntity>();
-    }
-}
-```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17' title='File snippet `TheDbContext.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheDbContext.cs-1' title='Navigate to start of snippet `TheDbContext.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17' title='File snippet `TheDbContext.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheDbContext.cs' title='Navigate to start of snippet `TheDbContext.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 <!-- snippet: TheEntity.cs -->
