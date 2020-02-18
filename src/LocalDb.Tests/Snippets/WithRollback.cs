@@ -12,8 +12,8 @@ class WithRollback
         );
 
         await using var sqlDatabase = await sqlInstance.BuildWithRollback();
-        var sqlConnection = sqlDatabase.Connection;
-        //Use the SqlConnection
+        var connection = sqlDatabase.Connection;
+        //Use the connection
         #endregion
     }
 }
