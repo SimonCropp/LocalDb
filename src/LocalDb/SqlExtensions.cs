@@ -3,7 +3,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 
 static class SqlExtensions
 {
@@ -31,7 +30,7 @@ static class SqlExtensions
 {commandText.IndentLines()}", "LocalDB");
             }
         }
-        catch (SqlException exception)
+        catch (DbException exception)
         {
             throw BuildException(connection, commandText, exception);
         }

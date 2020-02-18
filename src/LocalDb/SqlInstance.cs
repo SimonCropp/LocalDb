@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -15,7 +16,7 @@ namespace LocalDb
 
         public SqlInstance(
             string name,
-            Func<SqlConnection, Task> buildTemplate,
+            Func<DbConnection, Task> buildTemplate,
             string? directory = null,
             DateTime? timestamp = null,
             ushort templateSize = 3)
@@ -37,7 +38,7 @@ namespace LocalDb
             {
                 resultTimestamp = timestamp.Value;
             }
-            wrapper = new Wrapper(name, directory, templateSize);
+            wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
             wrapper.Start(resultTimestamp, buildTemplate);
         }
 

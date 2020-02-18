@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace EfLocalDb
         }
 
         public SqlInstance(
-            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
+            Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string? instanceSuffix = null,
             DateTime? timestamp = null,
@@ -57,7 +58,7 @@ namespace EfLocalDb
         }
 
         public SqlInstance(
-            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
+            Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
@@ -68,7 +69,7 @@ namespace EfLocalDb
         }
 
         void Init(
-            Func<SqlConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
+            Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
@@ -80,7 +81,7 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
 
-            Task BuildTemplate(SqlConnection connection)
+            Task BuildTemplate(DbConnection connection)
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
                 builder.UseSqlServer(connection);
@@ -89,7 +90,7 @@ namespace EfLocalDb
 
             var resultTimestamp = timestamp.GetValueOrDefault(Timestamp.LastModified<TDbContext>());
 
-            wrapper = new Wrapper(name, directory, templateSize);
+            wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
 
             wrapper.Start(resultTimestamp, BuildTemplate);
         }

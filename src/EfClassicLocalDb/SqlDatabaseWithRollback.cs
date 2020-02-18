@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Transactions;
-using Microsoft.Data.SqlClient;
 
 namespace EfLocalDb
 {

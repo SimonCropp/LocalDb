@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 
 namespace EfLocalDb
 {
@@ -81,14 +81,14 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
 
-            Task BuildTemplate(SqlConnection connection)
+            Task BuildTemplate(DbConnection connection)
             {
                 return buildTemplate(connection);
             }
 
             var resultTimestamp = timestamp.GetValueOrDefault(Timestamp.LastModified<TDbContext>());
 
-            wrapper = new Wrapper(name, directory, templateSize);
+            wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
 
             wrapper.Start(resultTimestamp, BuildTemplate);
         }
@@ -159,7 +159,12 @@ namespace EfLocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
-            var database = new SqlDatabase<TDbContext>(connection,dbName, constructInstance, () => wrapper.DeleteDatabase(dbName), data);
+            var database = new SqlDatabase<TDbContext>(
+                connection,
+                dbName,
+                constructInstance,
+                () => wrapper.DeleteDatabase(dbName),
+                data);
             await database.Start();
             return database;
         }

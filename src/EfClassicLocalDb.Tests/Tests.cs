@@ -41,7 +41,7 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
-            instanceSuffix: "theSuffix");
+            instanceSuffix: "theClassicSuffix");
 
         var entity = new TestEntity
         {
@@ -57,7 +57,8 @@ public class Tests :
         var dateTime = DateTime.Now;
         var instance1 = new SqlInstance<WithRebuildDbContext>(
             constructInstance: connection => new WithRebuildDbContext(connection),
-            timestamp: dateTime);
+            timestamp: dateTime,
+            instanceSuffix: "Classic");
         using (var database1 = await instance1.Build())
         {
             var entity = new TestEntity
@@ -70,7 +71,8 @@ public class Tests :
         var instance2 = new SqlInstance<WithRebuildDbContext>(
             constructInstance: connection => new WithRebuildDbContext(connection),
             buildTemplate: (WithRebuildDbContext x) => throw new Exception(),
-            timestamp: dateTime);
+            timestamp: dateTime,
+            instanceSuffix: "Classic");
         using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
     }

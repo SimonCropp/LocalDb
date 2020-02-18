@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using MethodTimer;
-using Microsoft.Data.SqlClient;
 
 class Wrapper
 {
@@ -11,20 +11,22 @@ class Wrapper
     ushort size;
     public readonly string MasterConnectionString;
     public readonly string WithRollbackConnectionString;
+    Func<string, DbConnection> buildConnection;
     string instance;
     string TemplateDataFile;
     string TemplateLogFile;
     string TemplateConnectionString;
     public readonly string ServerName;
     Task startupTask = null!;
-    SqlConnection masterConnection = null!;
+    DbConnection masterConnection = null!;
 
-    public Wrapper(string instance, string directory, ushort size = 3)
+    public Wrapper(Func<string, DbConnection> buildConnection, string instance, string directory, ushort size = 3)
     {
         Guard.AgainstDatabaseSize(nameof(size), size);
         Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
         LocalDbLogging.WrapperCreated = true;
+        this.buildConnection = buildConnection;
         this.instance = instance;
         MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
         TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
@@ -60,7 +62,7 @@ class Wrapper
         return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
     }
 
-    public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
+    public void Start(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
     {
 #if RELEASE
         try
@@ -85,7 +87,7 @@ class Wrapper
         return startupTask;
     }
 
-    void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
+    void InnerStart(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
     {
         void CleanStart()
         {
@@ -130,9 +132,9 @@ class Wrapper
     }
 
     [Time]
-    async Task CreateAndDetachTemplate(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, bool rebuild, bool optimize)
+    async Task CreateAndDetachTemplate(DateTime timestamp, Func<DbConnection, Task> buildTemplate, bool rebuild, bool optimize)
     {
-        masterConnection = new SqlConnection(MasterConnectionString);
+        masterConnection = buildConnection(MasterConnectionString);
         masterConnection.Open();
         var takeDbsOffline = ExecuteOnMasterAsync(SqlBuilder.TakeDbsOfflineCommand);
         if (LocalDbLogging.Enabled)
@@ -154,11 +156,7 @@ class Wrapper
         DeleteTemplateFiles();
         await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
 
-#if(NETSTANDARD2_1)
-        await using (var templateConnection = new SqlConnection(TemplateConnectionString))
-#else
-        using (var templateConnection = new SqlConnection(TemplateConnectionString))
-#endif
+        using (var templateConnection = buildConnection(TemplateConnectionString))
         {
             await templateConnection.OpenAsync();
             await buildTemplate(templateConnection);

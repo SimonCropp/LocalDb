@@ -9,6 +9,7 @@ public class WithRebuildDbContext :
     public WithRebuildDbContext(DbConnection connection) :
         base(connection, false)
     {
+
     }
 
     protected override void OnModelCreating(DbModelBuilder model)
