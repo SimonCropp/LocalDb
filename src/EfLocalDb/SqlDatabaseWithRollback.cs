@@ -37,11 +37,11 @@ namespace EfLocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var sqlConnection = new SqlConnection(ConnectionString);
-            await sqlConnection.OpenAsync();
+            var connection = new SqlConnection(ConnectionString);
+            await connection.OpenAsync();
             Connection.EnlistTransaction(Transaction);
 
-            return sqlConnection;
+            return connection;
         }
 
         public static implicit operator TDbContext(SqlDatabaseWithRollback<TDbContext> instance)
