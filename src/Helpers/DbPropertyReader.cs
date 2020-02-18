@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
-using Microsoft.Data.SqlClient;
 
 public static class DbPropertyReader
 {
-    public static DbSettings Read(SqlConnection connection, string name)
+    public static DbSettings Read(DbConnection connection, string name)
     {
         return new DbSettings(ReadFileSettings(connection, name).ToList());
     }
 
-    static IEnumerable<DbFileSettings> ReadFileSettings(SqlConnection connection, string name)
+    static IEnumerable<DbFileSettings> ReadFileSettings(DbConnection connection, string name)
     {
         using var command = connection.CreateCommand();
         command.CommandText = $@"
