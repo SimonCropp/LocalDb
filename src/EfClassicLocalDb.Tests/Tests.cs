@@ -71,7 +71,7 @@ public class Tests :
             constructInstance: builder => new WithRebuildDbContext(builder.Options),
             buildTemplate: x => throw new Exception(),
             timestamp: dateTime);
-        await using var database2 = await instance2.Build();
+        using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
     }
 
