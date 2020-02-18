@@ -30,9 +30,9 @@ namespace LocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var sqlConnection = new SqlConnection(ConnectionString);
-            await sqlConnection.OpenAsync();
-            return sqlConnection;
+            var connection = new SqlConnection(ConnectionString);
+            await connection.OpenAsync();
+            return connection;
         }
 
         public async Task Start()
