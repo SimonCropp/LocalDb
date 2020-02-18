@@ -52,16 +52,7 @@ public class TheEntity
     public string? Property { get; set; }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheEntity.cs#L1-L5' title='File snippet `TheEntity.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheEntity.cs' title='Navigate to start of snippet `TheEntity.cs`'>anchor</a></sup>
-<a id='snippet-TheEntity.cs-1'/></a>
-```cs
-public class TheEntity
-{
-    public int Id { get; set; }
-    public string? Property { get; set; }
-}
-```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5' title='File snippet `TheEntity.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheEntity.cs-1' title='Navigate to start of snippet `TheEntity.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5' title='File snippet `TheEntity.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheEntity.cs' title='Navigate to start of snippet `TheEntity.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
