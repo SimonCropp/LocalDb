@@ -19,7 +19,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfClassicLocalDb/SqlInstance.cs#L101-L110' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb/SqlInstance.cs#L100-L109' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
 <a id='snippet-getinstancename-1'/></a>
 ```cs
 if (scopeSuffix == null)
@@ -29,7 +29,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfLocalDb/SqlInstance.cs#L101-L110' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename-1' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/SqlInstance.cs#L102-L111' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename-1' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -123,7 +123,7 @@ public Task<SqlDatabase> Build(
     string? databaseSuffix = null,
     [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L54-L74' title='File snippet `conventionbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Navigate to start of snippet `conventionbuildsignature`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L55-L75' title='File snippet `conventionbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Navigate to start of snippet `conventionbuildsignature`'>anchor</a></sup>
 <!-- endsnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -159,7 +159,7 @@ If full control over the database name is required, there is an overload that ta
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L87-L92' title='File snippet `explicitbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Navigate to start of snippet `explicitbuildsignature`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L88-L93' title='File snippet `explicitbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Navigate to start of snippet `explicitbuildsignature`'>anchor</a></sup>
 <!-- endsnippet -->
 
 Which can be used as follows:

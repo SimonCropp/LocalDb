@@ -191,21 +191,20 @@ public class EfSnippetTests
     static EfSnippetTests()
     {
         sqlInstance = new SqlInstance<MyDbContext>(
-            builder => new MyDbContext(builder.Options));
+            connection => new MyDbContext(connection));
     }
 
     [Fact]
     public async Task TheTest()
     {
-        await using var database = await sqlInstance.Build();
-
+        using var database = await sqlInstance.Build();
         using (var dbContext = database.NewDbContext())
         {
             var entity = new TheEntity
             {
                 Property = "prop"
             };
-            dbContext.Add(entity);
+            dbContext.TestEntities.Add(entity);
             dbContext.SaveChanges();
         }
 
@@ -218,7 +217,7 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTestWithDbName()
     {
-        await using var database = await sqlInstance.Build("TheTestWithDbName");
+        using var database = await sqlInstance.Build("TheTestWithDbName");
         var entity = new TheEntity
         {
             Property = "prop"
@@ -229,7 +228,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='File snippet `EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfSnippetTests.cs' title='Navigate to start of snippet `EfSnippetTests.cs`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='File snippet `EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfSnippetTests.cs' title='Navigate to start of snippet `EfSnippetTests.cs`'>anchor</a></sup>
 <a id='snippet-EfSnippetTests.cs-1'/></a>
 ```cs
 using System.Threading.Tasks;
@@ -319,28 +318,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb/DefaultOptionsBuilder.cs#L1-L19' title='File snippet `DefaultOptionsBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-DefaultOptionsBuilder.cs' title='Navigate to start of snippet `DefaultOptionsBuilder.cs`'>anchor</a></sup>
-<a id='snippet-DefaultOptionsBuilder.cs-1'/></a>
-```cs
-using Microsoft.EntityFrameworkCore;
-
-static class DefaultOptionsBuilder
-{
-    static LogCommandInterceptor interceptor = new LogCommandInterceptor();
-
-    public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
-        where TDbContext : DbContext
-    {
-        var builder = new DbContextOptionsBuilder<TDbContext>();
-        if (LocalDbLogging.SqlLoggingEnabled)
-        {
-            builder.AddInterceptors(interceptor);
-        }
-        builder.EnableSensitiveDataLogging();
-        builder.EnableDetailedErrors();
-        return builder;
-    }
-}
-```
-<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19' title='File snippet `DefaultOptionsBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-DefaultOptionsBuilder.cs-1' title='Navigate to start of snippet `DefaultOptionsBuilder.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19' title='File snippet `DefaultOptionsBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-DefaultOptionsBuilder.cs' title='Navigate to start of snippet `DefaultOptionsBuilder.cs`'>anchor</a></sup>
 <!-- endsnippet -->
