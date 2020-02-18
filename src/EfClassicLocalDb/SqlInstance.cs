@@ -97,16 +97,12 @@ namespace EfLocalDb
         {
             Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
 
-            #region GetInstanceName
-
             if (scopeSuffix == null)
             {
                 return typeof(TDbContext).Name;
             }
 
             return $"{typeof(TDbContext).Name}_{scopeSuffix}";
-
-            #endregion
         }
 
         public void Cleanup() => wrapper.DeleteInstance();

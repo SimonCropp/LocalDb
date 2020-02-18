@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Threading.Tasks;
+using EfLocalDb;
 
 static class BuildTemplateConverter
 {
@@ -16,15 +17,7 @@ static class BuildTemplateConverter
             using var context = constructInstance(connection);
             if (buildTemplate == null)
             {
-                var script = ((IObjectContextAdapter)context).ObjectContext.CreateDatabaseScript();
-                try
-                {
-                    await context.Database.ExecuteSqlCommandAsync(script);
-                }
-                catch (DbException)
-                {
-                    //swallow for already exists
-                }
+                await context.CreateOnExistingDb();
             }
             else
             {

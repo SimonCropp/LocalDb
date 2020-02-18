@@ -2,6 +2,6 @@
 <Project>
   <PropertyGroup>
     <NoWarn>CS1591</NoWarn>
-    <Version>6.2.1</Version>
+    <Version>6.2.2</Version>
   </PropertyGroup>
 </Project>
