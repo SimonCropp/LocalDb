@@ -3,7 +3,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Fody" Version="6.1.0" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.1.1" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="XunitContext" Version="1.8.0" />
     <PackageReference Include="Verify.Xunit" Version="1.20.0" />
