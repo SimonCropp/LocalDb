@@ -35,9 +35,12 @@ class Wrapper
         this.size = size;
         TemplateDataFile = Path.Combine(directory, "template.mdf");
         TemplateLogFile = Path.Combine(directory, "template_log.ldf");
-        System.IO.Directory.CreateDirectory(directory);
+        var directoryInfo = System.IO.Directory.CreateDirectory(directory);
+        directoryInfo.ResetAccess();
+
         ServerName = $@"(LocalDb)\{instance}";
     }
+
 
     public async Task<string> CreateDatabaseFromTemplate(string name, bool withRollback = false)
     {
@@ -56,6 +59,9 @@ class Wrapper
         await startupTask;
         File.Copy(TemplateDataFile, dataFile, true);
         File.Copy(TemplateLogFile, logFile, true);
+
+        FileExtensions.MarkFileAsWritable(dataFile);
+        FileExtensions.MarkFileAsWritable(logFile);
 
         await ExecuteOnMasterAsync(commandText);
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
@@ -155,6 +161,9 @@ class Wrapper
 
         DeleteTemplateFiles();
         await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
+
+        FileExtensions.MarkFileAsWritable(TemplateDataFile);
+        FileExtensions.MarkFileAsWritable(TemplateLogFile);
 
         using (var templateConnection = buildConnection(TemplateConnectionString))
         {

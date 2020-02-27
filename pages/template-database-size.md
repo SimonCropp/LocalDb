@@ -21,7 +21,7 @@ To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/s
 use model;
 dbcc shrinkfile(modeldev, {size})
 ```
-<sup><a href='/src/LocalDb/SqlBuilder.cs#L51-L54' title='File snippet `shrinkmodeldb` was extracted from'>snippet source</a> | <a href='#snippet-shrinkmodeldb' title='Navigate to start of snippet `shrinkmodeldb`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlBuilder.cs#L53-L56' title='File snippet `shrinkmodeldb` was extracted from'>snippet source</a> | <a href='#snippet-shrinkmodeldb' title='Navigate to start of snippet `shrinkmodeldb`'>anchor</a></sup>
 <!-- endsnippet -->
 
 

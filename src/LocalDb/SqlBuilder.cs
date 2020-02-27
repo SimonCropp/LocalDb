@@ -30,7 +30,9 @@ else
     begin
         alter database [{name}] set online;
     end;
-";
+alter database [{name}] set read_write;
+"
+            ;
     }
 
     public static string DetachTemplateCommand = @"
