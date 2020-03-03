@@ -205,7 +205,7 @@ public class EfSnippetTests
                 Property = "prop"
             };
             dbContext.TestEntities.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         using (var dbContext = database.NewDbContext())
@@ -262,7 +262,7 @@ public class EfSnippetTests
                 Property = "prop"
             };
             dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         await using (var dbContext = database.NewDbContext())
