@@ -34,7 +34,7 @@ public class EfSnippetTests
                 Property = "prop"
             };
             dbContext.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         await using (var dbContext = database.NewDbContext())

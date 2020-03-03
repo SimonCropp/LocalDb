@@ -22,7 +22,7 @@ public class EfSnippetTests
                 Property = "prop"
             };
             dbContext.TestEntities.Add(entity);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
         }
 
         using (var dbContext = database.NewDbContext())

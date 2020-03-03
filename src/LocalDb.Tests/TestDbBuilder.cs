@@ -29,7 +29,7 @@ values ({nextInt});";
         await using var command = connection.CreateCommand();
         command.CommandText = "select Value from MyTable";
         await using var reader = await command.ExecuteReaderAsync();
-        while (reader.Read())
+        while (await reader.ReadAsync())
         {
             values.Add(reader.GetInt32(0));
         }

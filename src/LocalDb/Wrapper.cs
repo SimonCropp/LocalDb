@@ -141,7 +141,7 @@ class Wrapper
     async Task CreateAndDetachTemplate(DateTime timestamp, Func<DbConnection, Task> buildTemplate, bool rebuild, bool optimize)
     {
         masterConnection = buildConnection(MasterConnectionString);
-        masterConnection.Open();
+        await masterConnection.OpenAsync();
         var takeDbsOffline = ExecuteOnMasterAsync(SqlBuilder.TakeDbsOfflineCommand);
         if (LocalDbLogging.Enabled)
         {
