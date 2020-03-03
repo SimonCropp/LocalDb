@@ -26,8 +26,8 @@ static class SqlExtensions
 
             if (LocalDbLogging.SqlLoggingEnabled)
             {
-                Trace.WriteLine($@"Executed SQL ({stopwatch.ElapsedMilliseconds}.ms):
-{commandText.IndentLines()}", "LocalDB");
+                LocalDbLogging.Log($@"Executed SQL ({stopwatch.ElapsedMilliseconds}.ms):
+{commandText.IndentLines()}");
             }
         }
         catch (DbException exception)

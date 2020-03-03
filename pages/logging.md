@@ -49,16 +49,21 @@ public static class LocalDbLogging
     internal static bool Enabled;
     internal static bool WrapperCreated;
 
-    internal static void Log(string message)
+    internal static void LogIfVerbose(string message)
     {
         if (Enabled)
         {
-            Trace.WriteLine(message, "LocalDb");
+            Log(message);
         }
+    }
+
+    internal static void Log(string message)
+    {
+        Console.WriteLine($"LocalDb: {message}");
     }
 }
 ```
-<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L35' title='File snippet `localdblogging` was extracted from'>snippet source</a> | <a href='#snippet-localdblogging' title='Navigate to start of snippet `localdblogging`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L40' title='File snippet `localdblogging` was extracted from'>snippet source</a> | <a href='#snippet-localdblogging' title='Navigate to start of snippet `localdblogging`'>anchor</a></sup>
 <!-- endsnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
@@ -76,15 +81,15 @@ static class MethodTimeLogger
         }
         if (message == null)
         {
-            Trace.WriteLine($"{method.Name} {milliseconds}ms", "LocalDb");
+            LocalDbLogging.Log($"{method.Name} {milliseconds}ms");
             return;
         }
 
-        Trace.WriteLine($"{method.Name} {milliseconds}ms {message}", "LocalDb");
+        LocalDbLogging.Log($"{method.Name} {milliseconds}ms {message}");
     }
 }
 ```
-<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L4-L22' title='File snippet `methodtimelogger` was extracted from'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Navigate to start of snippet `methodtimelogger`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L3-L21' title='File snippet `methodtimelogger` was extracted from'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Navigate to start of snippet `methodtimelogger`'>anchor</a></sup>
 <!-- endsnippet -->
 
 

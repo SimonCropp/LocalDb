@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,7 +8,7 @@ class LogCommandInterceptor :
 {
     static void WriteLine(CommandEventData data)
     {
-        Trace.WriteLine($@"EF {data}", "LocalDB");
+        LocalDbLogging.Log($"EF {data}");
     }
 
     public override void CommandFailed(DbCommand command, CommandErrorEventData data)

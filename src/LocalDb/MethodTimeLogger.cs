@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
 
 #region MethodTimeLogger
 static class MethodTimeLogger
@@ -12,11 +11,11 @@ static class MethodTimeLogger
         }
         if (message == null)
         {
-            Trace.WriteLine($"{method.Name} {milliseconds}ms", "LocalDb");
+            LocalDbLogging.Log($"{method.Name} {milliseconds}ms");
             return;
         }
 
-        Trace.WriteLine($"{method.Name} {milliseconds}ms {message}", "LocalDb");
+        LocalDbLogging.Log($"{method.Name} {milliseconds}ms {message}");
     }
 }
 #endregion

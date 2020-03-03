@@ -78,7 +78,7 @@ class Wrapper
         InnerStart(timestamp, buildTemplate);
         var message = $"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.";
 
-        Trace.WriteLine(message, "LocalDb");
+        LocalDbLogging.Log(message);
 #if RELEASE
         }
         catch (Exception exception)
@@ -126,7 +126,7 @@ class Wrapper
         var templateLastMod = File.GetCreationTime(TemplateDataFile);
         if (timestamp == templateLastMod)
         {
-            LocalDbLogging.Log("Not modified so skipping rebuild");
+            LocalDbLogging.LogIfVerbose("Not modified so skipping rebuild");
             startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, false, false);
         }
         else
@@ -145,7 +145,7 @@ class Wrapper
         var takeDbsOffline = ExecuteOnMasterAsync(SqlBuilder.TakeDbsOfflineCommand);
         if (LocalDbLogging.Enabled)
         {
-            Trace.WriteLine($"SqlServerVersion: {masterConnection.ServerVersion}", "LocalDb");
+            LocalDbLogging.Log($"SqlServerVersion: {masterConnection.ServerVersion}");
         }
 
         if (optimize)

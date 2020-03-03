@@ -24,12 +24,17 @@ public static class LocalDbLogging
     internal static bool Enabled;
     internal static bool WrapperCreated;
 
-    internal static void Log(string message)
+    internal static void LogIfVerbose(string message)
     {
         if (Enabled)
         {
-            Trace.WriteLine(message, "LocalDb");
+            Log(message);
         }
+    }
+
+    internal static void Log(string message)
+    {
+        Console.WriteLine($"LocalDb: {message}");
     }
 }
 #endregion
