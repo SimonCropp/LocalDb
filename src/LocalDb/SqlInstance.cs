@@ -28,6 +28,10 @@ namespace LocalDb
             {
                 directory = DirectoryFinder.Find(name);
             }
+            else
+            {
+                DirectoryCleaner.CleanInstance(directory);
+            }
             DateTime resultTimestamp;
             if (timestamp == null)
             {

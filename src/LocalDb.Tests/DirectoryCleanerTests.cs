@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
-using LocalDb;
 using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;
 
-public class DirectoryFinderTests :
+public class DirectoryCleanerTests :
     VerifyBase
 {
     private string tempDir;
@@ -14,7 +12,7 @@ public class DirectoryFinderTests :
     [Fact]
     public void Empty()
     {
-        DirectoryFinder.CleanDirectory(tempDir);
+        DirectoryCleaner.CleanRoot(tempDir);
     }
 
     [Fact]
@@ -22,7 +20,7 @@ public class DirectoryFinderTests :
     {
         var fileAtRoot = Path.Combine(tempDir, "file.txt");
         File.WriteAllText(fileAtRoot, "content");
-        DirectoryFinder.CleanDirectory(tempDir);
+        DirectoryCleaner.CleanRoot(tempDir);
         Assert.True(File.Exists(fileAtRoot));
     }
 
@@ -31,7 +29,7 @@ public class DirectoryFinderTests :
     {
         var dirAtRoot = Path.Combine(tempDir, "Dir");
         Directory.CreateDirectory(dirAtRoot);
-        DirectoryFinder.CleanDirectory(tempDir);
+        DirectoryCleaner.CleanRoot(tempDir);
         Assert.False(Directory.Exists(dirAtRoot));
     }
 
@@ -42,7 +40,7 @@ public class DirectoryFinderTests :
         Directory.CreateDirectory(dirAtRoot);
         var file = Path.Combine(dirAtRoot, "file.txt");
         File.WriteAllText(file, "content");
-        DirectoryFinder.CleanDirectory(tempDir);
+        DirectoryCleaner.CleanRoot(tempDir);
         Assert.True(Directory.Exists(dirAtRoot));
         Assert.True(File.Exists(file));
     }
@@ -58,7 +56,7 @@ public class DirectoryFinderTests :
         var ldfFile = Path.Combine(dirAtRoot, "file.ldf");
         File.WriteAllText(ldfFile, "content");
         File.SetLastWriteTime(ldfFile, DateTime.Now.AddDays(-3));
-        DirectoryFinder.CleanDirectory(tempDir);
+        DirectoryCleaner.CleanRoot(tempDir);
         Assert.False(Directory.Exists(dirAtRoot));
         Assert.False(File.Exists(ldfFile));
         Assert.False(File.Exists(mdfFile));
@@ -73,16 +71,16 @@ public class DirectoryFinderTests :
         File.WriteAllText(mdfFile, "content");
         var ldfFile = Path.Combine(dirAtRoot, "file.ldf");
         File.WriteAllText(ldfFile, "content");
-        DirectoryFinder.CleanDirectory(tempDir);
+        DirectoryCleaner.CleanRoot(tempDir);
         Assert.True(Directory.Exists(dirAtRoot));
         Assert.True(File.Exists(ldfFile));
         Assert.True(File.Exists(mdfFile));
     }
 
-    public DirectoryFinderTests(ITestOutputHelper output) :
+    public DirectoryCleanerTests(ITestOutputHelper output) :
         base(output)
     {
-        tempDir = Path.Combine(Path.GetTempPath(),"DirectoryFinder");
+        tempDir = Path.Combine(Path.GetTempPath(), "DirectoryCleaner");
         Directory.CreateDirectory(tempDir);
     }
 

@@ -65,6 +65,7 @@ namespace EfLocalDb
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
+            DirectoryCleaner.CleanInstance(directory);
             Init(buildTemplate, constructInstance, name, directory, timestamp, templateSize);
         }
 
@@ -81,6 +82,7 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
 
+            DirectoryCleaner.CleanInstance(directory);
             Task BuildTemplate(DbConnection connection)
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();

@@ -41,6 +41,7 @@ namespace EfLocalDb
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
+            DirectoryCleaner.CleanInstance(directory);
             var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
             Init(convertedBuildTemplate, constructInstance, name, directory, timestamp, templateSize);
         }
@@ -65,6 +66,7 @@ namespace EfLocalDb
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
+            DirectoryCleaner.CleanInstance(directory);
             Init(buildTemplate, constructInstance, name, directory, timestamp, templateSize);
         }
 
