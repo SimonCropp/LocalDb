@@ -29,6 +29,7 @@ public class DirectoryCleanerTests :
     {
         var dirAtRoot = Path.Combine(tempDir, "Dir");
         Directory.CreateDirectory(dirAtRoot);
+        Directory.SetCreationTime(dirAtRoot, DateTime.Now.AddDays(-3));
         DirectoryCleaner.CleanRoot(tempDir);
         Assert.False(Directory.Exists(dirAtRoot));
     }
@@ -56,6 +57,7 @@ public class DirectoryCleanerTests :
         var ldfFile = Path.Combine(dirAtRoot, "file.ldf");
         File.WriteAllText(ldfFile, "content");
         File.SetLastWriteTime(ldfFile, DateTime.Now.AddDays(-3));
+        Directory.SetCreationTime(dirAtRoot, DateTime.Now.AddDays(-3));
         DirectoryCleaner.CleanRoot(tempDir);
         Assert.False(Directory.Exists(dirAtRoot));
         Assert.False(File.Exists(ldfFile));
@@ -87,6 +89,6 @@ public class DirectoryCleanerTests :
     public override void Dispose()
     {
         base.Dispose();
-        Directory.Delete(tempDir,true);
+        Directory.Delete(tempDir, true);
     }
 }
