@@ -17,6 +17,7 @@ static class FileExtensions
             File.Delete(file);
         }
     }
+
     // For running under elevated VS
     // LocalDb will no be able to access the created files
     public static void ResetAccess(this DirectoryInfo directoryInfo)
