@@ -7,6 +7,10 @@ static class DirectoryCleaner
 {
     public static void CleanRoot(string root)
     {
+        if (!Directory.Exists(root))
+        {
+            return;
+        }
         foreach (var instanceDirectory in Directory.EnumerateDirectories(root))
         {
             CleanInstance(instanceDirectory);
@@ -27,7 +31,8 @@ static class DirectoryCleaner
             }
         }
 
-        if (!Directory.GetFileSystemEntries(directory).Any())
+        if (!Directory.GetFileSystemEntries(directory).Any() &&
+            Directory.GetCreationTime(directory) < DateTime.Now.AddDays(-1))
         {
             Directory.Delete(directory, false);
         }
