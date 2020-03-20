@@ -37,6 +37,13 @@ public static class Timestamp
             .Replace(@"file:\\", "");
     }
 
+    public static DateTime LastModified(Delegate @delegate)
+    {
+        Guard.AgainstNull(nameof(@delegate), @delegate);
+        var assembly = @delegate.Target.GetType().Assembly;
+        return LastModified(assembly);
+    }
+
     public static DateTime LastModified(Assembly assembly)
     {
         Guard.AgainstNull(nameof(assembly), assembly);
@@ -49,5 +56,5 @@ public static class Timestamp
     }
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L11-L34' title='File snippet `timestamp` was extracted from'>snippet source</a> | <a href='#snippet-timestamp' title='Navigate to start of snippet `timestamp`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L11-L41' title='File snippet `timestamp` was extracted from'>snippet source</a> | <a href='#snippet-timestamp' title='Navigate to start of snippet `timestamp`'>anchor</a></sup>
 <!-- endsnippet -->
