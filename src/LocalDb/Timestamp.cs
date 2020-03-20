@@ -20,6 +20,13 @@ namespace LocalDb
                 .Replace(@"file:\\", "");
         }
 
+        public static DateTime LastModified(Delegate @delegate)
+        {
+            Guard.AgainstNull(nameof(@delegate), @delegate);
+            var assembly = @delegate.Target.GetType().Assembly;
+            return LastModified(assembly);
+        }
+
         public static DateTime LastModified(Assembly assembly)
         {
             Guard.AgainstNull(nameof(assembly), assembly);

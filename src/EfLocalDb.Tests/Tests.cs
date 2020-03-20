@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using EfLocalDb;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;

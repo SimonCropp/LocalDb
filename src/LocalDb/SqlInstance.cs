@@ -24,26 +24,27 @@ namespace LocalDb
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
-            if (directory == null)
-            {
-                directory = DirectoryFinder.Find(name);
-            }
-            else
-            {
-                DirectoryCleaner.CleanInstance(directory);
-            }
-            DateTime resultTimestamp;
-            if (timestamp == null)
-            {
-                var callingAssembly = Assembly.GetCallingAssembly();
-                resultTimestamp = Timestamp.LastModified(callingAssembly);
-            }
-            else
-            {
-                resultTimestamp = timestamp.Value;
-            }
+            directory = DirectoryFinder.Find(name);
+            DirectoryCleaner.CleanInstance(directory);
+            var callingAssembly = Assembly.GetCallingAssembly();
+            var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
             wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
             wrapper.Start(resultTimestamp, buildTemplate);
+        }
+
+        static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate, Assembly callingAssembly)
+        {
+            if (timestamp != null)
+            {
+                return timestamp.Value;
+            }
+
+            if (buildTemplate != null)
+            {
+                return Timestamp.LastModified(buildTemplate);
+            }
+
+            return Timestamp.LastModified(callingAssembly);
         }
 
         public void Cleanup()

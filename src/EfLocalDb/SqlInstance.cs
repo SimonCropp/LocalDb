@@ -30,19 +30,9 @@ namespace EfLocalDb
             var directory = DirectoryFinder.Find(instanceName);
 
             var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
-            Init(convertedBuildTemplate, constructInstance, instanceName, directory, timestamp, templateSize);
-        }
-
-        public SqlInstance(
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string name,
-            string directory,
-            Func<TDbContext, Task>? buildTemplate = null,
-            DateTime? timestamp = null,
-            ushort templateSize = 3)
-        {
-            var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
-            Init(convertedBuildTemplate, constructInstance, name, directory, timestamp, templateSize);
+            var name = GetInstanceName(instanceSuffix);
+            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
+            Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp);
         }
 
         public SqlInstance(
@@ -54,7 +44,36 @@ namespace EfLocalDb
         {
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
-            Init(buildTemplate, constructInstance, instanceName, directory, timestamp, templateSize);
+            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
+            Init(buildTemplate, constructInstance, instanceName, directory, templateSize, resultTimestamp);
+        }
+
+        static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
+        {
+            if (timestamp != null)
+            {
+                return timestamp.Value;
+            }
+
+            if (buildTemplate != null)
+            {
+                return Timestamp.LastModified(buildTemplate);
+            }
+
+            return Timestamp.LastModified<TDbContext>();
+        }
+
+        public SqlInstance(
+            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            string name,
+            string directory,
+            Func<TDbContext, Task>? buildTemplate = null,
+            DateTime? timestamp = null,
+            ushort templateSize = 3)
+        {
+            var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
+            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
+            Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp);
         }
 
         public SqlInstance(
@@ -65,24 +84,25 @@ namespace EfLocalDb
             DateTime? timestamp = null,
             ushort templateSize = 3)
         {
-            DirectoryCleaner.CleanInstance(directory);
-            Init(buildTemplate, constructInstance, name, directory, timestamp, templateSize);
+            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
+            Init(buildTemplate, constructInstance, name, directory, templateSize, resultTimestamp);
         }
 
-        void Init(
-            Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
+        void Init(Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
             string name,
             string directory,
-            DateTime? timestamp,
-            ushort templateSize)
+            ushort templateSize,
+            DateTime timestamp)
         {
+            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
 
             DirectoryCleaner.CleanInstance(directory);
+
             Task BuildTemplate(DbConnection connection)
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
@@ -90,11 +110,9 @@ namespace EfLocalDb
                 return buildTemplate(connection, builder);
             }
 
-            var resultTimestamp = timestamp.GetValueOrDefault(Timestamp.LastModified<TDbContext>());
-
             wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
 
-            wrapper.Start(resultTimestamp, BuildTemplate);
+            wrapper.Start(timestamp, BuildTemplate);
         }
 
         static string GetInstanceName(string? scopeSuffix)
