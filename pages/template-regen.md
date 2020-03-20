@@ -40,8 +40,13 @@ public static class Timestamp
     public static DateTime LastModified(Delegate @delegate)
     {
         Guard.AgainstNull(nameof(@delegate), @delegate);
-        var assembly = @delegate.Target.GetType().Assembly;
-        return LastModified(assembly);
+        if (@delegate.Target != null)
+        {
+            var targetAssembly = @delegate.Target.GetType().Assembly;
+            return LastModified(targetAssembly);
+        }
+        var declaringAssembly = @delegate.Method.DeclaringType.Assembly;
+        return LastModified(declaringAssembly);
     }
 
     public static DateTime LastModified(Assembly assembly)
@@ -56,5 +61,5 @@ public static class Timestamp
     }
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L11-L41' title='File snippet `timestamp` was extracted from'>snippet source</a> | <a href='#snippet-timestamp' title='Navigate to start of snippet `timestamp`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L11-L46' title='File snippet `timestamp` was extracted from'>snippet source</a> | <a href='#snippet-timestamp' title='Navigate to start of snippet `timestamp`'>anchor</a></sup>
 <!-- endsnippet -->
