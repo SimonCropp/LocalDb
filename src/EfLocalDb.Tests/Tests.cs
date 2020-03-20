@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using EfLocalDb;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using VerifyXunit;
 using Xunit;
 using Xunit.Abstractions;
@@ -41,6 +43,25 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: builder => new TestDbContext(builder.Options),
+            instanceSuffix: "theSuffix");
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build(new List<object> {entity});
+        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+    }
+
+    [Fact]
+    public async Task BuildTemplate()
+    {
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
+            buildTemplate: async context =>
+            {
+                await context.Database.EnsureCreatedAsync();
+            },
             instanceSuffix: "theSuffix");
 
         var entity = new TestEntity
