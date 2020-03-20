@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using VerifyXunit;
 using Microsoft.Data.SqlClient;
@@ -122,6 +123,16 @@ end;
         await instance.CreateDatabaseFromTemplate("ToDelete");
         await instance.DeleteDatabase("ToDelete");
         await Verify(await instance.ReadDatabaseState("ToDelete"));
+    }
+
+    [Fact]
+    public async Task DefinedTimestamp()
+    {
+        var instance2 = new Wrapper(s => new SqlConnection(s), "DefinedTimestamp", DirectoryFinder.Find("DefinedTimestamp"));
+        var dateTime = DateTime.Now;
+        instance2.Start(dateTime, connection => Task.CompletedTask);
+        await instance2.AwaitStart();
+        Assert.Equal(dateTime, File.GetCreationTime(instance2.TemplateDataFile));
     }
 
     [Fact]

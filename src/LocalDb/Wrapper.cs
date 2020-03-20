@@ -13,7 +13,7 @@ class Wrapper
     public readonly string WithRollbackConnectionString;
     Func<string, DbConnection> buildConnection;
     string instance;
-    string TemplateDataFile;
+    public readonly string TemplateDataFile;
     string TemplateLogFile;
     string TemplateConnectionString;
     public readonly string ServerName;
