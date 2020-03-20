@@ -23,8 +23,13 @@ namespace LocalDb
         public static DateTime LastModified(Delegate @delegate)
         {
             Guard.AgainstNull(nameof(@delegate), @delegate);
-            var assembly = @delegate.Target.GetType().Assembly;
-            return LastModified(assembly);
+            if (@delegate.Target != null)
+            {
+                var targetAssembly = @delegate.Target.GetType().Assembly;
+                return LastModified(targetAssembly);
+            }
+            var declaringAssembly = @delegate.Method.DeclaringType.Assembly;
+            return LastModified(declaringAssembly);
         }
 
         public static DateTime LastModified(Assembly assembly)
