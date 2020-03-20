@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using EfLocalDb;
 using VerifyXunit;
@@ -46,6 +48,48 @@ public class Tests :
         };
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+    }
+    [Fact]
+    public async Task Defined_TimeStamp()
+    {
+        var dateTime = DateTime.Now;
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: connection => new TestDbContext(connection),
+            buildTemplate:async context =>
+            {
+                await context.CreateOnExistingDb();
+            },
+            timestamp: dateTime,
+            instanceSuffix: "Defined_TimeStamp");
+
+        using var database = await instance.Build();
+        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+    }
+
+    [Fact]
+    public async Task Assembly_TimeStamp()
+    {
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: connection => new TestDbContext(connection),
+            instanceSuffix: "Assembly_TimeStamp");
+
+        using var database = await instance.Build();
+        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+    }
+
+    [Fact]
+    public async Task Delegate_TimeStamp()
+    {
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: connection => new TestDbContext(connection),
+            buildTemplate:async context =>
+            {
+                await context.CreateOnExistingDb();
+            },
+            instanceSuffix: "Delegate_TimeStamp");
+
+        using var database = await instance.Build();
+        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
     }
 
     //[Fact]

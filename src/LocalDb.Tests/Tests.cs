@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using LocalDb;
 using VerifyXunit;
@@ -17,6 +19,30 @@ public class Tests :
         var connection = database.Connection;
         var data = await TestDbBuilder.AddData(connection);
         Assert.Contains(data, await TestDbBuilder.GetData(connection));
+    }
+
+    [Fact]
+    public async Task Defined_TimeStamp()
+    {
+        var dateTime = DateTime.Now;
+        var instance = new SqlInstance(
+            name: "Defined_TimeStamp",
+            buildTemplate: TestDbBuilder.CreateTable,
+            timestamp: dateTime);
+
+        await using var database = await instance.Build();
+        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+    }
+
+    [Fact]
+    public async Task Delegate_TimeStamp()
+    {
+        var instance = new SqlInstance(
+            name: "Delegate_TimeStamp",
+            buildTemplate: TestDbBuilder.CreateTable);
+
+        await using var database = await instance.Build();
+        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
     }
 
     [Fact]

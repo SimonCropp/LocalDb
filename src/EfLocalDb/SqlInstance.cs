@@ -12,10 +12,10 @@ namespace EfLocalDb
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
-        Wrapper wrapper = null!;
+        internal Wrapper Wrapper { get; private set; } = null!;
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance = null!;
 
-        public string ServerName => wrapper.ServerName;
+        public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
             Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
@@ -110,9 +110,9 @@ namespace EfLocalDb
                 return buildTemplate(connection, builder);
             }
 
-            wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
+            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
 
-            wrapper.Start(timestamp, BuildTemplate);
+            Wrapper.Start(timestamp, BuildTemplate);
         }
 
         static string GetInstanceName(string? scopeSuffix)
@@ -131,11 +131,11 @@ namespace EfLocalDb
             #endregion
         }
 
-        public void Cleanup() => wrapper.DeleteInstance();
+        public void Cleanup() => Wrapper.DeleteInstance();
 
         Task<string> BuildDatabase(string dbName)
         {
-            return wrapper.CreateDatabaseFromTemplate(dbName);
+            return Wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace EfLocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
-            var database = new SqlDatabase<TDbContext>(connection,dbName, constructInstance, () => wrapper.DeleteDatabase(dbName), data);
+            var database = new SqlDatabase<TDbContext>(connection,dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data);
             await database.Start();
             return database;
         }
@@ -214,10 +214,10 @@ namespace EfLocalDb
 
         async Task<string> BuildWithRollbackDatabase()
         {
-            await wrapper.CreateWithRollbackDatabase();
-            return wrapper.WithRollbackConnectionString;
+            await Wrapper.CreateWithRollbackDatabase();
+            return Wrapper.WithRollbackConnectionString;
         }
 
-        public string MasterConnectionString => wrapper.MasterConnectionString;
+        public string MasterConnectionString => Wrapper.MasterConnectionString;
     }
 }

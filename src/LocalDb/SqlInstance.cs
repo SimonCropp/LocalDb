@@ -10,9 +10,9 @@ namespace LocalDb
 {
     public class SqlInstance
     {
-        Wrapper wrapper;
+        internal readonly Wrapper Wrapper;
 
-        public string ServerName => wrapper.ServerName;
+        public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
             string name,
@@ -28,8 +28,8 @@ namespace LocalDb
             DirectoryCleaner.CleanInstance(directory);
             var callingAssembly = Assembly.GetCallingAssembly();
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-            wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
-            wrapper.Start(resultTimestamp, buildTemplate);
+            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
+            Wrapper.Start(resultTimestamp, buildTemplate);
         }
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate, Assembly callingAssembly)
@@ -49,12 +49,12 @@ namespace LocalDb
 
         public void Cleanup()
         {
-            wrapper.DeleteInstance();
+            Wrapper.DeleteInstance();
         }
 
         Task<string> BuildContext(string dbName)
         {
-            return wrapper.CreateDatabaseFromTemplate(dbName);
+            return Wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
         #region ConventionBuildSignature
@@ -102,7 +102,7 @@ namespace LocalDb
             var database = new SqlDatabase(
                 connection,
                 dbName,
-                () => wrapper.DeleteDatabase(dbName));
+                () => Wrapper.DeleteDatabase(dbName));
             await database.Start();
             return database;
         }
@@ -120,10 +120,10 @@ namespace LocalDb
 
         async Task<string> BuildWithRollbackDatabase()
         {
-            await wrapper.CreateWithRollbackDatabase();
-            return wrapper.WithRollbackConnectionString;
+            await Wrapper.CreateWithRollbackDatabase();
+            return Wrapper.WithRollbackConnectionString;
         }
 
-        public string MasterConnectionString => wrapper.MasterConnectionString;
+        public string MasterConnectionString => Wrapper.MasterConnectionString;
     }
 }

@@ -12,10 +12,10 @@ namespace EfLocalDb
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
-        Wrapper wrapper = null!;
+        internal Wrapper Wrapper { get; private set; } = null!;
         Func<DbConnection, TDbContext> constructInstance = null!;
 
-        public string ServerName => wrapper.ServerName;
+        public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
             Func<DbConnection, TDbContext> constructInstance,
@@ -109,9 +109,9 @@ namespace EfLocalDb
                 return buildTemplate(connection);
             }
 
-            wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
+            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
 
-            wrapper.Start(timestamp, BuildTemplate);
+            Wrapper.Start(timestamp, BuildTemplate);
         }
 
         static string GetInstanceName(string? scopeSuffix)
@@ -126,11 +126,11 @@ namespace EfLocalDb
             return $"{typeof(TDbContext).Name}_{scopeSuffix}";
         }
 
-        public void Cleanup() => wrapper.DeleteInstance();
+        public void Cleanup() => Wrapper.DeleteInstance();
 
         Task<string> BuildDatabase(string dbName)
         {
-            return wrapper.CreateDatabaseFromTemplate(dbName);
+            return Wrapper.CreateDatabaseFromTemplate(dbName);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace EfLocalDb
                 connection,
                 dbName,
                 constructInstance,
-                () => wrapper.DeleteDatabase(dbName),
+                () => Wrapper.DeleteDatabase(dbName),
                 data);
             await database.Start();
             return database;
@@ -218,6 +218,6 @@ namespace EfLocalDb
         //    return wrapper.WithRollbackConnectionString;
         //}
 
-        public string MasterConnectionString => wrapper.MasterConnectionString;
+        public string MasterConnectionString => Wrapper.MasterConnectionString;
     }
 }
