@@ -34,7 +34,14 @@ public static class LocalDbLogging
 
     internal static void Log(string message)
     {
-        Console.WriteLine($"LocalDb: {message}");
+        try
+        {
+            Console.WriteLine($"LocalDb: {message}");
+        }
+        // dont care if log fails
+        catch
+        {
+        }
     }
 }
 #endregion

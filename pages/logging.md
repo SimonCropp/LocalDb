@@ -59,11 +59,18 @@ public static class LocalDbLogging
 
     internal static void Log(string message)
     {
-        Console.WriteLine($"LocalDb: {message}");
+        try
+        {
+            Console.WriteLine($"LocalDb: {message}");
+        }
+        // dont care if log fails
+        catch
+        {
+        }
     }
 }
 ```
-<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L40' title='File snippet `localdblogging` was extracted from'>snippet source</a> | <a href='#snippet-localdblogging' title='Navigate to start of snippet `localdblogging`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L47' title='File snippet `localdblogging` was extracted from'>snippet source</a> | <a href='#snippet-localdblogging' title='Navigate to start of snippet `localdblogging`'>anchor</a></sup>
 <!-- endsnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
