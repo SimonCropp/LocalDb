@@ -13,7 +13,7 @@
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.0" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" Version="1.0.42" PrivateAssets="All" />
