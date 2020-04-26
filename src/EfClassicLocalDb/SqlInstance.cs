@@ -22,7 +22,9 @@ namespace EfLocalDb
             Func<TDbContext, Task>? buildTemplate = null,
             string? instanceSuffix = null,
             DateTime? timestamp = null,
-            ushort templateSize = 3)
+            ushort templateSize = 3,
+            string? templatePath = null,
+            string? logPath = null)
         {
             Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
@@ -32,7 +34,7 @@ namespace EfLocalDb
             var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
 
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(convertedBuildTemplate, constructInstance, instanceName, directory, templateSize, resultTimestamp);
+            Init(convertedBuildTemplate, constructInstance, instanceName, directory, templateSize, resultTimestamp, templatePath, logPath);
         }
 
         public SqlInstance(
@@ -96,7 +98,9 @@ namespace EfLocalDb
             string name,
             string directory,
             ushort templateSize,
-            DateTime timestamp)
+            DateTime timestamp,
+            string? templatePath = null,
+            string? logPath = null)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
@@ -109,8 +113,7 @@ namespace EfLocalDb
                 return buildTemplate(connection);
             }
 
-            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize);
-
+            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize, templatePath, logPath);
             Wrapper.Start(timestamp, BuildTemplate);
         }
 
