@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfLocalDb
 {
@@ -15,6 +16,7 @@ namespace EfLocalDb
         internal Wrapper Wrapper { get; private set; } = null!;
         Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance = null!;
 
+        public IModel Model { get; private set; } = null!;
         public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
@@ -33,6 +35,13 @@ namespace EfLocalDb
             var name = GetInstanceName(instanceSuffix);
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
             Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp);
+        }
+
+        static IModel BuildModel(Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance)
+        {
+            var builder = DefaultOptionsBuilder.Build<TDbContext>();
+            builder.UseSqlServer("Fake");
+            return constructInstance(builder).Model;
         }
 
         public SqlInstance(
@@ -99,6 +108,7 @@ namespace EfLocalDb
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
+            Model = BuildModel(constructInstance);
             this.constructInstance = constructInstance;
 
             DirectoryCleaner.CleanInstance(directory);
@@ -181,7 +191,7 @@ namespace EfLocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
-            var database = new SqlDatabase<TDbContext>(connection,dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data);
+            var database = new SqlDatabase<TDbContext>(connection, dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data);
             await database.Start();
             return database;
         }
@@ -197,7 +207,7 @@ namespace EfLocalDb
         /// <param name="data">The seed data.</param>
         public Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(params object[] data)
         {
-            return BuildWithRollback((IEnumerable<object>)data);
+            return BuildWithRollback((IEnumerable<object>) data);
         }
 
         /// <summary>
