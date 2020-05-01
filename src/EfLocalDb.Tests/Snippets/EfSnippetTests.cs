@@ -12,23 +12,17 @@ public class EfSnippetTests
     }
 
     #region EfTest
-
     [Fact]
     public async Task TheTest()
     {
         #region EfBuildDatabase
-
         await using var database = await sqlInstance.Build();
-
         #endregion
 
         #region EfBuildContext
-
         await using (var dbContext = database.NewDbContext())
         {
-
             #endregion
-
             var entity = new TheEntity
             {
                 Property = "prop"
@@ -41,10 +35,8 @@ public class EfSnippetTests
         {
             Assert.Single(dbContext.TestEntities);
         }
-
         #endregion
     }
-
 
     [Fact]
     public async Task TheTestWithDbName()

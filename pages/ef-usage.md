@@ -156,7 +156,7 @@ Usage inside a test consists of two parts:
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L23' title='File snippet `efbuilddatabase` was extracted from'>snippet source</a> | <a href='#snippet-efbuilddatabase' title='Navigate to start of snippet `efbuilddatabase`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L18-L20' title='File snippet `efbuilddatabase` was extracted from'>snippet source</a> | <a href='#snippet-efbuilddatabase' title='Navigate to start of snippet `efbuilddatabase`'>anchor</a></sup>
 <!-- endsnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -170,7 +170,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await using (var dbContext = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L25-L30' title='File snippet `efbuildcontext` was extracted from'>snippet source</a> | <a href='#snippet-efbuildcontext' title='Navigate to start of snippet `efbuildcontext`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L22-L25' title='File snippet `efbuildcontext` was extracted from'>snippet source</a> | <a href='#snippet-efbuildcontext' title='Navigate to start of snippet `efbuildcontext`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -191,72 +191,16 @@ public class EfSnippetTests
     static EfSnippetTests()
     {
         sqlInstance = new SqlInstance<MyDbContext>(
-            connection => new MyDbContext(connection));
-    }
-
-    [Fact]
-    public async Task TheTest()
-    {
-        using var database = await sqlInstance.Build();
-        using (var dbContext = database.NewDbContext())
-        {
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            dbContext.TestEntities.Add(entity);
-            await dbContext.SaveChangesAsync();
-        }
-
-        using (var dbContext = database.NewDbContext())
-        {
-            Assert.Single(dbContext.TestEntities);
-        }
-    }
-
-    [Fact]
-    public async Task TheTestWithDbName()
-    {
-        using var database = await sqlInstance.Build("TheTestWithDbName");
-        var entity = new TheEntity
-        {
-            Property = "prop"
-        };
-        await database.AddData(entity);
-
-        Assert.Single(database.Context.TestEntities);
-    }
-}
-```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='File snippet `EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfSnippetTests.cs' title='Navigate to start of snippet `EfSnippetTests.cs`'>anchor</a></sup>
-<a id='snippet-EfSnippetTests.cs-1'/></a>
-```cs
-using System.Threading.Tasks;
-using EfLocalDb;
-using Xunit;
-
-public class EfSnippetTests
-{
-    static SqlInstance<MyDbContext> sqlInstance;
-    static EfSnippetTests()
-    {
-        sqlInstance = new SqlInstance<MyDbContext>(
             builder => new MyDbContext(builder.Options));
     }
 
-
     [Fact]
     public async Task TheTest()
     {
-
         await using var database = await sqlInstance.Build();
-
-
 
         await using (var dbContext = database.NewDbContext())
         {
-
-
             var entity = new TheEntity
             {
                 Property = "prop"
@@ -269,9 +213,7 @@ public class EfSnippetTests
         {
             Assert.Single(dbContext.TestEntities);
         }
-
     }
-
 
     [Fact]
     public async Task TheTestWithDbName()
@@ -287,7 +229,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L55' title='File snippet `EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfSnippetTests.cs-1' title='Navigate to start of snippet `EfSnippetTests.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='File snippet `EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfSnippetTests.cs' title='Navigate to start of snippet `EfSnippetTests.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 

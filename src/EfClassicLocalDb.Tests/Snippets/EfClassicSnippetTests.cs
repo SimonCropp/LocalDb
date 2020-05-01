@@ -2,10 +2,11 @@
 using EfLocalDb;
 using Xunit;
 
-public class EfSnippetTests
+public class EfClassicSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
-    static EfSnippetTests()
+
+    static EfClassicSnippetTests()
     {
         sqlInstance = new SqlInstance<MyDbContext>(
             connection => new MyDbContext(connection));
