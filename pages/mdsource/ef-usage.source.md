@@ -1,6 +1,6 @@
-# EntityFramework Usage
+# EntityFramework Core Usage
 
-Interactions with SqlLocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
+Interactions with SqlLocalDB via [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/).
 
 
 ## EfLocalDb package [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.svg)](https://www.nuget.org/packages/EfLocalDb/)

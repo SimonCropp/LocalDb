@@ -5,7 +5,7 @@ Source File: /pages/mdsource/ef-classic-usage.source.md
 To change this file edit the source file and then run MarkdownSnippets.
 -->
 
-# Classic EntityFramework Usage
+# Classic EntityFramework Classic Usage
 
 Interactions with SqlLocalDB via [Classic Entity Framework](https://docs.microsoft.com/en-us/ef/ef6/).
 
