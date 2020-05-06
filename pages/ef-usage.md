@@ -19,8 +19,8 @@ https://nuget.org/packages/EfLocalDb/
 
 The snippets use a DbContext of the following form:
 
-<!-- snippet: TheDbContext.cs -->
-<a id='snippet-TheDbContext.cs'/></a>
+<!-- snippet: EfLocalDb.Tests/Snippets/TheDbContext.cs -->
+<a id='snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs'/></a>
 ```cs
 using Microsoft.EntityFrameworkCore;
 
@@ -40,11 +40,11 @@ public class TheDbContext :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17' title='File snippet `TheDbContext.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheDbContext.cs' title='Navigate to start of snippet `TheDbContext.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L17' title='File snippet `EfLocalDb.Tests/Snippets/TheDbContext.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs' title='Navigate to start of snippet `EfLocalDb.Tests/Snippets/TheDbContext.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
-<!-- snippet: TheEntity.cs -->
-<a id='snippet-TheEntity.cs'/></a>
+<!-- snippet: EfLocalDb.Tests/Snippets/TheEntity.cs -->
+<a id='snippet-EfLocalDb.Tests/Snippets/TheEntity.cs'/></a>
 ```cs
 public class TheEntity
 {
@@ -52,7 +52,7 @@ public class TheEntity
     public string? Property { get; set; }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5' title='File snippet `TheEntity.cs` was extracted from'>snippet source</a> | <a href='#snippet-TheEntity.cs' title='Navigate to start of snippet `TheEntity.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheEntity.cs#L1-L5' title='File snippet `EfLocalDb.Tests/Snippets/TheEntity.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheEntity.cs' title='Navigate to start of snippet `EfLocalDb.Tests/Snippets/TheEntity.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -178,8 +178,8 @@ await using (var dbContext = database.NewDbContext())
 
 The above are combined in a full test:
 
-<!-- snippet: EfSnippetTests.cs -->
-<a id='snippet-EfSnippetTests.cs'/></a>
+<!-- snippet: EfLocalDb.Tests/Snippets/EfSnippetTests.cs -->
+<a id='snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs'/></a>
 ```cs
 using System.Threading.Tasks;
 using EfLocalDb;
@@ -229,7 +229,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='File snippet `EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfSnippetTests.cs' title='Navigate to start of snippet `EfSnippetTests.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='File snippet `EfLocalDb.Tests/Snippets/EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Navigate to start of snippet `EfLocalDb.Tests/Snippets/EfSnippetTests.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
@@ -237,8 +237,8 @@ public class EfSnippetTests
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
-<!-- snippet: DefaultOptionsBuilder.cs -->
-<a id='snippet-DefaultOptionsBuilder.cs'/></a>
+<!-- snippet: EfLocalDb/DefaultOptionsBuilder.cs -->
+<a id='snippet-EfLocalDb/DefaultOptionsBuilder.cs'/></a>
 ```cs
 using Microsoft.EntityFrameworkCore;
 
@@ -260,5 +260,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19' title='File snippet `DefaultOptionsBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-DefaultOptionsBuilder.cs' title='Navigate to start of snippet `DefaultOptionsBuilder.cs`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L19' title='File snippet `EfLocalDb/DefaultOptionsBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Navigate to start of snippet `EfLocalDb/DefaultOptionsBuilder.cs`'>anchor</a></sup>
 <!-- endsnippet -->

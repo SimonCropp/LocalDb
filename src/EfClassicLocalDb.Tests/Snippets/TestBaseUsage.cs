@@ -5,6 +5,8 @@ using Xunit;
 
 namespace TestBase
 {
+    #region EfClassicTestBase
+
     public class TestBase
     {
         static SqlInstance<TheDbContext> sqlInstance;
@@ -39,4 +41,6 @@ namespace TestBase
             Assert.Single(database.Context.TestEntities);
         }
     }
+
+    #endregion
 }

@@ -2,11 +2,11 @@
 using EfLocalDb;
 using Xunit;
 
-public class EfClassicSnippetTests
+public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
 
-    static EfClassicSnippetTests()
+    static EfSnippetTests()
     {
         sqlInstance = new SqlInstance<MyDbContext>(
             connection => new MyDbContext(connection));
@@ -15,9 +15,13 @@ public class EfClassicSnippetTests
     [Fact]
     public async Task TheTest()
     {
+        #region EfClassicBuildDatabase
         using var database = await sqlInstance.Build();
+        #endregion
+        #region EfClassicBuildContext
         using (var dbContext = database.NewDbContext())
         {
+            #endregion
             var entity = new TheEntity
             {
                 Property = "prop"
