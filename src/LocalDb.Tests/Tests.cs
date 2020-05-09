@@ -21,19 +21,19 @@ public class Tests :
         Assert.Contains(data, await TestDbBuilder.GetData(connection));
     }
 
-    [Fact]
-    public async Task SuppliedTemplate()
-    {
-        // The template has been pre-created with 2 test entities
-        var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
-        var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
+    //[Fact]
+    //public async Task SuppliedTemplate()
+    //{
+    //    // The template has been pre-created with 2 test entities
+    //    var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
+    //    var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
 
-        var myInstance = new SqlInstance("SuppliedTemplate", TestDbBuilder.CreateTable, templatePath: templatePath, logPath: logPath);
-        await using var database = await myInstance.Build();
-        var connection = database.Connection;
-        //var data = await TestDbBuilder.AddData(connection);
-        //Assert.Contains(data, await TestDbBuilder.GetData(connection));
-    }
+    //    var myInstance = new SqlInstance("SuppliedTemplate", TestDbBuilder.CreateTable, templatePath: templatePath, logPath: logPath);
+    //    await using var database = await myInstance.Build();
+    //    var connection = database.Connection;
+    //    //var data = await TestDbBuilder.AddData(connection);
+    //    //Assert.Contains(data, await TestDbBuilder.GetData(connection));
+    //}
 
     [Fact]
     public async Task Defined_TimeStamp()
