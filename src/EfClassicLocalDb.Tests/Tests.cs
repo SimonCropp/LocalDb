@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using EfLocalDb;
 using VerifyXunit;
@@ -170,6 +171,21 @@ public class Tests :
         };
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+    }
+
+    [Fact]
+    public async Task SuppliedTemplate()
+    {
+        // The template has been pre-created with 2 test entities
+        var baseDir = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "Test Data");
+        var templatePath = Path.Join(baseDir, "template.mdf");
+        var logPath = Path.Join(baseDir, "template_log.ldf");
+
+        var myInstance = new SqlInstance<TestDbContext>(x => new TestDbContext(x), templatePath: templatePath, logPath: logPath);
+        using var db = await myInstance.Build();
+        using var context = db.Context;
+
+        Assert.Equal(2, context.TestEntities.Count());
     }
 
     //[Fact]

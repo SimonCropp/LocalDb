@@ -18,4 +18,15 @@
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" Version="1.0.42" PrivateAssets="All" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Test Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Test Data\template.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Data\template_log.ldf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
