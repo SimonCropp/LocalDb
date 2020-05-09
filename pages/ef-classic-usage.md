@@ -144,7 +144,6 @@ public class Tests :
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45' title='File snippet `efclassictestbase` was extracted from'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Navigate to start of snippet `efclassictestbase`'>anchor</a></sup>
 <!-- endsnippet -->
 
-
 ## Usage in a Test
 
 Usage inside a test consists of two parts:
@@ -231,4 +230,41 @@ public class EfSnippetTests
 }
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='File snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs`'>anchor</a></sup>
+<!-- endsnippet -->
+
+
+## Using a pre-constructed template
+
+It is possible to pass the path to a pre-existing template to SqlInstance. This is useful if your database contains stored procedures, or requires a large amount of test data.
+
+<!-- snippet: EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs -->
+<a id='snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs'/></a>
+```cs
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using EfLocalDb;
+
+namespace EfClassicLocalDb.Tests.Snippets
+{
+    static class SuppliedTemplate
+    {
+        static SqlInstance<MyDbContext> sqlInstance;
+
+        static SuppliedTemplate()
+        {
+            var baseDir = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "Test Data");
+            var templatePath = Path.Join(baseDir, "template.mdf");
+            var logPath = Path.Join(baseDir, "template_log.ldf");
+
+            sqlInstance = new SqlInstance<MyDbContext>(
+                connection => new MyDbContext(connection),
+                templatePath: templatePath,
+                logPath: logPath);
+        }
+    }
+}
+```
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L25' title='File snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs`'>anchor</a></sup>
 <!-- endsnippet -->
