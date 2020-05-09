@@ -29,7 +29,8 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
   * [References:](#references)
   * [Usage](#usage)
     * [Raw SqlConnection](#raw-sqlconnection)
-    * [EntityFramework](#entityframework)
+    * [EntityFramework Classic](#entityframework-classic)
+    * [EntityFramework Core](#entityframework-core)
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
   * [SQL Server Updates](#sql-server-updates)
@@ -37,8 +38,9 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
   * [Security contact information](#security-contact-information)<!-- endtoc -->
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
-  * [EntityFramework Usage](/pages/ef-usage.md)
-  * [EntityFramework Migrations](/pages/efmigrations.md)
+  * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)
+  * [EntityFramework Core Usage](/pages/ef-usage.md)
+  * [EntityFramework Core Migrations](/pages/efmigrations.md)
   * [With Rollback Usage](/pages/with-rollback.md)
   * [Directory and name resolution](/pages/directory-and-name-resolution.md)
   * [Sql Management Studio](/pages/sql-management-studio.md)
@@ -107,9 +109,16 @@ Interactions with SqlLocalDB via a [SqlConnection](https://docs.microsoft.com/en
 [Full Usage](/pages/raw-usage.md)
 
 
-### EntityFramework
+### EntityFramework Classic
 
-Interactions with SqlLocalDB via [Entity Framework](https://docs.microsoft.com/en-us/ef/core/).
+Interactions with SqlLocalDB via [Entity Framework Classic](https://docs.microsoft.com/en-us/ef/ef6/).
+
+[Full Usage](/pages/ef--classic-usage.md)
+
+
+### EntityFramework Core
+
+Interactions with SqlLocalDB via [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/).
 
 [Full Usage](/pages/ef-usage.md)
 

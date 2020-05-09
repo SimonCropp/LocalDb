@@ -19,7 +19,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfLocalDb/SqlInstance.cs#L122-L131' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/SqlInstance.cs#L132-L141' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -175,5 +175,5 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L52-L54' title='File snippet `efwithdbname` was extracted from'>snippet source</a> | <a href='#snippet-efwithdbname' title='Navigate to start of snippet `efwithdbname`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L44-L46' title='File snippet `efwithdbname` was extracted from'>snippet source</a> | <a href='#snippet-efwithdbname' title='Navigate to start of snippet `efwithdbname`'>anchor</a></sup>
 <!-- endsnippet -->

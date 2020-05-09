@@ -5,6 +5,7 @@ using Xunit;
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
+
     static EfSnippetTests()
     {
         sqlInstance = new SqlInstance<MyDbContext>(
@@ -14,9 +15,13 @@ public class EfSnippetTests
     [Fact]
     public async Task TheTest()
     {
+        #region EfClassicBuildDatabase
         using var database = await sqlInstance.Build();
+        #endregion
+        #region EfClassicBuildContext
         using (var dbContext = database.NewDbContext())
         {
+            #endregion
             var entity = new TheEntity
             {
                 Property = "prop"
