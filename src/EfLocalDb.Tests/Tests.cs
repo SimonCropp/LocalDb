@@ -184,6 +184,23 @@ public class Tests :
     }
 
     [Fact]
+    public async Task SuppliedTemplate()
+    {
+        // The template has been pre-created with 2 test entities
+        var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
+        var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
+
+        var myInstance = new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
+            templatePath: templatePath,
+            logPath: logPath);
+        await using var db = await myInstance.Build();
+        var context = db.Context;
+
+        Assert.Equal(2, context.TestEntities.Count());
+    }
+
+    [Fact]
     public async Task WithRollback()
     {
         var entity = new TestEntity
