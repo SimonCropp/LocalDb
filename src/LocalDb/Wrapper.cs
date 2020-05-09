@@ -19,8 +19,9 @@ class Wrapper
     public readonly string ServerName;
     Task startupTask = null!;
     DbConnection masterConnection = null!;
+    readonly bool templateProvided = false;
 
-    public Wrapper(Func<string, DbConnection> buildConnection, string instance, string directory, ushort size = 3)
+    public Wrapper(Func<string, DbConnection> buildConnection, string instance, string directory, ushort size = 3, string? existingTemplatePath = null, string? existingLogPath = null)
     {
         Guard.AgainstDatabaseSize(nameof(size), size);
         Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
@@ -33,8 +34,9 @@ class Wrapper
         WithRollbackConnectionString = $"Data Source=(LocalDb)\\{instance};Database=withRollback;Pooling=false";
         Directory = directory;
         this.size = size;
-        TemplateDataFile = Path.Combine(directory, "template.mdf");
-        TemplateLogFile = Path.Combine(directory, "template_log.ldf");
+        templateProvided = existingTemplatePath != null;
+        TemplateDataFile = existingTemplatePath ?? Path.Combine(directory, "template.mdf");
+        TemplateLogFile = existingLogPath ?? Path.Combine(directory, "template_log.ldf");
         var directoryInfo = System.IO.Directory.CreateDirectory(directory);
         directoryInfo.ResetAccess();
 
@@ -153,7 +155,7 @@ class Wrapper
             await ExecuteOnMasterAsync(SqlBuilder.GetOptimizationCommand(size));
         }
 
-        if (!rebuild)
+        if (!rebuild || templateProvided)
         {
             await takeDbsOffline;
             return;

@@ -39,7 +39,6 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 
 snippet: EfClassicTestBase
 
-
 ## Usage in a Test
 
 Usage inside a test consists of two parts:
@@ -62,3 +61,10 @@ snippet: EfClassicBuildContext
 The above are combined in a full test:
 
 snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs
+
+
+## Using a pre-constructed template
+
+It is possible to pass the path to a pre-existing template to SqlInstance. This is useful if your database contains stored procedures, or requires a large amount of test data.
+
+snippet: EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs
