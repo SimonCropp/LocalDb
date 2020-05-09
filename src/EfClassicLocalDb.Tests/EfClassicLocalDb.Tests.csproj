@@ -5,6 +5,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\LocalDb.Tests\ModuleInitializer.cs" Link="ModuleInitializer.cs" />
+    <None Include="..\TestData\suppliedTemplate.mdf" Link="suppliedTemplate.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
 
     <PackageReference Include="EntityFramework" Version="6.4.0" />
     <PackageReference Include="XunitContext" Version="1.9.3" />
@@ -17,16 +23,5 @@
     <ProjectReference Include="..\EfClassicLocalDb\EfClassicLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" Version="1.0.42" PrivateAssets="All" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Test Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Test Data\template.mdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Test Data\template_log.ldf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+// ReSharper disable RedundantCast
 
 namespace EfLocalDb
 {
@@ -43,12 +44,14 @@ namespace EfLocalDb
             string directory,
             Func<TDbContext, Task>? buildTemplate = null,
             DateTime? timestamp = null,
-            ushort templateSize = 3)
+            ushort templateSize = 3,
+            string? templatePath = null,
+            string? logPath = null)
         {
             var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
 
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp);
+            Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp, templatePath, logPath);
         }
 
         public SqlInstance(
@@ -56,13 +59,15 @@ namespace EfLocalDb
             Func<DbConnection, TDbContext> constructInstance,
             string? instanceSuffix = null,
             DateTime? timestamp = null,
-            ushort templateSize = 3)
+            ushort templateSize = 3,
+            string? templatePath = null,
+            string? logPath = null)
         {
             var instanceName = GetInstanceName(instanceSuffix);
             var directory = DirectoryFinder.Find(instanceName);
 
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(buildTemplate, constructInstance, instanceName, directory, templateSize, resultTimestamp);
+            Init(buildTemplate, constructInstance, instanceName, directory, templateSize, resultTimestamp, templatePath, logPath);
         }
 
         public SqlInstance(
@@ -71,10 +76,12 @@ namespace EfLocalDb
             string name,
             string directory,
             DateTime? timestamp = null,
-            ushort templateSize = 3)
+            ushort templateSize = 3,
+            string? templatePath = null,
+            string? logPath = null)
         {
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(buildTemplate, constructInstance, name, directory, templateSize, resultTimestamp);
+            Init(buildTemplate, constructInstance, name, directory, templateSize, resultTimestamp, templatePath, logPath);
         }
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
@@ -99,8 +106,8 @@ namespace EfLocalDb
             string directory,
             ushort templateSize,
             DateTime timestamp,
-            string? templatePath = null,
-            string? logPath = null)
+            string? templatePath,
+            string? logPath)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);

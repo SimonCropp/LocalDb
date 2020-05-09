@@ -177,13 +177,15 @@ public class Tests :
     public async Task SuppliedTemplate()
     {
         // The template has been pre-created with 2 test entities
-        var baseDir = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "Test Data");
-        var templatePath = Path.Join(baseDir, "template.mdf");
-        var logPath = Path.Join(baseDir, "template_log.ldf");
+        var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
+        var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
 
-        var myInstance = new SqlInstance<TestDbContext>(x => new TestDbContext(x), templatePath: templatePath, logPath: logPath);
-        using var db = await myInstance.Build();
-        using var context = db.Context;
+        var sqlInstance = new SqlInstance<TestDbContext>(
+            constructInstance: x => new TestDbContext(x),
+            templatePath: templatePath,
+            logPath: logPath);
+        using var database = await sqlInstance.Build();
+        var context = database.Context;
 
         Assert.Equal(2, context.TestEntities.Count());
     }

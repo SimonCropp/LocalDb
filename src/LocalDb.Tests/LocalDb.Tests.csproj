@@ -3,6 +3,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\TestData\suppliedTemplate.mdf" Link="suppliedTemplate.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <PackageReference Include="Fody" Version="6.1.1" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="XunitContext" Version="1.9.3" />

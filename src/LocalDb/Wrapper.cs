@@ -19,11 +19,19 @@ class Wrapper
     public readonly string ServerName;
     Task startupTask = null!;
     DbConnection masterConnection = null!;
-    readonly bool templateProvided = false;
+    bool templateProvided;
 
-    public Wrapper(Func<string, DbConnection> buildConnection, string instance, string directory, ushort size = 3, string? existingTemplatePath = null, string? existingLogPath = null)
+    public Wrapper(
+        Func<string, DbConnection> buildConnection,
+        string instance,
+        string directory,
+        ushort size = 3,
+        string? existingTemplatePath = null,
+        string? existingLogPath = null)
     {
         Guard.AgainstDatabaseSize(nameof(size), size);
+        Guard.AgainstWhiteSpace(nameof(existingTemplatePath), existingTemplatePath);
+        Guard.AgainstWhiteSpace(nameof(existingLogPath), existingLogPath);
         Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
         LocalDbLogging.WrapperCreated = true;
@@ -42,7 +50,6 @@ class Wrapper
 
         ServerName = $@"(LocalDb)\{instance}";
     }
-
 
     public async Task<string> CreateDatabaseFromTemplate(string name, bool withRollback = false)
     {
