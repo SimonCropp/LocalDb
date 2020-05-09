@@ -173,22 +173,22 @@ public class Tests :
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
-    [Fact]
-    public async Task SuppliedTemplate()
-    {
-        // The template has been pre-created with 2 test entities
-        var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
-        var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
+    //[Fact]
+    //public async Task SuppliedTemplate()
+    //{
+    //    // The template has been pre-created with 2 test entities
+    //    var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
+    //    var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
 
-        var sqlInstance = new SqlInstance<TestDbContext>(
-            constructInstance: x => new TestDbContext(x),
-            templatePath: templatePath,
-            logPath: logPath);
-        using var database = await sqlInstance.Build();
-        var context = database.Context;
+    //    var sqlInstance = new SqlInstance<TestDbContext>(
+    //        constructInstance: x => new TestDbContext(x),
+    //        templatePath: templatePath,
+    //        logPath: logPath);
+    //    using var database = await sqlInstance.Build();
+    //    var context = database.Context;
 
-        Assert.Equal(2, context.TestEntities.Count());
-    }
+    //    Assert.Equal(2, context.TestEntities.Count());
+    //}
 
     //[Fact]
     //public async Task WithRollback()
