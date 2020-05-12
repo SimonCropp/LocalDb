@@ -12,7 +12,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
-    <PackageReference Include="EntityFramework" Version="6.4.0" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="XunitContext" Version="1.9.3" />
     <PackageReference Include="Verify.Xunit" Version="2.2.1" />
     <PackageReference Include="Fody" Version="6.1.1" PrivateAssets="all" />
