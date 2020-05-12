@@ -137,15 +137,15 @@ public class Tests :
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await using (var dbContext = database.NewDbContext())
+        await using (var data = database.NewDbContext())
         {
-            dbContext.Add(entity);
-            await dbContext.SaveChangesAsync();
+            data.Add(entity);
+            await data.SaveChangesAsync();
         }
 
-        await using (var dbContext = database.NewDbContext())
+        await using (var data = database.NewDbContext())
         {
-            Assert.NotNull(await dbContext.TestEntities.FindAsync(entity.Id));
+            Assert.NotNull(await data.TestEntities.FindAsync(entity.Id));
         }
     }
 
@@ -168,8 +168,8 @@ public class Tests :
     public async Task NewDbContext()
     {
         await using var database = await instance.Build();
-        await using var dbContext = database.NewDbContext();
-        Assert.NotSame(database.Context, dbContext);
+        await using var data = database.NewDbContext();
+        Assert.NotSame(database.Context, data);
     }
 
     [Fact]

@@ -167,7 +167,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 <!-- snippet: EfClassicBuildContext -->
 <a id='snippet-efclassicbuildcontext'/></a>
 ```cs
-using (var dbContext = database.NewDbContext())
+using (var data = database.NewDbContext())
 {
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L21-L24' title='File snippet `efclassicbuildcontext` was extracted from'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Navigate to start of snippet `efclassicbuildcontext`'>anchor</a></sup>
@@ -199,19 +199,19 @@ public class EfSnippetTests
     public async Task TheTest()
     {
         using var database = await sqlInstance.Build();
-        using (var dbContext = database.NewDbContext())
+        using (var data = database.NewDbContext())
         {
             var entity = new TheEntity
             {
                 Property = "prop"
             };
-            dbContext.TestEntities.Add(entity);
-            await dbContext.SaveChangesAsync();
+            data.TestEntities.Add(entity);
+            await data.SaveChangesAsync();
         }
 
-        using (var dbContext = database.NewDbContext())
+        using (var data = database.NewDbContext())
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(data.TestEntities);
         }
     }
 

@@ -20,20 +20,20 @@ public class EfSnippetTests
         #endregion
 
         #region EfBuildContext
-        await using (var dbContext = database.NewDbContext())
+        await using (var data = database.NewDbContext())
         {
             #endregion
             var entity = new TheEntity
             {
                 Property = "prop"
             };
-            dbContext.Add(entity);
-            await dbContext.SaveChangesAsync();
+            data.Add(entity);
+            await data.SaveChangesAsync();
         }
 
-        await using (var dbContext = database.NewDbContext())
+        await using (var data = database.NewDbContext())
         {
-            Assert.Single(dbContext.TestEntities);
+            Assert.Single(data.TestEntities);
         }
         #endregion
     }

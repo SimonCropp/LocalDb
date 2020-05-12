@@ -17,8 +17,8 @@ var sqlInstance = new SqlInstance<MyDbContext>(
     {
         options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 
-        await using var dbContext = new MyDbContext(options.Options);
-        await dbContext.Database.MigrateAsync();
+        await using var data = new MyDbContext(options.Options);
+        await data.Database.MigrateAsync();
     },
     constructInstance: builder => new MyDbContext(builder.Options));
 ```
@@ -48,8 +48,8 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 <!-- snippet: Migrate -->
 <a id='snippet-migrate'/></a>
 ```cs
-await using var dbContext = new MyDbContext(options.Options);
-await dbContext.Database.MigrateAsync();
+await using var data = new MyDbContext(options.Options);
+await data.Database.MigrateAsync();
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L25' title='File snippet `migrate` was extracted from'>snippet source</a> | <a href='#snippet-migrate' title='Navigate to start of snippet `migrate`'>anchor</a></sup>
 <!-- endsnippet -->

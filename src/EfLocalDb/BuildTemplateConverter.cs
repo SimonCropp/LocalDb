@@ -12,14 +12,14 @@ static class BuildTemplateConverter
     {
         return async (connection, builder) =>
         {
-            await using var dbContext = constructInstance(builder);
+            await using var data = constructInstance(builder);
             if (buildTemplate == null)
             {
-                await dbContext.Database.EnsureCreatedAsync();
+                await data.Database.EnsureCreatedAsync();
             }
             else
             {
-                await buildTemplate(dbContext);
+                await buildTemplate(data);
             }
         };
     }

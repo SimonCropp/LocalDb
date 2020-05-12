@@ -45,7 +45,7 @@ var sqlInstance = new SqlInstance<TheDbContext>(
 
 await using var sqlDatabase = await sqlInstance.BuildWithRollback();
 var connection = sqlDatabase.Connection;
-var dbContext = sqlDatabase.Context;
+var data = sqlDatabase.Context;
 //Use the Connection or TheDbContext
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='File snippet `efwithrollback` was extracted from'>snippet source</a> | <a href='#snippet-efwithrollback' title='Navigate to start of snippet `efwithrollback`'>anchor</a></sup>
