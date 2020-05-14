@@ -100,8 +100,28 @@ end;
         LocalDbApi.StopInstance("WithFileAndNoInstance");
     }
 
-    //TODO: new test with a named db existing, but no file existing
+    [Fact]
+    public async Task NoFileAndWithInstanceAndNamedDb()
+    {
+        var instanceName = "NoFileAndWithInstanceAndNamedDb";
+        LocalDbApi.StopAndDelete(instanceName);
+        LocalDbApi.CreateInstance(instanceName);
+        DirectoryFinder.Delete(instanceName);
+        var wrapper = new Wrapper(s => new SqlConnection(s), instanceName, DirectoryFinder.Find(instanceName));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+        //LocalDbApi.StopInstance(instanceName);
+        Thread.Sleep(3000);
+        DirectoryFinder.Delete(instanceName);
 
+        wrapper = new Wrapper(s => new SqlConnection(s), instanceName, DirectoryFinder.Find(instanceName));
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+
+        await Verify(await wrapper.ReadDatabaseState("Simple"));
+    }
 
     [Fact]
     public async Task NoFileAndWithInstance()
