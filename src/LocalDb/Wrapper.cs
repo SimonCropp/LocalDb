@@ -41,6 +41,8 @@ class Wrapper
         TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
         WithRollbackConnectionString = $"Data Source=(LocalDb)\\{instance};Database=withRollback;Pooling=false";
         Directory = directory;
+
+        LocalDbLogging.LogIfVerbose($"LocalDb: Directory: {directory}");
         this.size = size;
         templateProvided = existingTemplatePath != null;
         TemplateDataFile = existingTemplatePath ?? Path.Combine(directory, "template.mdf");
@@ -152,10 +154,7 @@ class Wrapper
         masterConnection = buildConnection(MasterConnectionString);
         await masterConnection.OpenAsync();
         var takeDbsOffline = ExecuteOnMasterAsync(SqlBuilder.TakeDbsOfflineCommand);
-        if (LocalDbLogging.Enabled)
-        {
-            LocalDbLogging.Log($"SqlServerVersion: {masterConnection.ServerVersion}");
-        }
+        LocalDbLogging.LogIfVerbose($"SqlServerVersion: {masterConnection.ServerVersion}");
 
         if (optimize)
         {
