@@ -10,8 +10,9 @@ public class DanglingLogWrapperTests :
     [Fact]
     public void Run()
     {
-        LocalDbApi.StopAndDelete("DanglingLogWrapperTests");
-        var instance = new Wrapper(s => new SqlConnection(s), "WrapperTests", DirectoryFinder.Find("DanglingLogWrapperTests"));
+        var name = "DanglingLogWrapperTests";
+        LocalDbApi.StopAndDelete(name);
+        var instance = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
         base.Dispose();
         instance.Start(DateTime.Now, TestDbBuilder.CreateTable);
     }
