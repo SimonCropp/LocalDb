@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 
 static class SqlExtensions
 {
@@ -46,7 +47,14 @@ static class SqlExtensions
 {nameof(commandText)}: {commandText}
 connectionString: {connection.ConnectionString}
 ");
-
+        if (exception is SqlException sqlException)
+        {
+            builder.AppendLine("SqlErrors:");
+            foreach (SqlError error in sqlException.Errors)
+            {
+                builder.AppendLine($"    {error.Message}");
+            }
+        }
         return new Exception(builder.ToString(), exception);
     }
 }
