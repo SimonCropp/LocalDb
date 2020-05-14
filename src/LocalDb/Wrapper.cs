@@ -42,7 +42,7 @@ class Wrapper
         WithRollbackConnectionString = $"Data Source=(LocalDb)\\{instance};Database=withRollback;Pooling=false";
         Directory = directory;
 
-        LocalDbLogging.LogIfVerbose($"LocalDb: Directory: {directory}");
+        LocalDbLogging.LogIfVerbose($"Directory: {directory}");
         this.size = size;
         templateProvided = existingTemplatePath != null;
         TemplateDataFile = existingTemplatePath ?? Path.Combine(directory, "template.mdf");
