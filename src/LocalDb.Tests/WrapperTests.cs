@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using VerifyXunit;
 using Microsoft.Data.SqlClient;
@@ -111,7 +112,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        //LocalDbApi.StopInstance(instanceName);
+
         Thread.Sleep(3000);
         DirectoryFinder.Delete(instanceName);
 
