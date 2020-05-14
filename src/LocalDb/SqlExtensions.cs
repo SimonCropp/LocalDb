@@ -3,7 +3,9 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+#if !EF
 using Microsoft.Data.SqlClient;
+#endif
 
 static class SqlExtensions
 {
@@ -47,6 +49,7 @@ static class SqlExtensions
 {nameof(commandText)}: {commandText}
 connectionString: {connection.ConnectionString}
 ");
+        #if !EF
         if (exception is SqlException sqlException)
         {
             builder.AppendLine("SqlErrors:");
@@ -55,6 +58,7 @@ connectionString: {connection.ConnectionString}
                 builder.AppendLine($"    {error.Message}");
             }
         }
+        #endif
         return new Exception(builder.ToString(), exception);
     }
 }

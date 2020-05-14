@@ -133,6 +133,12 @@ class Wrapper
             CleanStart();
             return;
         }
+        if (!File.Exists(TemplateDataFile))
+        {
+            LocalDbApi.StopAndDelete(instance);
+            CleanStart();
+            return;
+        }
 
         var templateLastMod = File.GetCreationTime(TemplateDataFile);
         if (timestamp == templateLastMod)
