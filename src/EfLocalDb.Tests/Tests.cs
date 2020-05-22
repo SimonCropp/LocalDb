@@ -79,7 +79,7 @@ public class Tests :
             storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
 
         await using var database = await instance.Build();
-        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class Tests :
             storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
 
         await using var database = await instance.Build();
-        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class Tests :
             storage: Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
 
         await using var database = await instance.Build();
-        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
     [Fact]

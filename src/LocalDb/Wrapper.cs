@@ -18,8 +18,8 @@ class Wrapper
     public readonly string WithRollbackConnectionString;
     Func<string, DbConnection> buildConnection;
     string instance;
-    public readonly string TemplateDataFile;
-    string TemplateLogFile;
+    public readonly string DataFile;
+    string LogFile;
     string TemplateConnectionString;
     public readonly string ServerName;
     Task startupTask = null!;
@@ -49,14 +49,14 @@ class Wrapper
         if (existingTemplate == null)
         {
             templateProvided = false;
-            TemplateDataFile = Path.Combine(directory, "template.mdf");
-            TemplateLogFile = Path.Combine(directory, "template_log.ldf");
+            DataFile = Path.Combine(directory, "template.mdf");
+            LogFile = Path.Combine(directory, "template_log.ldf");
         }
         else
         {
             templateProvided = true;
-            TemplateDataFile = existingTemplate.Value.DataPath;
-            TemplateLogFile = existingTemplate.Value.LogPath;
+            DataFile = existingTemplate.Value.DataPath;
+            LogFile = existingTemplate.Value.LogPath;
         }
 
         var directoryInfo = System.IO.Directory.CreateDirectory(directory);
@@ -80,8 +80,8 @@ class Wrapper
         }
 
         await startupTask;
-        File.Copy(TemplateDataFile, dataFile, true);
-        File.Copy(TemplateLogFile, logFile, true);
+        File.Copy(DataFile, dataFile, true);
+        File.Copy(LogFile, logFile, true);
 
         FileExtensions.MarkFileAsWritable(dataFile);
         FileExtensions.MarkFileAsWritable(logFile);
@@ -145,14 +145,14 @@ class Wrapper
             CleanStart();
             return;
         }
-        if (!File.Exists(TemplateDataFile))
+        if (!File.Exists(DataFile))
         {
             LocalDbApi.StopAndDelete(instance);
             CleanStart();
             return;
         }
 
-        var templateLastMod = File.GetCreationTime(TemplateDataFile);
+        var templateLastMod = File.GetCreationTime(DataFile);
         if (timestamp == templateLastMod)
         {
             LocalDbLogging.LogIfVerbose("Not modified so skipping rebuild");
@@ -167,7 +167,10 @@ class Wrapper
     }
 
     [Time]
-    async Task CreateAndDetachTemplate(DateTime timestamp, Func<DbConnection, Task> buildTemplate, bool rebuild, bool optimize)
+    async Task CreateAndDetachTemplate(
+        DateTime timestamp,
+        Func<DbConnection, Task> buildTemplate,
+        bool rebuild, bool optimize)
     {
         masterConnection = buildConnection(MasterConnectionString);
         await masterConnection.OpenAsync();
@@ -179,28 +182,31 @@ class Wrapper
             await ExecuteOnMasterAsync(SqlBuilder.GetOptimizationCommand(size));
         }
 
-        if (!rebuild || templateProvided)
+        if (rebuild && !templateProvided)
         {
-            await takeDbsOffline;
-            return;
+            await Rebuild(timestamp, buildTemplate);
         }
 
+        await takeDbsOffline;
+    }
+
+    async Task Rebuild(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
+    {
         DeleteTemplateFiles();
-        await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(TemplateDataFile, TemplateLogFile));
+        await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile));
 
-        FileExtensions.MarkFileAsWritable(TemplateDataFile);
-        FileExtensions.MarkFileAsWritable(TemplateLogFile);
+        FileExtensions.MarkFileAsWritable(DataFile);
+        FileExtensions.MarkFileAsWritable(LogFile);
 
-        using (var templateConnection = buildConnection(TemplateConnectionString))
+        using (var connection = buildConnection(TemplateConnectionString))
         {
-            await templateConnection.OpenAsync();
-            await buildTemplate(templateConnection);
+            await connection.OpenAsync();
+            await buildTemplate(connection);
         }
 
         await ExecuteOnMasterAsync(SqlBuilder.DetachTemplateCommand);
 
-        File.SetCreationTime(TemplateDataFile, timestamp);
-        await takeDbsOffline;
+        File.SetCreationTime(DataFile, timestamp);
     }
 
     Task ExecuteOnMasterAsync(string command)
@@ -217,8 +223,8 @@ class Wrapper
 
     void DeleteTemplateFiles()
     {
-        File.Delete(TemplateDataFile);
-        File.Delete(TemplateLogFile);
+        File.Delete(DataFile);
+        File.Delete(LogFile);
     }
 
     [Time]

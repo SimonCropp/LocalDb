@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.IO;
@@ -57,13 +56,9 @@ namespace EfLocalDb
             this.constructInstance = constructInstance;
 
             DirectoryCleaner.CleanInstance(storage.Value.Directory);
-            Task BuildTemplate(DbConnection connection)
-            {
-                return buildTemplate(connection);
-            }
 
             Wrapper = new Wrapper(s => new SqlConnection(s), storage.Value.Name, storage.Value.Directory, templateSize, existingTemplate);
-            Wrapper.Start(resultTimestamp, BuildTemplate);
+            Wrapper.Start(resultTimestamp, connection => buildTemplate(connection));
         }
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)

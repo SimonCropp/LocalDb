@@ -81,12 +81,12 @@ namespace EfLocalDb
                 return timestamp.Value;
             }
 
-            if (buildTemplate != null)
+            if (buildTemplate == null)
             {
-                return Timestamp.LastModified(buildTemplate);
+                return Timestamp.LastModified<TDbContext>();
             }
+            return Timestamp.LastModified(buildTemplate);
 
-            return Timestamp.LastModified<TDbContext>();
         }
 
         static IModel BuildModel(ConstructInstance<TDbContext> constructInstance)

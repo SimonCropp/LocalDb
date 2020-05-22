@@ -159,7 +159,7 @@ end;
         var dateTime = DateTime.Now;
         instance2.Start(dateTime, connection => Task.CompletedTask);
         await instance2.AwaitStart();
-        Assert.Equal(dateTime, File.GetCreationTime(instance2.TemplateDataFile));
+        Assert.Equal(dateTime, File.GetCreationTime(instance2.DataFile));
     }
 
     [Fact]
