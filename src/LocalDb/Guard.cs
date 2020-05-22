@@ -14,7 +14,7 @@ static class Guard
 
     static char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
 
-    public static void AgainstInvalidFileNameCharacters(string argumentName, string value)
+    public static void AgainstInvalidFileName(string argumentName, string value)
     {
         if (value.Any(x => invalidFileNameChars.Contains(x)))
         {

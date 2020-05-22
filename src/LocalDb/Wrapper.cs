@@ -34,7 +34,7 @@ class Wrapper
         ExistingTemplate? existingTemplate = null)
     {
         Guard.AgainstDatabaseSize(nameof(size), size);
-        Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
+        Guard.AgainstInvalidFileName(nameof(instance), instance);
 
         LocalDbLogging.WrapperCreated = true;
         this.buildConnection = buildConnection;
