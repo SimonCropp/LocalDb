@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -11,14 +10,14 @@ namespace EfLocalDb
         ISqlDatabase<TDbContext>
         where TDbContext : DbContext
     {
-        Func<DbConnection, TDbContext> constructInstance;
+        ConstructInstance<TDbContext> constructInstance;
         Func<Task> delete;
         IEnumerable<object>? data;
 
         internal SqlDatabase(
             string connectionString,
             string name,
-            Func<DbConnection, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             Func<Task> delete,
             IEnumerable<object>? data)
         {

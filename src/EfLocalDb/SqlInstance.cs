@@ -15,13 +15,13 @@ namespace EfLocalDb
         where TDbContext : DbContext
     {
         internal Wrapper Wrapper { get; private set; } = null!;
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance = null!;
+        ConstructInstance<TDbContext> constructInstance = null!;
 
         public IModel Model { get; private set; } = null!;
         public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             Func<TDbContext, Task>? buildTemplate = null,
             string? instanceSuffix = null,
             DateTime? timestamp = null,
@@ -40,7 +40,7 @@ namespace EfLocalDb
             Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp, templatePath, logPath);
         }
 
-        static IModel BuildModel(Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance)
+        static IModel BuildModel(ConstructInstance<TDbContext> constructInstance)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer("Fake");
@@ -49,7 +49,7 @@ namespace EfLocalDb
 
         public SqlInstance(
             Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string? instanceSuffix = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
@@ -78,7 +78,7 @@ namespace EfLocalDb
         }
 
         public SqlInstance(
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string name,
             string directory,
             Func<TDbContext, Task>? buildTemplate = null,
@@ -94,7 +94,7 @@ namespace EfLocalDb
 
         public SqlInstance(
             Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string name,
             string directory,
             DateTime? timestamp = null,
@@ -107,7 +107,7 @@ namespace EfLocalDb
         }
 
         void Init(Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string name,
             string directory,
             ushort templateSize,

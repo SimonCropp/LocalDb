@@ -1,12 +1,13 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
+using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
 
 static class BuildTemplateConverter
 {
     public static Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> Convert<TDbContext>(
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+        ConstructInstance<TDbContext> constructInstance,
         Func<TDbContext, Task>? buildTemplate)
         where TDbContext : DbContext
     {

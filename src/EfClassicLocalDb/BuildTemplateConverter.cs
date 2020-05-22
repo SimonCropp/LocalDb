@@ -7,7 +7,7 @@ using EfLocalDb;
 static class BuildTemplateConverter
 {
     public static Func<DbConnection, Task> Convert<TDbContext>(
-        Func<DbConnection, TDbContext> constructInstance,
+        ConstructInstance<TDbContext> constructInstance,
         Func<TDbContext, Task>? buildTemplate)
         where TDbContext : DbContext
     {

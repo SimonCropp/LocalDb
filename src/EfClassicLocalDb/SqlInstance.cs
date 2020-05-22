@@ -14,12 +14,12 @@ namespace EfLocalDb
         where TDbContext : DbContext
     {
         internal Wrapper Wrapper { get; private set; } = null!;
-        Func<DbConnection, TDbContext> constructInstance = null!;
+        ConstructInstance<TDbContext> constructInstance = null!;
 
         public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
-            Func<DbConnection, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             Func<TDbContext, Task>? buildTemplate = null,
             string? instanceSuffix = null,
             DateTime? timestamp = null,
@@ -39,7 +39,7 @@ namespace EfLocalDb
         }
 
         public SqlInstance(
-            Func<DbConnection, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string name,
             string directory,
             Func<TDbContext, Task>? buildTemplate = null,
@@ -56,7 +56,7 @@ namespace EfLocalDb
 
         public SqlInstance(
             Func<DbConnection, Task> buildTemplate,
-            Func<DbConnection, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string? instanceSuffix = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
@@ -72,7 +72,7 @@ namespace EfLocalDb
 
         public SqlInstance(
             Func<DbConnection, Task> buildTemplate,
-            Func<DbConnection, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string name,
             string directory,
             DateTime? timestamp = null,
@@ -101,7 +101,7 @@ namespace EfLocalDb
 
         void Init(
             Func<DbConnection, Task> buildTemplate,
-            Func<DbConnection, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             string name,
             string directory,
             ushort templateSize,
