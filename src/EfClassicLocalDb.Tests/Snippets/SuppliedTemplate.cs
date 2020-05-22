@@ -8,7 +8,6 @@ static class SuppliedTemplate
     {
         sqlInstance = new SqlInstance<MyDbContext>(
             connection => new MyDbContext(connection),
-            templatePath: "suppliedTemplate.mdf",
-            logPath: "suppliedTemplate_log.ldf");
+            existingTemplate: new ExistingTemplate("template.mdf", "template_log.ldf"));
     }
 }

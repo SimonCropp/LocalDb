@@ -7,8 +7,7 @@ class EfExplicitName
         #region EfExplicitName
         var sqlInstance = new SqlInstance<TheDbContext>(
             constructInstance: builder => new TheDbContext(builder.Options),
-            name: "theInstanceName",
-            directory: @"C:\LocalDb\theInstance");
+            storage: new Storage("theInstanceName",@"C:\LocalDb\theInstance"));
         #endregion
     }
 }

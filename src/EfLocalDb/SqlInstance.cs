@@ -14,52 +14,64 @@ namespace EfLocalDb
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
-        internal Wrapper Wrapper { get; private set; } = null!;
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance = null!;
+        internal Wrapper Wrapper { get; }
+        ConstructInstance<TDbContext> constructInstance;
+        static Storage DefaultStorage;
 
-        public IModel Model { get; private set; } = null!;
+        static SqlInstance()
+        {
+            var name = typeof(TDbContext).Name;
+            DefaultStorage = new Storage(name, DirectoryFinder.Find(name));
+        }
+
+        public IModel Model { get; }
+
         public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            Func<TDbContext, Task>? buildTemplate = null,
-            string? instanceSuffix = null,
+            ConstructInstance<TDbContext> constructInstance,
+            TemplateFromContext<TDbContext>? buildTemplate = null,
+            Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            string? templatePath = null,
-            string? logPath = null)
+            ExistingTemplate? existingTemplate = null) :
+            this(
+                constructInstance,
+                BuildTemplateConverter.Convert(constructInstance, buildTemplate),
+                storage,
+                GetTimestamp(timestamp, buildTemplate),
+                templateSize,
+                existingTemplate)
         {
-            Guard.AgainstWhiteSpace(nameof(instanceSuffix), instanceSuffix);
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
-            var instanceName = GetInstanceName(instanceSuffix);
-            var directory = DirectoryFinder.Find(instanceName);
-
-            var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
-            var name = GetInstanceName(instanceSuffix);
-            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp, templatePath, logPath);
-        }
-
-        static IModel BuildModel(Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance)
-        {
-            var builder = DefaultOptionsBuilder.Build<TDbContext>();
-            builder.UseSqlServer("Fake");
-            return constructInstance(builder).Model;
         }
 
         public SqlInstance(
-            Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string? instanceSuffix = null,
+            ConstructInstance<TDbContext> constructInstance,
+            TemplateFromConnection<TDbContext> buildTemplate,
+            Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            string? templatePath = null,
-            string? logPath = null)
+            ExistingTemplate? existingTemplate = null)
         {
-            var instanceName = GetInstanceName(instanceSuffix);
-            var directory = DirectoryFinder.Find(instanceName);
+            storage ??= DefaultStorage;
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(buildTemplate, constructInstance, instanceName, directory, templateSize, resultTimestamp, templatePath, logPath);
+            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
+            Guard.AgainstNull(nameof(constructInstance), constructInstance);
+            Model = BuildModel(constructInstance);
+            this.constructInstance = constructInstance;
+
+            DirectoryCleaner.CleanInstance(storage.Value.Directory);
+
+            Task BuildTemplate(DbConnection connection)
+            {
+                var builder = DefaultOptionsBuilder.Build<TDbContext>();
+                builder.UseSqlServer(connection);
+                return buildTemplate(connection, builder);
+            }
+
+            Wrapper = new Wrapper(s => new SqlConnection(s), storage.Value.Name, storage.Value.Directory, templateSize, existingTemplate);
+
+            Wrapper.Start(resultTimestamp, BuildTemplate);
         }
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
@@ -77,79 +89,11 @@ namespace EfLocalDb
             return Timestamp.LastModified<TDbContext>();
         }
 
-        public SqlInstance(
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string name,
-            string directory,
-            Func<TDbContext, Task>? buildTemplate = null,
-            DateTime? timestamp = null,
-            ushort templateSize = 3,
-            string? templatePath = null,
-            string? logPath = null)
+        static IModel BuildModel(ConstructInstance<TDbContext> constructInstance)
         {
-            var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
-            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(convertedBuildTemplate, constructInstance, name, directory, templateSize, resultTimestamp, templatePath, logPath);
-        }
-
-        public SqlInstance(
-            Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string name,
-            string directory,
-            DateTime? timestamp = null,
-            ushort templateSize = 3,
-            string? templatePath = null,
-            string? logPath = null)
-        {
-            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(buildTemplate, constructInstance, name, directory, templateSize, resultTimestamp, templatePath, logPath);
-        }
-
-        void Init(Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
-            string name,
-            string directory,
-            ushort templateSize,
-            DateTime timestamp,
-            string? templatePath,
-            string? logPath)
-        {
-            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
-            Guard.AgainstNullWhiteSpace(nameof(directory), directory);
-            Guard.AgainstNullWhiteSpace(nameof(name), name);
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
-            Model = BuildModel(constructInstance);
-            this.constructInstance = constructInstance;
-
-            DirectoryCleaner.CleanInstance(directory);
-
-            Task BuildTemplate(DbConnection connection)
-            {
-                var builder = DefaultOptionsBuilder.Build<TDbContext>();
-                builder.UseSqlServer(connection);
-                return buildTemplate(connection, builder);
-            }
-
-            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize, templatePath, logPath);
-
-            Wrapper.Start(timestamp, BuildTemplate);
-        }
-
-        static string GetInstanceName(string? scopeSuffix)
-        {
-            Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
-
-            #region GetInstanceName
-
-            if (scopeSuffix == null)
-            {
-                return typeof(TDbContext).Name;
-            }
-
-            return $"{typeof(TDbContext).Name}_{scopeSuffix}";
-
-            #endregion
+            var builder = DefaultOptionsBuilder.Build<TDbContext>();
+            builder.UseSqlServer("Fake");
+            return constructInstance(builder).Model;
         }
 
         public void Cleanup() => Wrapper.DeleteInstance();

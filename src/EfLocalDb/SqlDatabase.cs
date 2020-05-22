@@ -10,14 +10,14 @@ namespace EfLocalDb
         ISqlDatabase<TDbContext>
         where TDbContext : DbContext
     {
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        ConstructInstance<TDbContext> constructInstance;
         Func<Task> delete;
         IEnumerable<object>? data;
 
         internal SqlDatabase(
             string connectionString,
             string name,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             Func<Task> delete,
             IEnumerable<object>? data)
         {

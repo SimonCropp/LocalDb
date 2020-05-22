@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Data.SqlClient;
@@ -11,12 +10,12 @@ namespace EfLocalDb
         ISqlDatabase<TDbContext>
         where TDbContext : DbContext
     {
-        Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance;
+        ConstructInstance<TDbContext> constructInstance;
         IEnumerable<object>? data;
 
         internal SqlDatabaseWithRollback(
             string connectionString,
-            Func<DbContextOptionsBuilder<TDbContext>, TDbContext> constructInstance,
+            ConstructInstance<TDbContext> constructInstance,
             IEnumerable<object> data)
         {
             Name = "withRollback";
