@@ -40,7 +40,7 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
-            instanceSuffix: "theClassicSuffix");
+            storage: Storage.FromSuffix<TestDbContext>("theClassicSuffix"));
 
         var entity = new TestEntity
         {
@@ -58,7 +58,7 @@ public class Tests :
             constructInstance: connection => new TestDbContext(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,
-            instanceSuffix: "Defined_TimeStamp");
+            storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
 
         using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.TemplateDataFile));
@@ -69,7 +69,7 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
-            instanceSuffix: "Assembly_TimeStamp");
+            storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
 
         using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
@@ -81,7 +81,7 @@ public class Tests :
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
-            instanceSuffix: "Delegate_TimeStamp");
+            storage: Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
 
         using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
@@ -229,6 +229,6 @@ public class Tests :
     {
         instance = new SqlInstance<TestDbContext>(
             connection => new TestDbContext(connection),
-            instanceSuffix: "Classic");
+            storage: Storage.FromSuffix<TestDbContext>("Classic"));
     }
 }

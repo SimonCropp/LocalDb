@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="SqlDatabaseWithRollback.cs" />
+    <Compile Include="..\EfLocalDb\Storage.cs" Link="Storage.cs" />
     <Compile Include="..\LocalDb\DatabaseState.cs" />
     <Compile Include="..\LocalDb\DbFileNameReader.cs" />
     <Compile Include="..\LocalDb\SqlBuilder.cs" />

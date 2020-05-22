@@ -25,6 +25,7 @@ namespace EfLocalDb
         }
 
         public IModel Model { get; private set; } = null!;
+
         public string ServerName => Wrapper.ServerName;
 
         public SqlInstance(
@@ -42,13 +43,6 @@ namespace EfLocalDb
             var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
             Init(convertedBuildTemplate, constructInstance, storage.Value, templateSize, resultTimestamp, templatePath, logPath);
-        }
-
-        static IModel BuildModel(ConstructInstance<TDbContext> constructInstance)
-        {
-            var builder = DefaultOptionsBuilder.Build<TDbContext>();
-            builder.UseSqlServer("Fake");
-            return constructInstance(builder).Model;
         }
 
         public SqlInstance(
@@ -80,8 +74,15 @@ namespace EfLocalDb
             return Timestamp.LastModified<TDbContext>();
         }
 
+        static IModel BuildModel(ConstructInstance<TDbContext> constructInstance)
+        {
+            var builder = DefaultOptionsBuilder.Build<TDbContext>();
+            builder.UseSqlServer("Fake");
+            return constructInstance(builder).Model;
+        }
 
-        void Init(Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
+        void Init(
+            Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             ConstructInstance<TDbContext> constructInstance,
             Storage storage,
             ushort templateSize,
