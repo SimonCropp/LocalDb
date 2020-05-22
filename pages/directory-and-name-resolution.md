@@ -19,7 +19,17 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfLocalDb/SqlInstance.cs#L143-L152' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/SqlInstance.cs#L108-L117' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
+<a id='snippet-getinstancename-1'/></a>
+```cs
+if (scopeSuffix == null)
+{
+    return typeof(TDbContext).Name;
+}
+
+return $"{typeof(TDbContext).Name}_{scopeSuffix}";
+```
+<sup><a href='/src/EfLocalDb/Storage.cs#L28-L37' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename-1' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
 <!-- endsnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -54,10 +64,9 @@ var sqlInstance = new SqlInstance(
 ```cs
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new TheDbContext(builder.Options),
-    name: "theInstanceName",
-    directory: @"C:\LocalDb\theInstance");
+    storage: new Storage<TheDbContext>("theInstanceName",@"C:\LocalDb\theInstance"));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L12' title='File snippet `efexplicitname` was extracted from'>snippet source</a> | <a href='#snippet-efexplicitname' title='Navigate to start of snippet `efexplicitname`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='File snippet `efexplicitname` was extracted from'>snippet source</a> | <a href='#snippet-efexplicitname' title='Navigate to start of snippet `efexplicitname`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
