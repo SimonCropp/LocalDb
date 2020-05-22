@@ -45,8 +45,8 @@ namespace EfLocalDb
         }
 
         public SqlInstance(
-            Func<DbConnection, Task> buildTemplate,
             ConstructInstance<TDbContext> constructInstance,
+            Func<DbConnection, Task> buildTemplate,
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
