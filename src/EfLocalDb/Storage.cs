@@ -1,25 +1,25 @@
 ﻿namespace EfLocalDb
 {
-    public struct Name<TDbContext>
+    public struct Storage<TDbContext>
     {
-        public static Name<TDbContext> FromSuffix(string suffix)
+        public static Storage<TDbContext> FromSuffix(string suffix)
         {
             Guard.AgainstWhiteSpace(nameof(suffix), suffix);
             var instanceName = GetInstanceName(suffix);
-            return new Name<TDbContext>(instanceName,DirectoryFinder.Find(instanceName));
+            return new Storage<TDbContext>(instanceName,DirectoryFinder.Find(instanceName));
         }
 
-        public Name(string instanceName, string directory)
+        public Storage(string name, string directory)
         {
             Guard.AgainstNullWhiteSpace(nameof(directory), directory);
-            Guard.AgainstNullWhiteSpace(nameof(instanceName), instanceName);
-            InstanceName = instanceName;
+            Guard.AgainstNullWhiteSpace(nameof(name), name);
+            Name = name;
             Directory = directory;
         }
 
         public string Directory { get; private set; }
 
-        public string InstanceName { get; private set; }
+        public string Name { get; private set; }
 
         static string GetInstanceName(string? scopeSuffix)
         {
@@ -37,14 +37,14 @@
             #endregion
         }
 
-        public static Name<TDbContext> Default;
+        public static Storage<TDbContext> Default;
 
-        static Name()
+        static Storage()
         {
-            Default = new Name<TDbContext>();
+            Default = new Storage<TDbContext>();
 
             var instanceName = typeof(TDbContext).Name;
-            Default.InstanceName = instanceName;
+            Default.Name = instanceName;
             Default.Directory = DirectoryFinder.Find(instanceName);
         }
     }
