@@ -4,6 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
-    public delegate Task InitialiseTemplate<TDbContext>(DbConnection connection, DbContextOptionsBuilder<TDbContext> optionsBuilder)
+    public delegate Task TemplateFromConnection<TDbContext>(DbConnection connection, DbContextOptionsBuilder<TDbContext> optionsBuilder)
         where TDbContext : DbContext;
 }

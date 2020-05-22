@@ -1,16 +1,14 @@
-using System;
-using System.Data.Common;
-using System.Threading.Tasks;
 using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
 
 static class BuildTemplateConverter
 {
-    public static Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> Convert<TDbContext>(
+    public static TemplateFromConnection<TDbContext> Convert<TDbContext>(
         ConstructInstance<TDbContext> constructInstance,
-        Func<TDbContext, Task>? buildTemplate)
+        TemplateFromContext<TDbContext>? buildTemplate)
         where TDbContext : DbContext
     {
+        Guard.AgainstNull(nameof(constructInstance), constructInstance);
         return async (connection, builder) =>
         {
             await using var data = constructInstance(builder);

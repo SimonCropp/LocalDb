@@ -4,7 +4,7 @@
     {
         public static Storage FromSuffix<TDbContext>(string suffix)
         {
-            Guard.AgainstWhiteSpace(nameof(suffix), suffix);
+            Guard.AgainstNullWhiteSpace(nameof(suffix), suffix);
             var instanceName = GetInstanceName<TDbContext>(suffix);
             return new Storage(instanceName, DirectoryFinder.Find(instanceName));
         }

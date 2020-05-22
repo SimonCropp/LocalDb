@@ -27,26 +27,26 @@ namespace EfLocalDb
 
         public SqlInstance(
             ConstructInstance<TDbContext> constructInstance,
-            Func<TDbContext, Task>? buildTemplate = null,
+            TemplateFromContext<TDbContext>? buildTemplate = null,
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
             string? templatePath = null,
-            string? logPath = null)
+            string? logPath = null):
+            this(
+                constructInstance,
+                BuildTemplateConverter.Convert(constructInstance, buildTemplate),
+                storage,
+                GetTimestamp(timestamp, buildTemplate),
+                templateSize,
+                templatePath,
+                logPath)
         {
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
-
-            storage ??= DefaultStorage;
-
-            var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
-
-            var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(convertedBuildTemplate, constructInstance, storage.Value, templateSize, resultTimestamp, templatePath, logPath);
         }
 
         public SqlInstance(
             ConstructInstance<TDbContext> constructInstance,
-            Func<DbConnection, Task> buildTemplate,
+            TemplateFromConnection buildTemplate,
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
@@ -56,7 +56,17 @@ namespace EfLocalDb
             storage ??= DefaultStorage;
 
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Init(buildTemplate, constructInstance, storage.Value, templateSize, resultTimestamp, templatePath, logPath);
+            Guard.AgainstNull(nameof(constructInstance), constructInstance);
+            this.constructInstance = constructInstance;
+
+            DirectoryCleaner.CleanInstance(storage.Value.Directory);
+            Task BuildTemplate(DbConnection connection)
+            {
+                return buildTemplate(connection);
+            }
+
+            Wrapper = new Wrapper(s => new SqlConnection(s), storage.Value.Name, storage.Value.Directory, templateSize, templatePath, logPath);
+            Wrapper.Start(resultTimestamp, BuildTemplate);
         }
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
@@ -72,28 +82,6 @@ namespace EfLocalDb
             }
 
             return Timestamp.LastModified<TDbContext>();
-        }
-
-        void Init(
-            Func<DbConnection, Task> buildTemplate,
-            ConstructInstance<TDbContext> constructInstance,
-            Storage storage,
-            ushort templateSize,
-            DateTime timestamp,
-            string? templatePath,
-            string? logPath)
-        {
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
-            this.constructInstance = constructInstance;
-
-            DirectoryCleaner.CleanInstance(storage.Directory);
-            Task BuildTemplate(DbConnection connection)
-            {
-                return buildTemplate(connection);
-            }
-
-            Wrapper = new Wrapper(s => new SqlConnection(s), storage.Name, storage.Directory, templateSize, templatePath, logPath);
-            Wrapper.Start(timestamp, BuildTemplate);
         }
 
         public void Cleanup() => Wrapper.DeleteInstance();
