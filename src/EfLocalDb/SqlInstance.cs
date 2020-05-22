@@ -16,6 +16,13 @@ namespace EfLocalDb
     {
         internal Wrapper Wrapper { get; private set; } = null!;
         ConstructInstance<TDbContext> constructInstance = null!;
+        static Storage DefaultStorage;
+
+        static SqlInstance()
+        {
+            var instanceName = typeof(TDbContext).Name;
+            DefaultStorage = new Storage(instanceName, DirectoryFinder.Find(instanceName));
+        }
 
         public IModel Model { get; private set; } = null!;
         public string ServerName => Wrapper.ServerName;
@@ -23,7 +30,7 @@ namespace EfLocalDb
         public SqlInstance(
             ConstructInstance<TDbContext> constructInstance,
             Func<TDbContext, Task>? buildTemplate = null,
-            Storage<TDbContext>? storage = null,
+            Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
             string? templatePath = null,
@@ -31,7 +38,7 @@ namespace EfLocalDb
         {
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
 
-            storage ??= Storage<TDbContext>.Default;
+            storage ??= DefaultStorage;
             var convertedBuildTemplate = BuildTemplateConverter.Convert(constructInstance, buildTemplate);
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
             Init(convertedBuildTemplate, constructInstance, storage.Value, templateSize, resultTimestamp, templatePath, logPath);
@@ -47,13 +54,13 @@ namespace EfLocalDb
         public SqlInstance(
             Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             ConstructInstance<TDbContext> constructInstance,
-            Storage<TDbContext>? storage = null,
+            Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
             string? templatePath = null,
             string? logPath = null)
         {
-            storage ??= Storage<TDbContext>.Default;
+            storage ??= DefaultStorage;
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
             Init(buildTemplate, constructInstance, storage.Value, templateSize, resultTimestamp, templatePath, logPath);
         }
@@ -76,7 +83,7 @@ namespace EfLocalDb
 
         void Init(Func<DbConnection, DbContextOptionsBuilder<TDbContext>, Task> buildTemplate,
             ConstructInstance<TDbContext> constructInstance,
-            Storage<TDbContext> storage,
+            Storage storage,
             ushort templateSize,
             DateTime timestamp,
             string? templatePath,
