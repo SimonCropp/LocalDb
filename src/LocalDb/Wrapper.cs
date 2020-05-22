@@ -4,6 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using MethodTimer;
+#if EF
+using EfLocalDb;
+#else
+using LocalDb;
+#endif
 
 class Wrapper
 {
@@ -26,12 +31,9 @@ class Wrapper
         string instance,
         string directory,
         ushort size = 3,
-        string? existingTemplatePath = null,
-        string? existingLogPath = null)
+        ExistingTemplate? existingTemplate = null)
     {
         Guard.AgainstDatabaseSize(nameof(size), size);
-        Guard.AgainstWhiteSpace(nameof(existingTemplatePath), existingTemplatePath);
-        Guard.AgainstWhiteSpace(nameof(existingLogPath), existingLogPath);
         Guard.AgainstInvalidFileNameCharacters(nameof(instance), instance);
 
         LocalDbLogging.WrapperCreated = true;
@@ -44,9 +46,19 @@ class Wrapper
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
         this.size = size;
-        templateProvided = existingTemplatePath != null;
-        TemplateDataFile = existingTemplatePath ?? Path.Combine(directory, "template.mdf");
-        TemplateLogFile = existingLogPath ?? Path.Combine(directory, "template_log.ldf");
+        if (existingTemplate == null)
+        {
+            templateProvided = false;
+            TemplateDataFile = Path.Combine(directory, "template.mdf");
+            TemplateLogFile = Path.Combine(directory, "template_log.ldf");
+        }
+        else
+        {
+            templateProvided = true;
+            TemplateDataFile = existingTemplate.Value.DataPath;
+            TemplateLogFile = existingTemplate.Value.LogPath;
+        }
+
         var directoryInfo = System.IO.Directory.CreateDirectory(directory);
         directoryInfo.ResetAccess();
 

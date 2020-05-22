@@ -13,14 +13,14 @@ namespace EfLocalDb
     public class SqlInstance<TDbContext>
         where TDbContext : DbContext
     {
-        internal Wrapper Wrapper { get; private set; } = null!;
-        ConstructInstance<TDbContext> constructInstance = null!;
+        internal Wrapper Wrapper { get; }
+        ConstructInstance<TDbContext> constructInstance;
         static Storage DefaultStorage;
 
         static SqlInstance()
         {
-            var instanceName = typeof(TDbContext).Name;
-            DefaultStorage = new Storage(instanceName, DirectoryFinder.Find(instanceName));
+            var name = typeof(TDbContext).Name;
+            DefaultStorage = new Storage(name, DirectoryFinder.Find(name));
         }
 
         public string ServerName => Wrapper.ServerName;
@@ -31,16 +31,14 @@ namespace EfLocalDb
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            string? templatePath = null,
-            string? logPath = null):
+            ExistingTemplate? existingTemplate = null):
             this(
                 constructInstance,
                 BuildTemplateConverter.Convert(constructInstance, buildTemplate),
                 storage,
                 GetTimestamp(timestamp, buildTemplate),
                 templateSize,
-                templatePath,
-                logPath)
+                existingTemplate)
         {
         }
 
@@ -50,8 +48,7 @@ namespace EfLocalDb
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            string? templatePath = null,
-            string? logPath = null)
+            ExistingTemplate? existingTemplate = null)
         {
             storage ??= DefaultStorage;
 
@@ -65,7 +62,7 @@ namespace EfLocalDb
                 return buildTemplate(connection);
             }
 
-            Wrapper = new Wrapper(s => new SqlConnection(s), storage.Value.Name, storage.Value.Directory, templateSize, templatePath, logPath);
+            Wrapper = new Wrapper(s => new SqlConnection(s), storage.Value.Name, storage.Value.Directory, templateSize, existingTemplate);
             Wrapper.Start(resultTimestamp, BuildTemplate);
         }
 

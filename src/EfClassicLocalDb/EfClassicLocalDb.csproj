@@ -10,6 +10,7 @@
     <Compile Include="..\EfLocalDb\Storage.cs" Link="Storage.cs" />
     <Compile Include="..\LocalDb\DatabaseState.cs" />
     <Compile Include="..\LocalDb\DbFileNameReader.cs" />
+    <Compile Include="..\LocalDb\ExistingTemplate.cs" Link="ExistingTemplate.cs" />
     <Compile Include="..\LocalDb\SqlBuilder.cs" />
     <Compile Include="..\LocalDb\DirectoryCleaner.cs" />
     <Compile Include="..\LocalDb\StringExtensions.cs" />

@@ -250,10 +250,9 @@ static class SuppliedTemplate
     {
         sqlInstance = new SqlInstance<MyDbContext>(
             connection => new MyDbContext(connection),
-            templatePath: "suppliedTemplate.mdf",
-            logPath: "suppliedTemplate_log.ldf");
+            existingTemplate: new ExistingTemplate("template.mdf", "template_log.ldf"));
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L14' title='File snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L13' title='File snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs`'>anchor</a></sup>
 <!-- endsnippet -->
