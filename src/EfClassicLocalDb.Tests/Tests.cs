@@ -49,16 +49,14 @@ public class Tests :
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
+
     [Fact]
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
-            buildTemplate:async context =>
-            {
-                await context.CreateOnExistingDb();
-            },
+            buildTemplate: async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,
             instanceSuffix: "Defined_TimeStamp");
 
@@ -82,10 +80,7 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
-            buildTemplate:async context =>
-            {
-                await context.CreateOnExistingDb();
-            },
+            buildTemplate: async context => { await context.CreateOnExistingDb(); },
             instanceSuffix: "Delegate_TimeStamp");
 
         using var database = await instance.Build();
@@ -234,6 +229,6 @@ public class Tests :
     {
         instance = new SqlInstance<TestDbContext>(
             connection => new TestDbContext(connection),
-            instanceSuffix:"Classic");
+            instanceSuffix: "Classic");
     }
 }

@@ -42,7 +42,7 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: builder => new TestDbContext(builder.Options),
-            instanceSuffix: "theSuffix");
+            name: Name<TestDbContext>.FromSuffix("theSuffix"));
 
         var entity = new TestEntity
         {
@@ -58,7 +58,7 @@ public class Tests :
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: builder => new TestDbContext(builder.Options),
             buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
-            instanceSuffix: "theSuffix");
+            name: Name<TestDbContext>.FromSuffix("theSuffix"));
 
         var entity = new TestEntity
         {
@@ -76,7 +76,7 @@ public class Tests :
             constructInstance: builder => new TestDbContext(builder.Options),
             buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
             timestamp: dateTime,
-            instanceSuffix: "Defined_TimeStamp");
+            name: Name<TestDbContext>.FromSuffix("Defined_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.TemplateDataFile));
@@ -87,7 +87,7 @@ public class Tests :
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: builder => new TestDbContext(builder.Options),
-            instanceSuffix: "Assembly_TimeStamp");
+            name: Name<TestDbContext>.FromSuffix("Assembly_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
@@ -99,7 +99,7 @@ public class Tests :
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: builder => new TestDbContext(builder.Options),
             buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
-            instanceSuffix: "Delegate_TimeStamp");
+            name: Name<TestDbContext>.FromSuffix( "Delegate_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
