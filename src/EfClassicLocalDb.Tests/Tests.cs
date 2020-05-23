@@ -51,7 +51,6 @@ public class Tests :
         };
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
-        Assert.True(callbackCalled);
     }
 
     [Fact]

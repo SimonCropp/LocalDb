@@ -106,7 +106,6 @@ public class Tests :
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
-        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -131,7 +130,6 @@ public class Tests :
             timestamp: dateTime);
         await using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
-        Assert.True(callbackCalled);
     }
 
     [Fact]
