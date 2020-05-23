@@ -2,6 +2,7 @@
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using MethodTimer;
 #if EF
@@ -14,6 +15,8 @@ class Wrapper
 {
     public readonly string Directory;
     ushort size;
+    Func<DbConnection, Task>? callback;
+    SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
     public readonly string MasterConnectionString;
     public readonly string WithRollbackConnectionString;
     Func<string, DbConnection> buildConnection;
@@ -31,7 +34,8 @@ class Wrapper
         string instance,
         string directory,
         ushort size = 3,
-        ExistingTemplate? existingTemplate = null)
+        ExistingTemplate? existingTemplate = null,
+        Func<DbConnection, Task>? callback = null)
     {
         Guard.AgainstDatabaseSize(nameof(size), size);
         Guard.AgainstInvalidFileName(nameof(instance), instance);
@@ -46,6 +50,7 @@ class Wrapper
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
         this.size = size;
+        this.callback = callback;SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
         if (existingTemplate == null)
         {
             templateProvided = false;
@@ -67,17 +72,16 @@ class Wrapper
 
     public async Task<string> CreateDatabaseFromTemplate(string name, bool withRollback = false)
     {
+        if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new Exception("The database name 'template' is reserved.");
+        }
         //TODO: if dataFile doesnt exists do a drop and recreate
         var stopwatch = Stopwatch.StartNew();
 
         // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
-        var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
-        if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new Exception("The database name 'template' is reserved.");
-        }
 
         await startupTask;
         File.Copy(DataFile, dataFile, true);
@@ -86,9 +90,40 @@ class Wrapper
         FileExtensions.MarkFileAsWritable(dataFile);
         FileExtensions.MarkFileAsWritable(logFile);
 
+        var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
         await ExecuteOnMasterAsync(commandText);
+
+        var connectionString = $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
+        await RunCallback(connectionString);
+
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
-        return $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
+        return connectionString;
+    }
+
+    async Task RunCallback(string connectionString)
+    {
+        if (callback == null)
+        {
+            return;
+        }
+
+        try
+        {
+            await semaphoreSlim.WaitAsync();
+            if (callback == null)
+            {
+                return;
+            }
+
+            using var connection = buildConnection(connectionString);
+            await connection.OpenAsync();
+            await callback(connection);
+            callback = null;
+        }
+        finally
+        {
+            semaphoreSlim.Release();
+        }
     }
 
     public void Start(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
@@ -170,7 +205,8 @@ class Wrapper
     async Task CreateAndDetachTemplate(
         DateTime timestamp,
         Func<DbConnection, Task> buildTemplate,
-        bool rebuild, bool optimize)
+        bool rebuild,
+        bool optimize)
     {
         masterConnection = buildConnection(MasterConnectionString);
         await masterConnection.OpenAsync();
@@ -202,6 +238,11 @@ class Wrapper
         {
             await connection.OpenAsync();
             await buildTemplate(connection);
+            if (callback != null)
+            {
+                await callback(connection);
+                callback = null;
+            }
         }
 
         await ExecuteOnMasterAsync(SqlBuilder.DetachTemplateCommand);

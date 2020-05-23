@@ -91,6 +91,27 @@ end;
     }
 
     [Fact]
+    public async Task Callback()
+    {
+        var name = "Callback";
+
+        var callbackCalled = false;
+        var wrapper = new Wrapper(
+            s => new SqlConnection(s),
+            name,
+            DirectoryFinder.Find(name),
+            callback: connection =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+        Assert.True(callbackCalled);
+        LocalDbApi.StopInstance(name);
+    }
+
+    [Fact]
     public async Task WithFileAndNoInstance()
     {
         var name = "WithFileAndNoInstance";
