@@ -34,14 +34,16 @@ namespace EfLocalDb
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            ExistingTemplate? existingTemplate = null) :
+            ExistingTemplate? existingTemplate = null,
+            Callback<TDbContext>? callback = null) :
             this(
                 constructInstance,
                 BuildTemplateConverter.Convert(constructInstance, buildTemplate),
                 storage,
                 GetTimestamp(timestamp, buildTemplate),
                 templateSize,
-                existingTemplate)
+                existingTemplate,
+                callback)
         {
         }
 
@@ -51,7 +53,8 @@ namespace EfLocalDb
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            ExistingTemplate? existingTemplate = null)
+            ExistingTemplate? existingTemplate = null,
+            Callback<TDbContext>? callback = null)
         {
             storage ??= DefaultStorage;
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
@@ -60,7 +63,8 @@ namespace EfLocalDb
             Model = BuildModel(constructInstance);
             this.constructInstance = constructInstance;
 
-            DirectoryCleaner.CleanInstance(storage.Value.Directory);
+            var storageValue = storage.Value;
+            DirectoryCleaner.CleanInstance(storageValue.Directory);
 
             Task BuildTemplate(DbConnection connection)
             {
@@ -69,7 +73,25 @@ namespace EfLocalDb
                 return buildTemplate(connection, builder);
             }
 
-            Wrapper = new Wrapper(s => new SqlConnection(s), storage.Value.Name, storage.Value.Directory, templateSize, existingTemplate);
+            Func<DbConnection, Task>? wrapperCallback = null;
+            if (callback != null)
+            {
+                wrapperCallback = async connection =>
+                {
+                    var builder = DefaultOptionsBuilder.Build<TDbContext>();
+                    builder.UseSqlServer(connection);
+                    using var context = constructInstance(builder);
+                    await callback(connection, context);
+                };
+            }
+
+            Wrapper = new Wrapper(
+                s => new SqlConnection(s),
+                storageValue.Name,
+                storageValue.Directory,
+                templateSize,
+                existingTemplate,
+                wrapperCallback);
 
             Wrapper.Start(resultTimestamp, BuildTemplate);
         }
@@ -86,7 +108,6 @@ namespace EfLocalDb
                 return Timestamp.LastModified<TDbContext>();
             }
             return Timestamp.LastModified(buildTemplate);
-
         }
 
         static IModel BuildModel(ConstructInstance<TDbContext> constructInstance)

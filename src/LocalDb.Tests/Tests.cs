@@ -21,6 +21,22 @@ public class Tests :
         Assert.Contains(data, await TestDbBuilder.GetData(connection));
     }
 
+    [Fact]
+    public async Task Callback()
+    {
+        var callbackCalled = false;
+        var instance = new SqlInstance("Callback",
+            TestDbBuilder.CreateTable,
+            callback: connection =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
+
+        await using var database = await instance.Build();
+        Assert.True(callbackCalled);
+    }
+
     //[Fact]
     //public async Task SuppliedTemplate()
     //{

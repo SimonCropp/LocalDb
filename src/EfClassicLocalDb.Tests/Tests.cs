@@ -11,6 +11,7 @@ public class Tests :
     VerifyBase
 {
     SqlInstance<TestDbContext> instance;
+    bool callbackCalled;
 
     [Fact]
     public async Task SeedData()
@@ -21,6 +22,7 @@ public class Tests :
         };
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -33,6 +35,7 @@ public class Tests :
         using var database = await instance.Build();
         await database.AddData(entity);
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -48,6 +51,7 @@ public class Tests :
         };
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -131,6 +135,7 @@ public class Tests :
         {
             Assert.NotNull(await data.TestEntities.FindAsync(entity.Id));
         }
+        Assert.True(callbackCalled);
     }
 
     //TODO: should duplicate instances throw?
@@ -154,6 +159,7 @@ public class Tests :
         using var database = await instance.Build();
         using var data = database.NewDbContext();
         Assert.NotSame(database.Context, data);
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -165,6 +171,7 @@ public class Tests :
         };
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
     }
 
     //[Fact]
@@ -229,6 +236,11 @@ public class Tests :
     {
         instance = new SqlInstance<TestDbContext>(
             connection => new TestDbContext(connection),
-            storage: Storage.FromSuffix<TestDbContext>("Classic"));
+            storage: Storage.FromSuffix<TestDbContext>("Classic"),
+            callback: (connection, context) =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
     }
 }

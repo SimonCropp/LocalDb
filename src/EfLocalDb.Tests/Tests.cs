@@ -13,6 +13,7 @@ public class Tests :
     VerifyBase
 {
     SqlInstance<TestDbContext> instance;
+    bool callbackCalled;
 
     [Fact]
     public async Task SeedData()
@@ -23,6 +24,7 @@ public class Tests :
         };
         await using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -35,6 +37,7 @@ public class Tests :
         await using var database = await instance.Build();
         await database.AddData(entity);
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -103,6 +106,7 @@ public class Tests :
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -127,6 +131,7 @@ public class Tests :
             timestamp: dateTime);
         await using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -147,6 +152,8 @@ public class Tests :
         {
             Assert.NotNull(await data.TestEntities.FindAsync(entity.Id));
         }
+
+        Assert.True(callbackCalled);
     }
 
     //TODO: should duplicate instances throw?
@@ -170,6 +177,7 @@ public class Tests :
         await using var database = await instance.Build();
         await using var data = database.NewDbContext();
         Assert.NotSame(database.Context, data);
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -181,6 +189,7 @@ public class Tests :
         };
         await using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
     }
 
     //[Fact]
@@ -211,6 +220,7 @@ public class Tests :
         await using var database2 = await instance.BuildWithRollback();
         Assert.NotNull(await database1.Context.TestEntities.FindAsync(entity.Id));
         Assert.Empty(database2.Context.TestEntities.ToList());
+        Assert.True(callbackCalled);
     }
 
     [Fact]
@@ -238,12 +248,19 @@ public class Tests :
             database2?.Dispose();
             Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
         }
+
+        Assert.True(callbackCalled);
     }
 
     public Tests(ITestOutputHelper output) :
         base(output)
     {
         instance = new SqlInstance<TestDbContext>(
-            builder => new TestDbContext(builder.Options));
+            builder => new TestDbContext(builder.Options),
+            callback: (connection, context) =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
     }
 }
