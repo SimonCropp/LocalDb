@@ -50,7 +50,7 @@ class Wrapper
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
         this.size = size;
-        this.callback = callback;SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+        this.callback = callback;
         if (existingTemplate == null)
         {
             templateProvided = false;
