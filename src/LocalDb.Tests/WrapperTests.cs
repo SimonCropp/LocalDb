@@ -93,7 +93,7 @@ end;
     [Fact]
     public async Task Callback()
     {
-        var name = "Callback";
+        var name = "Callback2";
 
         var callbackCalled = false;
         var wrapper = new Wrapper(
