@@ -93,7 +93,7 @@ end;
     [Fact]
     public async Task Callback()
     {
-        var name = "Callback2";
+        var name = "Callback";
 
         var callbackCalled = false;
         var wrapper = new Wrapper(
@@ -108,7 +108,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Callback_Simple");
         Assert.True(callbackCalled);
-        LocalDbApi.StopInstance(name);
+        LocalDbApi.StopAndDelete(name);
     }
 
     [Fact]
