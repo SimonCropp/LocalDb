@@ -91,6 +91,27 @@ end;
     }
 
     [Fact]
+    public async Task Callback()
+    {
+        var name = "WrapperTests_Callback";
+
+        var callbackCalled = false;
+        var wrapper = new Wrapper(
+            s => new SqlConnection(s),
+            name,
+            DirectoryFinder.Find(name),
+            callback: connection =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+        Assert.True(callbackCalled);
+        LocalDbApi.StopAndDelete(name);
+    }
+
+    [Fact]
     public async Task WithFileAndNoInstance()
     {
         var name = "WithFileAndNoInstance";
@@ -159,7 +180,7 @@ end;
         var dateTime = DateTime.Now;
         instance2.Start(dateTime, connection => Task.CompletedTask);
         await instance2.AwaitStart();
-        Assert.Equal(dateTime, File.GetCreationTime(instance2.TemplateDataFile));
+        Assert.Equal(dateTime, File.GetCreationTime(instance2.DataFile));
     }
 
     [Fact]

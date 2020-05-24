@@ -21,6 +21,23 @@ public class Tests :
         Assert.Contains(data, await TestDbBuilder.GetData(connection));
     }
 
+    [Fact]
+    public async Task Callback()
+    {
+        var callbackCalled = false;
+        var instance = new SqlInstance(
+            "Tests_Callback",
+            TestDbBuilder.CreateTable,
+            callback: connection =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
+
+        await using var database = await instance.Build();
+        Assert.True(callbackCalled);
+    }
+
     //[Fact]
     //public async Task SuppliedTemplate()
     //{
@@ -45,7 +62,7 @@ public class Tests :
             timestamp: dateTime);
 
         await using var database = await instance.Build();
-        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
     [Fact]
@@ -56,7 +73,7 @@ public class Tests :
             buildTemplate: TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
-        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.TemplateDataFile));
+        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
     [Fact]

@@ -31,14 +31,16 @@ namespace EfLocalDb
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            ExistingTemplate? existingTemplate = null):
+            ExistingTemplate? existingTemplate = null,
+            Callback<TDbContext>? callback = null):
             this(
                 constructInstance,
                 BuildTemplateConverter.Convert(constructInstance, buildTemplate),
                 storage,
                 GetTimestamp(timestamp, buildTemplate),
                 templateSize,
-                existingTemplate)
+                existingTemplate,
+                callback)
         {
         }
 
@@ -48,7 +50,8 @@ namespace EfLocalDb
             Storage? storage = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            ExistingTemplate? existingTemplate = null)
+            ExistingTemplate? existingTemplate = null,
+            Callback<TDbContext>? callback = null)
         {
             storage ??= DefaultStorage;
 
@@ -56,14 +59,26 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
 
-            DirectoryCleaner.CleanInstance(storage.Value.Directory);
-            Task BuildTemplate(DbConnection connection)
-            {
-                return buildTemplate(connection);
-            }
+            var storageValue = storage.Value;
+            DirectoryCleaner.CleanInstance(storageValue.Directory);
 
-            Wrapper = new Wrapper(s => new SqlConnection(s), storage.Value.Name, storage.Value.Directory, templateSize, existingTemplate);
-            Wrapper.Start(resultTimestamp, BuildTemplate);
+            Func<DbConnection, Task>? wrapperCallback = null;
+            if (callback != null)
+            {
+                wrapperCallback = async connection =>
+                {
+                    using var context = constructInstance(connection);
+                    await callback(connection, context);
+                };
+            }
+            Wrapper = new Wrapper(
+                s => new SqlConnection(s),
+                storageValue.Name,
+                storageValue.Directory,
+                templateSize,
+                existingTemplate,
+                wrapperCallback);
+            Wrapper.Start(resultTimestamp, connection => buildTemplate(connection));
         }
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)

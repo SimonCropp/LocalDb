@@ -20,7 +20,8 @@ namespace LocalDb
             string? directory = null,
             DateTime? timestamp = null,
             ushort templateSize = 3,
-            ExistingTemplate? exitingTemplate= null)
+            ExistingTemplate? exitingTemplate = null,
+            Func<DbConnection, Task>? callback = null)
         {
             Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstWhiteSpace(nameof(directory), directory);
@@ -29,7 +30,7 @@ namespace LocalDb
             DirectoryCleaner.CleanInstance(directory);
             var callingAssembly = Assembly.GetCallingAssembly();
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate);
+            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate, callback);
             Wrapper.Start(resultTimestamp, buildTemplate);
         }
 
