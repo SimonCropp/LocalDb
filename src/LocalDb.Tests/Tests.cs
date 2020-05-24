@@ -25,7 +25,8 @@ public class Tests :
     public async Task Callback()
     {
         var callbackCalled = false;
-        var instance = new SqlInstance("Callback",
+        var instance = new SqlInstance(
+            "Tests_Callback",
             TestDbBuilder.CreateTable,
             callback: connection =>
             {
