@@ -108,6 +108,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Callback_Simple");
         Assert.True(callbackCalled);
+        LocalDbApi.StopInstance(name);
     }
 
     [Fact]
