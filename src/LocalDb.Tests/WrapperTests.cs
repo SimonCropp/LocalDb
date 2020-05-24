@@ -93,6 +93,7 @@ end;
     [Fact]
     public async Task Callback()
     {
+        Thread.Sleep(10000);
         var name = "Callback";
 
         var callbackCalled = false;
