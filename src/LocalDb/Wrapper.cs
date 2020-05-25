@@ -238,11 +238,6 @@ class Wrapper
         {
             await connection.OpenAsync();
             await buildTemplate(connection);
-            if (callback != null)
-            {
-                await callback(connection);
-                callback = null;
-            }
         }
 
         await ExecuteOnMasterAsync(SqlBuilder.DetachTemplateCommand);
