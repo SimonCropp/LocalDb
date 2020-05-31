@@ -65,6 +65,6 @@ snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs
 
 ## Using a pre-constructed template
 
-It is possible to pass the path to a pre-existing template to SqlInstance. This is useful if your database contains stored procedures, or requires a large amount of test data.
+It is possible to pass the path to a pre-existing template to SqlInstance. This is useful if the database contains stored procedures, or requires a large amount of test data.
 
 snippet: EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs

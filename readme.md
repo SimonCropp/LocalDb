@@ -34,7 +34,7 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
   * [SQL Server Updates](#sql-server-updates)
-  * [Simple.LocalDb](#simplelocaldb)
+  * [Credits](#credits)
   * [Security contact information](#security-contact-information)<!-- endtoc -->
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
@@ -152,7 +152,7 @@ Ensure that the latests SQL Server Cumulative Update is being used.
  * [SQL Server 2017](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
 
 
-## Simple.LocalDb
+## Credits
 
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
