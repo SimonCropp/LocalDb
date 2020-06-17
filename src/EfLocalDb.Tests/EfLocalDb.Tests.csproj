@@ -14,7 +14,7 @@
 
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.5" />
     <PackageReference Include="XunitContext" Version="1.9.4" />
-    <PackageReference Include="Verify.Xunit" Version="4.3.1" />
+    <PackageReference Include="Verify.Xunit" Version="5.0.3" />
     <PackageReference Include="Fody" Version="6.2.0" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.0" />
     <PackageReference Include="Xunit" Version="2.4.1" />
