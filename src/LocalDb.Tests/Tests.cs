@@ -3,12 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using LocalDb;
-using VerifyXunit;
 using Xunit;
-using Xunit.Abstractions;
 
-public class Tests :
-    VerifyBase
+public class Tests
 {
     [Fact]
     public async Task Simple()
@@ -148,9 +145,4 @@ public class Tests :
     //{
     //    new SqlInstance("LocalDbDuplicate", TestDbBuilder.CreateTable);
     //}
-
-    public Tests(ITestOutputHelper output) :
-        base(output)
-    {
-    }
 }

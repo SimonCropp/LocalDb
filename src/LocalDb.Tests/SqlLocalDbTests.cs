@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using VerifyXunit;
 using Xunit;
-using Xunit.Abstractions;
 
-public class SqlLocalDbTests :
-    VerifyBase
+[UsesVerify]
+public class SqlLocalDbTests
 {
     [Fact]
     public void Instances()
@@ -31,7 +30,7 @@ public class SqlLocalDbTests :
         LocalDbApi.CreateAndStart("InfoTest");
         var info = LocalDbApi.GetInstance("InfoTest");
 
-        await Verify(info);
+        await Verifier.Verify(info);
         LocalDbApi.StopAndDelete("InfoTest");
         Assert.False(LocalDbApi.GetInstance("InfoTest").Exists);
     }
@@ -45,9 +44,4 @@ public class SqlLocalDbTests :
     //        LocalDbApi.StopAndDelete(instance);
     //    }
     //}
-
-    public SqlLocalDbTests(ITestOutputHelper output) :
-        base(output)
-    {
-    }
 }

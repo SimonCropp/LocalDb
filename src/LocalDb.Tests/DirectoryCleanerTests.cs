@@ -1,11 +1,9 @@
 ﻿using System;
 using System.IO;
-using VerifyXunit;
 using Xunit;
-using Xunit.Abstractions;
 
 public class DirectoryCleanerTests :
-    VerifyBase
+    IDisposable
 {
     private string tempDir;
 
@@ -79,16 +77,14 @@ public class DirectoryCleanerTests :
         Assert.True(File.Exists(mdfFile));
     }
 
-    public DirectoryCleanerTests(ITestOutputHelper output) :
-        base(output)
+    public DirectoryCleanerTests()
     {
         tempDir = Path.Combine(Path.GetTempPath(), "DirectoryCleaner");
         Directory.CreateDirectory(tempDir);
     }
 
-    public override void Dispose()
+    public void Dispose()
     {
-        base.Dispose();
         Directory.Delete(tempDir, true);
     }
 }

@@ -1,9 +1,6 @@
-﻿using VerifyXunit;
-using Xunit;
-using Xunit.Abstractions;
+﻿using Xunit;
 
-public class LocalDbRegistryReaderTests :
-    VerifyBase
+public class LocalDbRegistryReaderTests
 {
     [Fact]
     public void GetInfo()
@@ -11,12 +8,5 @@ public class LocalDbRegistryReaderTests :
         var info = LocalDbRegistryReader.GetInfo();
         Assert.NotNull(info.path);
         Assert.NotNull(info.version);
-        WriteLine(info.path);
-        WriteLine(info.version);
-    }
-
-    public LocalDbRegistryReaderTests(ITestOutputHelper output) :
-        base(output)
-    {
     }
 }

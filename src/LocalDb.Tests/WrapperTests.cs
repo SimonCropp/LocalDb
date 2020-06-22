@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 using VerifyXunit;
 using Microsoft.Data.SqlClient;
 using Xunit;
-using Xunit.Abstractions;
 
-public class WrapperTests :
-    VerifyBase
+[UsesVerify]
+public class WrapperTests
 {
     static Wrapper instance;
 
@@ -16,7 +15,7 @@ public class WrapperTests :
     public Task InvalidInstanceName()
     {
         var exception = Assert.Throws<ArgumentException>(() => new Wrapper(s => new SqlConnection(s), "<", "s"));
-        return Verify(exception.Message);
+        return Verifier.Verify(exception.Message);
     }
 
     [Fact(Skip = "no supported")]
@@ -50,7 +49,7 @@ end;
             await wrapper.CreateDatabaseFromTemplate("Simple");
         }
 
-        await Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verifier.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance(name);
     }
 
@@ -72,7 +71,7 @@ end;
             await wrapper.CreateDatabaseFromTemplate("Simple");
         }
 
-        await Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verifier.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance(name);
     }
 
@@ -86,7 +85,7 @@ end;
         var wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        await Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verifier.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance(name);
     }
 
@@ -122,7 +121,7 @@ end;
         wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        await Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verifier.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance(name);
     }
 
@@ -146,7 +145,7 @@ end;
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
 
-        await Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verifier.Verify(await wrapper.ReadDatabaseState("Simple"));
     }
 
     [Fact]
@@ -160,7 +159,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        await Verify(await wrapper.ReadDatabaseState("Simple"));
+        await Verifier.Verify(await wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance(name);
     }
 
@@ -169,7 +168,7 @@ end;
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
         await instance.DeleteDatabase("ToDelete");
-        await Verify(await instance.ReadDatabaseState("ToDelete"));
+        await Verifier.Verify(await instance.ReadDatabaseState("ToDelete"));
     }
 
     [Fact]
@@ -195,7 +194,7 @@ end;
     public async Task CreateDatabase()
     {
         await instance.CreateDatabaseFromTemplate("CreateDatabase");
-        await Verify(await instance.ReadDatabaseState("CreateDatabase"));
+        await Verifier.Verify(await instance.ReadDatabaseState("CreateDatabase"));
     }
 
     [Fact]
@@ -209,16 +208,11 @@ end;
         var deletedState = await instance.ReadDatabaseState(name);
         await instance.CreateDatabaseFromTemplate(name);
         var createdState = await instance.ReadDatabaseState(name);
-        await Verify(new
+        await Verifier.Verify(new
         {
             deletedState,
             createdState
         });
-    }
-
-    public WrapperTests(ITestOutputHelper output) :
-        base(output)
-    {
     }
 
     static DateTime timestamp = new DateTime(2000, 1, 1);

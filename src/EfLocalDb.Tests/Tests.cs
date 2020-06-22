@@ -5,12 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using EfLocalDb;
-using VerifyXunit;
 using Xunit;
-using Xunit.Abstractions;
 
-public class Tests :
-    VerifyBase
+public class Tests
 {
     SqlInstance<TestDbContext> instance;
     bool callbackCalled;
@@ -250,8 +247,7 @@ public class Tests :
         Assert.True(callbackCalled);
     }
 
-    public Tests(ITestOutputHelper output) :
-        base(output)
+    public Tests()
     {
         instance = new SqlInstance<TestDbContext>(
             builder => new TestDbContext(builder.Options),

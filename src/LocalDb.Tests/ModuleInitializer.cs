@@ -1,4 +1,4 @@
-﻿using Verify;
+﻿using VerifyTests;
 using Xunit;
 
 public static class ModuleInitializer
@@ -7,7 +7,7 @@ public static class ModuleInitializer
     {
         XunitContext.Init();
         LocalDbLogging.EnableVerbose();
-        SharedVerifySettings.ModifySerialization(settings =>
+        VerifierSettings.ModifySerialization(settings =>
         {
             settings.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
             settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
