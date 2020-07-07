@@ -25,9 +25,8 @@ The snippets use the following helper class:
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Xunit;
 
-public class TestDbBuilder
+public static class TestDbBuilder
 {
     public static async Task CreateTable(DbConnection connection)
     {
@@ -35,8 +34,9 @@ public class TestDbBuilder
         command.CommandText = "create table MyTable (Value int);";
         await command.ExecuteNonQueryAsync();
     }
-    
+
     static int intData = 0;
+
     public static async Task<int> AddData(DbConnection connection)
     {
         await using var command = connection.CreateCommand();
@@ -59,11 +59,12 @@ values ({addData});";
         {
             values.Add(reader.GetInt32(0));
         }
+
         return values;
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L40' title='File snippet `TestDbBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Navigate to start of snippet `TestDbBuilder.cs`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L41' title='File snippet `TestDbBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Navigate to start of snippet `TestDbBuilder.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
