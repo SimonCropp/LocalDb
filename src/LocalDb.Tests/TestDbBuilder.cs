@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
-using Xunit;
 
-public class TestDbBuilder
+public static class TestDbBuilder
 {
     public static async Task CreateTable(DbConnection connection)
     {
@@ -12,15 +11,18 @@ public class TestDbBuilder
         await command.ExecuteNonQueryAsync();
     }
 
+    static int intData = 0;
+
     public static async Task<int> AddData(DbConnection connection)
     {
-        var nextInt = Counters.NextInt();
         await using var command = connection.CreateCommand();
+        var addData = intData;
+        intData++;
         command.CommandText = $@"
 insert into MyTable (Value)
-values ({nextInt});";
+values ({addData});";
         await command.ExecuteNonQueryAsync();
-        return nextInt;
+        return addData;
     }
 
     public static async Task<List<int>> GetData(DbConnection connection)
@@ -33,6 +35,7 @@ values ({nextInt});";
         {
             values.Add(reader.GetInt32(0));
         }
+
         return values;
     }
 }

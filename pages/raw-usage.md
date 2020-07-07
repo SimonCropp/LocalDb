@@ -35,16 +35,18 @@ public class TestDbBuilder
         command.CommandText = "create table MyTable (Value int);";
         await command.ExecuteNonQueryAsync();
     }
-
+    
+    static int intData = 0;
     public static async Task<int> AddData(DbConnection connection)
     {
-        var nextInt = Counters.NextInt();
         await using var command = connection.CreateCommand();
+        var addData = intData;
+        intData++;
         command.CommandText = $@"
 insert into MyTable (Value)
-values ({nextInt});";
+values ({addData});";
         await command.ExecuteNonQueryAsync();
-        return nextInt;
+        return addData;
     }
 
     public static async Task<List<int>> GetData(DbConnection connection)
@@ -61,7 +63,7 @@ values ({nextInt});";
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L38' title='File snippet `TestDbBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Navigate to start of snippet `TestDbBuilder.cs`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L40' title='File snippet `TestDbBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Navigate to start of snippet `TestDbBuilder.cs`'>anchor</a></sup>
 <!-- endsnippet -->
 
 
