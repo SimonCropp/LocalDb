@@ -13,6 +13,7 @@
     <Compile Include="..\LocalDb\StringExtensions.cs" />
     <Compile Include="..\LocalDb\Timestamp.cs" />
     <Compile Include="..\LocalDb\LocalDbLogging.cs" />
+    <Compile Include="..\LocalDb\Settings.cs" />
     <Compile Include="..\LocalDb\DbNamer.cs" />
     <Compile Include="..\LocalDb\DirectoryFinder.cs" />
     <Compile Include="..\LocalDb\DirectoryCleaner.cs" />
