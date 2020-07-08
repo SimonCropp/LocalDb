@@ -16,7 +16,7 @@ class Wrapper
     public readonly string Directory;
     ushort size;
     Func<DbConnection, Task>? callback;
-    SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1,1);
+    SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
     public readonly string MasterConnectionString;
     public readonly string WithRollbackConnectionString;
     Func<string, DbConnection> buildConnection;
@@ -26,7 +26,6 @@ class Wrapper
     string TemplateConnectionString;
     public readonly string ServerName;
     Task startupTask = null!;
-    DbConnection masterConnection = null!;
     bool templateProvided;
 
     public Wrapper(
@@ -43,9 +42,9 @@ class Wrapper
         LocalDbLogging.WrapperCreated = true;
         this.buildConnection = buildConnection;
         this.instance = instance;
-        MasterConnectionString = $"Data Source=(LocalDb)\\{instance};Database=master;MultipleActiveResultSets=True";
-        TemplateConnectionString = $"Data Source=(LocalDb)\\{instance};Database=template;Pooling=false";
-        WithRollbackConnectionString = $"Data Source=(LocalDb)\\{instance};Database=withRollback;Pooling=false";
+        MasterConnectionString = LocalDbSettings.connectionBuilder(instance, "master");
+        TemplateConnectionString = LocalDbSettings.connectionBuilder(instance, "template");
+        WithRollbackConnectionString = LocalDbSettings.connectionBuilder(instance, "withRollback");
         Directory = directory;
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
@@ -76,6 +75,7 @@ class Wrapper
         {
             throw new Exception("The database name 'template' is reserved.");
         }
+
         //TODO: if dataFile doesnt exists do a drop and recreate
         var stopwatch = Stopwatch.StartNew();
 
@@ -91,9 +91,15 @@ class Wrapper
         FileExtensions.MarkFileAsWritable(logFile);
 
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
-        await ExecuteOnMasterAsync(commandText);
 
-        var connectionString = $"Data Source=(LocalDb)\\{instance};Database={name};MultipleActiveResultSets=True;Pooling=false";
+#if NETSTANDARD2_1
+        await using var masterConnection = await OpenMasterConnection();
+#else
+        using var masterConnection = await OpenMasterConnection();
+#endif
+        await masterConnection.ExecuteCommandAsync(commandText);
+
+        var connectionString = LocalDbSettings.connectionBuilder(instance,name);
         await RunCallback(connectionString);
 
         Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
@@ -115,7 +121,11 @@ class Wrapper
                 return;
             }
 
+#if NETSTANDARD2_1
+            await using var connection = buildConnection(connectionString);
+#else
             using var connection = buildConnection(connectionString);
+#endif
             await connection.OpenAsync();
             await callback(connection);
             callback = null;
@@ -180,6 +190,7 @@ class Wrapper
             CleanStart();
             return;
         }
+
         if (!File.Exists(DataFile))
         {
             LocalDbApi.StopAndDelete(instance);
@@ -208,46 +219,61 @@ class Wrapper
         bool rebuild,
         bool optimize)
     {
-        masterConnection = buildConnection(MasterConnectionString);
-        await masterConnection.OpenAsync();
-        var takeDbsOffline = ExecuteOnMasterAsync(SqlBuilder.TakeDbsOfflineCommand);
+#if NETSTANDARD2_1
+        await using var takeOfflineConnection = await OpenMasterConnection();
+#else
+        using var takeOfflineConnection = await OpenMasterConnection();
+#endif
+        var takeDbsOffline = takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
+#if NETSTANDARD2_1
+        await using var masterConnection = await OpenMasterConnection();
+#else
+        using var masterConnection = await OpenMasterConnection();
+#endif
+
         LocalDbLogging.LogIfVerbose($"SqlServerVersion: {masterConnection.ServerVersion}");
 
         if (optimize)
         {
-            await ExecuteOnMasterAsync(SqlBuilder.GetOptimizationCommand(size));
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizationCommand(size));
         }
 
         if (rebuild && !templateProvided)
         {
-            await Rebuild(timestamp, buildTemplate);
+            await Rebuild(timestamp, buildTemplate, masterConnection);
         }
 
         await takeDbsOffline;
     }
 
-    async Task Rebuild(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
+    async Task<DbConnection> OpenMasterConnection()
+    {
+        var connection = buildConnection(MasterConnectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+
+    async Task Rebuild(DateTime timestamp, Func<DbConnection, Task> buildTemplate, DbConnection masterConnection)
     {
         DeleteTemplateFiles();
-        await ExecuteOnMasterAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile));
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile));
 
         FileExtensions.MarkFileAsWritable(DataFile);
         FileExtensions.MarkFileAsWritable(LogFile);
 
+#if NETSTANDARD2_1
+        await using (var connection = buildConnection(TemplateConnectionString))
+#else
         using (var connection = buildConnection(TemplateConnectionString))
+#endif
         {
             await connection.OpenAsync();
             await buildTemplate(connection);
         }
 
-        await ExecuteOnMasterAsync(SqlBuilder.DetachTemplateCommand);
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
 
         File.SetCreationTime(DataFile, timestamp);
-    }
-
-    Task ExecuteOnMasterAsync(string command)
-    {
-        return masterConnection.ExecuteCommandAsync(command);
     }
 
     [Time]
@@ -267,7 +293,12 @@ class Wrapper
     public async Task DeleteDatabase(string dbName)
     {
         var commandText = SqlBuilder.BuildDeleteDbCommand(dbName);
-        await ExecuteOnMasterAsync(commandText);
+#if NETSTANDARD2_1
+        await using var connection = await OpenMasterConnection();
+#else
+        using var connection = await OpenMasterConnection();
+#endif
+        await connection.ExecuteCommandAsync(commandText);
         var dataFile = Path.Combine(Directory, $"{dbName}.mdf");
         var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");
         File.Delete(dataFile);

@@ -12,6 +12,7 @@
     <Compile Include="..\LocalDb\DbFileNameReader.cs" />
     <Compile Include="..\LocalDb\ExistingTemplate.cs" Link="ExistingTemplate.cs" />
     <Compile Include="..\LocalDb\SqlBuilder.cs" />
+    <Compile Include="..\LocalDb\Settings.cs" />
     <Compile Include="..\LocalDb\DirectoryCleaner.cs" />
     <Compile Include="..\LocalDb\StringExtensions.cs" />
     <Compile Include="..\LocalDb\Timestamp.cs" />
