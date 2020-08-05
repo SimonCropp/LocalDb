@@ -16,7 +16,7 @@ Since the model database is 8MB, the default (and smallest) size for any new dat
 To have a smaller file size [DBCC SHRINKFILE](https://docs.microsoft.com/en-us/sql/t-sql/database-console-commands/dbcc-shrinkfile-transact-sql) is performed on the model database at the time a new SqlLocalDB instance is created. The smallest size allowed is 3MB.
 
 <!-- snippet: ShrinkModelDb -->
-<a id='snippet-shrinkmodeldb'/></a>
+<a id='snippet-shrinkmodeldb'></a>
 ```cs
 use model;
 dbcc shrinkfile(modeldev, {size})

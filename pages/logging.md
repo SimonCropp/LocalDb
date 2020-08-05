@@ -15,7 +15,7 @@ By default some information is written to [Trace.WriteLine](https://docs.microso
 To enable verbose logging use `LocalDbLogging`:
 
 <!-- snippet: LocalDbLoggingUsage -->
-<a id='snippet-localdbloggingusage'/></a>
+<a id='snippet-localdbloggingusage'></a>
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
@@ -25,7 +25,7 @@ LocalDbLogging.EnableVerbose();
 The full implementation is:
 
 <!-- snippet: LocalDbLogging -->
-<a id='snippet-localdblogging'/></a>
+<a id='snippet-localdblogging'></a>
 ```cs
 /// <summary>
 /// Controls the logging level.
@@ -76,7 +76,7 @@ public static class LocalDbLogging
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
 
 <!-- snippet: MethodTimeLogger -->
-<a id='snippet-methodtimelogger'/></a>
+<a id='snippet-methodtimelogger'></a>
 ```cs
 static class MethodTimeLogger
 {
@@ -105,7 +105,7 @@ static class MethodTimeLogger
 SQL statements can be logged:
 
 <!-- snippet: LocalDbLoggingUsageSqlLogging -->
-<a id='snippet-localdbloggingusagesqllogging'/></a>
+<a id='snippet-localdbloggingusagesqllogging'></a>
 ```cs
 LocalDbLogging.EnableVerbose(sqlLogging: true);
 ```

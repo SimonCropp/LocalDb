@@ -20,7 +20,7 @@ https://nuget.org/packages/EfLocalDb/
 The snippets use a DbContext of the following form:
 
 <!-- snippet: EfLocalDb.Tests/Snippets/TheDbContext.cs -->
-<a id='snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs'/></a>
+<a id='snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs'></a>
 ```cs
 using Microsoft.EntityFrameworkCore;
 
@@ -44,7 +44,7 @@ public class TheDbContext :
 <!-- endsnippet -->
 
 <!-- snippet: EfLocalDb.Tests/Snippets/TheEntity.cs -->
-<a id='snippet-EfLocalDb.Tests/Snippets/TheEntity.cs'/></a>
+<a id='snippet-EfLocalDb.Tests/Snippets/TheEntity.cs'></a>
 ```cs
 public class TheEntity
 {
@@ -70,7 +70,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: EfStaticConstructor -->
-<a id='snippet-efstaticconstructor'/></a>
+<a id='snippet-efstaticconstructor'></a>
 ```cs
 public class Tests
 {
@@ -103,7 +103,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: EfTestBase -->
-<a id='snippet-eftestbase'/></a>
+<a id='snippet-eftestbase'></a>
 ```cs
 public class TestBase
 {
@@ -152,7 +152,7 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: EfBuildDatabase -->
-<a id='snippet-efbuilddatabase'/></a>
+<a id='snippet-efbuilddatabase'></a>
 ```cs
 await using var database = await sqlInstance.Build();
 ```
@@ -165,7 +165,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using DbContexts
 
 <!-- snippet: EfBuildContext -->
-<a id='snippet-efbuildcontext'/></a>
+<a id='snippet-efbuildcontext'></a>
 ```cs
 await using (var data = database.NewDbContext())
 {
@@ -179,7 +179,7 @@ await using (var data = database.NewDbContext())
 The above are combined in a full test:
 
 <!-- snippet: EfLocalDb.Tests/Snippets/EfSnippetTests.cs -->
-<a id='snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs'/></a>
+<a id='snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
 using System.Threading.Tasks;
 using EfLocalDb;
@@ -238,7 +238,7 @@ public class EfSnippetTests
 When building a `DbContextOptionsBuilder` the default configuration is as follows:
 
 <!-- snippet: EfLocalDb/DefaultOptionsBuilder.cs -->
-<a id='snippet-EfLocalDb/DefaultOptionsBuilder.cs'/></a>
+<a id='snippet-EfLocalDb/DefaultOptionsBuilder.cs'></a>
 ```cs
 using Microsoft.EntityFrameworkCore;
 

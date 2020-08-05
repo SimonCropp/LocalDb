@@ -20,7 +20,7 @@ https://nuget.org/packages/EfClassicLocalDb/
 The snippets use a DbContext of the following form:
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheDbContext.cs -->
-<a id='snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs'/></a>
+<a id='snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs'></a>
 ```cs
 using System.Data.Common;
 using System.Data.Entity;
@@ -45,7 +45,7 @@ public class TheDbContext :
 <!-- endsnippet -->
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheEntity.cs -->
-<a id='snippet-EfClassicLocalDb.Tests/Snippets/TheEntity.cs'/></a>
+<a id='snippet-EfClassicLocalDb.Tests/Snippets/TheEntity.cs'></a>
 ```cs
 public class TheEntity
 {
@@ -71,7 +71,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: EfClassicStaticConstructor -->
-<a id='snippet-efclassicstaticconstructor'/></a>
+<a id='snippet-efclassicstaticconstructor'></a>
 ```cs
 public class Tests
 {
@@ -104,7 +104,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: EfClassicTestBase -->
-<a id='snippet-efclassictestbase'/></a>
+<a id='snippet-efclassictestbase'></a>
 ```cs
 public class TestBase
 {
@@ -152,7 +152,7 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: EfClassicBuildDatabase -->
-<a id='snippet-efclassicbuilddatabase'/></a>
+<a id='snippet-efclassicbuilddatabase'></a>
 ```cs
 using var database = await sqlInstance.Build();
 ```
@@ -165,7 +165,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using DbContexts
 
 <!-- snippet: EfClassicBuildContext -->
-<a id='snippet-efclassicbuildcontext'/></a>
+<a id='snippet-efclassicbuildcontext'></a>
 ```cs
 using (var data = database.NewDbContext())
 {
@@ -179,7 +179,7 @@ using (var data = database.NewDbContext())
 The above are combined in a full test:
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs -->
-<a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'/></a>
+<a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
 using System.Threading.Tasks;
 using EfLocalDb;
@@ -238,7 +238,7 @@ public class EfSnippetTests
 It is possible to pass the path to a pre-existing template to SqlInstance. This is useful if the database contains stored procedures, or requires a large amount of test data.
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs -->
-<a id='snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs'/></a>
+<a id='snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs'></a>
 ```cs
 using EfLocalDb;
 

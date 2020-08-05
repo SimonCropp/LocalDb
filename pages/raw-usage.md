@@ -20,7 +20,7 @@ https://nuget.org/packages/LocalDb/
 The snippets use the following helper class:
 
 <!-- snippet: TestDbBuilder.cs -->
-<a id='snippet-TestDbBuilder.cs'/></a>
+<a id='snippet-TestDbBuilder.cs'></a>
 ```cs
 using System.Collections.Generic;
 using System.Data.Common;
@@ -82,7 +82,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: StaticConstructor -->
-<a id='snippet-staticconstructor'/></a>
+<a id='snippet-staticconstructor'></a>
 ```cs
 public class Tests
 {
@@ -113,7 +113,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: TestBase -->
-<a id='snippet-testbase'/></a>
+<a id='snippet-testbase'></a>
 ```cs
 public class TestBase
 {
@@ -158,7 +158,7 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: BuildDatabase -->
-<a id='snippet-builddatabase'/></a>
+<a id='snippet-builddatabase'></a>
 ```cs
 await using var database = await sqlInstance.Build();
 await TestDbBuilder.AddData(database.Connection);
@@ -173,7 +173,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using SQLConnection
 
 <!-- snippet: BuildContext -->
-<a id='snippet-buildcontext'/></a>
+<a id='snippet-buildcontext'></a>
 ```cs
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
@@ -187,7 +187,7 @@ Assert.Single(await TestDbBuilder.GetData(database.Connection));
 The above are combined in a full test:
 
 <!-- snippet: SnippetTests.cs -->
-<a id='snippet-SnippetTests.cs'/></a>
+<a id='snippet-SnippetTests.cs'></a>
 ```cs
 using System.Threading.Tasks;
 using LocalDb;

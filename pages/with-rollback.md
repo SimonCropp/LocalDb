@@ -20,7 +20,7 @@ If a test has failed, to debug the database state, temporarily switch back to th
 ## Usage
 
 <!-- snippet: WithRollback -->
-<a id='snippet-withrollback'/></a>
+<a id='snippet-withrollback'></a>
 ```cs
 var sqlInstance = new SqlInstance(
     name: "theInstanceName",
@@ -38,7 +38,7 @@ var connection = sqlDatabase.Connection;
 ## EntityFramework Usage
 
 <!-- snippet: EfWithRollback -->
-<a id='snippet-efwithrollback'/></a>
+<a id='snippet-efwithrollback'></a>
 ```cs
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new TheDbContext(builder.Options));
