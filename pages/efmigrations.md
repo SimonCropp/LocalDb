@@ -10,7 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 [EntityFramework Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
 
 <!-- snippet: Migrations -->
-<a id='snippet-migrations'/></a>
+<a id='snippet-migrations'></a>
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
     buildTemplate: async (connection, options) =>
@@ -33,7 +33,7 @@ The above performs the following actions:
 Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/operations).
 
 <!-- snippet: IMigrationsSqlGenerator -->
-<a id='snippet-imigrationssqlgenerator'/></a>
+<a id='snippet-imigrationssqlgenerator'></a>
 ```cs
 options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 ```
@@ -46,7 +46,7 @@ options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/#apply-migrations-at-runtime).
 
 <!-- snippet: Migrate -->
-<a id='snippet-migrate'/></a>
+<a id='snippet-migrate'></a>
 ```cs
 await using var data = new MyDbContext(options.Options);
 await data.Database.MigrateAsync();

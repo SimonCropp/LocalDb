@@ -10,7 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 The instance name is defined as:
 
 <!-- snippet: GetInstanceName -->
-<a id='snippet-getinstancename'/></a>
+<a id='snippet-getinstancename'></a>
 ```cs
 if (scopeSuffix == null)
 {
@@ -35,7 +35,7 @@ There is an explicit registration override that takes an instance name and a dir
 ## For SQL:
 
 <!-- snippet: ExplicitName -->
-<a id='snippet-explicitname'/></a>
+<a id='snippet-explicitname'></a>
 ```cs
 var sqlInstance = new SqlInstance(
     name: "theInstanceName",
@@ -50,7 +50,7 @@ var sqlInstance = new SqlInstance(
 ## For EntityFramework:
 
 <!-- snippet: EfExplicitName -->
-<a id='snippet-efexplicitname'/></a>
+<a id='snippet-efexplicitname'></a>
 ```cs
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new TheDbContext(builder.Options),
@@ -65,7 +65,7 @@ var sqlInstance = new SqlInstance<TheDbContext>(
 When using azure hosted machines for build agents, it makes sense to use the agent temp directory as defined by the `AGENT_TEMPDIRECTORY` environment variable. The reason is that the temp directory is located on a secondary drive. However this drive has some strange permissions that will cause run time errors, usually manifesting as a SqlException with `Could not open new database...`. To work around this run the following script at machine startup:
 
 <!-- snippet: Set-D-Drive-Permissions.ps1 -->
-<a id='snippet-Set-D-Drive-Permissions.ps1'/></a>
+<a id='snippet-Set-D-Drive-Permissions.ps1'></a>
 ```ps1
 $paths = @('D:\Agent', 'D:\Agent\Work', 'D:\Agent\Work\_Temp')
 
@@ -92,7 +92,7 @@ A design goal is to have an isolated database per test. To facilitate this the `
 The convention signature is as follows:
 
 <!-- snippet: ConventionBuildSignature -->
-<a id='snippet-conventionbuildsignature'/></a>
+<a id='snippet-conventionbuildsignature'></a>
 ```cs
 /// <summary>
 ///   Build database with a name based on the calling Method.
@@ -120,7 +120,7 @@ public Task<SqlDatabase> Build(
 With these parameters the database name is the derived as follows:
 
 <!-- snippet: DeriveName -->
-<a id='snippet-derivename'/></a>
+<a id='snippet-derivename'></a>
 ```cs
 public static string DeriveDbName(
     string? suffix,
@@ -143,7 +143,7 @@ public static string DeriveDbName(
 If full control over the database name is required, there is an overload that takes an explicit name:
 
 <!-- snippet: ExplicitBuildSignature -->
-<a id='snippet-explicitbuildsignature'/></a>
+<a id='snippet-explicitbuildsignature'></a>
 ```cs
 /// <summary>
 ///   Build database with an explicit name.
@@ -159,7 +159,7 @@ Which can be used as follows:
 ### For SQL:
 
 <!-- snippet: WithDbName -->
-<a id='snippet-withdbname'/></a>
+<a id='snippet-withdbname'></a>
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
@@ -170,7 +170,7 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ### For EntityFramework:
 
 <!-- snippet: EFWithDbName -->
-<a id='snippet-efwithdbname'/></a>
+<a id='snippet-efwithdbname'></a>
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
