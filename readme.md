@@ -33,7 +33,6 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
     * [EntityFramework Core](#entityframework-core)
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
-  * [SQL Server Updates](#sql-server-updates)
   * [Credits](#credits)
   * [Security contact information](#security-contact-information)<!-- endtoc -->
   * [Design](/pages/design.md)
@@ -143,13 +142,6 @@ Useful commands:
  * `sqllocaldb start InstanceName`: start an instance
  * `sqllocaldb stop InstanceName`: stop an instance
  * `sqllocaldb delete InstanceName`: delete an instance (this does not delete the file system data for the instance)
-
-
-## SQL Server Updates
-
-Ensure that the latests SQL Server Cumulative Update is being used.
-
- * [SQL Server 2017](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
 
 
 ## Credits
