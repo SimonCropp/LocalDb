@@ -121,13 +121,6 @@ Useful commands:
  * `sqllocaldb delete InstanceName`: delete an instance (this does not delete the file system data for the instance)
 
 
-## SQL Server Updates
-
-Ensure that the latests SQL Server Cumulative Update is being used.
-
- * [SQL Server 2017](https://support.microsoft.com/en-au/help/4047329/sql-server-2017-build-versions)
-
-
 ## Credits
 
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
