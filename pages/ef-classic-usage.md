@@ -42,7 +42,7 @@ public class TheDbContext :
 }
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L18' title='File snippet `EfClassicLocalDb.Tests/Snippets/TheDbContext.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/TheDbContext.cs`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheEntity.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/TheEntity.cs'></a>
@@ -54,7 +54,7 @@ public class TheEntity
 }
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheEntity.cs#L1-L5' title='File snippet `EfClassicLocalDb.Tests/Snippets/TheEntity.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheEntity.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/TheEntity.cs`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## Initialize SqlInstance
@@ -96,7 +96,7 @@ public class Tests
 }
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L30' title='File snippet `efclassicstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Navigate to start of snippet `efclassicstaticconstructor`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ### Static constructor in test base
@@ -142,7 +142,7 @@ public class Tests :
 }
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45' title='File snippet `efclassictestbase` was extracted from'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Navigate to start of snippet `efclassictestbase`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 ## Usage in a Test
 
@@ -157,7 +157,7 @@ Usage inside a test consists of two parts:
 using var database = await sqlInstance.Build();
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L18-L20' title='File snippet `efclassicbuilddatabase` was extracted from'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Navigate to start of snippet `efclassicbuilddatabase`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
 
@@ -171,7 +171,7 @@ using (var data = database.NewDbContext())
 {
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L21-L24' title='File snippet `efclassicbuildcontext` was extracted from'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Navigate to start of snippet `efclassicbuildcontext`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 #### Full Test
@@ -230,7 +230,7 @@ public class EfSnippetTests
 }
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='File snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## Using a pre-constructed template
@@ -255,4 +255,4 @@ static class SuppliedTemplate
 }
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L13' title='File snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->

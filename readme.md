@@ -34,7 +34,7 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
   * [Credits](#credits)
-  * [Security contact information](#security-contact-information)<!-- endtoc -->
+  * [Security contact information](#security-contact-information)<!-- endToc -->
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
   * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)

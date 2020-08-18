@@ -23,7 +23,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
     constructInstance: builder => new MyDbContext(builder.Options));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L29' title='File snippet `migrations` was extracted from'>snippet source</a> | <a href='#snippet-migrations' title='Navigate to start of snippet `migrations`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 The above performs the following actions:
 
@@ -38,7 +38,7 @@ Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/e
 options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L20' title='File snippet `imigrationssqlgenerator` was extracted from'>snippet source</a> | <a href='#snippet-imigrationssqlgenerator' title='Navigate to start of snippet `imigrationssqlgenerator`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## Apply the migration
@@ -52,4 +52,4 @@ await using var data = new MyDbContext(options.Options);
 await data.Database.MigrateAsync();
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L25' title='File snippet `migrate` was extracted from'>snippet source</a> | <a href='#snippet-migrate' title='Navigate to start of snippet `migrate`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->

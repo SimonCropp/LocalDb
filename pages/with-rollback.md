@@ -32,7 +32,7 @@ var connection = sqlDatabase.Connection;
 //Use the connection
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L17' title='File snippet `withrollback` was extracted from'>snippet source</a> | <a href='#snippet-withrollback' title='Navigate to start of snippet `withrollback`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## EntityFramework Usage
@@ -49,4 +49,4 @@ var data = sqlDatabase.Context;
 //Use the Connection or TheDbContext
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='File snippet `efwithrollback` was extracted from'>snippet source</a> | <a href='#snippet-efwithrollback' title='Navigate to start of snippet `efwithrollback`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->

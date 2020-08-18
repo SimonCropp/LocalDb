@@ -20,7 +20,7 @@ if (scopeSuffix == null)
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
 <sup><a href='/src/EfLocalDb/Storage.cs#L28-L37' title='File snippet `getinstancename` was extracted from'>snippet source</a> | <a href='#snippet-getinstancename' title='Navigate to start of snippet `getinstancename`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
 
@@ -44,7 +44,7 @@ var sqlInstance = new SqlInstance(
 );
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13' title='File snippet `explicitname` was extracted from'>snippet source</a> | <a href='#snippet-explicitname' title='Navigate to start of snippet `explicitname`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## For EntityFramework:
@@ -57,7 +57,7 @@ var sqlInstance = new SqlInstance<TheDbContext>(
     storage: new Storage("theInstanceName",@"C:\LocalDb\theInstance"));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='File snippet `efexplicitname` was extracted from'>snippet source</a> | <a href='#snippet-efexplicitname' title='Navigate to start of snippet `efexplicitname`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## Building using Azure machines
@@ -78,7 +78,7 @@ $paths | % {
 }
 ```
 <sup><a href='/src/StartUpScript/Set-D-Drive-Permissions.ps1#L1-L9' title='File snippet `Set-D-Drive-Permissions.ps1` was extracted from'>snippet source</a> | <a href='#snippet-Set-D-Drive-Permissions.ps1' title='Navigate to start of snippet `Set-D-Drive-Permissions.ps1`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 # Database Name Resolution
@@ -115,7 +115,7 @@ public Task<SqlDatabase> Build(
     [CallerMemberName] string memberName = "")
 ```
 <sup><a href='/src/LocalDb/SqlInstance.cs#L62-L82' title='File snippet `conventionbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Navigate to start of snippet `conventionbuildsignature`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
 
@@ -135,7 +135,7 @@ public static string DeriveDbName(
 }
 ```
 <sup><a href='/src/LocalDb/DbNamer.cs#L3-L15' title='File snippet `derivename` was extracted from'>snippet source</a> | <a href='#snippet-derivename' title='Navigate to start of snippet `derivename`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## Explicit name
@@ -151,7 +151,7 @@ If full control over the database name is required, there is an overload that ta
 public async Task<SqlDatabase> Build(string dbName)
 ```
 <sup><a href='/src/LocalDb/SqlInstance.cs#L95-L100' title='File snippet `explicitbuildsignature` was extracted from'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Navigate to start of snippet `explicitbuildsignature`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 Which can be used as follows:
 
@@ -164,7 +164,7 @@ Which can be used as follows:
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L35' title='File snippet `withdbname` was extracted from'>snippet source</a> | <a href='#snippet-withdbname' title='Navigate to start of snippet `withdbname`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ### For EntityFramework:
@@ -175,4 +175,4 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L44-L46' title='File snippet `efwithdbname` was extracted from'>snippet source</a> | <a href='#snippet-efwithdbname' title='Navigate to start of snippet `efwithdbname`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->

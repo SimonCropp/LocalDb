@@ -22,7 +22,7 @@ use model;
 dbcc shrinkfile(modeldev, {size})
 ```
 <sup><a href='/src/LocalDb/SqlBuilder.cs#L53-L56' title='File snippet `shrinkmodeldb` was extracted from'>snippet source</a> | <a href='#snippet-shrinkmodeldb' title='Navigate to start of snippet `shrinkmodeldb`'>anchor</a></sup>
-<!-- endsnippet -->
+<!-- endSnippet -->
 
 
 ## Override
