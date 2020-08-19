@@ -144,6 +144,21 @@ public class Tests :
 <!-- endSnippet -->
 
 
+### SqlServerDbContextOptionsBuilder
+
+Some SqlServer options are exposed by passing a `Action<SqlServerDbContextOptionsBuilder>` to the ` SqlServerDbContextOptionsExtensions.UseSqlServer`. In this project the `UseSqlServer` is handled internally, so the SqlServerDbContextOptionsBuilder functionality is achieved by passing a action to the SqlInstance.
+
+<!-- snippet: sqlOptionsBuilder -->
+<a id='snippet-sqloptionsbuilder'></a>
+```cs
+var sqlInstance = new SqlInstance<MyDbContext>(
+    constructInstance: builder => new MyDbContext(builder.Options),
+    sqlOptionsBuilder: sqlBuilder => sqlBuilder.EnableRetryOnFailure(5));
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/SqlBuilder.cs#L8-L14' title='File snippet `sqloptionsbuilder` was extracted from'>snippet source</a> | <a href='#snippet-sqloptionsbuilder' title='Navigate to start of snippet `sqloptionsbuilder`'>anchor</a></sup>
+<!-- endSnippet -->
+
+
 ## Usage in a Test
 
 Usage inside a test consists of two parts:

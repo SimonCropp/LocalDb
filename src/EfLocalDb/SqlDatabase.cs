@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EfLocalDb
 {
@@ -13,18 +14,21 @@ namespace EfLocalDb
         ConstructInstance<TDbContext> constructInstance;
         Func<Task> delete;
         IEnumerable<object>? data;
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
 
         internal SqlDatabase(
             string connectionString,
             string name,
             ConstructInstance<TDbContext> constructInstance,
             Func<Task> delete,
-            IEnumerable<object>? data)
+            IEnumerable<object>? data,
+            Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
         {
             Name = name;
             this.constructInstance = constructInstance;
             this.delete = delete;
             this.data = data;
+            this.sqlOptionsBuilder = sqlOptionsBuilder;
             ConnectionString = connectionString;
             Connection = new SqlConnection(connectionString);
         }
@@ -68,7 +72,7 @@ namespace EfLocalDb
         public TDbContext NewDbContext()
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
-            builder.UseSqlServer(Connection);
+            builder.UseSqlServer(Connection, sqlOptionsBuilder);
             return constructInstance(builder);
         }
 

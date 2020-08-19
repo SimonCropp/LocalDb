@@ -40,6 +40,13 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 snippet: EfTestBase
 
 
+### SqlServerDbContextOptionsBuilder
+
+Some SqlServer options are exposed by passing a `Action<SqlServerDbContextOptionsBuilder>` to the ` SqlServerDbContextOptionsExtensions.UseSqlServer`. In this project the `UseSqlServer` is handled internally, so the SqlServerDbContextOptionsBuilder functionality is achieved by passing a action to the SqlInstance.
+
+snippet: sqlOptionsBuilder
+
+
 ## Usage in a Test
 
 Usage inside a test consists of two parts:

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 // ReSharper disable RedundantCast
 
@@ -17,6 +18,7 @@ namespace EfLocalDb
         internal Wrapper Wrapper { get; }
         ConstructInstance<TDbContext> constructInstance;
         static Storage DefaultStorage;
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
 
         static SqlInstance()
         {
@@ -46,7 +48,8 @@ namespace EfLocalDb
             DateTime? timestamp = null,
             ushort templateSize = 3,
             ExistingTemplate? existingTemplate = null,
-            Callback<TDbContext>? callback = null) :
+            Callback<TDbContext>? callback = null,
+            Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null) :
             this(
                 constructInstance,
                 BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -54,7 +57,8 @@ namespace EfLocalDb
                 GetTimestamp(timestamp, buildTemplate),
                 templateSize,
                 existingTemplate,
-                callback)
+                callback,
+                sqlOptionsBuilder)
         {
         }
 
@@ -76,7 +80,8 @@ namespace EfLocalDb
             DateTime? timestamp = null,
             ushort templateSize = 3,
             ExistingTemplate? existingTemplate = null,
-            Callback<TDbContext>? callback = null)
+            Callback<TDbContext>? callback = null,
+            Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null)
         {
             storage ??= DefaultStorage;
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
@@ -84,6 +89,7 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             Model = BuildModel(constructInstance);
             this.constructInstance = constructInstance;
+            this.sqlOptionsBuilder = sqlOptionsBuilder;
 
             var storageValue = storage.Value;
             DirectoryCleaner.CleanInstance(storageValue.Directory);
@@ -91,7 +97,7 @@ namespace EfLocalDb
             Task BuildTemplate(DbConnection connection)
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
-                builder.UseSqlServer(connection);
+                builder.UseSqlServer(connection, sqlOptionsBuilder);
                 return buildTemplate(connection, builder);
             }
 
@@ -101,7 +107,7 @@ namespace EfLocalDb
                 wrapperCallback = async connection =>
                 {
                     var builder = DefaultOptionsBuilder.Build<TDbContext>();
-                    builder.UseSqlServer(connection);
+                    builder.UseSqlServer(connection, sqlOptionsBuilder);
 #if NETSTANDARD2_1
                     await using var context = constructInstance(builder);
 #else
@@ -133,6 +139,7 @@ namespace EfLocalDb
             {
                 return Timestamp.LastModified<TDbContext>();
             }
+
             return Timestamp.LastModified(buildTemplate);
         }
 
@@ -193,7 +200,13 @@ namespace EfLocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
-            var database = new SqlDatabase<TDbContext>(connection, dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data);
+            var database = new SqlDatabase<TDbContext>(
+                connection,
+                dbName,
+                constructInstance,
+                () => Wrapper.DeleteDatabase(dbName),
+                data,
+                sqlOptionsBuilder);
             await database.Start();
             return database;
         }
@@ -219,7 +232,11 @@ namespace EfLocalDb
         public async Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(IEnumerable<object> data)
         {
             var connection = await BuildWithRollbackDatabase();
-            var database = new SqlDatabaseWithRollback<TDbContext>(connection, constructInstance, data);
+            var database = new SqlDatabaseWithRollback<TDbContext>(
+                connection,
+                constructInstance,
+                data,
+                sqlOptionsBuilder);
             await database.Start();
             return database;
         }
