@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EfLocalDb
 {
@@ -12,15 +14,18 @@ namespace EfLocalDb
     {
         ConstructInstance<TDbContext> constructInstance;
         IEnumerable<object>? data;
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
 
         internal SqlDatabaseWithRollback(
             string connectionString,
             ConstructInstance<TDbContext> constructInstance,
-            IEnumerable<object> data)
+            IEnumerable<object> data,
+            Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
         {
             Name = "withRollback";
             this.constructInstance = constructInstance;
             this.data = data;
+            this.sqlOptionsBuilder = sqlOptionsBuilder;
             ConnectionString = connectionString;
             var transactionOptions = new TransactionOptions
             {
@@ -72,7 +77,7 @@ namespace EfLocalDb
         public TDbContext NewDbContext()
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
-            builder.UseSqlServer(Connection);
+            builder.UseSqlServer(Connection, sqlOptionsBuilder);
             var data = constructInstance(builder);
             data.Database.EnlistTransaction(Transaction);
             return data;

@@ -53,6 +53,23 @@ public class Tests
     }
 
     [Fact]
+    public async Task SqlOptionsBuilder()
+    {
+        var optionsBuilderCalled = false;
+        var instance = new SqlInstance<TestDbContext>(
+            constructInstance: builder => new TestDbContext(builder.Options),
+            sqlOptionsBuilder: builder => { optionsBuilderCalled = true; });
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build(new List<object> {entity});
+        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(optionsBuilderCalled);
+    }
+
+    [Fact]
     public async Task BuildTemplate()
     {
         var instance = new SqlInstance<TestDbContext>(
