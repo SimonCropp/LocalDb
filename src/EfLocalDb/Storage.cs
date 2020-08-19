@@ -17,9 +17,9 @@
             Directory = directory;
         }
 
-        public string Directory { get; private set; }
+        public string Directory { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
         static string GetInstanceName<TDbContext>(string? scopeSuffix)
         {

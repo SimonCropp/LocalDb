@@ -28,6 +28,17 @@ namespace EfLocalDb
 
         public string ServerName => Wrapper.ServerName;
 
+        /// <summary>
+        /// Instantiate a <see cref="SqlInstance{TDbContext}"/>.
+        /// Should usually be scoped as once instance per appdomain. So all tests use the same instance of <see cref="SqlInstance{TDbContext}"/>.
+        /// </summary>
+        /// <param name="constructInstance"></param>
+        /// <param name="buildTemplate"></param>
+        /// <param name="storage">Disk storage convention for where the mdb and the ldf files will be located.</param>
+        /// <param name="timestamp"></param>
+        /// <param name="templateSize">The size in MB for the template. Optional.</param>
+        /// <param name="existingTemplate">Existing mdb and the ldf files to use when building the template. Optional.</param>
+        /// <param name="callback">Option callback that is executed after the template database has been created.</param>
         public SqlInstance(
             ConstructInstance<TDbContext> constructInstance,
             TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -47,6 +58,17 @@ namespace EfLocalDb
         {
         }
 
+        /// <summary>
+        /// Instantiate a <see cref="SqlInstance{TDbContext}"/>.
+        /// Should usually be scoped as once instance per appdomain. So all tests use the same instance of <see cref="SqlInstance{TDbContext}"/>.
+        /// </summary>
+        /// <param name="constructInstance"></param>
+        /// <param name="buildTemplate"></param>
+        /// <param name="storage">Disk storage convention for where the mdb and the ldf files will be located. Optional.</param>
+        /// <param name="timestamp"></param>
+        /// <param name="templateSize">The size in MB for the template. Optional.</param>
+        /// <param name="existingTemplate">Existing mdb and the ldf files to use when building the template. Optional.</param>
+        /// <param name="callback">Callback that is executed after the template database has been created. Optional.</param>
         public SqlInstance(
             ConstructInstance<TDbContext> constructInstance,
             TemplateFromConnection<TDbContext> buildTemplate,
