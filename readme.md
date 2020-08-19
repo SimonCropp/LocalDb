@@ -98,7 +98,7 @@ See the official guidance: [InMemory is not a relational database](https://docs.
 
 ## Usage
 
-This project currently supports two approaches.
+This project supports several approaches.
 
 
 ### Raw SqlConnection
