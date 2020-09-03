@@ -9,7 +9,7 @@
     <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <PackageReference Include="Fody" Version="6.2.4" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.2.5" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="All" />
     <PackageReference Include="XunitContext" Version="2.0.1" />
     <PackageReference Include="Verify.Xunit" Version="6.10.7" />
