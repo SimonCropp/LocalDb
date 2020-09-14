@@ -40,7 +40,7 @@ public class Tests
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
-            storage: Storage.FromSuffix<TestDbContext>("theClassicSuffix"));
+            storage: Storage.FromSuffix<TestDbContext>($"theClassicSuffix{Environment.Version.Major}"));
 
         var entity = new TestEntity
         {
@@ -58,7 +58,7 @@ public class Tests
             constructInstance: connection => new TestDbContext(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,
-            storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
+            storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
 
         using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -69,7 +69,7 @@ public class Tests
     {
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
-            storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
+            storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -81,7 +81,7 @@ public class Tests
         var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new TestDbContext(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
-            storage: Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
+            storage: Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -231,7 +231,7 @@ public class Tests
     {
         instance = new SqlInstance<TestDbContext>(
             connection => new TestDbContext(connection),
-            storage: Storage.FromSuffix<TestDbContext>("Classic"),
+            storage: Storage.FromSuffix<TestDbContext>($"Classic{Environment.Version.Major}"),
             callback: (connection, context) =>
             {
                 callbackCalled = true;
