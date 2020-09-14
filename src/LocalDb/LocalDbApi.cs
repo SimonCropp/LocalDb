@@ -114,7 +114,7 @@ using System.Text;
              for (var i = 0; i < count; i++)
              {
                  var idx = IntPtr.Add(pointer, length * i);
-                 names.Add(Marshal.PtrToStringAuto(idx));
+                 names.Add(Marshal.PtrToStringAuto(idx)!);
              }
 
              return names;

@@ -82,7 +82,7 @@ namespace EfLocalDb
             Connection.Dispose();
         }
 
-#if(NETSTANDARD2_1)
+#if(!NETSTANDARD2_0)
         public async ValueTask DisposeAsync()
         {
             if (Context != null)
@@ -95,9 +95,9 @@ namespace EfLocalDb
         public async Task Delete()
         {
 #if(NETSTANDARD2_1)
-            await DisposeAsync();
-#else
             Dispose();
+#else
+            await DisposeAsync();
 #endif
             await delete();
         }

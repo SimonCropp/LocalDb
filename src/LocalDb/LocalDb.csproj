@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0-Windows</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests.</Description>
     <PackageTags>LocalDB, Testing</PackageTags>
   </PropertyGroup>
@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0-rc.1.20451.14" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
     <PackageReference Include="Nullable" Version="1.2.1" PrivateAssets="All" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.43" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.45" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Condition="$(Configuration) == 'Release'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-rc.1.20451.14" />
   </ItemGroup>

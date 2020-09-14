@@ -53,7 +53,7 @@ namespace LocalDb
             Connection.Dispose();
         }
 
-#if(NETSTANDARD2_1)
+#if(!NETSTANDARD2_0)
         public ValueTask DisposeAsync()
         {
             Transaction.Rollback();

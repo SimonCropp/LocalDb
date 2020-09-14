@@ -45,7 +45,7 @@ namespace LocalDb
             Connection.Dispose();
         }
 
-#if(NETSTANDARD2_1)
+#if(!NETSTANDARD2_0)
         public ValueTask DisposeAsync()
         {
             return Connection.DisposeAsync();
@@ -54,10 +54,10 @@ namespace LocalDb
 
         public async Task Delete()
         {
-#if(NETSTANDARD2_1)
-            await DisposeAsync();
-#else
+#if(NETSTANDARD2_0)
             Dispose();
+#else
+            await DisposeAsync();
 #endif
             await delete();
         }

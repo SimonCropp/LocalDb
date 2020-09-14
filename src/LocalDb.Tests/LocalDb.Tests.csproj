@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net5.0-Windows</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\TestData\suppliedTemplate.mdf" Link="suppliedTemplate.mdf">
@@ -19,6 +19,6 @@
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="21.0.1" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.43" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.45" PrivateAssets="All" />
   </ItemGroup>
 </Project>
