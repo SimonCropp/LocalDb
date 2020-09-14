@@ -95,7 +95,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L30' title='File snippet `efclassicstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Navigate to start of snippet `efclassicstaticconstructor`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L9-L31' title='File snippet `efclassicstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Navigate to start of snippet `efclassicstaticconstructor`'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -141,7 +141,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45' title='File snippet `efclassictestbase` was extracted from'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Navigate to start of snippet `efclassictestbase`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TestBaseUsage.cs#L10-L47' title='File snippet `efclassictestbase` was extracted from'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Navigate to start of snippet `efclassictestbase`'>anchor</a></sup>
 <!-- endSnippet -->
 
 ## Usage in a Test

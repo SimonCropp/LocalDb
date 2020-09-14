@@ -94,7 +94,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L8-L32' title='File snippet `efstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Navigate to start of snippet `efstaticconstructor`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L9-L33' title='File snippet `efstaticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Navigate to start of snippet `efstaticconstructor`'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -140,7 +140,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45' title='File snippet `eftestbase` was extracted from'>snippet source</a> | <a href='#snippet-eftestbase' title='Navigate to start of snippet `eftestbase`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L9-L46' title='File snippet `eftestbase` was extracted from'>snippet source</a> | <a href='#snippet-eftestbase' title='Navigate to start of snippet `eftestbase`'>anchor</a></sup>
 <!-- endSnippet -->
 
 
