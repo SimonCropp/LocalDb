@@ -27,11 +27,16 @@ static class LocalDbRegistryReader
         using var versionKey = versions.OpenSubKey(latest.ToString());
         if (versionKey == null)
         {
-            throw new InvalidOperationException("Could not find LocalDb dll.");
+            throw new InvalidOperationException("Could not find LocalDb dll. VersionKey is null");
         }
 
         var version = latest.ToString();
-        var path = (string) versionKey.GetValue("InstanceAPIPath");
+        var value = versionKey.GetValue("InstanceAPIPath");
+        if (value == null)
+        {
+            throw new InvalidOperationException("Could not find LocalDb dll. No InstanceAPIPath.");
+        }
+        var path = (string) value;
         return (path, version);
     }
 
