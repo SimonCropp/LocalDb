@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if(!NETCOREAPP3_1)
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
@@ -31,3 +32,4 @@ namespace StaticConstructor
 
     #endregion
 }
+#endif

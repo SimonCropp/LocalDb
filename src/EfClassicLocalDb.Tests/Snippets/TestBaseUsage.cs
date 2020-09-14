@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿#if(!NETCOREAPP3_1)
+
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
@@ -44,3 +46,4 @@ namespace TestBase
 
     #endregion
 }
+#endif

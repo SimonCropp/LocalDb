@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if(!NETCOREAPP3_1)
+using System;
 using System.Collections.Generic;
 using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
@@ -56,3 +57,4 @@ public class Migrations
         }
     }
 }
+#endif
