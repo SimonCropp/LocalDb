@@ -156,7 +156,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L18-L20' title='File snippet `efclassicbuilddatabase` was extracted from'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Navigate to start of snippet `efclassicbuilddatabase`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L21' title='File snippet `efclassicbuilddatabase` was extracted from'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Navigate to start of snippet `efclassicbuilddatabase`'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -170,7 +170,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L21-L24' title='File snippet `efclassicbuildcontext` was extracted from'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Navigate to start of snippet `efclassicbuildcontext`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L22-L25' title='File snippet `efclassicbuildcontext` was extracted from'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Navigate to start of snippet `efclassicbuildcontext`'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -181,6 +181,7 @@ The above are combined in a full test:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
+#if(!NETCOREAPP3_1)
 using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
@@ -228,8 +229,9 @@ public class EfSnippetTests
         Assert.Single(database.Context.TestEntities);
     }
 }
+#endif
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='File snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs`'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L49' title='File snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Navigate to start of snippet `EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs`'>anchor</a></sup>
 <!-- endSnippet -->
 
 
