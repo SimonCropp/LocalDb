@@ -174,5 +174,5 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L44-L46' title='File snippet `efwithdbname` was extracted from'>snippet source</a> | <a href='#snippet-efwithdbname' title='Navigate to start of snippet `efwithdbname`'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L45-L47' title='File snippet `efwithdbname` was extracted from'>snippet source</a> | <a href='#snippet-efwithdbname' title='Navigate to start of snippet `efwithdbname`'>anchor</a></sup>
 <!-- endSnippet -->
