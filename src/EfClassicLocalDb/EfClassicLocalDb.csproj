@@ -35,11 +35,11 @@
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="6.2.5" PrivateAssets="all" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0-preview.8.20407.11" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0-rc.1.20451.14" />
     <PackageReference Include="Nullable" Version="1.2.1" PrivateAssets="All" />
     <PackageReference Include="ProjectDefaults" Version="1.0.43" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Condition="$(Configuration) == 'Release'" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-preview.8.20407.11" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-rc.1.20451.14" />
   </ItemGroup>
 </Project>
