@@ -34,7 +34,8 @@ public class Migrations
     {
         public IReadOnlyList<MigrationCommand> Generate(
             IReadOnlyList<MigrationOperation> operations,
-            IModel? model = null)
+            IModel? model = null,
+            MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
         {
             throw new NotImplementedException();
         }
