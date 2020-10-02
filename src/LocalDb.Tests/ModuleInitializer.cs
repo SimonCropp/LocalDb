@@ -1,6 +1,11 @@
-﻿using EfLocalDb;
-using VerifyTests;
+﻿using VerifyTests;
 using Xunit;
+
+#if EF
+using EfLocalDb;
+#else
+using LocalDb;
+#endif
 
 public static class ModuleInitializer
 {
