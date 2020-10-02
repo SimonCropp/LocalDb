@@ -1,4 +1,5 @@
-﻿using VerifyTests;
+﻿using EfLocalDb;
+using VerifyTests;
 using Xunit;
 
 public static class ModuleInitializer
@@ -7,6 +8,7 @@ public static class ModuleInitializer
     {
         XunitContext.Init();
         LocalDbLogging.EnableVerbose();
+        LocalDbSettings.ConnectionBuilder((instance, database) => $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true;Connection Timeout=300");
         VerifierSettings.ModifySerialization(settings =>
         {
             settings.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
