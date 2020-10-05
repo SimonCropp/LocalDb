@@ -19,7 +19,7 @@ To enable verbose logging use `LocalDbLogging`:
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7' title='File snippet `localdbloggingusage` was extracted from'>snippet source</a> | <a href='#snippet-localdbloggingusage' title='Navigate to start of snippet `localdbloggingusage`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdbloggingusage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 The full implementation is:
@@ -70,7 +70,7 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L47' title='File snippet `localdblogging` was extracted from'>snippet source</a> | <a href='#snippet-localdblogging' title='Navigate to start of snippet `localdblogging`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdblogging' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
@@ -96,7 +96,7 @@ static class MethodTimeLogger
     }
 }
 ```
-<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L3-L21' title='File snippet `methodtimelogger` was extracted from'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Navigate to start of snippet `methodtimelogger`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L3-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -109,7 +109,7 @@ SQL statements can be logged:
 ```cs
 LocalDbLogging.EnableVerbose(sqlLogging: true);
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10' title='File snippet `localdbloggingusagesqllogging` was extracted from'>snippet source</a> | <a href='#snippet-localdbloggingusagesqllogging' title='Navigate to start of snippet `localdbloggingusagesqllogging`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdbloggingusagesqllogging' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 And an example database creation message would be:

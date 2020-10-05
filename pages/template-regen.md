@@ -52,5 +52,5 @@ public static class Timestamp
     }
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L11-L37' title='File snippet `timestamp` was extracted from'>snippet source</a> | <a href='#snippet-timestamp' title='Navigate to start of snippet `timestamp`'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L11-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
