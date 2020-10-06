@@ -64,7 +64,7 @@ values ({addData});";
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L41' title='File snippet `TestDbBuilder.cs` was extracted from'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Navigate to start of snippet `TestDbBuilder.cs`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L41' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -104,7 +104,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L7-L29' title='File snippet `staticconstructor` was extracted from'>snippet source</a> | <a href='#snippet-staticconstructor' title='Navigate to start of snippet `staticconstructor`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L7-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-staticconstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -146,7 +146,7 @@ public class Tests:
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L41' title='File snippet `testbase` was extracted from'>snippet source</a> | <a href='#snippet-testbase' title='Navigate to start of snippet `testbase`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L41' title='Snippet source file'>snippet source</a> | <a href='#snippet-testbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -164,7 +164,7 @@ await using var database = await sqlInstance.Build();
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L26' title='File snippet `builddatabase` was extracted from'>snippet source</a> | <a href='#snippet-builddatabase' title='Navigate to start of snippet `builddatabase`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -178,7 +178,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L22-L25' title='File snippet `buildcontext` was extracted from'>snippet source</a> | <a href='#snippet-buildcontext' title='Navigate to start of snippet `buildcontext`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L22-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -221,5 +221,5 @@ public class SnippetTests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L31' title='File snippet `SnippetTests.cs` was extracted from'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Navigate to start of snippet `SnippetTests.cs`'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
