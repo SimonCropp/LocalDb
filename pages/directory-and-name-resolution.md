@@ -10,7 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 The instance name is defined as:
 
 <!-- snippet: GetInstanceName -->
-<a id='getinstancename'></a>
+<a id='snippet-getinstancename'></a>
 ```cs
 if (scopeSuffix == null)
 {
@@ -19,7 +19,7 @@ if (scopeSuffix == null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfLocalDb/Storage.cs#L28-L37' title='Snippet source file'>snippet source</a> | <a href='#getinstancename' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/Storage.cs#L28-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-getinstancename' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -35,7 +35,7 @@ There is an explicit registration override that takes an instance name and a dir
 ## For SQL:
 
 <!-- snippet: ExplicitName -->
-<a id='explicitname'></a>
+<a id='snippet-explicitname'></a>
 ```cs
 var sqlInstance = new SqlInstance(
     name: "theInstanceName",
@@ -43,20 +43,20 @@ var sqlInstance = new SqlInstance(
     directory: @"C:\LocalDb\theInstance"
 );
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13' title='Snippet source file'>snippet source</a> | <a href='#explicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
 ## For EntityFramework:
 
 <!-- snippet: EfExplicitName -->
-<a id='efexplicitname'></a>
+<a id='snippet-efexplicitname'></a>
 ```cs
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new TheDbContext(builder.Options),
     storage: new Storage("theInstanceName",@"C:\LocalDb\theInstance"));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='Snippet source file'>snippet source</a> | <a href='#efexplicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -65,7 +65,7 @@ var sqlInstance = new SqlInstance<TheDbContext>(
 When using azure hosted machines for build agents, it makes sense to use the agent temp directory as defined by the `AGENT_TEMPDIRECTORY` environment variable. The reason is that the temp directory is located on a secondary drive. However this drive has some strange permissions that will cause run time errors, usually manifesting as a SqlException with `Could not open new database...`. To work around this run the following script at machine startup:
 
 <!-- snippet: Set-D-Drive-Permissions.ps1 -->
-<a id='Set-D-Drive-Permissions.ps1'></a>
+<a id='snippet-Set-D-Drive-Permissions.ps1'></a>
 ```ps1
 $paths = @('D:\Agent', 'D:\Agent\Work', 'D:\Agent\Work\_Temp')
 
@@ -77,7 +77,7 @@ $paths | % {
     Set-Acl $d.FullName -AclObject $acl
 }
 ```
-<sup><a href='/src/StartUpScript/Set-D-Drive-Permissions.ps1#L1-L9' title='Snippet source file'>snippet source</a> | <a href='#Set-D-Drive-Permissions.ps1' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/StartUpScript/Set-D-Drive-Permissions.ps1#L1-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-Set-D-Drive-Permissions.ps1' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -92,7 +92,7 @@ A design goal is to have an isolated database per test. To facilitate this the `
 The convention signature is as follows:
 
 <!-- snippet: ConventionBuildSignature -->
-<a id='conventionbuildsignature'></a>
+<a id='snippet-conventionbuildsignature'></a>
 ```cs
 /// <summary>
 ///   Build database with a name based on the calling Method.
@@ -114,13 +114,13 @@ public Task<SqlDatabase> Build(
     string? databaseSuffix = null,
     [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L62-L82' title='Snippet source file'>snippet source</a> | <a href='#conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L62-L82' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
 
 <!-- snippet: DeriveName -->
-<a id='derivename'></a>
+<a id='snippet-derivename'></a>
 ```cs
 public static string DeriveDbName(
     string? suffix,
@@ -134,7 +134,7 @@ public static string DeriveDbName(
     return $"{testClass}_{member}_{suffix}";
 }
 ```
-<sup><a href='/src/LocalDb/DbNamer.cs#L3-L15' title='Snippet source file'>snippet source</a> | <a href='#derivename' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/DbNamer.cs#L3-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-derivename' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -143,14 +143,14 @@ public static string DeriveDbName(
 If full control over the database name is required, there is an overload that takes an explicit name:
 
 <!-- snippet: ExplicitBuildSignature -->
-<a id='explicitbuildsignature'></a>
+<a id='snippet-explicitbuildsignature'></a>
 ```cs
 /// <summary>
 ///   Build database with an explicit name.
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L95-L100' title='Snippet source file'>snippet source</a> | <a href='#explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L95-L100' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:
@@ -159,20 +159,20 @@ Which can be used as follows:
 ### For SQL:
 
 <!-- snippet: WithDbName -->
-<a id='withdbname'></a>
+<a id='snippet-withdbname'></a>
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L35' title='Snippet source file'>snippet source</a> | <a href='#withdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
 ### For EntityFramework:
 
 <!-- snippet: EFWithDbName -->
-<a id='efwithdbname'></a>
+<a id='snippet-efwithdbname'></a>
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L44-L46' title='Snippet source file'>snippet source</a> | <a href='#efwithdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L44-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-efwithdbname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
