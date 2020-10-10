@@ -20,7 +20,7 @@ If a test has failed, to debug the database state, temporarily switch back to th
 ## Usage
 
 <!-- snippet: WithRollback -->
-<a id='withrollback'></a>
+<a id='snippet-withrollback'></a>
 ```cs
 var sqlInstance = new SqlInstance(
     name: "theInstanceName",
@@ -31,14 +31,14 @@ await using var sqlDatabase = await sqlInstance.BuildWithRollback();
 var connection = sqlDatabase.Connection;
 //Use the connection
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L17' title='Snippet source file'>snippet source</a> | <a href='#withrollback' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/WithRollback.cs#L8-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-withrollback' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
 ## EntityFramework Usage
 
 <!-- snippet: EfWithRollback -->
-<a id='efwithrollback'></a>
+<a id='snippet-efwithrollback'></a>
 ```cs
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new TheDbContext(builder.Options));
@@ -48,5 +48,5 @@ var connection = sqlDatabase.Connection;
 var data = sqlDatabase.Context;
 //Use the Connection or TheDbContext
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='Snippet source file'>snippet source</a> | <a href='#efwithrollback' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/WithRollback.cs#L8-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-efwithrollback' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

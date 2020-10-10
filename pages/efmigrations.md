@@ -10,7 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 [EntityFramework Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/) are supported.
 
 <!-- snippet: Migrations -->
-<a id='migrations'></a>
+<a id='snippet-migrations'></a>
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
     buildTemplate: async (connection, options) =>
@@ -22,7 +22,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
     },
     constructInstance: builder => new MyDbContext(builder.Options));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L29' title='Snippet source file'>snippet source</a> | <a href='#migrations' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-migrations' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 The above performs the following actions:
@@ -33,11 +33,11 @@ The above performs the following actions:
 Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/operations).
 
 <!-- snippet: IMigrationsSqlGenerator -->
-<a id='imigrationssqlgenerator'></a>
+<a id='snippet-imigrationssqlgenerator'></a>
 ```cs
 options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L20' title='Snippet source file'>snippet source</a> | <a href='#imigrationssqlgenerator' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-imigrationssqlgenerator' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -46,10 +46,10 @@ options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/#apply-migrations-at-runtime).
 
 <!-- snippet: Migrate -->
-<a id='migrate'></a>
+<a id='snippet-migrate'></a>
 ```cs
 await using var data = new MyDbContext(options.Options);
 await data.Database.MigrateAsync();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L25' title='Snippet source file'>snippet source</a> | <a href='#migrate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-migrate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
