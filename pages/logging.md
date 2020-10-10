@@ -15,17 +15,17 @@ By default some information is written to [Trace.WriteLine](https://docs.microso
 To enable verbose logging use `LocalDbLogging`:
 
 <!-- snippet: LocalDbLoggingUsage -->
-<a id='913a950a'></a>
+<a id='localdbloggingusage'></a>
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7' title='Snippet source file'>snippet source</a> | <a href='#913a950a' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7' title='Snippet source file'>snippet source</a> | <a href='#localdbloggingusage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 The full implementation is:
 
 <!-- snippet: LocalDbLogging -->
-<a id='6933017d'></a>
+<a id='localdblogging'></a>
 ```cs
 /// <summary>
 /// Controls the logging level.
@@ -70,13 +70,13 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L47' title='Snippet source file'>snippet source</a> | <a href='#6933017d' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L47' title='Snippet source file'>snippet source</a> | <a href='#localdblogging' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
 
 <!-- snippet: MethodTimeLogger -->
-<a id='75352580'></a>
+<a id='methodtimelogger'></a>
 ```cs
 static class MethodTimeLogger
 {
@@ -96,7 +96,7 @@ static class MethodTimeLogger
     }
 }
 ```
-<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L3-L21' title='Snippet source file'>snippet source</a> | <a href='#75352580' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L3-L21' title='Snippet source file'>snippet source</a> | <a href='#methodtimelogger' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -105,11 +105,11 @@ static class MethodTimeLogger
 SQL statements can be logged:
 
 <!-- snippet: LocalDbLoggingUsageSqlLogging -->
-<a id='6dcdb799'></a>
+<a id='localdbloggingusagesqllogging'></a>
 ```cs
 LocalDbLogging.EnableVerbose(sqlLogging: true);
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10' title='Snippet source file'>snippet source</a> | <a href='#6dcdb799' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10' title='Snippet source file'>snippet source</a> | <a href='#localdbloggingusagesqllogging' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 And an example database creation message would be:
