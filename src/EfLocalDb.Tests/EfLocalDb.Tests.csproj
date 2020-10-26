@@ -12,14 +12,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.1.20451.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.2.20475.6" />
     <PackageReference Include="XunitContext" Version="2.0.1" />
     <PackageReference Include="Verify.Xunit" Version="6.25.1" />
     <PackageReference Include="Fody" Version="6.3.0" PrivateAssets="all" />
     <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="All" />
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201020-06" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" Version="1.0.47" PrivateAssets="All" />

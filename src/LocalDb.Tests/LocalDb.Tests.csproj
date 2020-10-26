@@ -15,7 +15,7 @@
     <PackageReference Include="Verify.Xunit" Version="6.25.1" />
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201020-06" />
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="21.6.1" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
