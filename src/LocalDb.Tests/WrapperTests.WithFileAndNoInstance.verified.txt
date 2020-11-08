@@ -1,6 +1,6 @@
 {
   DataFileExists: true,
   LogFileExists: true,
-  DbDataFileName: 'Simple.mdf',
-  DbLogFileName: 'Simple_log.ldf'
+  DbDataFileName: Simple.mdf,
+  DbLogFileName: Simple_log.ldf
 }

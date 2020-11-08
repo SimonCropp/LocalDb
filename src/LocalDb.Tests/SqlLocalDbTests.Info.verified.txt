@@ -1,7 +1,7 @@
 {
   Size: 1460,
-  InstanceName: 'InfoTest',
+  InstanceName: InfoTest,
   Exists: true,
   IsRunning: true,
-  SharedInstanceName: ''
+  SharedInstanceName: 
 }
