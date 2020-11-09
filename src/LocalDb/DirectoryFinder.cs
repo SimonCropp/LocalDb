@@ -39,6 +39,6 @@ static class DirectoryFinder
             return localDbEnv;
         }
 
-        return Path.Combine(Path.GetTempPath(), "LocalDb");
+        return Path.GetFullPath(Path.Combine(Path.GetTempPath(), "LocalDb"));
     }
 }
