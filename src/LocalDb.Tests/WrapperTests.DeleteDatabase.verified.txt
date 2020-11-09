@@ -1,1 +1,7 @@
-{}
+[
+  {
+    Text: 
+alter database [ToDelete] set single_user with rollback immediate;
+drop database [ToDelete];
+  }
+]

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VerifyXunit;
 using Microsoft.Data.SqlClient;
+using VerifyTests;
 using Xunit;
 
 [UsesVerify]
@@ -167,8 +168,10 @@ end;
     public async Task DeleteDatabase()
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
+        SqlRecording.StartRecording();
         await instance.DeleteDatabase("ToDelete");
-        await Verifier.Verify(await instance.ReadDatabaseState("ToDelete"));
+        var entries = SqlRecording.FinishRecording();
+        await Verifier.Verify(entries);
     }
 
     [Fact]
@@ -183,18 +186,29 @@ end;
     }
 
     [Fact]
-    public Task WithRebuild()
+    public async Task WithRebuild()
     {
         var instance2 = new Wrapper(s => new SqlConnection(s), "WrapperTests", DirectoryFinder.Find("WrapperTests"));
-        instance2.Start(timestamp, connection => throw new Exception());
-        return instance2.AwaitStart();
+
+        SqlRecording.StartRecording();
+        instance2.Start(timestamp, _ => throw new Exception());
+        await instance2.AwaitStart();
+        var entries = SqlRecording.FinishRecording();
+        await Verifier.Verify(entries);
     }
 
     [Fact]
     public async Task CreateDatabase()
     {
+        SqlRecording.StartRecording();
         await instance.CreateDatabaseFromTemplate("CreateDatabase");
-        await Verifier.Verify(await instance.ReadDatabaseState("CreateDatabase"));
+        var entries = SqlRecording.FinishRecording();
+        await Verifier.Verify(
+            new
+            {
+                entries,
+                state= await instance.ReadDatabaseState("CreateDatabase")
+            });
     }
 
     [Fact]
@@ -206,10 +220,15 @@ end;
         await connection.OpenAsync();
         await instance.DeleteDatabase(name);
         var deletedState = await instance.ReadDatabaseState(name);
+
+        SqlRecording.StartRecording();
         await instance.CreateDatabaseFromTemplate(name);
+        var entries = SqlRecording.FinishRecording();
+
         var createdState = await instance.ReadDatabaseState(name);
         await Verifier.Verify(new
         {
+            entries,
             deletedState,
             createdState
         });

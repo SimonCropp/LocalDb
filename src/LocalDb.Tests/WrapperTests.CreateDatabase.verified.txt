@@ -1,6 +1,31 @@
 {
-  DataFileExists: true,
-  LogFileExists: true,
-  DbDataFileName: CreateDatabase.mdf,
-  DbLogFileName: CreateDatabase_log.ldf
+  entries: [
+    {
+      Text: 
+if db_id('CreateDatabase') is null
+    begin
+       
+create database [CreateDatabase] on
+(
+    name = [CreateDatabase],
+    filename = 'WrapperTests\CreateDatabase.mdf'
+),
+(
+    filename = 'WrapperTests\CreateDatabase_log.ldf'
+)
+for attach;
+    end;
+else
+    begin
+        alter database [CreateDatabase] set online;
+    end;
+alter database [CreateDatabase] set read_write;
+    }
+  ],
+  state: {
+    DataFileExists: true,
+    LogFileExists: true,
+    DbDataFileName: CreateDatabase.mdf,
+    DbLogFileName: CreateDatabase_log.ldf
+  }
 }

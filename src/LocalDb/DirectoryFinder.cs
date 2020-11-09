@@ -3,7 +3,7 @@ using System.IO;
 
 static class DirectoryFinder
 {
-    static string dataRoot;
+    public static string dataRoot;
 
     static DirectoryFinder()
     {

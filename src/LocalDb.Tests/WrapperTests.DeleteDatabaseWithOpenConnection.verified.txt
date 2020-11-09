@@ -1,4 +1,27 @@
 {
+  entries: [
+    {
+      Text: 
+if db_id('ToDelete') is null
+    begin
+       
+create database [ToDelete] on
+(
+    name = [ToDelete],
+    filename = 'WrapperTests\ToDelete.mdf'
+),
+(
+    filename = 'WrapperTests\ToDelete_log.ldf'
+)
+for attach;
+    end;
+else
+    begin
+        alter database [ToDelete] set online;
+    end;
+alter database [ToDelete] set read_write;
+    }
+  ],
   deletedState: {},
   createdState: {
     DataFileExists: true,
