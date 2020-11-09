@@ -14,7 +14,7 @@ public static class ModuleInitializer
         XunitContext.Init();
         LocalDbLogging.EnableVerbose();
         LocalDbSettings.ConnectionBuilder((instance, database) => $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true;Connection Timeout=300");
-        VerifierSettings.AddScrubber(builder => builder.Replace(DirectoryFinder.dataRoot,""));
+        VerifierSettings.ScrubLinesContaining("filename = '");
         VerifierSettings.ModifySerialization(settings =>
         {
             settings.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);

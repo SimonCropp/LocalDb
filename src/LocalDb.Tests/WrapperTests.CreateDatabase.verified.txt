@@ -8,10 +8,8 @@ if db_id('CreateDatabase') is null
 create database [CreateDatabase] on
 (
     name = [CreateDatabase],
-    filename = 'WrapperTests\CreateDatabase.mdf'
 ),
 (
-    filename = 'WrapperTests\CreateDatabase_log.ldf'
 )
 for attach;
     end;

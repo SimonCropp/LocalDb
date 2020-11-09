@@ -8,10 +8,8 @@ if db_id('ToDelete') is null
 create database [ToDelete] on
 (
     name = [ToDelete],
-    filename = 'WrapperTests\ToDelete.mdf'
 ),
 (
-    filename = 'WrapperTests\ToDelete_log.ldf'
 )
 for attach;
     end;
