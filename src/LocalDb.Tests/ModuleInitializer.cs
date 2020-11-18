@@ -1,4 +1,5 @@
-﻿using VerifyTests;
+﻿using System.Runtime.CompilerServices;
+using VerifyTests;
 using Xunit;
 
 #if EF
@@ -9,6 +10,7 @@ using LocalDb;
 
 public static class ModuleInitializer
 {
+    [ModuleInitializer]
     public static void Initialize()
     {
         XunitContext.Init();

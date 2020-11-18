@@ -9,8 +9,6 @@
     <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <PackageReference Include="Fody" Version="6.3.0" PrivateAssets="all" />
-    <PackageReference Include="ModuleInit.Fody" Version="2.1.1" PrivateAssets="All" />
     <PackageReference Include="Verify.SqlServer" Version="2.7.0" />
     <PackageReference Include="XunitContext" Version="3.0.0" />
     <PackageReference Include="Verify.Xunit" Version="8.4.0" />
