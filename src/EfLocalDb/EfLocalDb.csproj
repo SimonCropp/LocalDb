@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net5</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
     <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB, Testing</PackageTags>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>

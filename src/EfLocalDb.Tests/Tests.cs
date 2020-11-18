@@ -257,7 +257,10 @@ public class Tests
         finally
         {
             var stopwatch2 = Stopwatch.StartNew();
-            database2?.Dispose();
+            if (database2 != null)
+            {
+                await database2.DisposeAsync();
+            }
             Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
         }
 

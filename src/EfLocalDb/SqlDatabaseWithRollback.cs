@@ -83,21 +83,12 @@ namespace EfLocalDb
             return data;
         }
 
-        public void Dispose()
-        {
-            Transaction.Rollback();
-            Transaction.Dispose();
-
-            Context?.Dispose();
-            Connection.Dispose();
-        }
-
-#if(!NETSTANDARD2_0)
         public async ValueTask DisposeAsync()
         {
             Transaction.Rollback();
             Transaction.Dispose();
 
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (Context != null)
             {
                 await Context.DisposeAsync();
@@ -105,6 +96,5 @@ namespace EfLocalDb
 
             await Connection.DisposeAsync();
         }
-#endif
     }
 }

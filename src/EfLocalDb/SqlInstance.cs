@@ -110,7 +110,7 @@ namespace EfLocalDb
                 {
                     var builder = DefaultOptionsBuilder.Build<TDbContext>();
                     builder.UseSqlServer(connection, sqlOptionsBuilder);
-#if NETSTANDARD2_1
+#if NET5_0
                     await using var context = constructInstance(builder);
 #else
                     using var context = constructInstance(builder);

@@ -6,10 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EfLocalDb
 {
     public interface ISqlDatabase<out TDbContext>:
-#if(NETSTANDARD2_1)
-        IAsyncDisposable,
-#endif
-        IDisposable
+        IAsyncDisposable
         where TDbContext : DbContext
     {
         string Name { get; }

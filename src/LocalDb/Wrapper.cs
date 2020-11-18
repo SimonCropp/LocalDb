@@ -92,7 +92,7 @@ class Wrapper
 
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
 
-#if NETSTANDARD2_1
+#if NET5_0
         await using var masterConnection = await OpenMasterConnection();
 #else
         using var masterConnection = await OpenMasterConnection();
@@ -121,7 +121,7 @@ class Wrapper
                 return;
             }
 
-#if NETSTANDARD2_1
+#if NET5_0
             await using var connection = buildConnection(connectionString);
 #else
             using var connection = buildConnection(connectionString);
@@ -219,13 +219,13 @@ class Wrapper
         bool rebuild,
         bool optimize)
     {
-#if NETSTANDARD2_1
+#if NET5_0
         await using var takeOfflineConnection = await OpenMasterConnection();
 #else
         using var takeOfflineConnection = await OpenMasterConnection();
 #endif
         var takeDbsOffline = takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
-#if NETSTANDARD2_1
+#if NET5_0
         await using var masterConnection = await OpenMasterConnection();
 #else
         using var masterConnection = await OpenMasterConnection();
@@ -261,7 +261,7 @@ class Wrapper
         FileExtensions.MarkFileAsWritable(DataFile);
         FileExtensions.MarkFileAsWritable(LogFile);
 
-#if NETSTANDARD2_1
+#if NET5_0
         await using (var connection = buildConnection(TemplateConnectionString))
 #else
         using (var connection = buildConnection(TemplateConnectionString))
@@ -293,7 +293,7 @@ class Wrapper
     public async Task DeleteDatabase(string dbName)
     {
         var commandText = SqlBuilder.BuildDeleteDbCommand(dbName);
-#if NETSTANDARD2_1
+#if NET5_0
         await using var connection = await OpenMasterConnection();
 #else
         using var connection = await OpenMasterConnection();

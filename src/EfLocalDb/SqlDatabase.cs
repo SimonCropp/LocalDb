@@ -76,29 +76,19 @@ namespace EfLocalDb
             return constructInstance(builder);
         }
 
-        public void Dispose()
-        {
-            Context?.Dispose();
-            Connection.Dispose();
-        }
-
-#if(!NETSTANDARD2_0)
         public async ValueTask DisposeAsync()
         {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (Context != null)
             {
                 await Context.DisposeAsync();
             }
             await Connection.DisposeAsync();
         }
-#endif
+
         public async Task Delete()
         {
-#if(NETSTANDARD2_1)
-            Dispose();
-#else
             await DisposeAsync();
-#endif
             await delete();
         }
     }

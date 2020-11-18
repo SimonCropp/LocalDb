@@ -17,7 +17,7 @@ static class SqlExtensions
         {
             var stopwatch = Stopwatch.StartNew();
 
-#if(NETSTANDARD2_1)
+#if(NET5_0)
             await using (var command = connection.CreateCommand())
 #else
             using (var command = connection.CreateCommand())
