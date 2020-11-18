@@ -3,7 +3,7 @@
 #region MethodTimeLogger
 static class MethodTimeLogger
 {
-    public static void Log(MethodBase method, long milliseconds, string message)
+    public static void Log(MethodBase method, long milliseconds, string? message)
     {
         if (!LocalDbLogging.Enabled)
         {

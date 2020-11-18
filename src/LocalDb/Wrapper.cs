@@ -16,7 +16,7 @@ class Wrapper
     public readonly string Directory;
     ushort size;
     Func<DbConnection, Task>? callback;
-    SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+    SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
     public readonly string WithRollbackConnectionString;
     Func<string, DbConnection> buildConnection;

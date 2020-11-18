@@ -234,7 +234,7 @@ end;
         });
     }
 
-    static DateTime timestamp = new DateTime(2000, 1, 1);
+    static DateTime timestamp = new(2000, 1, 1);
 
     static WrapperTests()
     {

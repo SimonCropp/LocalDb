@@ -6,7 +6,7 @@ public static class DbPropertyReader
 {
     public static DbSettings Read(DbConnection connection, string name)
     {
-        return new DbSettings(ReadFileSettings(connection, name).ToList());
+        return new(ReadFileSettings(connection, name).ToList());
     }
 
     static IEnumerable<DbFileSettings> ReadFileSettings(DbConnection connection, string name)
