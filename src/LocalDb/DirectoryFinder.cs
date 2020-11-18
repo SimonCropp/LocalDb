@@ -14,11 +14,6 @@ static class DirectoryFinder
 
     public static string Find(string instanceName)
     {
-        if (instanceName == null)
-        {
-            return dataRoot;
-        }
-
         return Path.Combine(dataRoot, instanceName);
     }
 
