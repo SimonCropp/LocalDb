@@ -87,32 +87,6 @@ public class Tests
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
-    //[Fact]
-    //public async Task WithRebuildDbContext()
-    //{
-    //    var dateTime = DateTime.Now;
-    //    var instance1 = new SqlInstance<WithRebuildDbContext>(
-    //        constructInstance: connection => new WithRebuildDbContext(connection),
-    //        timestamp: dateTime,
-    //        instanceSuffix: "Classic");
-    //    using (var database1 = await instance1.Build())
-    //    {
-    //        var entity = new TestEntity
-    //        {
-    //            Property = "prop"
-    //        };
-    //        await database1.AddData(entity);
-    //    }
-
-    //    var instance2 = new SqlInstance<WithRebuildDbContext>(
-    //        constructInstance: connection => new WithRebuildDbContext(connection),
-    //        buildTemplate: (WithRebuildDbContext x) => throw new Exception(),
-    //        timestamp: dateTime,
-    //        instanceSuffix: "Classic");
-    //    using var database2 = await instance2.Build();
-    //    Assert.Empty(database2.Context.TestEntities);
-    //}
-
     [Fact]
     public async Task Secondary()
     {
