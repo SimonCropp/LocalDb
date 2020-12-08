@@ -164,21 +164,6 @@ public class Tests
         Assert.True(callbackCalled);
     }
 
-    //TODO: should duplicate instances throw?
-    //[Fact]
-    //public void DuplicateDbContext()
-    //{
-    //    Register();
-    //    var exception = Assert.Throws<Exception>(Register);
-    //    await Verify(exception.Message);
-    //}
-
-    //static void Register()
-    //{
-    //    new SqlInstance<DuplicateDbContext>(
-    //        constructInstance: builder => new DuplicateDbContext(builder.Options));
-    //}
-
     [Fact]
     public async Task NewDbContext()
     {
@@ -199,63 +184,6 @@ public class Tests
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         Assert.True(callbackCalled);
     }
-
-    //[Fact]
-    //public async Task SuppliedTemplate()
-    //{
-    //    // The template has been pre-created with 2 test entities
-    //    var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
-    //    var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
-
-    //    var sqlInstance = new SqlInstance<TestDbContext>(
-    //        constructInstance: x => new TestDbContext(x),
-    //        templatePath: templatePath,
-    //        logPath: logPath);
-    //    using var database = await sqlInstance.Build();
-    //    var context = database.Context;
-
-    //    Assert.Equal(2, context.TestEntities.Count());
-    //}
-
-    //[Fact]
-    //public async Task WithRollback()
-    //{
-    //    var entity = new TestEntity
-    //    {
-    //        Property = "prop"
-    //    };
-    //    using var database1 = await instance.BuildWithRollback(new List<object> {entity});
-    //    using var database2 = await instance.BuildWithRollback();
-    //    Assert.NotNull(await database1.Context.TestEntities.FindAsync(entity.Id));
-    //    Assert.Empty(database2.Context.TestEntities.ToList());
-    //}
-
-    //[Fact]
-    //public async Task WithRollbackPerf()
-    //{
-    //    using (await instance.BuildWithRollback())
-    //    {
-    //    }
-
-    //    var entity = new TestEntity
-    //    {
-    //        Property = "prop"
-    //    };
-    //    SqlDatabaseWithRollback<TestDbContext>? database2 = null;
-    //    try
-    //    {
-    //        var stopwatch1 = Stopwatch.StartNew();
-    //        database2 = await instance.BuildWithRollback();
-    //        Trace.WriteLine(stopwatch1.ElapsedMilliseconds);
-    //        await database2.AddData(entity);
-    //    }
-    //    finally
-    //    {
-    //        var stopwatch2 = Stopwatch.StartNew();
-    //        database2?.Dispose();
-    //        Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
-    //    }
-    //}
 
     public Tests()
     {
