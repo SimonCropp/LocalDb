@@ -38,6 +38,61 @@ public class Tests
     }
 
     [Fact]
+    public async Task AddDataUntraccked()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
+    }
+
+    [Fact]
+    public async Task AddDataMultiple()
+    {
+        var entity1 = new TestEntity
+        {
+            Id = 1,
+            Property = "prop"
+        };
+        var entity2 = new TestEntity
+        {
+            Id = 2,
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddData(entity1, entity2);
+        var testEntities = database.Context.TestEntities;
+        Assert.NotNull(await testEntities.FindAsync(entity1.Id));
+        Assert.NotNull(await testEntities.FindAsync(entity2.Id));
+        Assert.True(callbackCalled);
+    }
+
+    [Fact]
+    public async Task AddDataUntrackedMultiple()
+    {
+        var entity1 = new TestEntity
+        {
+            Id = 1,
+            Property = "prop"
+        };
+        var entity2 = new TestEntity
+        {
+            Id = 2,
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity1, entity2);
+        var testEntities = database.Context.TestEntities;
+        Assert.NotNull(await testEntities.FindAsync(entity1.Id));
+        Assert.NotNull(await testEntities.FindAsync(entity2.Id));
+        Assert.True(callbackCalled);
+    }
+
+    [Fact]
     public async Task SuffixedContext()
     {
         var instance = new SqlInstance<TestDbContext>(
@@ -168,21 +223,6 @@ public class Tests
         Assert.True(callbackCalled);
     }
 
-    //TODO: should duplicate instances throw?
-    //[Fact]
-    //public void DuplicateDbContext()
-    //{
-    //    Register();
-    //    var exception = Assert.Throws<Exception>(Register);
-    //    await Verify(exception.Message);
-    //}
-
-    //static void Register()
-    //{
-    //    new SqlInstance<DuplicateDbContext>(
-    //        constructInstance: builder => new DuplicateDbContext(builder.Options));
-    //}
-
     [Fact]
     public async Task NewDbContext()
     {
@@ -203,23 +243,6 @@ public class Tests
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         Assert.True(callbackCalled);
     }
-
-    //[Fact]
-    //public async Task SuppliedTemplate()
-    //{
-    //    // The template has been pre-created with 2 test entities
-    //    var templatePath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate.mdf");
-    //    var logPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "suppliedTemplate_log.ldf");
-
-    //    var myInstance = new SqlInstance<TestDbContext>(
-    //        constructInstance: builder => new TestDbContext(builder.Options),
-    //        templatePath: templatePath,
-    //        logPath: logPath);
-    //    await using var db = await myInstance.Build();
-    //    var context = db.Context;
-
-    //    Assert.Equal(2, context.TestEntities.Count());
-    //}
 
     [Fact]
     public async Task WithRollback()
@@ -261,6 +284,7 @@ public class Tests
             {
                 await database2.DisposeAsync();
             }
+
             Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
         }
 
