@@ -7,8 +7,8 @@ public class EfSnippetTests
     static SqlInstance<MyDbContext> sqlInstance;
     static EfSnippetTests()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            builder => new MyDbContext(builder.Options));
+        sqlInstance = new(
+            builder => new(builder.Options));
     }
 
     #region EfTest
@@ -23,7 +23,7 @@ public class EfSnippetTests
         await using (var data = database.NewDbContext())
         {
             #endregion
-            var entity = new TheEntity
+            TheEntity entity = new()
             {
                 Property = "prop"
             };
@@ -44,7 +44,7 @@ public class EfSnippetTests
         #region EfWithDbName
         await using var database = await sqlInstance.Build("TheTestWithDbName");
         #endregion
-        var entity = new TheEntity
+        TheEntity entity = new()
         {
             Property = "prop"
         };

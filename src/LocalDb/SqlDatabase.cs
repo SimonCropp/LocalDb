@@ -14,7 +14,7 @@ namespace LocalDb
             this.delete = delete;
             ConnectionString = connectionString;
             Name = name;
-            Connection = new SqlConnection(connectionString);
+            Connection = new(connectionString);
         }
 
         public string ConnectionString { get; }
@@ -30,7 +30,7 @@ namespace LocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var connection = new SqlConnection(ConnectionString);
+            SqlConnection connection = new(ConnectionString);
             await connection.OpenAsync();
             return connection;
         }

@@ -110,7 +110,7 @@ using System.Text;
          try
          {
              getInstances(pointer, ref count);
-             var names = new List<string>(count);
+             List<string> names = new(count);
              for (var i = 0; i < count; i++)
              {
                  var idx = IntPtr.Add(pointer, length * i);
@@ -127,7 +127,7 @@ using System.Text;
 
      public static LocalDbInstanceInfo GetInstance(string instanceName)
      {
-         var info = new LocalDbInstanceInfo();
+         LocalDbInstanceInfo info = new();
          getInstanceInfo(instanceName, ref info, Marshal.SizeOf(typeof(LocalDbInstanceInfo)));
          return info;
      }
@@ -169,7 +169,7 @@ using System.Text;
 
      public static void StartInstance(string instanceName)
      {
-         var connection = new StringBuilder(MaxPath);
+         StringBuilder connection = new(MaxPath);
          var size = connection.Capacity;
 
          startInstance(instanceName, 0, connection, ref size);

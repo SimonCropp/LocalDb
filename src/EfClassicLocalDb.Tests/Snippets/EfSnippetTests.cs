@@ -9,8 +9,8 @@ public class EfSnippetTests
 
     static EfSnippetTests()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            connection => new MyDbContext(connection));
+        sqlInstance = new(
+            connection => new(connection));
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public class EfSnippetTests
         using (var data = database.NewDbContext())
         {
             #endregion
-            var entity = new TheEntity
+            TheEntity entity = new()
             {
                 Property = "prop"
             };
@@ -41,7 +41,7 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         using var database = await sqlInstance.Build("TheTestWithDbName");
-        var entity = new TheEntity
+        TheEntity entity = new()
         {
             Property = "prop"
         };

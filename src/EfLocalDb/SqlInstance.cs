@@ -23,7 +23,7 @@ namespace EfLocalDb
         static SqlInstance()
         {
             var name = typeof(TDbContext).Name;
-            DefaultStorage = new Storage(name, DirectoryFinder.Find(name));
+            DefaultStorage = new(name, DirectoryFinder.Find(name));
         }
 
         public IModel Model { get; }
@@ -119,7 +119,7 @@ namespace EfLocalDb
                 };
             }
 
-            Wrapper = new Wrapper(
+            Wrapper = new(
                 s => new SqlConnection(s),
                 storageValue.Name,
                 storageValue.Directory,
@@ -202,7 +202,7 @@ namespace EfLocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildDatabase(dbName);
-            var database = new SqlDatabase<TDbContext>(
+            SqlDatabase<TDbContext> database = new(
                 connection,
                 dbName,
                 constructInstance,
@@ -234,7 +234,7 @@ namespace EfLocalDb
         public async Task<SqlDatabaseWithRollback<TDbContext>> BuildWithRollback(IEnumerable<object> data)
         {
             var connection = await BuildWithRollbackDatabase();
-            var database = new SqlDatabaseWithRollback<TDbContext>(
+            SqlDatabaseWithRollback<TDbContext> database = new(
                 connection,
                 constructInstance,
                 data,

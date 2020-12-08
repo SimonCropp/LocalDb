@@ -39,7 +39,7 @@ public static class LocalDbLogging
     {
         if (WrapperCreated)
         {
-            throw new Exception("Must be called prior to `SqlInstance` being created.");
+            throw new("Must be called prior to `SqlInstance` being created.");
         }
         Enabled = true;
         SqlLoggingEnabled = sqlLogging;

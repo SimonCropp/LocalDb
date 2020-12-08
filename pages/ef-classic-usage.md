@@ -79,17 +79,17 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
-            connection => new TheDbContext(connection));
+        sqlInstance = new(
+            connection => new(connection));
     }
 
     public async Task Test()
     {
-        var entity = new TheEntity
+        TheEntity entity = new()
         {
             Property = "prop"
         };
-        var data = new List<object> {entity};
+        List<object> data = new(){entity};
         using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }
@@ -112,8 +112,8 @@ public class TestBase
 
     static TestBase()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
-            constructInstance: connection => new TheDbContext(connection));
+        sqlInstance = new(
+            constructInstance: connection => new(connection));
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
@@ -131,7 +131,7 @@ public class Tests :
     public async Task Test()
     {
         using var database = await LocalDb();
-        var entity = new TheEntity
+        TheEntity entity = new()
         {
             Property = "prop"
         };
@@ -192,8 +192,8 @@ public class EfSnippetTests
 
     static EfSnippetTests()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            connection => new MyDbContext(connection));
+        sqlInstance = new(
+            connection => new(connection));
     }
 
     [Fact]
@@ -202,7 +202,7 @@ public class EfSnippetTests
         using var database = await sqlInstance.Build();
         using (var data = database.NewDbContext())
         {
-            var entity = new TheEntity
+            TheEntity entity = new()
             {
                 Property = "prop"
             };
@@ -220,7 +220,7 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         using var database = await sqlInstance.Build("TheTestWithDbName");
-        var entity = new TheEntity
+        TheEntity entity = new()
         {
             Property = "prop"
         };
@@ -250,9 +250,9 @@ static class SuppliedTemplate
 
     static SuppliedTemplate()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            connection => new MyDbContext(connection),
-            existingTemplate: new ExistingTemplate("template.mdf", "template_log.ldf"));
+        sqlInstance = new(
+            connection => new(connection),
+            existingTemplate: new("template.mdf", "template_log.ldf"));
     }
 }
 ```

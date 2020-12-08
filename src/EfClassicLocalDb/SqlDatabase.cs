@@ -26,7 +26,7 @@ namespace EfLocalDb
             this.delete = delete;
             this.data = data;
             ConnectionString = connectionString;
-            Connection = new SqlConnection(connectionString);
+            Connection = new(connectionString);
         }
 
         public string Name { get; }
@@ -35,7 +35,7 @@ namespace EfLocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var connection = new SqlConnection(ConnectionString);
+            SqlConnection connection = new(ConnectionString);
             await connection.OpenAsync();
             return connection;
         }

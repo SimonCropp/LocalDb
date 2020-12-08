@@ -43,18 +43,18 @@ class LogCommandInterceptor :
     public override ValueTask<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData data, DbDataReader result, CancellationToken cancellation)
     {
         WriteLine(data);
-        return new ValueTask<DbDataReader>(result);
+        return new(result);
     }
 
     public override ValueTask<object> ScalarExecutedAsync(DbCommand command, CommandExecutedEventData data, object result, CancellationToken cancellation)
     {
         WriteLine(data);
-        return new ValueTask<object>(result);
+        return new(result);
     }
 
     public override ValueTask<int> NonQueryExecutedAsync(DbCommand command, CommandExecutedEventData data, int result, CancellationToken cancellation)
     {
         WriteLine(data);
-        return new ValueTask<int>(result);
+        return new(result);
     }
 }

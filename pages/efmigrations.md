@@ -12,15 +12,15 @@ To change this file edit the source file and then run MarkdownSnippets.
 <!-- snippet: Migrations -->
 <a id='snippet-migrations'></a>
 ```cs
-var sqlInstance = new SqlInstance<MyDbContext>(
+SqlInstance<MyDbContext> sqlInstance = new(
     buildTemplate: async (connection, options) =>
     {
         options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 
-        await using var data = new MyDbContext(options.Options);
+        await using MyDbContext data = new(options.Options);
         await data.Database.MigrateAsync();
     },
-    constructInstance: builder => new MyDbContext(builder.Options));
+    constructInstance: builder => new(builder.Options));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-migrations' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -48,7 +48,7 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 <!-- snippet: Migrate -->
 <a id='snippet-migrate'></a>
 ```cs
-await using var data = new MyDbContext(options.Options);
+await using MyDbContext data = new(options.Options);
 await data.Database.MigrateAsync();
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L21-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-migrate' title='Start of snippet'>anchor</a></sup>

@@ -11,8 +11,8 @@ namespace LocalDb
         {
             ConnectionString = connectionString;
             Name = "withRollback";
-            Connection = new SqlConnection(connectionString);
-            var transactionOptions = new TransactionOptions
+            Connection = new(connectionString);
+            TransactionOptions transactionOptions = new()
             {
                 IsolationLevel = IsolationLevel.Snapshot
             };
@@ -32,7 +32,7 @@ namespace LocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var connection = new SqlConnection(ConnectionString);
+            SqlConnection connection = new(ConnectionString);
             await connection.OpenAsync();
             Connection.EnlistTransaction(Transaction);
             return connection;

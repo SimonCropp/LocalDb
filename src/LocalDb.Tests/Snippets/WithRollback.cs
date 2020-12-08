@@ -6,7 +6,7 @@ class WithRollback
     async Task Usage()
     {
         #region WithRollback
-        var sqlInstance = new SqlInstance(
+        SqlInstance sqlInstance = new(
             name: "theInstanceName",
             buildTemplate: TestDbBuilder.CreateTable
         );

@@ -73,7 +73,7 @@ class Wrapper
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
-            throw new Exception("The database name 'template' is reserved.");
+            throw new("The database name 'template' is reserved.");
         }
 
         //TODO: if dataFile doesnt exists do a drop and recreate
@@ -309,7 +309,7 @@ class Wrapper
 
     void InitRollbackTask()
     {
-        withRollbackTask = new Lazy<Task>(() => CreateDatabaseFromTemplate("withRollback", true));
+        withRollbackTask = new(() => CreateDatabaseFromTemplate("withRollback", true));
     }
 
     public async Task CreateWithRollbackDatabase()

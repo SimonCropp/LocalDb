@@ -27,12 +27,12 @@ namespace EfLocalDb
             this.data = data;
             this.sqlOptionsBuilder = sqlOptionsBuilder;
             ConnectionString = connectionString;
-            var transactionOptions = new TransactionOptions
+            TransactionOptions transactionOptions = new()
             {
                 IsolationLevel = IsolationLevel.Snapshot
             };
             Transaction = new CommittableTransaction(transactionOptions);
-            Connection = new SqlConnection(ConnectionString);
+            Connection = new(ConnectionString);
         }
 
         public string Name { get; }
@@ -41,7 +41,7 @@ namespace EfLocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var connection = new SqlConnection(ConnectionString);
+            SqlConnection connection = new(ConnectionString);
             await connection.OpenAsync();
             Connection.EnlistTransaction(Transaction);
 

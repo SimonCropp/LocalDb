@@ -13,8 +13,8 @@ namespace TestBase
 
         static TestBase()
         {
-            sqlInstance = new SqlInstance<TheDbContext>(
-                constructInstance: builder => new TheDbContext(builder.Options));
+            sqlInstance = new(
+                constructInstance: builder => new(builder.Options));
         }
 
         public Task<SqlDatabase<TheDbContext>> LocalDb(
@@ -32,7 +32,7 @@ namespace TestBase
         public async Task Test()
         {
             await using var database = await LocalDb();
-            var entity = new TheEntity
+            TheEntity entity = new()
             {
                 Property = "prop"
             };

@@ -37,7 +37,7 @@ There is an explicit registration override that takes an instance name and a dir
 <!-- snippet: ExplicitName -->
 <a id='snippet-explicitname'></a>
 ```cs
-var sqlInstance = new SqlInstance(
+SqlInstance sqlInstance = new(
     name: "theInstanceName",
     buildTemplate: TestDbBuilder.CreateTable,
     directory: @"C:\LocalDb\theInstance"
@@ -52,9 +52,9 @@ var sqlInstance = new SqlInstance(
 <!-- snippet: EfExplicitName -->
 <a id='snippet-efexplicitname'></a>
 ```cs
-var sqlInstance = new SqlInstance<TheDbContext>(
-    constructInstance: builder => new TheDbContext(builder.Options),
-    storage: new Storage("theInstanceName",@"C:\LocalDb\theInstance"));
+SqlInstance<TheDbContext> sqlInstance = new(
+    constructInstance: builder => new(builder.Options),
+    storage: new("theInstanceName",@"C:\LocalDb\theInstance"));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

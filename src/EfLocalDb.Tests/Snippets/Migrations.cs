@@ -12,7 +12,7 @@ public class Migrations
     {
         #region Migrations
 
-        var sqlInstance = new SqlInstance<MyDbContext>(
+        SqlInstance<MyDbContext> sqlInstance = new(
             buildTemplate: async (connection, options) =>
             {
                 #region IMigrationsSqlGenerator
@@ -20,11 +20,11 @@ public class Migrations
                 #endregion
                 #region Migrate
 
-                await using var data = new MyDbContext(options.Options);
+                await using MyDbContext data = new(options.Options);
                 await data.Database.MigrateAsync();
                 #endregion
             },
-            constructInstance: builder => new MyDbContext(builder.Options));
+            constructInstance: builder => new(builder.Options));
 
         #endregion
     }
@@ -37,7 +37,7 @@ public class Migrations
             IModel? model = null,
             MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
         {
-            throw new NotImplementedException();
+            throw new();
         }
     }
 

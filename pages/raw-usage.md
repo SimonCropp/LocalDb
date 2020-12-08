@@ -51,7 +51,7 @@ values ({addData});";
 
     public static async Task<List<int>> GetData(DbConnection connection)
     {
-        var values = new List<int>();
+        List<int> values = new();
         await using var command = connection.CreateCommand();
         command.CommandText = "select Value from MyTable";
         await using var reader = await command.ExecuteReaderAsync();
@@ -90,7 +90,7 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new SqlInstance(
+        sqlInstance = new(
             name: "StaticConstructorInstance",
             buildTemplate: TestDbBuilder.CreateTable);
     }
@@ -121,7 +121,7 @@ public class TestBase
 
     static TestBase()
     {
-        instance = new SqlInstance(
+        instance = new(
             name:"TestBaseUsage",
             buildTemplate: TestDbBuilder.CreateTable);
     }
@@ -199,7 +199,7 @@ public class SnippetTests
 
     static SnippetTests()
     {
-        sqlInstance = new SqlInstance(
+        sqlInstance = new(
             name: "Snippets",
             buildTemplate: TestDbBuilder.CreateTable);
     }

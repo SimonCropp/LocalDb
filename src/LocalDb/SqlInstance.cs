@@ -30,7 +30,7 @@ namespace LocalDb
             DirectoryCleaner.CleanInstance(directory);
             var callingAssembly = Assembly.GetCallingAssembly();
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-            Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate, callback);
+            Wrapper = new(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate, callback);
             Wrapper.Start(resultTimestamp, buildTemplate);
         }
 
@@ -101,7 +101,7 @@ namespace LocalDb
         {
             Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
             var connection = await BuildContext(dbName);
-            var database = new SqlDatabase(
+            SqlDatabase database = new(
                 connection,
                 dbName,
                 () => Wrapper.DeleteDatabase(dbName));
@@ -115,7 +115,7 @@ namespace LocalDb
         public async Task<SqlDatabaseWithRollback> BuildWithRollback()
         {
             var connection = await BuildWithRollbackDatabase();
-            var database = new SqlDatabaseWithRollback(connection);
+            SqlDatabaseWithRollback database = new(connection);
             await database.Start();
             return database;
         }

@@ -45,7 +45,7 @@ static class SqlExtensions
 
     static Exception BuildException(DbConnection connection, string commandText, Exception exception)
     {
-        var builder = new StringBuilder($@"Failed to execute SQL command.
+        StringBuilder builder = new($@"Failed to execute SQL command.
 {nameof(commandText)}: {commandText}
 connectionString: {connection.ConnectionString}
 ");
@@ -59,6 +59,6 @@ connectionString: {connection.ConnectionString}
             }
         }
         #endif
-        return new Exception(builder.ToString(), exception);
+        return new(builder.ToString(), exception);
     }
 }

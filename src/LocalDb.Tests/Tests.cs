@@ -10,7 +10,7 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
+        SqlInstance instance = new("Name", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         var connection = database.Connection;
@@ -22,7 +22,7 @@ public class Tests
     public async Task Callback()
     {
         var callbackCalled = false;
-        var instance = new SqlInstance(
+        SqlInstance instance = new(
             "Tests_Callback",
             TestDbBuilder.CreateTable,
             callback: connection =>
@@ -53,7 +53,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance(
+        SqlInstance instance = new(
             name: "Defined_TimeStamp",
             buildTemplate: TestDbBuilder.CreateTable,
             timestamp: dateTime);
@@ -65,7 +65,7 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        var instance = new SqlInstance(
+        SqlInstance instance = new(
             name: "Delegate_TimeStamp",
             buildTemplate: TestDbBuilder.CreateTable);
 
@@ -76,7 +76,7 @@ public class Tests
     [Fact]
     public async Task WithRollback()
     {
-        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
+        SqlInstance instance = new("Name", TestDbBuilder.CreateTable);
 
         await using var database1 = await instance.BuildWithRollback();
         await using var database2 = await instance.BuildWithRollback();
@@ -88,7 +88,7 @@ public class Tests
     [Fact]
     public async Task WithRollbackPerf()
     {
-        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
+        SqlInstance instance = new("Name", TestDbBuilder.CreateTable);
 
         await using (await instance.BuildWithRollback())
         {
@@ -115,7 +115,7 @@ public class Tests
     public async Task Multiple()
     {
         var stopwatch = Stopwatch.StartNew();
-        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
+        SqlInstance instance = new("Multiple", TestDbBuilder.CreateTable);
 
         await using (var database = await instance.Build(databaseSuffix: "one"))
         {
@@ -131,18 +131,4 @@ public class Tests
 
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
     }
-
-    //TODO: should duplicate instances throw?
-    //[Fact]
-    //public void Duplicate()
-    //{
-    //    Register();
-    //    var exception = Assert.Throws<Exception>(Register);
-    //    await Verify(exception.Message);
-    //}
-
-    //static void Register()
-    //{
-    //    new SqlInstance("LocalDbDuplicate", TestDbBuilder.CreateTable);
-    //}
 }

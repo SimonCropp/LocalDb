@@ -13,7 +13,7 @@ public class Tests
     [Fact]
     public async Task SeedData()
     {
-        var entity = new TestEntity
+        TestEntity entity = new()
         {
             Property = "prop"
         };
@@ -25,7 +25,7 @@ public class Tests
     [Fact]
     public async Task AddData()
     {
-        var entity = new TestEntity
+        TestEntity entity = new()
         {
             Property = "prop"
         };
@@ -38,7 +38,7 @@ public class Tests
     [Fact]
     public async Task AddDataUntracked()
     {
-        var entity = new TestEntity
+        TestEntity entity = new()
         {
             Property = "prop"
         };
@@ -51,12 +51,12 @@ public class Tests
     [Fact]
     public async Task AddDataMultiple()
     {
-        var entity1 = new TestEntity
+        TestEntity entity1 = new()
         {
             Id = 1,
             Property = "prop"
         };
-        var entity2 = new TestEntity
+        TestEntity entity2 = new()
         {
             Id = 2,
             Property = "prop"
@@ -72,12 +72,12 @@ public class Tests
     [Fact]
     public async Task AddDataUntrackedMultiple()
     {
-        var entity1 = new TestEntity
+        TestEntity entity1 = new()
         {
             Id = 1,
             Property = "prop"
         };
-        var entity2 = new TestEntity
+        TestEntity entity2 = new()
         {
             Id = 2,
             Property = "prop"
@@ -93,11 +93,11 @@ public class Tests
     [Fact]
     public async Task SuffixedContext()
     {
-        var instance = new SqlInstance<TestDbContext>(
-            constructInstance: connection => new TestDbContext(connection),
+        SqlInstance<TestDbContext> instance = new(
+            constructInstance: connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"theClassicSuffix{Environment.Version.Major}"));
 
-        var entity = new TestEntity
+        TestEntity entity = new()
         {
             Property = "prop"
         };
@@ -109,8 +109,8 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance<TestDbContext>(
-            constructInstance: connection => new TestDbContext(connection),
+        SqlInstance<TestDbContext> instance = new(
+            constructInstance: connection => new(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,
             storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
@@ -122,8 +122,8 @@ public class Tests
     [Fact]
     public async Task Assembly_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(
-            constructInstance: connection => new TestDbContext(connection),
+        SqlInstance<TestDbContext> instance = new(
+            constructInstance: connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
@@ -133,8 +133,8 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(
-            constructInstance: connection => new TestDbContext(connection),
+        SqlInstance<TestDbContext> instance = new(
+            constructInstance: connection => new(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
             storage: Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
 
@@ -145,7 +145,7 @@ public class Tests
     [Fact]
     public async Task Secondary()
     {
-        var entity = new TestEntity
+        TestEntity entity = new()
         {
             Property = "prop"
         };
@@ -176,7 +176,7 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        var entity = new TestEntity
+        TestEntity entity = new()
         {
             Property = "Item1"
         };
@@ -187,10 +187,10 @@ public class Tests
 
     public Tests()
     {
-        instance = new SqlInstance<TestDbContext>(
-            connection => new TestDbContext(connection),
+        instance = new(
+            connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"Classic{Environment.Version.Major}"),
-            callback: (connection, context) =>
+            callback: (_, _) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;

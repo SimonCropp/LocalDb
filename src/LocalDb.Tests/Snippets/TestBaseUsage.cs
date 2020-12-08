@@ -13,7 +13,7 @@ namespace TestBase
 
         static TestBase()
         {
-            instance = new SqlInstance(
+            instance = new(
                 name:"TestBaseUsage",
                 buildTemplate: TestDbBuilder.CreateTable);
         }

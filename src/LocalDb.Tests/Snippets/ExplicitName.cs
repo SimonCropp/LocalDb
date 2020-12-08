@@ -5,7 +5,7 @@ class ExplicitName
     ExplicitName()
     {
         #region ExplicitName
-        var sqlInstance = new SqlInstance(
+        SqlInstance sqlInstance = new(
             name: "theInstanceName",
             buildTemplate: TestDbBuilder.CreateTable,
             directory: @"C:\LocalDb\theInstance"

@@ -13,17 +13,17 @@ namespace StaticConstructor
 
         static Tests()
         {
-            sqlInstance = new SqlInstance<TheDbContext>(
-                builder => new TheDbContext(builder.Options));
+            sqlInstance = new(
+                builder => new(builder.Options));
         }
 
         public async Task Test()
         {
-            var entity = new TheEntity
+            TheEntity entity = new()
             {
                 Property = "prop"
             };
-            var data = new List<object> {entity};
+            List<object> data = new() {entity};
             await using var database = await sqlInstance.Build(data);
             Assert.Single(database.Context.TestEntities);
         }

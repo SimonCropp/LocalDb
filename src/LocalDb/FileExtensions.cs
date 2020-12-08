@@ -6,7 +6,7 @@ static class FileExtensions
 {
     public static void MarkFileAsWritable(string dataFile)
     {
-        var di = new FileInfo(dataFile);
+        FileInfo di = new(dataFile);
         di.Attributes &= ~FileAttributes.ReadOnly;
     }
 
@@ -23,8 +23,8 @@ static class FileExtensions
     public static void ResetAccess(this DirectoryInfo directoryInfo)
     {
         var accessControl = directoryInfo.GetAccessControl();
-        var everyone = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-        var accessRule = new FileSystemAccessRule(
+        SecurityIdentifier everyone = new(WellKnownSidType.WorldSid, null);
+        FileSystemAccessRule accessRule = new(
             everyone,
             FileSystemRights.FullControl | FileSystemRights.Synchronize,
             InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,

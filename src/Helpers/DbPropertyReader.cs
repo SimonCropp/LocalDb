@@ -19,7 +19,7 @@ where name like '{name}%'";
         var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            yield return new DbFileSettings
+            yield return new
             (
                 name: (string) reader["name"],
                 filename: (string) reader["filename"]

@@ -30,7 +30,7 @@ namespace EfLocalDb
             this.data = data;
             this.sqlOptionsBuilder = sqlOptionsBuilder;
             ConnectionString = connectionString;
-            Connection = new SqlConnection(connectionString);
+            Connection = new(connectionString);
         }
 
         public string Name { get; }
@@ -39,7 +39,7 @@ namespace EfLocalDb
 
         public async Task<SqlConnection> OpenNewConnection()
         {
-            var connection = new SqlConnection(ConnectionString);
+            SqlConnection connection = new(ConnectionString);
             await connection.OpenAsync();
             return connection;
         }

@@ -22,7 +22,7 @@ If a test has failed, to debug the database state, temporarily switch back to th
 <!-- snippet: WithRollback -->
 <a id='snippet-withrollback'></a>
 ```cs
-var sqlInstance = new SqlInstance(
+SqlInstance sqlInstance = new(
     name: "theInstanceName",
     buildTemplate: TestDbBuilder.CreateTable
 );
@@ -40,8 +40,8 @@ var connection = sqlDatabase.Connection;
 <!-- snippet: EfWithRollback -->
 <a id='snippet-efwithrollback'></a>
 ```cs
-var sqlInstance = new SqlInstance<TheDbContext>(
-    constructInstance: builder => new TheDbContext(builder.Options));
+SqlInstance<TheDbContext> sqlInstance = new(
+    constructInstance: builder => new(builder.Options));
 
 await using var sqlDatabase = await sqlInstance.BuildWithRollback();
 var connection = sqlDatabase.Connection;
