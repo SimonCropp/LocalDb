@@ -55,12 +55,10 @@ public class Tests
     {
         TestEntity entity1 = new()
         {
-            Id = 1,
             Property = "prop"
         };
         TestEntity entity2 = new()
         {
-            Id = 2,
             Property = "prop"
         };
         await using var database = await instance.Build();
