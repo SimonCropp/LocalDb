@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfLocalDb
 {
-    public interface ISqlDatabase<out TDbContext>:
+    public partial interface ISqlDatabase<out TDbContext>:
         IAsyncDisposable
         where TDbContext : DbContext
     {

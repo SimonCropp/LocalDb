@@ -38,7 +38,7 @@ public class Tests
     }
 
     [Fact]
-    public async Task AddDataUntraccked()
+    public async Task AddDataUntracked()
     {
         TestEntity entity = new()
         {
@@ -70,16 +70,38 @@ public class Tests
     }
 
     [Fact]
-    public async Task AddDataUntrackedMultiple()
+    public async Task AddDataMultipleMixed()
     {
         TestEntity entity1 = new()
         {
-            Id = 1,
             Property = "prop"
         };
         TestEntity entity2 = new()
         {
-            Id = 2,
+            Property = "prop"
+        };
+        TestEntity entity3 = new()
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddData(new List<object>{entity1, entity2}, entity3);
+        var testEntities = database.Context.TestEntities;
+        Assert.NotNull(await testEntities.FindAsync(entity1.Id));
+        Assert.NotNull(await testEntities.FindAsync(entity2.Id));
+        Assert.NotNull(await testEntities.FindAsync(entity3.Id));
+        Assert.True(callbackCalled);
+    }
+
+    [Fact]
+    public async Task AddDataUntrackedMultiple()
+    {
+        TestEntity entity1 = new()
+        {
+            Property = "prop"
+        };
+        TestEntity entity2 = new()
+        {
             Property = "prop"
         };
         await using var database = await instance.Build();

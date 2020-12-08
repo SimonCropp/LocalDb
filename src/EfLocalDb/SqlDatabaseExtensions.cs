@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,8 +12,31 @@ namespace EfLocalDb
             where TDbContext : DbContext
         {
             Guard.AgainstNull(nameof(entities), entities);
-            database.Context.AddRange(entities);
-            return database.Context.SaveChangesAsync();
+            return Add(database, entities, database.Context);
+        }
+
+        static Task Add<TDbContext>(ISqlDatabase<TDbContext> database, IEnumerable<object> entities, TDbContext context)
+            where TDbContext : DbContext
+        {
+            foreach (var entity in entities)
+            {
+                if (entity is IEnumerable enumerable)
+                {
+                    var entityType = entity.GetType();
+                    if (database.EntityTypes.Any(x => x.ClrType != entityType))
+                    {
+                        foreach (var nested in enumerable)
+                        {
+                            context.Add(nested);
+                        }
+
+                        continue;
+                    }
+                }
+
+                context.Add(entity);
+            }
+            return context.SaveChangesAsync();
         }
 
         public static Task AddData<TDbContext>(this ISqlDatabase<TDbContext> database, params object[] entities)
@@ -25,8 +50,7 @@ namespace EfLocalDb
         {
             Guard.AgainstNull(nameof(entities), entities);
             await using var context = database.NewDbContext();
-            context.AddRange(entities);
-            await context.SaveChangesAsync();
+            await Add(database, entities, context);
         }
 
         public static Task AddDataUntracked<TDbContext>(this ISqlDatabase<TDbContext> database, params object[] entities)

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfLocalDb
 {
@@ -64,6 +66,7 @@ namespace EfLocalDb
         {
             await Connection.OpenAsync();
             Context = NewDbContext();
+            EntityTypes = Context.Model.GetEntityTypes().ToList();
             if (data != null)
             {
                 await this.AddData(data);
@@ -73,6 +76,8 @@ namespace EfLocalDb
         public Transaction Transaction { get; }
 
         public TDbContext Context { get; private set; } = null!;
+
+        public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;
 
         public TDbContext NewDbContext()
         {
