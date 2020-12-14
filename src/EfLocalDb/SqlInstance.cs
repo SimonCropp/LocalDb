@@ -91,7 +91,18 @@ namespace EfLocalDb
             Guard.AgainstNull(nameof(constructInstance), constructInstance);
             Model = BuildModel(constructInstance);
             this.constructInstance = constructInstance;
-            this.sqlOptionsBuilder = sqlOptionsBuilder;
+            if (sqlOptionsBuilder == null)
+            {
+                this.sqlOptionsBuilder = builder => { builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery); };
+            }
+            else
+            {
+                this.sqlOptionsBuilder = builder =>
+                {
+                    sqlOptionsBuilder(builder);
+                    builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+                };
+            }
 
             var storageValue = storage.Value;
             DirectoryCleaner.CleanInstance(storageValue.Directory);
