@@ -99,8 +99,8 @@ namespace EfLocalDb
             {
                 this.sqlOptionsBuilder = builder =>
                 {
-                    builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                     sqlOptionsBuilder(builder);
+                    builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
                 };
             }
 
