@@ -9,7 +9,7 @@ static class BuildTemplateConverter
         where TDbContext : DbContext
     {
         Guard.AgainstNull(nameof(constructInstance), constructInstance);
-        return async (connection, builder) =>
+        return async (_, builder) =>
         {
             await using var data = constructInstance(builder);
             if (buildTemplate == null)

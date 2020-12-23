@@ -133,7 +133,7 @@ public class Tests
         var optionsBuilderCalled = false;
         SqlInstance<TestDbContext> instance = new(
             constructInstance: builder => new(builder.Options),
-            sqlOptionsBuilder: builder => { optionsBuilderCalled = true; });
+            sqlOptionsBuilder: _ => { optionsBuilderCalled = true; });
 
         TestEntity entity = new()
         {
@@ -215,7 +215,7 @@ public class Tests
 
         SqlInstance<WithRebuildDbContext> instance2 = new(
             constructInstance: builder => new(builder.Options),
-            buildTemplate: x => throw new(),
+            buildTemplate: _ => throw new(),
             timestamp: dateTime);
         await using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
@@ -315,7 +315,7 @@ public class Tests
     {
         instance = new(
             builder => new(builder.Options),
-            callback: (connection, context) =>
+            callback: (_, _) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;

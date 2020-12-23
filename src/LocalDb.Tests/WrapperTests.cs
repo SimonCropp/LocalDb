@@ -100,7 +100,7 @@ end;
             s => new SqlConnection(s),
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: _ =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;
@@ -180,7 +180,7 @@ end;
         var name = "DefinedTimestamp";
         Wrapper instance2 = new(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
         var dateTime = DateTime.Now;
-        instance2.Start(dateTime, connection => Task.CompletedTask);
+        instance2.Start(dateTime, _ => Task.CompletedTask);
         await instance2.AwaitStart();
         Assert.Equal(dateTime, File.GetCreationTime(instance2.DataFile));
     }

@@ -25,7 +25,7 @@ public class Tests
         SqlInstance instance = new(
             "Tests_Callback",
             TestDbBuilder.CreateTable,
-            callback: connection =>
+            callback: _ =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;
