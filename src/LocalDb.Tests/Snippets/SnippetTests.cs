@@ -14,7 +14,6 @@ public class SnippetTests
     }
 
     #region Test
-
     public async Task TheTest()
     {
         #region BuildDatabase
@@ -25,7 +24,6 @@ public class SnippetTests
         #endregion
         #endregion
     }
-
     #endregion
 
     public async Task TheTestWithDbName()

@@ -164,7 +164,7 @@ await using var database = await sqlInstance.Build();
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L20-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L19-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -178,7 +178,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L22-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L21-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -204,14 +204,12 @@ public class SnippetTests
             buildTemplate: TestDbBuilder.CreateTable);
     }
 
-
     public async Task TheTest()
     {
         await using var database = await sqlInstance.Build();
         await TestDbBuilder.AddData(database.Connection);
         Assert.Single(await TestDbBuilder.GetData(database.Connection));
     }
-
 
     public async Task TheTestWithDbName()
     {
@@ -221,5 +219,5 @@ public class SnippetTests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
