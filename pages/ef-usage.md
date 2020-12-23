@@ -159,6 +159,46 @@ SqlInstance<MyDbContext> sqlInstance = new(
 <!-- endSnippet -->
 
 
+### Seeding data in the template
+
+Data can be seeded into the template database for use across all tests:
+
+<!-- snippet: EfBuildTemplate -->
+<a id='snippet-efbuildtemplate'></a>
+```cs
+public class BuildTemplate
+{
+    static SqlInstance<TheDbContext> sqlInstance;
+
+    static BuildTemplate()
+    {
+        sqlInstance = new(
+            constructInstance: builder => new(builder.Options),
+            buildTemplate: async context =>
+            {
+                await context.Database.EnsureCreatedAsync();
+                TheEntity entity = new()
+                {
+                    Property = "prop"
+                };
+                context.Add(entity);
+                await context.SaveChangesAsync();
+            });
+    }
+
+    [Fact]
+    public async Task Test()
+    {
+        await using var database = await sqlInstance.Build();
+
+        Assert.Single(database.Context.TestEntities);
+    }
+}
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L5-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+
 ## Usage in a Test
 
 Usage inside a test consists of two parts:

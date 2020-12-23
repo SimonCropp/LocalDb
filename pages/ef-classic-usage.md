@@ -144,6 +144,47 @@ public class Tests :
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TestBaseUsage.cs#L10-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
+
+### Seeding data in the template
+
+Data can be seeded into the template database for use across all tests:
+
+<!-- snippet: EfClassicBuildTemplate -->
+<a id='snippet-efclassicbuildtemplate'></a>
+```cs
+public class BuildTemplate
+{
+    static SqlInstance<TheDbContext> sqlInstance;
+
+    static BuildTemplate()
+    {
+        sqlInstance = new(
+            constructInstance: connection => new(connection),
+            buildTemplate: async context =>
+            {
+                await context.CreateOnExistingDb();
+                TheEntity entity = new()
+                {
+                    Property = "prop"
+                };
+                context.TestEntities.Add(entity);
+                await context.SaveChangesAsync();
+            });
+    }
+
+    [Fact]
+    public async Task Test()
+    {
+        using var database = await sqlInstance.Build();
+
+        Assert.Single(database.Context.TestEntities);
+    }
+}
+```
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L5-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+
 ## Usage in a Test
 
 Usage inside a test consists of two parts:

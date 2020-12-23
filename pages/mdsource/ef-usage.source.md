@@ -47,6 +47,13 @@ Some SqlServer options are exposed by passing a `Action<SqlServerDbContextOption
 snippet: sqlOptionsBuilder
 
 
+### Seeding data in the template
+
+Data can be seeded into the template database for use across all tests:
+
+snippet: EfBuildTemplate
+
+
 ## Usage in a Test
 
 Usage inside a test consists of two parts:

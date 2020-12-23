@@ -39,6 +39,14 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 
 snippet: EfClassicTestBase
 
+
+### Seeding data in the template
+
+Data can be seeded into the template database for use across all tests:
+
+snippet: EfClassicBuildTemplate
+
+
 ## Usage in a Test
 
 Usage inside a test consists of two parts:
