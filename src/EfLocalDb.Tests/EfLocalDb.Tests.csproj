@@ -20,6 +20,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201123-03" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.51" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.52" PrivateAssets="All" />
   </ItemGroup>
 </Project>
