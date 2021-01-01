@@ -15,7 +15,7 @@
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201123-03" />
-    <PackageReference Include="MarkdownSnippets.MsBuild" Version="21.7.2" />
+    <PackageReference Include="MarkdownSnippets.MsBuild" Version="22.0.0" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" Version="1.0.52" PrivateAssets="All" />
