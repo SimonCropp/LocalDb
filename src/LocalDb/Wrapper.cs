@@ -69,15 +69,13 @@ class Wrapper
         ServerName = $@"(LocalDb)\{instance}";
     }
 
+    [Time("Name: '{name}'")]
     public async Task<string> CreateDatabaseFromTemplate(string name, bool withRollback = false)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
             throw new("The database name 'template' is reserved.");
         }
-
-        //TODO: if dataFile doesnt exists do a drop and recreate
-        var stopwatch = Stopwatch.StartNew();
 
         // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
@@ -101,8 +99,6 @@ class Wrapper
 
         var connectionString = LocalDbSettings.connectionBuilder(instance,name);
         await RunCallback(connectionString);
-
-        Trace.WriteLine($"Create DB `{name}` {stopwatch.ElapsedMilliseconds}ms.", "LocalDb");
         return connectionString;
     }
 
@@ -212,7 +208,7 @@ class Wrapper
         InitRollbackTask();
     }
 
-    [Time]
+    [Time("Timestamp: '{timestamp}', Rebuild: '{rebuild}', Optimize: '{optimize}'")]
     async Task CreateAndDetachTemplate(
         DateTime timestamp,
         Func<DbConnection, Task> buildTemplate,
@@ -289,7 +285,7 @@ class Wrapper
         File.Delete(LogFile);
     }
 
-    [Time]
+    [Time("dbName: '{dbName}'")]
     public async Task DeleteDatabase(string dbName)
     {
         var commandText = SqlBuilder.BuildDeleteDbCommand(dbName);
