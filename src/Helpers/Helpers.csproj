@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.52" PrivateAssets="All" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.53" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
