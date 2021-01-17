@@ -4,5 +4,6 @@
     <NoWarn>CS1591;CA1416;CS8632</NoWarn>
     <Version>9.2.0</Version>
     <AssemblyVersion>1.0.0</AssemblyVersion>
+    <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
   </PropertyGroup>
 </Project>
