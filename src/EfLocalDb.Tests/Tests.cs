@@ -265,6 +265,18 @@ public class Tests
     }
 
     [Fact]
+    public async Task SimpleContext()
+    {
+        TestEntity entity = new()
+        {
+            Property = "Item1"
+        };
+        await using var context = await instance.BuildContext(new List<object> {entity});
+        Assert.NotNull(await context.TestEntities.FindAsync(entity.Id));
+        Assert.True(callbackCalled);
+    }
+
+    [Fact]
     public async Task WithRollback()
     {
         TestEntity entity = new()

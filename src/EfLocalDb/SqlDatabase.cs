@@ -79,6 +79,13 @@ namespace EfLocalDb
             return constructInstance(builder);
         }
 
+        internal TDbContext NewConnectionOwnedDbContext()
+        {
+            var builder = DefaultOptionsBuilder.Build<TDbContext>();
+            builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
+            return constructInstance(builder);
+        }
+
         public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;
 
         public async ValueTask DisposeAsync()
