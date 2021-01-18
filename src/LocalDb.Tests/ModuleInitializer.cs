@@ -7,8 +7,6 @@ using EfLocalDb;
 using LocalDb;
 #endif
 
-[assembly: CollectionBehavior(CollectionBehavior.CollectionPerClass, DisableTestParallelization = true)]
-
 public static class ModuleInitializer
 {
     [ModuleInitializer]

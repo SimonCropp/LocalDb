@@ -7,7 +7,7 @@ namespace TestBase
 {
     #region TestBase
 
-    public class TestBase
+    public abstract class TestBase
     {
         static SqlInstance instance;
 

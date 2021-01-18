@@ -1,6 +1,4 @@
-﻿#if(DEBUG)
-
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
@@ -9,7 +7,7 @@ namespace TestBase
 {
     #region EfClassicTestBase
 
-    public class TestBase
+    public abstract class TestBase
     {
         static SqlInstance<TheDbContext> sqlInstance;
 
@@ -47,4 +45,3 @@ namespace TestBase
 
     #endregion
 }
-#endif
