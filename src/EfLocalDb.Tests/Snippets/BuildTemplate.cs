@@ -1,5 +1,4 @@
-﻿#if(DEBUG)
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
 
@@ -35,4 +34,3 @@ public class BuildTemplate
 }
 
 #endregion
-#endif

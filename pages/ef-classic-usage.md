@@ -106,7 +106,7 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 <!-- snippet: EfClassicTestBase -->
 <a id='snippet-efclassictestbase'></a>
 ```cs
-public class TestBase
+public abstract class TestBase
 {
     static SqlInstance<TheDbContext> sqlInstance;
 
@@ -142,7 +142,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L10-L48' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L8-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

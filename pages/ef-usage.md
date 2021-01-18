@@ -105,7 +105,7 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 <!-- snippet: EfTestBase -->
 <a id='snippet-eftestbase'></a>
 ```cs
-public class TestBase
+public abstract class TestBase
 {
     static SqlInstance<TheDbContext> sqlInstance;
 
@@ -196,7 +196,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L6-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L5-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
