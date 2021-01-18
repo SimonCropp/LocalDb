@@ -169,7 +169,7 @@ Data can be seeded into the template database for use across all tests:
 ```cs
 public class BuildTemplate
 {
-    static SqlInstance<TheDbContext> sqlInstance;
+    static SqlInstance<BuildTemplateDbContext> sqlInstance;
 
     static BuildTemplate()
     {
