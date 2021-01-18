@@ -6,7 +6,7 @@ using Xunit;
 
 public class BuildTemplate
 {
-    static SqlInstance<TheDbContext> sqlInstance;
+    static SqlInstance<TheTemplateDbContext> sqlInstance;
 
     static BuildTemplate()
     {
@@ -25,7 +25,7 @@ public class BuildTemplate
     }
 
     [Fact]
-    public async Task BuildTemplateTest()
+    public async Task Test()
     {
         using var database = await sqlInstance.Build();
 
