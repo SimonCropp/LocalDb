@@ -115,7 +115,7 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 <!-- snippet: TestBase -->
 <a id='snippet-testbase'></a>
 ```cs
-public class TestBase
+public abstract class TestBase
 {
     static SqlInstance instance;
 

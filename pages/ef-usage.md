@@ -105,7 +105,7 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 <!-- snippet: EfTestBase -->
 <a id='snippet-eftestbase'></a>
 ```cs
-public class TestBase
+public abstract class TestBase
 {
     static SqlInstance<TheDbContext> sqlInstance;
 
