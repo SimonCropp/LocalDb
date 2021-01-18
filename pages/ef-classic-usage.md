@@ -155,7 +155,7 @@ Data can be seeded into the template database for use across all tests:
 ```cs
 public class BuildTemplate
 {
-    static SqlInstance<TheDbContext> sqlInstance;
+    static SqlInstance<TheTemplateDbContext> sqlInstance;
 
     static BuildTemplate()
     {
@@ -174,7 +174,7 @@ public class BuildTemplate
     }
 
     [Fact]
-    public async Task BuildTemplateTest()
+    public async Task Test()
     {
         using var database = await sqlInstance.Build();
 
