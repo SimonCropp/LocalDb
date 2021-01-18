@@ -187,7 +187,7 @@ public class BuildTemplate
     }
 
     [Fact]
-    public async Task TestBuildTemplate()
+    public async Task Test()
     {
         await using var database = await sqlInstance.Build();
 
