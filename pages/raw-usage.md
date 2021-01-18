@@ -127,10 +127,11 @@ public abstract class TestBase
     }
 
     public Task<SqlDatabase> LocalDb(
+        [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
-        return instance.Build(GetType().Name, databaseSuffix, memberName);
+        return instance.Build(testFile, databaseSuffix, memberName);
     }
 }
 
@@ -146,7 +147,7 @@ public class Tests:
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L41' title='Snippet source file'>snippet source</a> | <a href='#snippet-testbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L42' title='Snippet source file'>snippet source</a> | <a href='#snippet-testbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
