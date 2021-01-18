@@ -1,12 +1,13 @@
 ﻿using System.Runtime.CompilerServices;
 using VerifyTests;
 using Xunit;
-
 #if EF
 using EfLocalDb;
 #else
 using LocalDb;
 #endif
+
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerClass, DisableTestParallelization = true)]
 
 public static class ModuleInitializer
 {
