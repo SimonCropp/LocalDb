@@ -1,4 +1,4 @@
-﻿#if(!NETCOREAPP3_1)
+﻿#if(DEBUG)
 
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -20,10 +20,11 @@ namespace TestBase
         }
 
         public Task<SqlDatabase<TheDbContext>> LocalDb(
+            [CallerFilePath] string testFile = "",
             string? databaseSuffix = null,
             [CallerMemberName] string memberName = "")
         {
-            return sqlInstance.Build(GetType().Name, databaseSuffix, memberName);
+            return sqlInstance.Build(testFile, databaseSuffix, memberName);
         }
     }
 

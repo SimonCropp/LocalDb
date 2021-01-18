@@ -116,10 +116,11 @@ public class TestBase
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
+        [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
-        return sqlInstance.Build(GetType().Name, databaseSuffix, memberName);
+        return sqlInstance.Build(testFile, databaseSuffix, memberName);
     }
 }
 
@@ -140,7 +141,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TestBaseUsage.cs#L8-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-eftestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L8-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-eftestbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -195,7 +196,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L5-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L6-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

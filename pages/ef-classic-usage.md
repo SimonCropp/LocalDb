@@ -117,10 +117,11 @@ public class TestBase
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
+        [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
-        return sqlInstance.Build(GetType().Name, databaseSuffix, memberName);
+        return sqlInstance.Build(testFile, databaseSuffix, memberName);
     }
 }
 
@@ -141,7 +142,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TestBaseUsage.cs#L10-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L10-L48' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

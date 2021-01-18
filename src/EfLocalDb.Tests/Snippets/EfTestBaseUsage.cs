@@ -18,10 +18,11 @@ namespace TestBase
         }
 
         public Task<SqlDatabase<TheDbContext>> LocalDb(
+            [CallerFilePath] string testFile = "",
             string? databaseSuffix = null,
             [CallerMemberName] string memberName = "")
         {
-            return sqlInstance.Build(GetType().Name, databaseSuffix, memberName);
+            return sqlInstance.Build(testFile, databaseSuffix, memberName);
         }
     }
 
