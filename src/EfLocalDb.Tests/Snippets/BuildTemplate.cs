@@ -6,7 +6,7 @@ using Xunit;
 
 public class BuildTemplate
 {
-    static SqlInstance<TheDbContext> sqlInstance;
+    static SqlInstance<BuildTemplateDbContext> sqlInstance;
 
     static BuildTemplate()
     {
