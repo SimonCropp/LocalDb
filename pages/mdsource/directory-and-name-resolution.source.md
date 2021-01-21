@@ -7,7 +7,7 @@ snippet: GetInstanceName
 That InstanceName is then used to derive the data directory. In order:
 
  * If `LocalDBData` environment variable exists then use `LocalDBData\InstanceName`.
- * Use `%TempDir%\LocalDb\InstanceName`.
+ * Use `%Temp%\LocalDb\InstanceName`.
 
 Database files older than a day will be purged from the data directory.
 
