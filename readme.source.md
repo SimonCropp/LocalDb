@@ -11,6 +11,7 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
 
 **SqlLocalDB is only supported on Windows**
 
+toc
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
   * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)
