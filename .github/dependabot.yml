@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "19:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: Verify.Xunit
+    versions:
+    - 10.6.2
+    - 11.0.2
+    - 11.6.0
+  - dependency-name: Microsoft.EntityFrameworkCore.SqlServer
+    versions:
+    - 5.0.4
