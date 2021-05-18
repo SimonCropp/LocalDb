@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -71,6 +72,38 @@ namespace EfLocalDb
         }
 
         public TDbContext Context { get; private set; } = null!;
+
+        /// <summary>
+        /// Calls <see cref="DbContext.SaveChanges()"/> on <see cref="Context"/>.
+        /// </summary>
+        public int SaveChangesAsync()
+        {
+            return Context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.SaveChanges(bool)"/> on <see cref="Context"/>.
+        /// </summary>
+        public int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            return Context.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> on <see cref="Context"/>.
+        /// </summary>
+        public Task<int> SaveChangesAsync(CancellationToken cancellation = default)
+        {
+            return Context.SaveChangesAsync(cancellation);
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.SaveChangesAsync(bool, CancellationToken)"/> on <see cref="Context"/>.
+        /// </summary>
+        public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellation = default)
+        {
+            return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
+        }
 
         public TDbContext NewDbContext()
         {

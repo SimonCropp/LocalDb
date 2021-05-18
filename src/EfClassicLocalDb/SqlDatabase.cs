@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EfLocalDb
@@ -64,6 +65,22 @@ namespace EfLocalDb
         }
 
         public TDbContext Context { get; private set; } = null!;
+
+        /// <summary>
+        /// Calls <see cref="DbContext.SaveChanges()"/> on <see cref="Context"/>.
+        /// </summary>
+        public int SaveChanges()
+        {
+            return Context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> on <see cref="Context"/>.
+        /// </summary>
+        public Task<int> SaveChangesAsync(CancellationToken cancellation = default)
+        {
+            return Context.SaveChangesAsync(cancellation);
+        }
 
         public TDbContext NewDbContext()
         {
