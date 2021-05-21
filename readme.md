@@ -149,10 +149,6 @@ Useful commands:
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
 
-## Security contact information
-
-To report a security vulnerability, use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
-
 
 ## Icon
 

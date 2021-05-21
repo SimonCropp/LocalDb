@@ -7,7 +7,6 @@
 
 Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
-Support is available via a [Tidelift Subscription](https://tidelift.com/subscription/pkg/nuget-localdb?utm_source=nuget-localdb&utm_medium=referral&utm_campaign=enterprise).
 
 **SqlLocalDB is only supported on Windows**
 
@@ -125,10 +124,6 @@ Useful commands:
 
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
-
-## Security contact information
-
-To report a security vulnerability, use the [Tidelift security contact](https://tidelift.com/security). Tidelift will coordinate the fix and disclosure.
 
 
 ## Icon
