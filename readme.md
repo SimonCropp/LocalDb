@@ -14,7 +14,6 @@ To change this file edit the source file and then run MarkdownSnippets.
 
 Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
-Support is available via a [Tidelift Subscription](https://tidelift.com/subscription/pkg/nuget-localdb?utm_source=nuget-localdb&utm_medium=referral&utm_campaign=enterprise).
 
 **SqlLocalDB is only supported on Windows**
 
@@ -33,8 +32,7 @@ Support is available via a [Tidelift Subscription](https://tidelift.com/subscrip
     * [EntityFramework Core](#entityframework-core)
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
-  * [Credits](#credits)
-  * [Security contact information](#security-contact-information)<!-- endToc -->
+  * [Credits](#credits)<!-- endToc -->
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
   * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)
