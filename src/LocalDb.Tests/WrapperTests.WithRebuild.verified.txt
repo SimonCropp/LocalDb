@@ -1,6 +1,6 @@
-[
+﻿[
   {
-    Text: 
+    Text:
 declare @command nvarchar(max)
 set @command = ''
 

@@ -1,7 +1,7 @@
-{
+﻿{
   entries: [
     {
-      Text: 
+      Text:
 if db_id('ToDelete') is null
     begin
        
