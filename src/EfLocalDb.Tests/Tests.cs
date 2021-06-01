@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
@@ -273,53 +271,6 @@ public class Tests
         };
         await using var context = await instance.BuildContext(new List<object> {entity});
         Assert.NotNull(await context.TestEntities.FindAsync(entity.Id));
-        Assert.True(callbackCalled);
-    }
-
-    [Fact]
-    public async Task WithRollback()
-    {
-        TestEntity entity = new()
-        {
-            Property = "prop"
-        };
-        await using var database1 = await instance.BuildWithRollback(new List<object> {entity});
-        await using var database2 = await instance.BuildWithRollback();
-        Assert.NotNull(await database1.Context.TestEntities.FindAsync(entity.Id));
-        Assert.Empty(database2.Context.TestEntities.ToList());
-        Assert.True(callbackCalled);
-    }
-
-    [Fact]
-    public async Task WithRollbackPerf()
-    {
-        await using (await instance.BuildWithRollback())
-        {
-        }
-
-        TestEntity entity = new()
-        {
-            Property = "prop"
-        };
-        SqlDatabaseWithRollback<TestDbContext>? database2 = null;
-        try
-        {
-            var stopwatch1 = Stopwatch.StartNew();
-            database2 = await instance.BuildWithRollback();
-            Trace.WriteLine(stopwatch1.ElapsedMilliseconds);
-            await database2.AddData(entity);
-        }
-        finally
-        {
-            var stopwatch2 = Stopwatch.StartNew();
-            if (database2 != null)
-            {
-                await database2.DisposeAsync();
-            }
-
-            Trace.WriteLine(stopwatch2.ElapsedMilliseconds);
-        }
-
         Assert.True(callbackCalled);
     }
 

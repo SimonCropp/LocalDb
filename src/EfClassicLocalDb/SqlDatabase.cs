@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace EfLocalDb
 {
-    public class SqlDatabase<TDbContext> :
-        ISqlDatabase<TDbContext>
+    public partial class SqlDatabase<TDbContext> :
+        IDisposable
         where TDbContext : DbContext
     {
         ConstructInstance<TDbContext> constructInstance;
@@ -60,7 +60,7 @@ namespace EfLocalDb
             Context = NewDbContext();
             if (data != null)
             {
-                await this.AddData(data);
+                await AddData(data);
             }
         }
 
