@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace EfLocalDb
 {
-    public class SqlDatabase<TDbContext> :
-        ISqlDatabase<TDbContext>
+    public partial class SqlDatabase<TDbContext> :
+        IAsyncDisposable
         where TDbContext : DbContext
     {
         ConstructInstance<TDbContext> constructInstance;
@@ -67,7 +67,7 @@ namespace EfLocalDb
             EntityTypes = Context.Model.GetEntityTypes().ToList();
             if (data != null)
             {
-                await this.AddData(data);
+                await AddData(data);
             }
         }
 

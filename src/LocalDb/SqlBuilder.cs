@@ -1,6 +1,6 @@
 ﻿static class SqlBuilder
 {
-    public static string GetCreateOrMakeOnlineCommand(string name, string dataFile, string logFile, bool withRollback)
+    public static string GetCreateOrMakeOnlineCommand(string name, string dataFile, string logFile)
     {
         var createCommand = $@"
 create database [{name}] on
@@ -12,14 +12,6 @@ create database [{name}] on
     filename = '{logFile}'
 )
 for attach;";
-        if (withRollback)
-        {
-            createCommand += $@"
-alter database {name}
-set read_committed_snapshot on;
-alter database {name}
-set allow_snapshot_isolation on;";
-        }
 
         return $@"
 if db_id('{name}') is null

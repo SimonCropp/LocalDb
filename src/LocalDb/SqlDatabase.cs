@@ -5,7 +5,10 @@ using Microsoft.Data.SqlClient;
 namespace LocalDb
 {
     public class SqlDatabase :
-        ISqlDatabase
+#if(NET5_0)
+        IAsyncDisposable,
+#endif
+        IDisposable
     {
         Func<Task> delete;
 

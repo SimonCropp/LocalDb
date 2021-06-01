@@ -18,7 +18,6 @@ class Wrapper
     Func<DbConnection, Task>? callback;
     SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
-    public readonly string WithRollbackConnectionString;
     Func<string, DbConnection> buildConnection;
     string instance;
     public readonly string DataFile;
@@ -44,7 +43,6 @@ class Wrapper
         this.instance = instance;
         MasterConnectionString = LocalDbSettings.connectionBuilder(instance, "master");
         TemplateConnectionString = LocalDbSettings.connectionBuilder(instance, "template");
-        WithRollbackConnectionString = LocalDbSettings.connectionBuilder(instance, "withRollback");
         Directory = directory;
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
@@ -70,7 +68,7 @@ class Wrapper
     }
 
     [Time("Name: '{name}'")]
-    public async Task<string> CreateDatabaseFromTemplate(string name, bool withRollback = false)
+    public async Task<string> CreateDatabaseFromTemplate(string name)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -88,7 +86,7 @@ class Wrapper
         FileExtensions.MarkFileAsWritable(dataFile);
         FileExtensions.MarkFileAsWritable(logFile);
 
-        var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile, withRollback);
+        var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
 
 #if NET5_0
         await using var masterConnection = await OpenMasterConnection();
@@ -169,7 +167,6 @@ class Wrapper
                 buildTemplate,
                 rebuild: true,
                 optimize: true);
-            InitRollbackTask();
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -204,8 +201,6 @@ class Wrapper
         {
             startupTask = CreateAndDetachTemplate(timestamp, buildTemplate, true, false);
         }
-
-        InitRollbackTask();
     }
 
     [Time("Timestamp: '{timestamp}', Rebuild: '{rebuild}', Optimize: '{optimize}'")]
@@ -299,18 +294,5 @@ class Wrapper
         var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");
         File.Delete(dataFile);
         File.Delete(logFile);
-    }
-
-    Lazy<Task> withRollbackTask = null!;
-
-    void InitRollbackTask()
-    {
-        withRollbackTask = new(() => CreateDatabaseFromTemplate("withRollback", true));
-    }
-
-    public async Task CreateWithRollbackDatabase()
-    {
-        await startupTask;
-        await withRollbackTask.Value;
     }
 }

@@ -74,44 +74,6 @@ public class Tests
     }
 
     [Fact]
-    public async Task WithRollback()
-    {
-        SqlInstance instance = new("Name", TestDbBuilder.CreateTable);
-
-        await using var database1 = await instance.BuildWithRollback();
-        await using var database2 = await instance.BuildWithRollback();
-        var data = await TestDbBuilder.AddData(database1.Connection);
-        Assert.Contains(data, await TestDbBuilder.GetData(database1.Connection));
-        Assert.Empty(await TestDbBuilder.GetData(database2.Connection));
-    }
-
-    [Fact]
-    public async Task WithRollbackPerf()
-    {
-        SqlInstance instance = new("Name", TestDbBuilder.CreateTable);
-
-        await using (await instance.BuildWithRollback())
-        {
-        }
-
-        SqlDatabaseWithRollback? database = null;
-
-        try
-        {
-            var stopwatch = Stopwatch.StartNew();
-            database = await instance.BuildWithRollback();
-            Trace.WriteLine(stopwatch.ElapsedMilliseconds);
-            await TestDbBuilder.AddData(database.Connection);
-        }
-        finally
-        {
-            var stopwatch = Stopwatch.StartNew();
-            database?.Dispose();
-            Trace.WriteLine(stopwatch.ElapsedMilliseconds);
-        }
-    }
-
-    [Fact]
     public async Task Multiple()
     {
         var stopwatch = Stopwatch.StartNew();
