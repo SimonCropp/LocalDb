@@ -121,11 +121,11 @@ Useful commands:
 
 ## ReSharper Test Runner
 
-The ReSharper Test Runner has a feature that detects spawened processes, and prompts if they do not shut down when a test ends. This is problematic when using SqlLocalDB since the Sql Server process continues to run:
+The ReSharper Test Runner has a feature that detects spawned processes, and prompts if they do not shut down when a test ends. This is problematic when using SqlLocalDB since the Sql Server process continues to run:
 
 ![](pages/resharper-spawned.png)
 
-To avoid this error spawened processes can be ignored:
+To avoid this error spawned processes can be ignored:
 
 ![](pages/resharper-ignore-spawned.png)
 
