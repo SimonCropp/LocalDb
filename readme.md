@@ -32,6 +32,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
     * [EntityFramework Core](#entityframework-core)
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
+  * [ReSharper Test Runner](#resharper-test-runner)
   * [Credits](#credits)<!-- endToc -->
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
@@ -139,6 +140,17 @@ Useful commands:
  * `sqllocaldb start InstanceName`: start an instance
  * `sqllocaldb stop InstanceName`: stop an instance
  * `sqllocaldb delete InstanceName`: delete an instance (this does not delete the file system data for the instance)
+
+
+## ReSharper Test Runner
+
+The ReSharper Test Runner has a feature that detects spawened processes, and prompts if they do not shut down when a test ends. This is problematic when using SqlLocalDB since the Sql Server process continues to run:
+
+![](pages/resharper-spawned.png.png)
+
+To avoid this error spawened processes can be ignored:
+
+![](pages/resharper-ignore-spawned.png)
 
 
 ## Credits

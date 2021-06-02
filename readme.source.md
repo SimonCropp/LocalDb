@@ -119,6 +119,17 @@ Useful commands:
  * `sqllocaldb delete InstanceName`: delete an instance (this does not delete the file system data for the instance)
 
 
+## ReSharper Test Runner
+
+The ReSharper Test Runner has a feature that detects spawened processes, and prompts if they do not shut down when a test ends. This is problematic when using SqlLocalDB since the Sql Server process continues to run:
+
+![](pages/resharper-spawned.png.png)
+
+To avoid this error spawened processes can be ignored:
+
+![](pages/resharper-ignore-spawned.png)
+
+
 ## Credits
 
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
