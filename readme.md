@@ -146,7 +146,7 @@ Useful commands:
 
 The ReSharper Test Runner has a feature that detects spawened processes, and prompts if they do not shut down when a test ends. This is problematic when using SqlLocalDB since the Sql Server process continues to run:
 
-![](pages/resharper-spawned.png.png)
+![](pages/resharper-spawned.png)
 
 To avoid this error spawened processes can be ignored:
 
