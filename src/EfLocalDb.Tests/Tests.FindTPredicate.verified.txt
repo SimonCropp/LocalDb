@@ -1,4 +1,0 @@
-﻿{
-  Id: Id_1,
-  Property: prop
-}

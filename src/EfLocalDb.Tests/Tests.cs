@@ -89,7 +89,7 @@ public class Tests
     }
 
     [Fact]
-    public async Task FindTPredicate()
+    public async Task Single()
     {
         TestEntity entity = new()
         {
@@ -97,14 +97,14 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verifier.Verify(database.Find<TestEntity>(_ => _.Id == entity.Id));
+        await Verifier.Verify(database.Single<TestEntity>(_ => _.Id == entity.Id));
     }
 
     [Fact]
-    public async Task FindMissingTPredicate()
+    public async Task SingleMissing()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find<TestEntity>(entity => entity.Id == 10));
+        await Verifier.ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
     }
 
     [Fact]

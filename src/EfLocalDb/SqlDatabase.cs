@@ -189,23 +189,17 @@ namespace EfLocalDb
         /// <summary>
         /// Calls <see cref="DbSet{TEntity}.FindAsync(object[])"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
         /// </summary>
-        public async Task<T> Find<T>(Expression<Func<T, bool>> predicate)
+        public Task<T> Single<T>(Expression<Func<T, bool>>? predicate = null)
             where T : class
         {
             var set = Set<T>();
-            var results = await set.Where(predicate).ToListAsync();
 
-            if (results.Count == 1)
+            if (predicate == null)
             {
-                return results[0];
+                return set.SingleAsync();
             }
 
-            if (results.Count > 1)
-            {
-                throw new("More than one record found");
-            }
-
-            throw new("No record found");
+            return set.SingleAsync(predicate);
         }
 
         /// <summary>
