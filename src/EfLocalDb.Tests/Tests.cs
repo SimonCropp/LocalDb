@@ -46,7 +46,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        Assert.False(await database.Exists(entity.Id));
+        Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
 
