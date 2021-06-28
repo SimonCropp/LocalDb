@@ -159,7 +159,7 @@ namespace EfLocalDb
         /// <summary>
         /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns all resulting items.
         /// </summary>
-        public async Task<object> Find<T>(params object[] keys)
+        public async Task<T> Find<T>(params object[] keys)
             where T : class
         {
             var result = await NoTrackingContext.Set<T>().FindAsync(keys);
