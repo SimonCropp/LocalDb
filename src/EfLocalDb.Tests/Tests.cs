@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using EfLocalDb;
+using VerifyXunit;
 using Xunit;
 
+[UsesVerify]
 public class Tests
 {
     SqlInstance<TestDbContext> instance;
@@ -46,6 +48,32 @@ public class Tests
         await database.AddDataUntracked(entity);
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         Assert.True(callbackCalled);
+    }
+
+    [Fact]
+    public async Task Find()
+    {
+        TestEntity entity = new()
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verifier.Verify(database.Find(entity.Id));
+    }
+
+    [Fact]
+    public async Task FindMissing()
+    {
+        await using var database = await instance.Build();
+        await Verifier.ThrowsTask(() => database.Find(0));
+    }
+
+    [Fact]
+    public async Task FindIncorrectType()
+    {
+        await using var database = await instance.Build();
+        await Verifier.ThrowsTask(() => database.Find("key"));
     }
 
     [Fact]

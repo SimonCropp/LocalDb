@@ -1,0 +1,6 @@
+﻿{
+  Type: Exception,
+  Message: No record found with keys: 0,
+  StackTrace:
+at EfLocalDb.SqlDatabase`1.Find(Object[] keys)
+}
