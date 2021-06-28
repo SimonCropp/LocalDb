@@ -204,7 +204,13 @@ namespace EfLocalDb
                 EntityTypes
                     .Where(entity =>
                     {
-                        var entityKeys = entity.FindPrimaryKey().Properties.Select(x => x.ClrType);
+                        var primaryKey = entity.FindPrimaryKey();
+                        if (primaryKey == null)
+                        {
+                            return false;
+                        }
+
+                        var entityKeys = primaryKey.Properties.Select(x => x.ClrType);
                         return entityKeys.SequenceEqual(inputKeyTypes);
                     })
                     .Select(entity => NoTrackingContext.FindAsync(entity.ClrType, keys).AsTask()).ToList();
