@@ -70,13 +70,6 @@ public class Tests
     }
 
     [Fact]
-    public async Task ExistsIncorrectTypeT()
-    {
-        await using var database = await instance.Build();
-        Assert.False(await database.Exists<TestEntity>("key"));
-    }
-
-    [Fact]
     public async Task FindT()
     {
         TestEntity entity = new()
