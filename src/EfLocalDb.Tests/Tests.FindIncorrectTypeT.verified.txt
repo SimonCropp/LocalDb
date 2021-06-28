@@ -1,0 +1,9 @@
+﻿{
+  Type: ArgumentException,
+  Message: The key value at position 0 of the call to 'DbSet<TestEntity>.Find' was of type 'string', which does not match the property type of 'int'.,
+  StackTrace:
+at Microsoft.EntityFrameworkCore.Internal.EntityFinder`1.FindTracked(Object[] keyValues, IReadOnlyList`1& keyProperties)
+at Microsoft.EntityFrameworkCore.Internal.EntityFinder`1.FindAsync(Object[] keyValues, CancellationToken cancellationToken)
+at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.FindAsync(Object[] keyValues)
+at EfLocalDb.SqlDatabase`1.Find[T](Object[] keys)
+}

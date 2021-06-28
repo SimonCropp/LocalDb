@@ -159,6 +159,40 @@ namespace EfLocalDb
         /// <summary>
         /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns all resulting items.
         /// </summary>
+        public async Task<object> Find<T>(params object[] keys)
+            where T : class
+        {
+            var result = await NoTrackingContext.Set<T>().FindAsync(keys);
+            if (result != null)
+            {
+                return result;
+            }
+
+            var keyString = string.Join(", ", keys);
+            throw new("No record found with keys: " + keyString);
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns true if the item exists.
+        /// </summary>
+        public async Task<bool> Exists<T>(params object[] keys)
+            where T : class
+        {
+            var result = await Set<T>().FindAsync(keys);
+            return result != null;
+        }
+
+        /// <summary>
+        /// Returns <see cref="DbContext.Set{TEntity}()"/> from <see cref="NoTrackingContext"/>.
+        /// </summary>
+        public DbSet<T> Set<T>() where T : class
+        {
+            return NoTrackingContext.Set<T>();
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns all resulting items.
+        /// </summary>
         public async Task<object> Find(params object[] keys)
         {
             var results = await FindResults(keys);
