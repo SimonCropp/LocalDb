@@ -20,7 +20,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build(new List<object> {entity});
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -33,7 +33,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddData(entity);
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -46,7 +46,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.False(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -198,9 +198,8 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddData(entity1, entity2);
-        var testEntities = database.Context.TestEntities;
-        Assert.NotNull(await testEntities.FindAsync(entity1.Id));
-        Assert.NotNull(await testEntities.FindAsync(entity2.Id));
+        Assert.True(await database.Exists(entity1.Id));
+        Assert.True(await database.Exists(entity2.Id));
         Assert.True(callbackCalled);
     }
 
@@ -222,9 +221,9 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddData(new List<object>{entity1, entity2}, entity3);
         var testEntities = database.Context.TestEntities;
-        Assert.NotNull(await testEntities.FindAsync(entity1.Id));
-        Assert.NotNull(await testEntities.FindAsync(entity2.Id));
-        Assert.NotNull(await testEntities.FindAsync(entity3.Id));
+        Assert.True(await database.Exists(entity1.Id));
+        Assert.True(await database.Exists(entity2.Id));
+        Assert.True(await database.Exists(entity3.Id));
         Assert.True(callbackCalled);
     }
 
@@ -242,8 +241,8 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity1, entity2);
         var testEntities = database.Context.TestEntities;
-        Assert.NotNull(await testEntities.FindAsync(entity1.Id));
-        Assert.NotNull(await testEntities.FindAsync(entity2.Id));
+        Assert.True(await database.Exists(entity1.Id));
+        Assert.True(await database.Exists(entity2.Id));
         Assert.True(callbackCalled);
     }
 
@@ -259,7 +258,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build(new List<object> {entity});
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(await database.Exists(entity.Id));
     }
 
     [Fact]
@@ -275,7 +274,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build(new List<object> {entity});
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(await database.Exists(entity.Id));
         Assert.True(optionsBuilderCalled);
     }
 
@@ -292,7 +291,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build(new List<object> {entity});
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(await database.Exists(entity.Id));
     }
 
     [Fact]
@@ -395,7 +394,7 @@ public class Tests
             Property = "Item1"
         };
         await using var database = await instance.Build(new List<object> {entity});
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
 
