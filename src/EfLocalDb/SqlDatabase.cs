@@ -170,17 +170,14 @@ namespace EfLocalDb
             {
                 return true;
             }
-            
-            if (results.Count == 0)
-            {
-                return false;
-            }
 
-            var keyString = string.Join(", ", keys);
             if (results.Count > 1)
             {
+                var keyString = string.Join(", ", keys);
                 throw new("More than one record found with keys: " + keyString);
             }
+
+            return false;
         }
 
         async Task<List<object?>> FindResults(object[] keys)
