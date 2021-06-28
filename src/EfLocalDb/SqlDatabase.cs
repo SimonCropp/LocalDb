@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
@@ -157,12 +158,26 @@ namespace EfLocalDb
         }
 
         /// <summary>
-        /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns all resulting items.
+        /// Calls <see cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
+        /// </summary>
+        public Task<int> Count<T>(Expression<Func<T, bool>>? predicate = null)
+            where T : class
+        {
+            if (predicate == null)
+            {
+                return Set<T>().CountAsync();
+            }
+
+            return Set<T>().CountAsync(predicate);
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbSet{TEntity}.FindAsync(object[])"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
         /// </summary>
         public async Task<T> Find<T>(params object[] keys)
             where T : class
         {
-            var result = await NoTrackingContext.Set<T>().FindAsync(keys);
+            var result = await Set<T>().FindAsync(keys);
             if (result != null)
             {
                 return result;
@@ -170,6 +185,27 @@ namespace EfLocalDb
 
             var keyString = string.Join(", ", keys);
             throw new("No record found with keys: " + keyString);
+        }
+        /// <summary>
+        /// Calls <see cref="DbSet{TEntity}.FindAsync(object[])"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
+        /// </summary>
+        public async Task<T> Find<T>(Expression<Func<T, bool>> predicate)
+            where T : class
+        {
+            var set = Set<T>();
+            var results = await set.Where(predicate).ToListAsync();
+
+            if (results.Count == 1)
+            {
+                return results[0];
+            }
+
+            if (results.Count > 1)
+            {
+                throw new("More than one record found");
+            }
+
+            throw new("No record found");
         }
 
         /// <summary>

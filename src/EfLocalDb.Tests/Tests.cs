@@ -89,6 +89,44 @@ public class Tests
     }
 
     [Fact]
+    public async Task FindTPredicate()
+    {
+        TestEntity entity = new()
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verifier.Verify(database.Find<TestEntity>(_ => _.Id == entity.Id));
+    }
+
+    [Fact]
+    public async Task FindMissingTPredicate()
+    {
+        await using var database = await instance.Build();
+        await Verifier.ThrowsTask(() => database.Find<TestEntity>(entity => entity.Id == 10));
+    }
+
+    [Fact]
+    public async Task CountT()
+    {
+        TestEntity entity = new()
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.Equal(1, await database.Count<TestEntity>());
+    }
+
+    [Fact]
+    public async Task CountMissingT()
+    {
+        await using var database = await instance.Build();
+        Assert.Equal(0, await database.Count<TestEntity>());
+    }
+
+    [Fact]
     public async Task FindIncorrectTypeT()
     {
         await using var database = await instance.Build();
