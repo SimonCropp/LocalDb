@@ -128,6 +128,7 @@ namespace EfLocalDb
             {
                 await Context.DisposeAsync();
             }
+
             await Connection.DisposeAsync();
         }
 
@@ -135,6 +136,42 @@ namespace EfLocalDb
         {
             await DisposeAsync();
             await delete();
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.FindAsync(System.Type,object[])"/> on all entity types and returns all resulting items.
+        /// </summary>
+        public async Task<object> Find(params object[] keys)
+        {
+            var inputKeyTypes = keys.Select(x => x.GetType()).ToList();
+            List<Task<object?>> tasks =
+                EntityTypes
+                    .Where(entity =>
+                    {
+                        var entityKeys = entity.FindPrimaryKey().Properties.Select(x => x.ClrType);
+                        return entityKeys.SequenceEqual(inputKeyTypes);
+                    })
+                    .Select(entity => Context.FindAsync(entity.ClrType, keys).AsTask()).ToList();
+
+            await Task.WhenAll(tasks);
+
+            var results = tasks
+                .Select(x => x.Result)
+                .Where(x => x != null)
+                .ToList();
+
+            if (results.Count == 1)
+            {
+                return results[0]!;
+            }
+
+            var keyString = string.Join(", ", keys);
+            if (results.Count > 1)
+            {
+                throw new("More than one record found with keys: " + keyString);
+            }
+
+            throw new("No record found with keys: " + keyString);
         }
     }
 }
