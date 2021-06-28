@@ -64,6 +64,7 @@ namespace EfLocalDb
             await Connection.OpenAsync();
 
             Context = NewDbContext();
+            NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
             EntityTypes = Context.Model.GetEntityTypes().ToList();
             if (data != null)
             {
@@ -72,6 +73,7 @@ namespace EfLocalDb
         }
 
         public TDbContext Context { get; private set; } = null!;
+        public TDbContext NoTrackingContext { get; private set; } = null!;
 
         /// <summary>
         /// Calls <see cref="DbContext.SaveChanges()"/> on <see cref="Context"/>.
@@ -105,17 +107,27 @@ namespace EfLocalDb
             return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
         }
 
-        public TDbContext NewDbContext()
+        public TDbContext NewDbContext(QueryTrackingBehavior? tracking = null)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection, sqlOptionsBuilder);
+
+            if (tracking.HasValue)
+            {
+                builder.UseQueryTrackingBehavior(tracking.Value);
+            }
+
             return constructInstance(builder);
         }
 
-        internal TDbContext NewConnectionOwnedDbContext()
+        internal TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
+            if (tracking.HasValue)
+            {
+                builder.UseQueryTrackingBehavior(tracking.Value);
+            }
             return constructInstance(builder);
         }
 
@@ -127,6 +139,11 @@ namespace EfLocalDb
             if (Context != null)
             {
                 await Context.DisposeAsync();
+            }
+
+            if (NoTrackingContext != null)
+            {
+                await NoTrackingContext.DisposeAsync();
             }
 
             await Connection.DisposeAsync();
@@ -190,7 +207,7 @@ namespace EfLocalDb
                         var entityKeys = entity.FindPrimaryKey().Properties.Select(x => x.ClrType);
                         return entityKeys.SequenceEqual(inputKeyTypes);
                     })
-                    .Select(entity => Context.FindAsync(entity.ClrType, keys).AsTask()).ToList();
+                    .Select(entity => NoTrackingContext.FindAsync(entity.ClrType, keys).AsTask()).ToList();
 
             await Task.WhenAll(tasks);
 
