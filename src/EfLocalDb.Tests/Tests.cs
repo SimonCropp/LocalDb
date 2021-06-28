@@ -51,6 +51,32 @@ public class Tests
     }
 
     [Fact]
+    public async Task Exists()
+    {
+        TestEntity entity = new()
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.True(await database.Exists(entity.Id));
+    }
+
+    [Fact]
+    public async Task ExistsMissing()
+    {
+        await using var database = await instance.Build();
+        Assert.False(await database.Exists(0));
+    }
+
+    [Fact]
+    public async Task ExistsIncorrectType()
+    {
+        await using var database = await instance.Build();
+        Assert.False(await database.Exists("key"));
+    }
+
+    [Fact]
     public async Task Find()
     {
         TestEntity entity = new()

@@ -139,26 +139,11 @@ namespace EfLocalDb
         }
 
         /// <summary>
-        /// Calls <see cref="DbContext.FindAsync(System.Type,object[])"/> on all entity types and returns all resulting items.
+        /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns all resulting items.
         /// </summary>
         public async Task<object> Find(params object[] keys)
         {
-            var inputKeyTypes = keys.Select(x => x.GetType()).ToList();
-            List<Task<object?>> tasks =
-                EntityTypes
-                    .Where(entity =>
-                    {
-                        var entityKeys = entity.FindPrimaryKey().Properties.Select(x => x.ClrType);
-                        return entityKeys.SequenceEqual(inputKeyTypes);
-                    })
-                    .Select(entity => Context.FindAsync(entity.ClrType, keys).AsTask()).ToList();
-
-            await Task.WhenAll(tasks);
-
-            var results = tasks
-                .Select(x => x.Result)
-                .Where(x => x != null)
-                .ToList();
+            var results = await FindResults(keys);
 
             if (results.Count == 1)
             {
@@ -172,6 +157,47 @@ namespace EfLocalDb
             }
 
             throw new("No record found with keys: " + keyString);
+        }
+
+        /// <summary>
+        /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns true if the item exists.
+        /// </summary>
+        public async Task<bool> Exists(params object[] keys)
+        {
+            var results = await FindResults(keys);
+
+            if (results.Count == 1)
+            {
+                return true;
+            }
+
+            if (results.Count > 1)
+            {
+                var keyString = string.Join(", ", keys);
+                throw new("More than one record found with keys: " + keyString);
+            }
+
+            return false;
+        }
+
+        async Task<List<object?>> FindResults(object[] keys)
+        {
+            var inputKeyTypes = keys.Select(x => x.GetType()).ToList();
+            List<Task<object?>> tasks =
+                EntityTypes
+                    .Where(entity =>
+                    {
+                        var entityKeys = entity.FindPrimaryKey().Properties.Select(x => x.ClrType);
+                        return entityKeys.SequenceEqual(inputKeyTypes);
+                    })
+                    .Select(entity => Context.FindAsync(entity.ClrType, keys).AsTask()).ToList();
+
+            await Task.WhenAll(tasks);
+
+            return tasks
+                .Select(x => x.Result)
+                .Where(x => x != null)
+                .ToList();
         }
     }
 }
