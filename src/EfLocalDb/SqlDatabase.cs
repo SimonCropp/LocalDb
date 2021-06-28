@@ -128,6 +128,7 @@ namespace EfLocalDb
             {
                 builder.UseQueryTrackingBehavior(tracking.Value);
             }
+
             return constructInstance(builder);
         }
 
@@ -164,10 +165,11 @@ namespace EfLocalDb
 
             if (results.Count == 1)
             {
-                return results[0]!;
+                return results[0];
             }
 
             var keyString = string.Join(", ", keys);
+
             if (results.Count > 1)
             {
                 throw new("More than one record found with keys: " + keyString);
@@ -197,30 +199,35 @@ namespace EfLocalDb
             return false;
         }
 
-        async Task<List<object?>> FindResults(object[] keys)
+        async Task<List<object>> FindResults(object[] keys)
         {
+            var list = new List<object>();
+
             var inputKeyTypes = keys.Select(x => x.GetType()).ToList();
-            List<Task<object?>> tasks =
-                EntityTypes
-                    .Where(entity =>
+
+            var entitiesToQuery = EntityTypes
+                .Where(entity =>
+                {
+                    var primaryKey = entity.FindPrimaryKey();
+                    if (primaryKey == null)
                     {
-                        var primaryKey = entity.FindPrimaryKey();
-                        if (primaryKey == null)
-                        {
-                            return false;
-                        }
+                        return false;
+                    }
 
-                        var entityKeys = primaryKey.Properties.Select(x => x.ClrType);
-                        return entityKeys.SequenceEqual(inputKeyTypes);
-                    })
-                    .Select(entity => NoTrackingContext.FindAsync(entity.ClrType, keys).AsTask()).ToList();
+                    var entityKeys = primaryKey.Properties.Select(x => x.ClrType);
+                    return entityKeys.SequenceEqual(inputKeyTypes);
+                });
 
-            await Task.WhenAll(tasks);
+            foreach (var entity in entitiesToQuery)
+            {
+                var result = await NoTrackingContext.FindAsync(entity.ClrType, keys);
+                if (result != null)
+                {
+                    list.Add(result);
+                }
+            }
 
-            return tasks
-                .Select(x => x.Result)
-                .Where(x => x != null)
-                .ToList();
+            return list;
         }
     }
 }
