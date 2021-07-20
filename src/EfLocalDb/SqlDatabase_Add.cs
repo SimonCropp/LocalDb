@@ -9,7 +9,6 @@ namespace EfLocalDb
     {
         public Task AddData(IEnumerable<object> entities)
         {
-            Guard.AgainstNull(nameof(entities), entities);
             return Add(entities, Context);
         }
 
@@ -44,7 +43,6 @@ namespace EfLocalDb
 
         public async Task AddDataUntracked(IEnumerable<object> entities)
         {
-            Guard.AgainstNull(nameof(entities), entities);
             await using var context = NewDbContext();
             await Add(entities, context);
         }

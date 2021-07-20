@@ -23,7 +23,6 @@ namespace LocalDb
             ExistingTemplate? exitingTemplate = null,
             Func<DbConnection, Task>? callback = null)
         {
-            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
             Guard.AgainstWhiteSpace(nameof(directory), directory);
             Guard.AgainstNullWhiteSpace(nameof(name), name);
             directory = DirectoryFinder.Find(name);

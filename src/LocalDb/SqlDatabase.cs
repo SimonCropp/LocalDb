@@ -27,7 +27,6 @@ namespace LocalDb
 
         public static implicit operator SqlConnection(SqlDatabase instance)
         {
-            Guard.AgainstNull(nameof(instance), instance);
             return instance.Connection;
         }
 

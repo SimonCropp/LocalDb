@@ -10,7 +10,6 @@ namespace EfLocalDb
         public static async Task CreateOnExistingDb<TDbContext>(this TDbContext context)
             where TDbContext : DbContext
         {
-            Guard.AgainstNull(nameof(context), context);
             var script = ((IObjectContextAdapter)context).ObjectContext.CreateDatabaseScript();
             try
             {

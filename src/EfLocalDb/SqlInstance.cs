@@ -87,8 +87,6 @@ namespace EfLocalDb
         {
             storage ??= DefaultStorage;
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Guard.AgainstNull(nameof(buildTemplate), buildTemplate);
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
             Model = BuildModel(constructInstance);
             this.constructInstance = constructInstance;
             this.sqlOptionsBuilder = sqlOptionsBuilder;

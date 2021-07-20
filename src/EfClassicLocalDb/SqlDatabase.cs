@@ -43,13 +43,11 @@ namespace EfLocalDb
 
         public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
         {
-            Guard.AgainstNull(nameof(instance), instance);
             return instance.Context;
         }
 
         public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance)
         {
-            Guard.AgainstNull(nameof(instance), instance);
             return instance.Connection;
         }
 

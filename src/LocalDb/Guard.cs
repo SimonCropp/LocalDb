@@ -4,14 +4,6 @@ using System.Linq;
 
 static class Guard
 {
-    public static void AgainstNull(string argumentName, object value)
-    {
-        if (value == null)
-        {
-            throw new ArgumentNullException(argumentName);
-        }
-    }
-
     static char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
 
     public static void AgainstInvalidFileName(string argumentName, string value)

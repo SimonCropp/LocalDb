@@ -56,7 +56,6 @@ namespace EfLocalDb
             storage ??= DefaultStorage;
 
             var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-            Guard.AgainstNull(nameof(constructInstance), constructInstance);
             this.constructInstance = constructInstance;
 
             var storageValue = storage.Value;

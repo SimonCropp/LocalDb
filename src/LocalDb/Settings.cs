@@ -12,7 +12,6 @@ namespace LocalDb
 
         public static void ConnectionBuilder(BuildConnection builder)
         {
-            Guard.AgainstNull(nameof(builder), builder);
             connectionBuilder = builder;
         }
     }
