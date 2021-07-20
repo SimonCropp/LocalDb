@@ -114,7 +114,7 @@ public Task<SqlDatabase> Build(
     string? databaseSuffix = null,
     [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L62-L82' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L61-L81' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -150,7 +150,7 @@ If full control over the database name is required, there is an overload that ta
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L95-L100' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L94-L99' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:

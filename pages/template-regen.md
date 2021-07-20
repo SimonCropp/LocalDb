@@ -30,7 +30,6 @@ public static class Timestamp
 {
     public static DateTime LastModified(Delegate @delegate)
     {
-        Guard.AgainstNull(nameof(@delegate), @delegate);
         if (@delegate.Target != null)
         {
             var targetAssembly = @delegate.Target.GetType().Assembly;
@@ -42,7 +41,6 @@ public static class Timestamp
 
     public static DateTime LastModified(Assembly assembly)
     {
-        Guard.AgainstNull(nameof(assembly), assembly);
         return File.GetLastWriteTime(assembly.Location);
     }
 
@@ -52,5 +50,5 @@ public static class Timestamp
     }
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L11-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L11-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
