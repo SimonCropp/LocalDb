@@ -35,7 +35,7 @@
     <PackageReference Include="Fody" Version="6.5.2" PrivateAssets="all" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="All" />
+    <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" Version="1.0.56" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" Condition="$(Configuration) == 'Release'" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
