@@ -135,7 +135,7 @@ namespace EfLocalDb
 
         public async ValueTask DisposeAsync()
         {
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
             if (Context != null)
             {
                 await Context.DisposeAsync();
@@ -145,6 +145,7 @@ namespace EfLocalDb
             {
                 await NoTrackingContext.DisposeAsync();
             }
+            // ReSharper restore ConditionIsAlwaysTrueOrFalse
 
             await Connection.DisposeAsync();
         }
