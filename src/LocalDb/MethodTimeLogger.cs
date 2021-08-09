@@ -9,7 +9,7 @@ static class MethodTimeLogger
         {
             return;
         }
-        if (message == null)
+        if (message is null)
         {
             LocalDbLogging.Log($"{method.Name} {milliseconds}ms");
             return;

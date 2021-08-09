@@ -6,7 +6,7 @@
         string member,
         string testClass)
     {
-        if (suffix == null)
+        if (suffix is null)
         {
             return $"{testClass}_{member}";
         }

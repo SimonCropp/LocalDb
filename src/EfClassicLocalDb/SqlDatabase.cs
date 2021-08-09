@@ -56,7 +56,7 @@ namespace EfLocalDb
             await Connection.OpenAsync();
 
             Context = NewDbContext();
-            if (data != null)
+            if (data is not null)
             {
                 await AddData(data);
             }

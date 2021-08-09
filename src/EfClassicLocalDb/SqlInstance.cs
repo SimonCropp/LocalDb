@@ -62,7 +62,7 @@ namespace EfLocalDb
             DirectoryCleaner.CleanInstance(storageValue.Directory);
 
             Func<DbConnection, Task>? wrapperCallback = null;
-            if (callback != null)
+            if (callback is not null)
             {
                 wrapperCallback = async connection =>
                 {
@@ -82,12 +82,12 @@ namespace EfLocalDb
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
         {
-            if (timestamp != null)
+            if (timestamp is not null)
             {
                 return timestamp.Value;
             }
 
-            if (buildTemplate != null)
+            if (buildTemplate is not null)
             {
                 return Timestamp.LastModified(buildTemplate);
             }

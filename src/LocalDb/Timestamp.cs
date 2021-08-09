@@ -13,7 +13,7 @@ namespace LocalDb
     {
         public static DateTime LastModified(Delegate @delegate)
         {
-            if (@delegate.Target != null)
+            if (@delegate.Target is not null)
             {
                 var targetAssembly = @delegate.Target.GetType().Assembly;
                 return LastModified(targetAssembly);

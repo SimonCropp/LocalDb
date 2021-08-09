@@ -11,7 +11,7 @@ static class BuildTemplateConverter
         return async (_, builder) =>
         {
             await using var data = constructInstance(builder);
-            if (buildTemplate == null)
+            if (buildTemplate is null)
             {
                 await data.Database.EnsureCreatedAsync();
             }

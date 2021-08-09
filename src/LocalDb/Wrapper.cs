@@ -48,7 +48,7 @@ class Wrapper
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
         this.size = size;
         this.callback = callback;
-        if (existingTemplate == null)
+        if (existingTemplate is null)
         {
             templateProvided = false;
             DataFile = Path.Combine(directory, "template.mdf");
@@ -102,7 +102,7 @@ class Wrapper
 
     async Task RunCallback(string connectionString)
     {
-        if (callback == null)
+        if (callback is null)
         {
             return;
         }
@@ -110,7 +110,7 @@ class Wrapper
         try
         {
             await semaphoreSlim.WaitAsync();
-            if (callback == null)
+            if (callback is null)
             {
                 return;
             }

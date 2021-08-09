@@ -11,7 +11,7 @@ static class BuildTemplateConverter
         return async connection =>
         {
             using var context = constructInstance(connection);
-            if (buildTemplate == null)
+            if (buildTemplate is null)
             {
                 await context.CreateOnExistingDb();
             }

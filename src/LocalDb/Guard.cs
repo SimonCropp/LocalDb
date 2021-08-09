@@ -32,7 +32,7 @@ static class Guard
 
     public static void AgainstWhiteSpace(string argumentName, string? value)
     {
-        if (value == null)
+        if (value is null)
         {
             return;
         }

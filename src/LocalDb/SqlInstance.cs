@@ -35,12 +35,12 @@ namespace LocalDb
 
         static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate, Assembly callingAssembly)
         {
-            if (timestamp != null)
+            if (timestamp is not null)
             {
                 return timestamp.Value;
             }
 
-            if (buildTemplate != null)
+            if (buildTemplate is not null)
             {
                 return Timestamp.LastModified(buildTemplate);
             }

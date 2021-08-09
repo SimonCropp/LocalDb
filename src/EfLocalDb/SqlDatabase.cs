@@ -65,7 +65,7 @@ namespace EfLocalDb
             Context = NewDbContext();
             NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
             EntityTypes = Context.Model.GetEntityTypes().ToList();
-            if (data != null)
+            if (data is not null)
             {
                 await AddData(data);
             }
@@ -136,12 +136,12 @@ namespace EfLocalDb
         public async ValueTask DisposeAsync()
         {
             // ReSharper disable ConditionIsAlwaysTrueOrFalse
-            if (Context != null)
+            if (Context is not null)
             {
                 await Context.DisposeAsync();
             }
 
-            if (NoTrackingContext != null)
+            if (NoTrackingContext is not null)
             {
                 await NoTrackingContext.DisposeAsync();
             }
@@ -162,7 +162,7 @@ namespace EfLocalDb
         public Task<int> Count<T>(Expression<Func<T, bool>>? predicate = null)
             where T : class
         {
-            if (predicate == null)
+            if (predicate is null)
             {
                 return Set<T>().CountAsync();
             }
@@ -177,7 +177,7 @@ namespace EfLocalDb
             where T : class
         {
             var result = await Set<T>().FindAsync(keys);
-            if (result != null)
+            if (result is not null)
             {
                 return result;
             }
@@ -193,7 +193,7 @@ namespace EfLocalDb
         {
             var set = Set<T>();
 
-            if (predicate == null)
+            if (predicate is null)
             {
                 return set.SingleAsync();
             }
@@ -272,7 +272,7 @@ namespace EfLocalDb
                 .Where(entity =>
                 {
                     var primaryKey = entity.FindPrimaryKey();
-                    if (primaryKey == null)
+                    if (primaryKey is null)
                     {
                         return false;
                     }
@@ -284,7 +284,7 @@ namespace EfLocalDb
             foreach (var entity in entitiesToQuery)
             {
                 var result = await NoTrackingContext.FindAsync(entity.ClrType, keys);
-                if (result != null)
+                if (result is not null)
                 {
                     list.Add(result);
                 }

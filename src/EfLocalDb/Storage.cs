@@ -27,7 +27,7 @@
 
             #region GetInstanceName
 
-            if (scopeSuffix == null)
+            if (scopeSuffix is null)
             {
                 return typeof(TDbContext).Name;
             }
