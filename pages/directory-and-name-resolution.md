@@ -12,7 +12,7 @@ The instance name is defined as:
 <!-- snippet: GetInstanceName -->
 <a id='snippet-getinstancename'></a>
 ```cs
-if (scopeSuffix == null)
+if (scopeSuffix is null)
 {
     return typeof(TDbContext).Name;
 }
@@ -127,7 +127,7 @@ public static string DeriveDbName(
     string member,
     string testClass)
 {
-    if (suffix == null)
+    if (suffix is null)
     {
         return $"{testClass}_{member}";
     }
