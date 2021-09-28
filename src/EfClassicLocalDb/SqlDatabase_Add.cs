@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace EfLocalDb
+﻿namespace EfLocalDb
 {
     public partial class SqlDatabase<TDbContext>
     {

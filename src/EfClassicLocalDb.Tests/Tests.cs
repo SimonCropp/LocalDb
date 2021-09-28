@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using EfLocalDb;
+﻿using EfLocalDb;
 using Xunit;
 
 public class Tests

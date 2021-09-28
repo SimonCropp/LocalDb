@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using VerifyXunit;
+﻿using VerifyXunit;
 using Microsoft.Data.SqlClient;
 using VerifyTests;
 using Xunit;

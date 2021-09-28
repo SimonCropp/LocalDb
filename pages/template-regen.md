@@ -50,5 +50,5 @@ public static class Timestamp
     }
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L11-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L7-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

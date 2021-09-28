@@ -1,9 +1,4 @@
-﻿using System;
-using System.Data.Common;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using MethodTimer;
 #if EF
 using EfLocalDb;

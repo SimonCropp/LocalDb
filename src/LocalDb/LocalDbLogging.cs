@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-
-#region LocalDbLogging
+﻿#region LocalDbLogging
 /// <summary>
 /// Controls the logging level.
 /// </summary>

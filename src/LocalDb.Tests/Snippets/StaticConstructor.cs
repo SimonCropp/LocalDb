@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using LocalDb;
+﻿using LocalDb;
 using Xunit;
 
 namespace StaticConstructor

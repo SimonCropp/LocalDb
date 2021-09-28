@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-
-#if EF
+﻿#if EF
 namespace EfLocalDb
 #else
 namespace LocalDb

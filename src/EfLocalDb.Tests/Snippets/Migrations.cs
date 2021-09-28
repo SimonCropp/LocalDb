@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using EfLocalDb;
+﻿using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;

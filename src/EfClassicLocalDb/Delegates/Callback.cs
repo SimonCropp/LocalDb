@@ -1,6 +1,5 @@
 using System.Data.Common;
 using System.Data.Entity;
-using System.Threading.Tasks;
 
 namespace EfLocalDb
 {

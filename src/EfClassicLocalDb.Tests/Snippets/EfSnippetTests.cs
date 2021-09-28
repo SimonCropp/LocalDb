@@ -1,5 +1,4 @@
 ﻿#if(!NETCOREAPP3_1)
-using System.Threading.Tasks;
 using EfLocalDb;
 using Xunit;
 

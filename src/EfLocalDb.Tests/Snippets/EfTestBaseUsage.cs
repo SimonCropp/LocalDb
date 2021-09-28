@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using EfLocalDb;
+﻿using EfLocalDb;
 using Xunit;
 
 namespace TestBase

@@ -70,7 +70,7 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup><a href='/src/LocalDb/LocalDbLogging.cs#L4-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdblogging' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/LocalDbLogging.cs#L1-L44' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdblogging' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
@@ -96,7 +96,7 @@ static class MethodTimeLogger
     }
 }
 ```
-<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L3-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L1-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

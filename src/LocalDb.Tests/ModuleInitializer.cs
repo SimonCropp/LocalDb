@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using VerifyTests;
+﻿using VerifyTests;
 using Xunit;
 #if EF
 using EfLocalDb;

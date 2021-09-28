@@ -1,6 +1,4 @@
-﻿using System;
-
-static class ExceptionBuilder
+﻿static class ExceptionBuilder
 {
     public static Exception WrapLocalDbFailure(string name, string directory, Exception exception)
     {

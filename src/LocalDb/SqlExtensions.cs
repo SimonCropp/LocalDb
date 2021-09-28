@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data.Common;
-using System.Diagnostics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 #if !EF
 using Microsoft.Data.SqlClient;
 #endif

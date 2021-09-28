@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using EfLocalDb;
+﻿using EfLocalDb;
 using Xunit;
 
 namespace StaticConstructor

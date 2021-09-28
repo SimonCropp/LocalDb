@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net5</TargetFrameworks>
+    <TargetFrameworks>net6</TargetFrameworks>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

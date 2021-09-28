@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using EfLocalDb;
+﻿using EfLocalDb;
 using Xunit;
 
 #region EfClassicBuildTemplate
