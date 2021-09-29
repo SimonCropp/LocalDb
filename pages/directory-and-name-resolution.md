@@ -110,9 +110,9 @@ The convention signature is as follows:
 /// Will default to the caller method name is used.
 /// </param>
 public Task<SqlDatabase> Build(
-    [CallerFilePath] string testFile = "",
-    string? databaseSuffix = null,
-    [CallerMemberName] string memberName = "")
+        [CallerFilePath] string testFile = "",
+        string? databaseSuffix = null,
+        [CallerMemberName] string memberName = "")
 ```
 <sup><a href='/src/LocalDb/SqlInstance.cs#L56-L76' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
