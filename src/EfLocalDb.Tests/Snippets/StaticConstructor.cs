@@ -1,31 +1,30 @@
 ﻿using EfLocalDb;
 using Xunit;
 
-namespace StaticConstructor
+namespace StaticConstructor;
+
+#region EfStaticConstructor
+
+public class Tests
 {
-    #region EfStaticConstructor
+    static SqlInstance<TheDbContext> sqlInstance;
 
-    public class Tests
+    static Tests()
     {
-        static SqlInstance<TheDbContext> sqlInstance;
-
-        static Tests()
-        {
-            sqlInstance = new(
-                builder => new(builder.Options));
-        }
-
-        public async Task Test()
-        {
-            TheEntity entity = new()
-            {
-                Property = "prop"
-            };
-            List<object> data = new() {entity};
-            await using var database = await sqlInstance.Build(data);
-            Assert.Single(database.Context.TestEntities);
-        }
+        sqlInstance = new(
+            builder => new(builder.Options));
     }
 
-    #endregion
+    public async Task Test()
+    {
+        TheEntity entity = new()
+        {
+            Property = "prop"
+        };
+        List<object> data = new() {entity};
+        await using var database = await sqlInstance.Build(data);
+        Assert.Single(database.Context.TestEntities);
+    }
 }
+
+#endregion

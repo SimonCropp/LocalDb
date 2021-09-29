@@ -1,41 +1,40 @@
 ﻿using LocalDb;
 using Xunit;
 
-namespace TestBase
+namespace TestBase;
+
+#region TestBase
+
+public abstract class TestBase
 {
-    #region TestBase
+    static SqlInstance instance;
 
-    public abstract class TestBase
+    static TestBase()
     {
-        static SqlInstance instance;
-
-        static TestBase()
-        {
-            instance = new(
-                name:"TestBaseUsage",
-                buildTemplate: TestDbBuilder.CreateTable);
-        }
-
-        public Task<SqlDatabase> LocalDb(
-            [CallerFilePath] string testFile = "",
-            string? databaseSuffix = null,
-            [CallerMemberName] string memberName = "")
-        {
-            return instance.Build(testFile, databaseSuffix, memberName);
-        }
+        instance = new(
+            name:"TestBaseUsage",
+            buildTemplate: TestDbBuilder.CreateTable);
     }
 
-    public class Tests:
-        TestBase
+    public Task<SqlDatabase> LocalDb(
+        [CallerFilePath] string testFile = "",
+        string? databaseSuffix = null,
+        [CallerMemberName] string memberName = "")
     {
-        [Fact]
-        public async Task Test()
-        {
-            await using var database = await LocalDb();
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-        }
+        return instance.Build(testFile, databaseSuffix, memberName);
     }
-
-    #endregion
 }
+
+public class Tests:
+    TestBase
+{
+    [Fact]
+    public async Task Test()
+    {
+        await using var database = await LocalDb();
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+    }
+}
+
+#endregion

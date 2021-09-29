@@ -1,45 +1,44 @@
 ﻿using EfLocalDb;
 using Xunit;
 
-namespace TestBase
+namespace TestBase;
+
+#region EfClassicTestBase
+
+public abstract class TestBase
 {
-    #region EfClassicTestBase
+    static SqlInstance<TheDbContext> sqlInstance;
 
-    public abstract class TestBase
+    static TestBase()
     {
-        static SqlInstance<TheDbContext> sqlInstance;
-
-        static TestBase()
-        {
-            sqlInstance = new(
-                constructInstance: connection => new(connection));
-        }
-
-        public Task<SqlDatabase<TheDbContext>> LocalDb(
-            [CallerFilePath] string testFile = "",
-            string? databaseSuffix = null,
-            [CallerMemberName] string memberName = "")
-        {
-            return sqlInstance.Build(testFile, databaseSuffix, memberName);
-        }
+        sqlInstance = new(
+            constructInstance: connection => new(connection));
     }
 
-    public class Tests :
-        TestBase
+    public Task<SqlDatabase<TheDbContext>> LocalDb(
+        [CallerFilePath] string testFile = "",
+        string? databaseSuffix = null,
+        [CallerMemberName] string memberName = "")
     {
-        [Fact]
-        public async Task Test()
-        {
-            using var database = await LocalDb();
-            TheEntity entity = new()
-            {
-                Property = "prop"
-            };
-            await database.AddData(entity);
-
-            Assert.Single(database.Context.TestEntities);
-        }
+        return sqlInstance.Build(testFile, databaseSuffix, memberName);
     }
-
-    #endregion
 }
+
+public class Tests :
+    TestBase
+{
+    [Fact]
+    public async Task Test()
+    {
+        using var database = await LocalDb();
+        TheEntity entity = new()
+        {
+            Property = "prop"
+        };
+        await database.AddData(entity);
+
+        Assert.Single(database.Context.TestEntities);
+    }
+}
+
+#endregion

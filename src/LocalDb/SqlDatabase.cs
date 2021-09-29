@@ -1,49 +1,49 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace LocalDb
-{
-    public class SqlDatabase :
+namespace LocalDb;
+
+public class SqlDatabase :
 #if(NET5_0)
-        IAsyncDisposable,
+    IAsyncDisposable,
 #endif
-        IDisposable
+    IDisposable
+{
+    Func<Task> delete;
+
+    internal SqlDatabase(string connectionString, string name, Func<Task> delete)
     {
-        Func<Task> delete;
+        this.delete = delete;
+        ConnectionString = connectionString;
+        Name = name;
+        Connection = new(connectionString);
+    }
 
-        internal SqlDatabase(string connectionString, string name, Func<Task> delete)
-        {
-            this.delete = delete;
-            ConnectionString = connectionString;
-            Name = name;
-            Connection = new(connectionString);
-        }
+    public string ConnectionString { get; }
+    public string Name { get; }
 
-        public string ConnectionString { get; }
-        public string Name { get; }
+    public SqlConnection Connection { get; }
 
-        public SqlConnection Connection { get; }
+    public static implicit operator SqlConnection(SqlDatabase instance)
+    {
+        return instance.Connection;
+    }
 
-        public static implicit operator SqlConnection(SqlDatabase instance)
-        {
-            return instance.Connection;
-        }
+    public async Task<SqlConnection> OpenNewConnection()
+    {
+        SqlConnection connection = new(ConnectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
 
-        public async Task<SqlConnection> OpenNewConnection()
-        {
-            SqlConnection connection = new(ConnectionString);
-            await connection.OpenAsync();
-            return connection;
-        }
+    public async Task Start()
+    {
+        await Connection.OpenAsync();
+    }
 
-        public async Task Start()
-        {
-            await Connection.OpenAsync();
-        }
-
-        public void Dispose()
-        {
-            Connection.Dispose();
-        }
+    public void Dispose()
+    {
+        Connection.Dispose();
+    }
 
 #if(!NETSTANDARD2_0)
         public ValueTask DisposeAsync()
@@ -52,14 +52,13 @@ namespace LocalDb
         }
 #endif
 
-        public async Task Delete()
-        {
+    public async Task Delete()
+    {
 #if(NETSTANDARD2_0)
-            Dispose();
+        Dispose();
 #else
             await DisposeAsync();
 #endif
-            await delete();
-        }
+        await delete();
     }
 }

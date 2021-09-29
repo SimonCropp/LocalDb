@@ -1,5 +1,3 @@
-using System.Linq;
-
 static class Guard
 {
     static char[] invalidFileNameChars = Path.GetInvalidFileNameChars();

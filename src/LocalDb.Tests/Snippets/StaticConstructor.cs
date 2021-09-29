@@ -1,29 +1,28 @@
 ﻿using LocalDb;
 using Xunit;
 
-namespace StaticConstructor
+namespace StaticConstructor;
+
+#region StaticConstructor
+
+public class Tests
 {
-    #region StaticConstructor
+    static SqlInstance sqlInstance;
 
-    public class Tests
+    static Tests()
     {
-        static SqlInstance sqlInstance;
-
-        static Tests()
-        {
-            sqlInstance = new(
-                name: "StaticConstructorInstance",
-                buildTemplate: TestDbBuilder.CreateTable);
-        }
-
-        [Fact]
-        public async Task Test()
-        {
-            await using var database = await sqlInstance.Build();
-            await TestDbBuilder.AddData(database.Connection);
-            Assert.Single(await TestDbBuilder.GetData(database.Connection));
-        }
+        sqlInstance = new(
+            name: "StaticConstructorInstance",
+            buildTemplate: TestDbBuilder.CreateTable);
     }
 
-    #endregion
+    [Fact]
+    public async Task Test()
+    {
+        await using var database = await sqlInstance.Build();
+        await TestDbBuilder.AddData(database.Connection);
+        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+    }
 }
+
+#endregion

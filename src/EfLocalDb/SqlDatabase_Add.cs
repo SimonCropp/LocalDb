@@ -1,52 +1,49 @@
-﻿using System.Linq;
+﻿namespace EfLocalDb;
 
-namespace EfLocalDb
+public partial class SqlDatabase<TDbContext>
 {
-    public partial class SqlDatabase<TDbContext>
+    public Task AddData(IEnumerable<object> entities)
     {
-        public Task AddData(IEnumerable<object> entities)
-        {
-            return Add(entities, Context);
-        }
+        return Add(entities, Context);
+    }
 
-        Task Add(IEnumerable<object> entities, TDbContext context)
+    Task Add(IEnumerable<object> entities, TDbContext context)
+    {
+        foreach (var entity in entities)
         {
-            foreach (var entity in entities)
+            if (entity is IEnumerable enumerable)
             {
-                if (entity is IEnumerable enumerable)
+                var entityType = entity.GetType();
+                if (EntityTypes.Any(x => x.ClrType != entityType))
                 {
-                    var entityType = entity.GetType();
-                    if (EntityTypes.Any(x => x.ClrType != entityType))
+                    foreach (var nested in enumerable)
                     {
-                        foreach (var nested in enumerable)
-                        {
-                            context.Add(nested);
-                        }
-
-                        continue;
+                        context.Add(nested);
                     }
-                }
 
-                context.Add(entity);
+                    continue;
+                }
             }
 
-            return context.SaveChangesAsync();
+            context.Add(entity);
         }
 
-        public Task AddData(params object[] entities)
-        {
-            return AddData((IEnumerable<object>)entities);
-        }
+        return context.SaveChangesAsync();
+    }
 
-        public async Task AddDataUntracked(IEnumerable<object> entities)
-        {
-            await using var context = NewDbContext();
-            await Add(entities, context);
-        }
+    public Task AddData(params object[] entities)
+    {
+        return AddData((IEnumerable<object>)entities);
+    }
 
-        public Task AddDataUntracked(params object[] entities)
-        {
-            return AddDataUntracked((IEnumerable<object>)entities);
-        }
+    public async Task AddDataUntracked(IEnumerable<object> entities)
+    {
+        await using var context = NewDbContext();
+        await Add(entities, context);
+    }
+
+    public Task AddDataUntracked(params object[] entities)
+    {
+        return AddDataUntracked((IEnumerable<object>)entities);
     }
 }

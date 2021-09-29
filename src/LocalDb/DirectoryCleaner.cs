@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-static class DirectoryCleaner
+﻿static class DirectoryCleaner
 {
     public static void CleanRoot(string root)
     {
