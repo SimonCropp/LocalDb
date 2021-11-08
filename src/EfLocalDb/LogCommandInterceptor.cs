@@ -14,7 +14,7 @@ class LogCommandInterceptor :
         WriteLine(data);
     }
 
-    public override Task CommandFailedAsync(DbCommand command, CommandErrorEventData data, CancellationToken cancellation)
+    public override Task CommandFailedAsync(DbCommand command, CommandErrorEventData data, CancellationToken cancellation = default)
     {
         WriteLine(data);
         return Task.CompletedTask;
@@ -26,7 +26,7 @@ class LogCommandInterceptor :
         return result;
     }
 
-    public override object ScalarExecuted(DbCommand command, CommandExecutedEventData data, object result)
+    public override object? ScalarExecuted(DbCommand command, CommandExecutedEventData data, object? result)
     {
         WriteLine(data);
         return result;
@@ -38,19 +38,19 @@ class LogCommandInterceptor :
         return result;
     }
 
-    public override ValueTask<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData data, DbDataReader result, CancellationToken cancellation)
+    public override ValueTask<DbDataReader> ReaderExecutedAsync(DbCommand command, CommandExecutedEventData data, DbDataReader result, CancellationToken cancellation = default)
     {
         WriteLine(data);
         return new(result);
     }
 
-    public override ValueTask<object> ScalarExecutedAsync(DbCommand command, CommandExecutedEventData data, object result, CancellationToken cancellation)
+    public override ValueTask<object?> ScalarExecutedAsync(DbCommand command, CommandExecutedEventData data, object? result, CancellationToken cancellation = default)
     {
         WriteLine(data);
         return new(result);
     }
 
-    public override ValueTask<int> NonQueryExecutedAsync(DbCommand command, CommandExecutedEventData data, int result, CancellationToken cancellation)
+    public override ValueTask<int> NonQueryExecutedAsync(DbCommand command, CommandExecutedEventData data, int result, CancellationToken cancellation = default)
     {
         WriteLine(data);
         return new(result);
