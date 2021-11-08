@@ -100,6 +100,7 @@ public class Tests
         using var database = await instance.Build(new List<object> {entity});
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
+#if DEBUG
 
     [Fact]
     public async Task Defined_TimeStamp()
@@ -114,6 +115,7 @@ public class Tests
         using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
     }
+#endif
 
     [Fact]
     public async Task Assembly_TimeStamp()
