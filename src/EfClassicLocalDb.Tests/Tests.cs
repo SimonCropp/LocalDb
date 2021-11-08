@@ -101,6 +101,7 @@ public class Tests
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
+#if DEBUG
     [Fact]
     public async Task Defined_TimeStamp()
     {
@@ -126,7 +127,6 @@ public class Tests
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
-#if DEBUG
     [Fact]
     public async Task Delegate_TimeStamp()
     {
