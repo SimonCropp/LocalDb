@@ -44,5 +44,20 @@
         {
             yield return logFile;
         }
+
+        foreach (var logFile in Directory.EnumerateFiles(instanceDirectory, "*.xel"))
+        {
+            yield return logFile;
+        }
+
+        foreach (var logFile in Directory.EnumerateFiles(instanceDirectory, "*.log"))
+        {
+            yield return logFile;
+        }
+
+        foreach (var logFile in Directory.EnumerateFiles(instanceDirectory, "*.bin"))
+        {
+            yield return logFile;
+        }
     }
 }
