@@ -103,11 +103,7 @@ public class SqlInstance<TDbContext>
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
                 builder.UseSqlServer(connection, sqlOptionsBuilder);
-#if NET5_0
                 await using var context = constructInstance(builder);
-#else
-                    using var context = constructInstance(builder);
-#endif
                 await callback(connection, context);
             };
         }
