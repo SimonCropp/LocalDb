@@ -1,12 +1,12 @@
-﻿using System.Data.Common;
-using System.Data.Entity;
+﻿using System.Data.Entity;
+using Microsoft.Data.SqlClient;
 
 public class DuplicateDbContext :
     DbContext
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
-    public DuplicateDbContext(DbConnection connection) :
+    public DuplicateDbContext(SqlConnection connection) :
         base(connection, false)
     {
     }

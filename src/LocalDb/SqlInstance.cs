@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 namespace LocalDb;
 
@@ -11,12 +10,12 @@ public class SqlInstance
 
     public SqlInstance(
         string name,
-        Func<DbConnection, Task> buildTemplate,
+        Func<SqlConnection, Task> buildTemplate,
         string? directory = null,
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<DbConnection, Task>? callback = null)
+        Func<SqlConnection, Task>? callback = null)
     {
         Guard.AgainstWhiteSpace(nameof(directory), directory);
         Guard.AgainstNullWhiteSpace(nameof(name), name);
@@ -24,7 +23,7 @@ public class SqlInstance
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-        Wrapper = new(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate, callback);
+        Wrapper = new(s => new(s), name, directory, templateSize, exitingTemplate, callback);
         Wrapper.Start(resultTimestamp, buildTemplate);
     }
 

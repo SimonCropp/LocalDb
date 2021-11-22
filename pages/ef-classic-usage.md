@@ -22,15 +22,15 @@ The snippets use a DbContext of the following form:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheDbContext.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs'></a>
 ```cs
-using System.Data.Common;
 using System.Data.Entity;
+using Microsoft.Data.SqlClient;
 
 public class TheDbContext :
     DbContext
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-    public TheDbContext(DbConnection connection) :
+    public TheDbContext(SqlConnection connection) :
         base(connection, false)
     {
     }

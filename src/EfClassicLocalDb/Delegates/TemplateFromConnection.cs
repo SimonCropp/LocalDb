@@ -1,5 +1,5 @@
-using System.Data.Common;
+using Microsoft.Data.SqlClient;
 
 namespace EfLocalDb;
 
-public delegate Task TemplateFromConnection(DbConnection connection);
+public delegate Task TemplateFromConnection(SqlConnection connection);

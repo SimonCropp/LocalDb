@@ -106,7 +106,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        SqlInstance<TestDbContext> instance = new(
+        var instance = new SqlInstance<TestDbContext>(
             constructInstance: connection => new(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,

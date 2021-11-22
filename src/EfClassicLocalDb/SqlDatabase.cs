@@ -1,5 +1,5 @@
 ﻿using System.Data.Entity;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EfLocalDb;
 
@@ -32,7 +32,7 @@ public partial class SqlDatabase<TDbContext> :
 
     public async Task<SqlConnection> OpenNewConnection()
     {
-        SqlConnection connection = new(ConnectionString);
+        var connection = new SqlConnection(ConnectionString);
         await connection.OpenAsync();
         return connection;
     }
