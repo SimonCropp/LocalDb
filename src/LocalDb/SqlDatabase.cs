@@ -3,9 +3,7 @@
 namespace LocalDb;
 
 public class SqlDatabase :
-#if(NET5_0)
     IAsyncDisposable,
-#endif
     IDisposable
 {
     Func<Task> delete;
@@ -45,20 +43,14 @@ public class SqlDatabase :
         Connection.Dispose();
     }
 
-#if(!NETSTANDARD2_0)
-        public ValueTask DisposeAsync()
-        {
-            return Connection.DisposeAsync();
-        }
-#endif
+    public ValueTask DisposeAsync()
+    {
+        return Connection.DisposeAsync();
+    }
 
     public async Task Delete()
     {
-#if(NETSTANDARD2_0)
-        Dispose();
-#else
-            await DisposeAsync();
-#endif
+        await DisposeAsync();
         await delete();
     }
 }
