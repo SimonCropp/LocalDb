@@ -1,12 +1,12 @@
-﻿using System.Data.Common;
-using System.Data.Entity;
+﻿using System.Data.Entity;
+using Microsoft.Data.SqlClient;
 
 public class TestDbContext :
     DbContext
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
-    public TestDbContext(DbConnection connection) :
+    public TestDbContext(SqlConnection connection) :
         base(connection, false)
     {
     }

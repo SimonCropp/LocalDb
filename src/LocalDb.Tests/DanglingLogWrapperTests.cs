@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Xunit;
+﻿using Xunit;
 
 public class DanglingLogWrapperTests
 {
@@ -8,7 +7,7 @@ public class DanglingLogWrapperTests
     {
         var name = "DanglingLogWrapperTests";
         LocalDbApi.StopAndDelete(name);
-        Wrapper instance = new(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        Wrapper instance = new(s => new(s), name, DirectoryFinder.Find(name));
         instance.Start(DateTime.Now, TestDbBuilder.CreateTable);
     }
 }

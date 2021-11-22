@@ -1,8 +1,8 @@
-﻿using System.Data.Common;
+﻿using Microsoft.Data.SqlClient;
 
 public static class TestDbBuilder
 {
-    public static async Task CreateTable(DbConnection connection)
+    public static async Task CreateTable(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "create table MyTable (Value int);";
@@ -11,7 +11,7 @@ public static class TestDbBuilder
 
     static int intData = 0;
 
-    public static async Task<int> AddData(DbConnection connection)
+    public static async Task<int> AddData(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         var addData = intData;
@@ -23,7 +23,7 @@ values ({addData});";
         return addData;
     }
 
-    public static async Task<List<int>> GetData(DbConnection connection)
+    public static async Task<List<int>> GetData(SqlConnection connection)
     {
         List<int> values = new();
         await using var command = connection.CreateCommand();

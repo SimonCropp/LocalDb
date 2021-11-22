@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -89,14 +88,14 @@ public class SqlInstance<TDbContext>
         var storageValue = storage.Value;
         DirectoryCleaner.CleanInstance(storageValue.Directory);
 
-        Task BuildTemplate(DbConnection connection)
+        Task BuildTemplate(SqlConnection connection)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(connection, sqlOptionsBuilder);
             return buildTemplate(connection, builder);
         }
 
-        Func<DbConnection, Task>? wrapperCallback = null;
+        Func<SqlConnection, Task>? wrapperCallback = null;
         if (callback is not null)
         {
             wrapperCallback = async connection =>
@@ -109,7 +108,7 @@ public class SqlInstance<TDbContext>
         }
 
         Wrapper = new(
-            s => new SqlConnection(s),
+            s => new(s),
             storageValue.Name,
             storageValue.Directory,
             templateSize,
