@@ -8,6 +8,6 @@ public class ExceptionBuilderTests
     public Task WrapLocalDbFailure()
     {
         var wrapped = ExceptionBuilder.WrapLocalDbFailure("InstanceName", @"c:\LocalDBData\InstanceName", new());
-        return Verifier.Verify(wrapped.Message);
+        return Verify(wrapped.Message);
     }
 }

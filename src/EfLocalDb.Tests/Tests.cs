@@ -74,7 +74,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verifier.Verify(database.Find<TestEntity>(entity.Id));
+        await Verify(database.Find<TestEntity>(entity.Id));
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verifier.Verify(database.Single<TestEntity>(_ => _.Id == entity.Id));
+        await Verify(database.Single<TestEntity>(_ => _.Id == entity.Id));
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verifier.Verify(database.Find(entity.Id));
+        await Verify(database.Find(entity.Id));
     }
 
     [Fact]
