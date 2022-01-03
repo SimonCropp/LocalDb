@@ -1,7 +1,7 @@
+using System.Data.Common;
 using System.Data.Entity;
-using Microsoft.Data.SqlClient;
 
 namespace EfLocalDb;
 
-public delegate Task Callback<in TDbContext>(SqlConnection connection, TDbContext context)
+public delegate Task Callback<in TDbContext>(DbConnection connection, TDbContext context)
     where TDbContext : DbContext;

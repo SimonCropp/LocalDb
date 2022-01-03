@@ -1,5 +1,4 @@
 ﻿using LocalDb;
-using Xunit;
 
 namespace StaticConstructor;
 

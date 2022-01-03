@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class LocalDbRegistryReaderTests
+﻿public class LocalDbRegistryReaderTests
 {
     [Fact]
     public void GetInfo()

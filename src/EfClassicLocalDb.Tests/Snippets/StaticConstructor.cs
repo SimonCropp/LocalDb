@@ -1,5 +1,5 @@
-﻿using EfLocalDb;
-using Xunit;
+﻿#if(!NETCOREAPP3_1)
+using EfLocalDb;
 
 namespace StaticConstructor
 {
@@ -27,3 +27,4 @@ namespace StaticConstructor
     }
     #endregion
 }
+#endif

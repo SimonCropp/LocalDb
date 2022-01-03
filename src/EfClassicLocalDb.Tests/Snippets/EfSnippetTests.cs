@@ -1,5 +1,5 @@
-﻿using EfLocalDb;
-using Xunit;
+﻿#if(!NETCOREAPP3_1)
+using EfLocalDb;
 
 public class EfSnippetTests
 {
@@ -48,3 +48,4 @@ public class EfSnippetTests
         Assert.Single(database.Context.TestEntities);
     }
 }
+#endif

@@ -1,5 +1,4 @@
 ﻿using LocalDb;
-using Xunit;
 
 public class SnippetTests
 {

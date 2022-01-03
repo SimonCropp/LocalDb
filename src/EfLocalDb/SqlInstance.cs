@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -88,27 +89,31 @@ public class SqlInstance<TDbContext>
         var storageValue = storage.Value;
         DirectoryCleaner.CleanInstance(storageValue.Directory);
 
-        Task BuildTemplate(SqlConnection connection)
+        Task BuildTemplate(DbConnection connection)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(connection, sqlOptionsBuilder);
             return buildTemplate(connection, builder);
         }
 
-        Func<SqlConnection, Task>? wrapperCallback = null;
+        Func<DbConnection, Task>? wrapperCallback = null;
         if (callback is not null)
         {
             wrapperCallback = async connection =>
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
                 builder.UseSqlServer(connection, sqlOptionsBuilder);
+#if NET5_0
                 await using var context = constructInstance(builder);
+#else
+                    using var context = constructInstance(builder);
+#endif
                 await callback(connection, context);
             };
         }
 
         Wrapper = new(
-            s => new(s),
+            s => new SqlConnection(s),
             storageValue.Name,
             storageValue.Directory,
             templateSize,

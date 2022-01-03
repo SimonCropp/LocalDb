@@ -1,12 +1,12 @@
-﻿using System.Data.Entity;
-using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
+using System.Data.Entity;
 
 public class BuildTemplateDbContext :
     DbContext
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-    public BuildTemplateDbContext(SqlConnection connection) :
+    public BuildTemplateDbContext(DbConnection connection) :
         base(connection, false)
     {
     }

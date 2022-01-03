@@ -1,8 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
+#if !EF
+using Microsoft.Data.SqlClient;
+#endif
 
 static class SqlExtensions
 {
-    public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
+    public static async Task ExecuteCommandAsync(this DbConnection connection, string commandText)
     {
         commandText = commandText.Trim();
 
@@ -10,7 +13,11 @@ static class SqlExtensions
         {
             var stopwatch = Stopwatch.StartNew();
 
+#if(NET5_0)
             await using (var command = connection.CreateCommand())
+#else
+            using (var command = connection.CreateCommand())
+#endif
             {
                 command.CommandText = commandText;
                 await command.ExecuteNonQueryAsync();
@@ -22,7 +29,7 @@ static class SqlExtensions
 {commandText.IndentLines()}");
             }
         }
-        catch (SqlException exception)
+        catch (DbException exception)
         {
             throw BuildException(connection, commandText, exception);
         }
@@ -32,7 +39,7 @@ static class SqlExtensions
         }
     }
 
-    static Exception BuildException(SqlConnection connection, string commandText, Exception exception)
+    static Exception BuildException(DbConnection connection, string commandText, Exception exception)
     {
         StringBuilder builder = new($@"Failed to execute SQL command.
 {nameof(commandText)}: {commandText}

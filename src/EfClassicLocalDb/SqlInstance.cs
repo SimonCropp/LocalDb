@@ -1,6 +1,6 @@
-﻿using System.Data.Entity;
-using Microsoft.Data.SqlClient;
-
+﻿using System.Data.Common;
+using System.Data.Entity;
+using System.Data.SqlClient;
 // ReSharper disable RedundantCast
 
 namespace EfLocalDb;
@@ -56,7 +56,7 @@ public class SqlInstance<TDbContext>
         var storageValue = storage.Value;
         DirectoryCleaner.CleanInstance(storageValue.Directory);
 
-        Func<SqlConnection, Task>? wrapperCallback = null;
+        Func<DbConnection, Task>? wrapperCallback = null;
         if (callback is not null)
         {
             wrapperCallback = async connection =>
@@ -66,7 +66,7 @@ public class SqlInstance<TDbContext>
             };
         }
         Wrapper = new(
-            s => new(s),
+            s => new SqlConnection(s),
             storageValue.Name,
             storageValue.Directory,
             templateSize,

@@ -1,13 +1,13 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
 
 public static class DbPropertyReader
 {
-    public static DbSettings Read(SqlConnection connection, string name)
+    public static DbSettings Read(DbConnection connection, string name)
     {
         return new(ReadFileSettings(connection, name).ToList());
     }
 
-    static IEnumerable<DbFileSettings> ReadFileSettings(SqlConnection connection, string name)
+    static IEnumerable<DbFileSettings> ReadFileSettings(DbConnection connection, string name)
     {
         using var command = connection.CreateCommand();
         command.CommandText = $@"

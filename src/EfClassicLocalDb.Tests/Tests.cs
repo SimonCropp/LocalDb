@@ -1,5 +1,4 @@
 ﻿using EfLocalDb;
-using Xunit;
 
 public class Tests
 {
@@ -106,7 +105,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance<TestDbContext>(
+        SqlInstance<TestDbContext> instance = new(
             constructInstance: connection => new(connection),
             buildTemplate: async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,

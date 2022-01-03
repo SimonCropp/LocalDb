@@ -1,12 +1,12 @@
-﻿using System.Data.Entity;
-using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
+using System.Data.Entity;
 
 public class WithRebuildDbContext :
     DbContext
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;
 
-    public WithRebuildDbContext(SqlConnection connection) :
+    public WithRebuildDbContext(DbConnection connection) :
         base(connection, false)
     {
 
