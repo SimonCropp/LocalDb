@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-public class DirectoryCleanerTests :
+﻿public class DirectoryCleanerTests :
     IDisposable
 {
     private string tempDir;

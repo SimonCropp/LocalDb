@@ -1,5 +1,4 @@
 ﻿using EfLocalDb;
-using Xunit;
 
 #region EfClassicBuildTemplate
 

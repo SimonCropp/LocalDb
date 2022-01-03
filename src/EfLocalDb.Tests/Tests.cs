@@ -1,6 +1,4 @@
 ﻿using EfLocalDb;
-using VerifyXunit;
-using Xunit;
 
 [UsesVerify]
 public class Tests
@@ -74,14 +72,14 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verifier.Verify(database.Find<TestEntity>(entity.Id));
+        await Verify(database.Find<TestEntity>(entity.Id));
     }
 
     [Fact]
     public async Task FindMissingT()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find<TestEntity>(0));
+        await ThrowsTask(() => database.Find<TestEntity>(0));
     }
 
     [Fact]
@@ -93,14 +91,14 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verifier.Verify(database.Single<TestEntity>(_ => _.Id == entity.Id));
+        await Verify(database.Single<TestEntity>(_ => _.Id == entity.Id));
     }
 
     [Fact]
     public async Task SingleMissing()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
+        await ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
     }
 
     [Fact]
@@ -126,7 +124,7 @@ public class Tests
     public async Task FindIncorrectTypeT()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find<TestEntity>("key"));
+        await ThrowsTask(() => database.Find<TestEntity>("key"));
     }
 
     [Fact]
@@ -164,21 +162,21 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verifier.Verify(database.Find(entity.Id));
+        await Verify(database.Find(entity.Id));
     }
 
     [Fact]
     public async Task FindMissing()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find(0));
+        await ThrowsTask(() => database.Find(0));
     }
 
     [Fact]
     public async Task FindIncorrectType()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find("key"));
+        await ThrowsTask(() => database.Find("key"));
     }
 
     [Fact]

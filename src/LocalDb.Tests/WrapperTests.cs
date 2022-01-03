@@ -1,7 +1,4 @@
-﻿using VerifyXunit;
-using Microsoft.Data.SqlClient;
-using VerifyTests;
-using Xunit;
+﻿using Microsoft.Data.SqlClient;
 
 [UsesVerify]
 public class WrapperTests

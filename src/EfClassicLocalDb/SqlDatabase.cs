@@ -83,6 +83,7 @@ public partial class SqlDatabase<TDbContext> :
 
     public void Dispose()
     {
+        // ReSharper disable once ConstantConditionalAccessQualifier
         Context?.Dispose();
         Connection.Dispose();
     }

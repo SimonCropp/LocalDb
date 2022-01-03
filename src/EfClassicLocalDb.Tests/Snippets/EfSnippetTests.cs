@@ -1,6 +1,5 @@
 ﻿#if(!NETCOREAPP3_1)
 using EfLocalDb;
-using Xunit;
 
 public class EfSnippetTests
 {

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.SqlClient;
-using Xunit;
 
 public class DanglingLogWrapperTests
 {
