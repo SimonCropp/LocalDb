@@ -243,7 +243,9 @@ public class Tests
     [Fact]
     public async Task SuffixedContext()
     {
-        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options),
+            storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
 
         var entity = new TestEntity
         {
@@ -257,7 +259,9 @@ public class Tests
     public async Task SqlOptionsBuilder()
     {
         var optionsBuilderCalled = false;
-        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), sqlOptionsBuilder: _ => { optionsBuilderCalled = true; });
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options),
+            sqlOptionsBuilder: _ => { optionsBuilderCalled = true; });
 
         var entity = new TestEntity
         {
@@ -271,7 +275,10 @@ public class Tests
     [Fact]
     public async Task BuildTemplate()
     {
-        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); }, storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options),
+            async context => { await context.Database.EnsureCreatedAsync(); },
+            Storage.FromSuffix<TestDbContext>("theSuffix"));
 
         var entity = new TestEntity
         {
@@ -285,7 +292,11 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); }, timestamp: dateTime, storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options),
+            async context => { await context.Database.EnsureCreatedAsync(); },
+            timestamp: dateTime,
+            storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -294,7 +305,9 @@ public class Tests
     [Fact]
     public async Task Assembly_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options),
+            storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -303,7 +316,10 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); }, storage: Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options),
+            async context => { await context.Database.EnsureCreatedAsync(); },
+            Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -313,7 +329,9 @@ public class Tests
     public async Task WithRebuildDbContext()
     {
         var dateTime = DateTime.Now;
-        var instance1 = new SqlInstance<WithRebuildDbContext>(constructInstance: builder => new WithRebuildDbContext(builder.Options), timestamp: dateTime);
+        var instance1 = new SqlInstance<WithRebuildDbContext>(
+            builder => new WithRebuildDbContext(builder.Options),
+            timestamp: dateTime);
         await using (var database1 = await instance1.Build())
         {
             var entity = new TestEntity
@@ -323,7 +341,10 @@ public class Tests
             await database1.AddData(entity);
         }
 
-        var instance2 = new SqlInstance<WithRebuildDbContext>(constructInstance: builder => new WithRebuildDbContext(builder.Options), buildTemplate: _ => throw new Exception(), timestamp: dateTime);
+        var instance2 = new SqlInstance<WithRebuildDbContext>(
+            builder => new WithRebuildDbContext(builder.Options),
+            _ => throw new Exception(),
+            timestamp: dateTime);
         await using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
     }

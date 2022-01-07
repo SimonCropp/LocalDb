@@ -11,26 +11,28 @@ public class Migrations
     {
         #region Migrations
 
-        var sqlInstance = new SqlInstance<MyDbContext>(buildTemplate: async (connection, options) =>
-        {
-            #region IMigrationsSqlGenerator
+        var sqlInstance = new SqlInstance<MyDbContext>(
+            buildTemplate: async (connection, options) =>
+            {
+                #region IMigrationsSqlGenerator
 
-            options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
+                options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 
-            #endregion
+                #endregion
 
-            #region Migrate
+                #region Migrate
 
-            await using var data = new MyDbContext(options.Options);
-            await data.Database.MigrateAsync();
+                await using var data = new MyDbContext(options.Options);
+                await data.Database.MigrateAsync();
 
-            #endregion
-        }, constructInstance: builder => new MyDbContext(builder.Options));
+                #endregion
+            },
+            constructInstance: builder => new MyDbContext(builder.Options));
 
         #endregion
     }
 
-    class MigrationsGenerator:
+    class MigrationsGenerator :
         IMigrationsSqlGenerator
     {
         public IReadOnlyList<MigrationCommand> Generate(
@@ -42,7 +44,7 @@ public class Migrations
         }
     }
 
-    class MyDbContext:
+    class MyDbContext :
         DbContext
     {
         public DbSet<TheEntity> TestEntities { get; set; } = null!;

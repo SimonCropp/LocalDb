@@ -88,7 +88,9 @@ public class Tests
     [Fact]
     public async Task SuffixedContext()
     {
-        var instance = new SqlInstance<TestDbContext>(constructInstance: connection => new TestDbContext(connection), storage: Storage.FromSuffix<TestDbContext>($"theClassicSuffix{Environment.Version.Major}"));
+        var instance = new SqlInstance<TestDbContext>(
+            connection => new TestDbContext(connection),
+            storage: Storage.FromSuffix<TestDbContext>($"theClassicSuffix{Environment.Version.Major}"));
 
         var entity = new TestEntity
         {
@@ -103,7 +105,11 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance<TestDbContext>(constructInstance: connection => new TestDbContext(connection), buildTemplate: async context => { await context.CreateOnExistingDb(); }, timestamp: dateTime, storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
+        var instance = new SqlInstance<TestDbContext>(
+            connection => new TestDbContext(connection),
+            async context => { await context.CreateOnExistingDb(); },
+            timestamp: dateTime,
+            storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
 
         using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -112,7 +118,9 @@ public class Tests
     [Fact]
     public async Task Assembly_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(constructInstance: connection => new TestDbContext(connection), storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
+        var instance = new SqlInstance<TestDbContext>(
+            connection => new TestDbContext(connection),
+            storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -121,7 +129,10 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(constructInstance: connection => new TestDbContext(connection), buildTemplate: async context => { await context.CreateOnExistingDb(); }, storage: Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
+        var instance = new SqlInstance<TestDbContext>(
+            connection => new TestDbContext(connection),
+            async context => { await context.CreateOnExistingDb(); },
+            Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));

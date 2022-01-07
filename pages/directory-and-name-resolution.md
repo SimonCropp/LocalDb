@@ -37,13 +37,12 @@ There is an explicit registration override that takes an instance name and a dir
 <!-- snippet: ExplicitName -->
 <a id='snippet-explicitname'></a>
 ```cs
-SqlInstance sqlInstance = new(
+var sqlInstance = new SqlInstance(
     name: "theInstanceName",
     buildTemplate: TestDbBuilder.CreateTable,
-    directory: @"C:\LocalDb\theInstance"
-);
+    directory: @"C:\LocalDb\theInstance");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -52,9 +51,9 @@ SqlInstance sqlInstance = new(
 <!-- snippet: EfExplicitName -->
 <a id='snippet-efexplicitname'></a>
 ```cs
-SqlInstance<TheDbContext> sqlInstance = new(
-    constructInstance: builder => new(builder.Options),
-    storage: new("theInstanceName",@"C:\LocalDb\theInstance"));
+var sqlInstance = new SqlInstance<TheDbContext>(
+    constructInstance: builder => new TheDbContext(builder.Options),
+    storage: new Storage("theInstanceName", @"C:\LocalDb\theInstance"));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

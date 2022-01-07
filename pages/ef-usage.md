@@ -78,17 +78,17 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new(
-            builder => new(builder.Options));
+        sqlInstance = new SqlInstance<TheDbContext>(
+            builder => new TheDbContext(builder.Options));
     }
 
     public async Task Test()
     {
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
-        List<object> data = new() {entity};
+        var data = new List<object> {entity};
         await using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }
@@ -111,8 +111,8 @@ public abstract class TestBase
 
     static TestBase()
     {
-        sqlInstance = new(
-            constructInstance: builder => new(builder.Options));
+        sqlInstance = new SqlInstance<TheDbContext>(
+            constructInstance: builder => new TheDbContext(builder.Options));
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
@@ -131,7 +131,7 @@ public class Tests :
     public async Task Test()
     {
         await using var database = await LocalDb();
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -152,8 +152,8 @@ Some SqlServer options are exposed by passing a `Action<SqlServerDbContextOption
 <!-- snippet: sqlOptionsBuilder -->
 <a id='snippet-sqloptionsbuilder'></a>
 ```cs
-SqlInstance<MyDbContext> sqlInstance = new(
-    constructInstance: builder => new(builder.Options),
+var sqlInstance = new SqlInstance<MyDbContext>(
+    constructInstance: builder => new MyDbContext(builder.Options),
     sqlOptionsBuilder: sqlBuilder => sqlBuilder.EnableRetryOnFailure(5));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/SqlBuilder.cs#L8-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-sqloptionsbuilder' title='Start of snippet'>anchor</a></sup>
@@ -173,12 +173,12 @@ public class BuildTemplate
 
     static BuildTemplate()
     {
-        sqlInstance = new(
-            constructInstance: builder => new(builder.Options),
+        sqlInstance = new SqlInstance<BuildTemplateDbContext>(
+            constructInstance: builder => new BuildTemplateDbContext(builder.Options),
             buildTemplate: async context =>
             {
                 await context.Database.EnsureCreatedAsync();
-                TheEntity entity = new()
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };
@@ -244,8 +244,8 @@ public class EfSnippetTests
     static SqlInstance<MyDbContext> sqlInstance;
     static EfSnippetTests()
     {
-        sqlInstance = new(
-            builder => new(builder.Options));
+        sqlInstance = new SqlInstance<MyDbContext>(
+            builder => new MyDbContext(builder.Options));
     }
 
     [Fact]
@@ -255,7 +255,7 @@ public class EfSnippetTests
 
         await using (var data = database.NewDbContext())
         {
-            TheEntity entity = new()
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -273,7 +273,7 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         await using var database = await sqlInstance.Build("TheTestWithDbName");
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -298,12 +298,12 @@ using Microsoft.EntityFrameworkCore;
 
 static class DefaultOptionsBuilder
 {
-    static LogCommandInterceptor interceptor = new();
+    static LogCommandInterceptor interceptor = new LogCommandInterceptor();
 
     public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
         where TDbContext : DbContext
     {
-        DbContextOptionsBuilder<TDbContext> builder = new();
+        var builder = new DbContextOptionsBuilder<TDbContext>();
         if (LocalDbLogging.SqlLoggingEnabled)
         {
             builder.AddInterceptors(interceptor);

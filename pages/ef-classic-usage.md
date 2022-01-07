@@ -79,17 +79,17 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new(
-            connection => new(connection));
+        sqlInstance = new SqlInstance<TheDbContext>(
+            connection => new TheDbContext(connection));
     }
 
     public async Task Test()
     {
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
-        List<object> data = new(){entity};
+        var data = new List<object> {entity};
         using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }
@@ -112,8 +112,8 @@ public abstract class TestBase
 
     static TestBase()
     {
-        sqlInstance = new(
-            constructInstance: connection => new(connection));
+        sqlInstance = new SqlInstance<TheDbContext>(
+            constructInstance: connection => new TheDbContext(connection));
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
@@ -132,7 +132,7 @@ public class Tests :
     public async Task Test()
     {
         using var database = await LocalDb();
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -159,12 +159,12 @@ public class BuildTemplate
 
     static BuildTemplate()
     {
-        sqlInstance = new(
-            constructInstance: connection => new(connection),
+        sqlInstance = new SqlInstance<BuildTemplateDbContext>(
+            constructInstance: connection => new BuildTemplateDbContext(connection),
             buildTemplate: async context =>
             {
                 await context.CreateOnExistingDb();
-                TheEntity entity = new()
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };
@@ -232,8 +232,8 @@ public class EfSnippetTests
 
     static EfSnippetTests()
     {
-        sqlInstance = new(
-            connection => new(connection));
+        sqlInstance = new SqlInstance<MyDbContext>(
+            connection => new MyDbContext(connection));
     }
 
     [Fact]
@@ -242,7 +242,7 @@ public class EfSnippetTests
         using var database = await sqlInstance.Build();
         using (var data = database.NewDbContext())
         {
-            TheEntity entity = new()
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -260,7 +260,7 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         using var database = await sqlInstance.Build("TheTestWithDbName");
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -290,9 +290,9 @@ static class SuppliedTemplate
 
     static SuppliedTemplate()
     {
-        sqlInstance = new(
-            connection => new(connection),
-            existingTemplate: new("template.mdf", "template_log.ldf"));
+        sqlInstance = new SqlInstance<MyDbContext>(
+            connection => new MyDbContext(connection),
+            existingTemplate: new ExistingTemplate("template.mdf", "template_log.ldf"));
     }
 }
 ```
