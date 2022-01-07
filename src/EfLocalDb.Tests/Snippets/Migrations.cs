@@ -27,7 +27,7 @@ public class Migrations
 
                 #endregion
             },
-            constructInstance: builder => new MyDbContext(builder.Options));
+            constructInstance: builder => new(builder.Options));
 
         #endregion
     }
@@ -40,7 +40,7 @@ public class Migrations
             IModel? model = null,
             MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
         {
-            throw new Exception();
+            throw new();
         }
     }
 

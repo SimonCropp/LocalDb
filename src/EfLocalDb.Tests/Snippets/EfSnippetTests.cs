@@ -5,8 +5,8 @@ public class EfSnippetTests
     static SqlInstance<MyDbContext> sqlInstance;
     static EfSnippetTests()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            builder => new MyDbContext(builder.Options));
+        sqlInstance = new(
+            builder => new(builder.Options));
     }
 
     #region EfTest

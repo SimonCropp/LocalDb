@@ -10,7 +10,7 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
+        sqlInstance = new(
             builder => new(builder.Options));
     }
 

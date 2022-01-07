@@ -10,7 +10,7 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new SqlInstance(
+        sqlInstance = new(
             name: "StaticConstructorInstance",
             buildTemplate: TestDbBuilder.CreateTable);
     }

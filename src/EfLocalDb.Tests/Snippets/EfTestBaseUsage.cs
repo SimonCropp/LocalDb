@@ -10,7 +10,7 @@ public abstract class TestBase
 
     static TestBase()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
+        sqlInstance = new(
             constructInstance: builder => new(builder.Options));
     }
 

@@ -29,7 +29,7 @@ public partial class SqlDatabase<TDbContext> :
         this.data = data;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         ConnectionString = connectionString;
-        Connection = new SqlConnection(connectionString);
+        Connection = new(connectionString);
     }
 
     public string Name { get; }
@@ -178,7 +178,7 @@ public partial class SqlDatabase<TDbContext> :
         }
 
         var keyString = string.Join(", ", keys);
-        throw new Exception("No record found with keys: " + keyString);
+        throw new("No record found with keys: " + keyString);
     }
     /// <summary>
     /// Calls <see cref="DbSet{TEntity}.FindAsync(object[])"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
@@ -230,10 +230,10 @@ public partial class SqlDatabase<TDbContext> :
 
         if (results.Count > 1)
         {
-            throw new Exception("More than one record found with keys: " + keyString);
+            throw new("More than one record found with keys: " + keyString);
         }
 
-        throw new Exception("No record found with keys: " + keyString);
+        throw new("No record found with keys: " + keyString);
     }
 
     /// <summary>
@@ -251,7 +251,7 @@ public partial class SqlDatabase<TDbContext> :
         if (results.Count > 1)
         {
             var keyString = string.Join(", ", keys);
-            throw new Exception("More than one record found with keys: " + keyString);
+            throw new("More than one record found with keys: " + keyString);
         }
 
         return false;

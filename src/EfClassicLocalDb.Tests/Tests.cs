@@ -89,7 +89,7 @@ public class Tests
     public async Task SuffixedContext()
     {
         var instance = new SqlInstance<TestDbContext>(
-            connection => new TestDbContext(connection),
+            connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"theClassicSuffix{Environment.Version.Major}"));
 
         var entity = new TestEntity
@@ -106,7 +106,7 @@ public class Tests
     {
         var dateTime = DateTime.Now;
         var instance = new SqlInstance<TestDbContext>(
-            connection => new TestDbContext(connection),
+            connection => new(connection),
             async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,
             storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
@@ -119,7 +119,7 @@ public class Tests
     public async Task Assembly_TimeStamp()
     {
         var instance = new SqlInstance<TestDbContext>(
-            connection => new TestDbContext(connection),
+            connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
@@ -130,7 +130,7 @@ public class Tests
     public async Task Delegate_TimeStamp()
     {
         var instance = new SqlInstance<TestDbContext>(
-            connection => new TestDbContext(connection),
+            connection => new(connection),
             async context => { await context.CreateOnExistingDb(); },
             Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
 
@@ -184,8 +184,8 @@ public class Tests
 
     public Tests()
     {
-        instance = new SqlInstance<TestDbContext>(
-            connection => new TestDbContext(connection),
+        instance = new(
+            connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"Classic{Environment.Version.Major}"),
             callback: (_, _) =>
             {

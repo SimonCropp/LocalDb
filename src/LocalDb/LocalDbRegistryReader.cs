@@ -10,7 +10,7 @@ static class LocalDbRegistryReader
         using var versions = rootKey.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions");
         if (versions is null)
         {
-            throw new Exception("LocalDb not installed.");
+            throw new("LocalDb not installed.");
         }
 
         var latest = versions.GetSubKeyNames()
@@ -19,20 +19,20 @@ static class LocalDbRegistryReader
             .FirstOrDefault();
         if (latest is null)
         {
-            throw new Exception("LocalDb not installed.");
+            throw new("LocalDb not installed.");
         }
 
         using var versionKey = versions.OpenSubKey(latest.ToString());
         if (versionKey is null)
         {
-            throw new Exception("Could not find LocalDb dll. VersionKey is null");
+            throw new("Could not find LocalDb dll. VersionKey is null");
         }
 
         var version = latest.ToString();
         var value = versionKey.GetValue("InstanceAPIPath");
         if (value is null)
         {
-            throw new Exception("Could not find LocalDb dll. No InstanceAPIPath.");
+            throw new("Could not find LocalDb dll. No InstanceAPIPath.");
         }
         var path = (string) value;
         return (path, version);

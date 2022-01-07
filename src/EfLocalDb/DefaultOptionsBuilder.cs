@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 static class DefaultOptionsBuilder
 {
-    static LogCommandInterceptor interceptor = new LogCommandInterceptor();
+    static LogCommandInterceptor interceptor = new();
 
     public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
         where TDbContext : DbContext

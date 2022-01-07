@@ -23,7 +23,7 @@ public partial class SqlDatabase<TDbContext> :
         this.delete = delete;
         this.data = data;
         ConnectionString = connectionString;
-        Connection = new SqlConnection(connectionString);
+        Connection = new(connectionString);
     }
 
     public string Name { get; }

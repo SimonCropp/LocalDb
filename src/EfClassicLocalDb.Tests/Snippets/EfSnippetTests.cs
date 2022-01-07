@@ -7,8 +7,7 @@ public class EfSnippetTests
 
     static EfSnippetTests()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            connection => new MyDbContext(connection));
+        sqlInstance = new(connection => new(connection));
     }
 
     [Fact]

@@ -11,7 +11,7 @@ class Wrapper
     public readonly string Directory;
     ushort size;
     Func<DbConnection, Task>? callback;
-    SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+    SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
     Func<string, DbConnection> buildConnection;
     string instance;
@@ -67,7 +67,7 @@ class Wrapper
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
-            throw new Exception("The database name 'template' is reserved.");
+            throw new("The database name 'template' is reserved.");
         }
 
         // Explicitly dont take offline here, since that is done at startup

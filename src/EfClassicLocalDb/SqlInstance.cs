@@ -15,7 +15,7 @@ public class SqlInstance<TDbContext>
     static SqlInstance()
     {
         var name = typeof(TDbContext).Name;
-        DefaultStorage = new Storage(name, DirectoryFinder.Find(name));
+        DefaultStorage = new(name, DirectoryFinder.Find(name));
     }
 
     public string ServerName => Wrapper.ServerName;
@@ -65,7 +65,7 @@ public class SqlInstance<TDbContext>
                 await callback(connection, context);
             };
         }
-        Wrapper = new Wrapper(
+        Wrapper = new(
             s => new SqlConnection(s),
             storageValue.Name,
             storageValue.Directory,

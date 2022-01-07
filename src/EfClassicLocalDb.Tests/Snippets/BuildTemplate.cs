@@ -9,7 +9,7 @@ public class BuildTemplate
     static BuildTemplate()
     {
         sqlInstance = new(
-            constructInstance: connection => new BuildTemplateDbContext(connection),
+            constructInstance: connection => new(connection),
             buildTemplate: async context =>
             {
                 await context.CreateOnExistingDb();

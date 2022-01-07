@@ -55,6 +55,6 @@ connectionString: {connection.ConnectionString}
             }
         }
         #endif
-        return new Exception(builder.ToString(), exception);
+        return new(builder.ToString(), exception);
     }
 }

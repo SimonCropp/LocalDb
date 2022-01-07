@@ -10,7 +10,7 @@ namespace StaticConstructor
 
         static Tests()
         {
-            sqlInstance = new SqlInstance<TheDbContext>(
+            sqlInstance = new(
                 connection => new(connection));
         }
 
