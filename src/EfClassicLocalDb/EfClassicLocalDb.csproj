@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6</TargetFrameworks>
+    <TargetFrameworks>net48;net5</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
     <PackageTags>EntityFramework, LocalDB, Testing</PackageTags>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
@@ -29,14 +29,17 @@
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\State.cs" />
 
+    <Using Remove="System.Net.Http" />
     <PackageReference Include="MethodTimer.Fody" Version="3.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" Condition="$(TargetFramework) == 'netstandard2.1'" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.1" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="6.6.0" PrivateAssets="all" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.63" PrivateAssets="all" />
+    <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="all" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.63" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" Condition="$(Configuration) == 'Release'" />
+    <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
   </ItemGroup>
 </Project>

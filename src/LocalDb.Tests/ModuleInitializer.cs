@@ -1,6 +1,4 @@
-﻿using VerifyTests;
-using Xunit;
-#if EF
+﻿#if EF
 using EfLocalDb;
 #else
 using LocalDb;

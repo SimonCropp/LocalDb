@@ -7,7 +7,7 @@ public class SqlBuilder
     {
         #region sqlOptionsBuilder
 
-        SqlInstance<MyDbContext> sqlInstance = new(
+        var sqlInstance = new SqlInstance<MyDbContext>(
             constructInstance: builder => new(builder.Options),
             sqlOptionsBuilder: sqlBuilder => sqlBuilder.EnableRetryOnFailure(5));
 

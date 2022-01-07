@@ -1,9 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
+using DataSqlConnection = System.Data.SqlClient.SqlConnection;
 
 namespace LocalDb;
 
 public class SqlDatabase :
+#if(NET5_0)
     IAsyncDisposable,
+#endif
     IDisposable
 {
     Func<Task> delete;
@@ -28,7 +31,14 @@ public class SqlDatabase :
 
     public async Task<SqlConnection> OpenNewConnection()
     {
-        SqlConnection connection = new(ConnectionString);
+        var connection = new SqlConnection(ConnectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+
+    public async Task<DataSqlConnection> OpenNewDataConnection()
+    {
+        var connection = new DataSqlConnection(ConnectionString);
         await connection.OpenAsync();
         return connection;
     }
@@ -43,14 +53,20 @@ public class SqlDatabase :
         Connection.Dispose();
     }
 
+#if(!NETSTANDARD2_0 && !NET461)
     public ValueTask DisposeAsync()
     {
         return Connection.DisposeAsync();
     }
+#endif
 
     public async Task Delete()
     {
+#if(NETSTANDARD2_0 || NET461)
+        Dispose();
+#else
         await DisposeAsync();
+#endif
         await delete();
     }
 }

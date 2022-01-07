@@ -84,17 +84,17 @@ public class Tests
 
     public async Task Test()
     {
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
-        List<object> data = new() {entity};
+        var data = new List<object> {entity};
         await using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L6-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L5-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -131,7 +131,7 @@ public class Tests :
     public async Task Test()
     {
         await using var database = await LocalDb();
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -141,7 +141,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L6-L44' title='Snippet source file'>snippet source</a> | <a href='#snippet-eftestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L5-L43' title='Snippet source file'>snippet source</a> | <a href='#snippet-eftestbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -152,7 +152,7 @@ Some SqlServer options are exposed by passing a `Action<SqlServerDbContextOption
 <!-- snippet: sqlOptionsBuilder -->
 <a id='snippet-sqloptionsbuilder'></a>
 ```cs
-SqlInstance<MyDbContext> sqlInstance = new(
+var sqlInstance = new SqlInstance<MyDbContext>(
     constructInstance: builder => new(builder.Options),
     sqlOptionsBuilder: sqlBuilder => sqlBuilder.EnableRetryOnFailure(5));
 ```
@@ -178,7 +178,7 @@ public class BuildTemplate
             buildTemplate: async context =>
             {
                 await context.Database.EnsureCreatedAsync();
-                TheEntity entity = new()
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };
@@ -196,7 +196,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L4-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -212,7 +212,7 @@ Usage inside a test consists of two parts:
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuilddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L16-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuilddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -226,7 +226,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L21-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -238,7 +238,6 @@ The above are combined in a full test:
 <a id='snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
 using EfLocalDb;
-using Xunit;
 
 public class EfSnippetTests
 {
@@ -256,7 +255,7 @@ public class EfSnippetTests
 
         await using (var data = database.NewDbContext())
         {
-            TheEntity entity = new()
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -274,7 +273,7 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         await using var database = await sqlInstance.Build("TheTestWithDbName");
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -284,7 +283,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -304,7 +303,7 @@ static class DefaultOptionsBuilder
     public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
         where TDbContext : DbContext
     {
-        DbContextOptionsBuilder<TDbContext> builder = new();
+        var builder = new DbContextOptionsBuilder<TDbContext>();
         if (LocalDbLogging.SqlLoggingEnabled)
         {
             builder.AddInterceptors(interceptor);

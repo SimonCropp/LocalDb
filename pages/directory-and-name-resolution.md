@@ -37,13 +37,12 @@ There is an explicit registration override that takes an instance name and a dir
 <!-- snippet: ExplicitName -->
 <a id='snippet-explicitname'></a>
 ```cs
-SqlInstance sqlInstance = new(
+var sqlInstance = new SqlInstance(
     name: "theInstanceName",
     buildTemplate: TestDbBuilder.CreateTable,
-    directory: @"C:\LocalDb\theInstance"
-);
+    directory: @"C:\LocalDb\theInstance");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -52,9 +51,9 @@ SqlInstance sqlInstance = new(
 <!-- snippet: EfExplicitName -->
 <a id='snippet-efexplicitname'></a>
 ```cs
-SqlInstance<TheDbContext> sqlInstance = new(
+var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new(builder.Options),
-    storage: new("theInstanceName",@"C:\LocalDb\theInstance"));
+    storage: new("theInstanceName", @"C:\LocalDb\theInstance"));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -114,7 +113,7 @@ public Task<SqlDatabase> Build(
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L55-L75' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L56-L76' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -150,7 +149,7 @@ If full control over the database name is required, there is an overload that ta
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L88-L93' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L89-L94' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:
@@ -163,7 +162,7 @@ Which can be used as follows:
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L30-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L29-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -174,5 +173,5 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L43-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-efwithdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L42-L44' title='Snippet source file'>snippet source</a> | <a href='#snippet-efwithdbname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

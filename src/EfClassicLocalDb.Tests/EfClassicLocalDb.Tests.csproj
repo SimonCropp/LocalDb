@@ -11,16 +11,15 @@
     <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-
+    <Using Remove="System.Net.Http" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="XunitContext" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0" />
     <PackageReference Include="Verify.Xunit" Version="14.12.0" />
     <PackageReference Include="Xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
     <ProjectReference Include="..\EfClassicLocalDb\EfClassicLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.63" PrivateAssets="all" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.63" PrivateAssets="All" />
   </ItemGroup>
 </Project>

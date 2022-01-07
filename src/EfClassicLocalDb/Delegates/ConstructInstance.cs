@@ -1,7 +1,7 @@
+using System.Data.Common;
 using System.Data.Entity;
-using Microsoft.Data.SqlClient;
 
 namespace EfLocalDb;
 
-public delegate TDbContext ConstructInstance<out TDbContext>(SqlConnection connection)
+public delegate TDbContext ConstructInstance<out TDbContext>(DbConnection connection)
     where TDbContext : DbContext;

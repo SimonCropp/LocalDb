@@ -1,5 +1,5 @@
-﻿using EfLocalDb;
-using Xunit;
+﻿#if(!NETCOREAPP3_1)
+using EfLocalDb;
 
 public class EfSnippetTests
 {
@@ -7,8 +7,7 @@ public class EfSnippetTests
 
     static EfSnippetTests()
     {
-        sqlInstance = new(
-            connection => new(connection));
+        sqlInstance = new(connection => new(connection));
     }
 
     [Fact]
@@ -21,7 +20,7 @@ public class EfSnippetTests
         using (var data = database.NewDbContext())
         {
             #endregion
-            TheEntity entity = new()
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -39,7 +38,7 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         using var database = await sqlInstance.Build("TheTestWithDbName");
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -48,3 +47,4 @@ public class EfSnippetTests
         Assert.Single(database.Context.TestEntities);
     }
 }
+#endif

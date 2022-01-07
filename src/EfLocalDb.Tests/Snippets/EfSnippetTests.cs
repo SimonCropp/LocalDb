@@ -1,5 +1,4 @@
 ﻿using EfLocalDb;
-using Xunit;
 
 public class EfSnippetTests
 {
@@ -22,7 +21,7 @@ public class EfSnippetTests
         await using (var data = database.NewDbContext())
         {
             #endregion
-            TheEntity entity = new()
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -43,7 +42,7 @@ public class EfSnippetTests
         #region EfWithDbName
         await using var database = await sqlInstance.Build("TheTestWithDbName");
         #endregion
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };

@@ -1,6 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System.Data.Common;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using Microsoft.Data.SqlClient;
 
 namespace EfLocalDb;
 
@@ -14,7 +14,7 @@ public static class DbContextExtensions
         {
             await context.Database.ExecuteSqlCommandAsync(script);
         }
-        catch (SqlException)
+        catch (DbException)
         {
             //swallow for already exists
         }

@@ -22,15 +22,15 @@ The snippets use a DbContext of the following form:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheDbContext.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs'></a>
 ```cs
+using System.Data.Common;
 using System.Data.Entity;
-using Microsoft.Data.SqlClient;
 
 public class TheDbContext :
     DbContext
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-    public TheDbContext(SqlConnection connection) :
+    public TheDbContext(DbConnection connection) :
         base(connection, false)
     {
     }
@@ -85,11 +85,11 @@ public class Tests
 
     public async Task Test()
     {
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
-        List<object> data = new(){entity};
+        var data = new List<object> {entity};
         using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }
@@ -132,7 +132,7 @@ public class Tests :
     public async Task Test()
     {
         using var database = await LocalDb();
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -142,7 +142,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L6-L44' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L5-L43' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -164,7 +164,7 @@ public class BuildTemplate
             buildTemplate: async context =>
             {
                 await context.CreateOnExistingDb();
-                TheEntity entity = new()
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };
@@ -182,7 +182,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L4-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildtemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -198,7 +198,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L16-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -212,7 +212,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -223,8 +223,8 @@ The above are combined in a full test:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
+#if(!NETCOREAPP3_1)
 using EfLocalDb;
-using Xunit;
 
 public class EfSnippetTests
 {
@@ -232,8 +232,7 @@ public class EfSnippetTests
 
     static EfSnippetTests()
     {
-        sqlInstance = new(
-            connection => new(connection));
+        sqlInstance = new(connection => new(connection));
     }
 
     [Fact]
@@ -242,7 +241,7 @@ public class EfSnippetTests
         using var database = await sqlInstance.Build();
         using (var data = database.NewDbContext())
         {
-            TheEntity entity = new()
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
@@ -260,7 +259,7 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         using var database = await sqlInstance.Build("TheTestWithDbName");
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
@@ -269,6 +268,7 @@ public class EfSnippetTests
         Assert.Single(database.Context.TestEntities);
     }
 }
+#endif
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

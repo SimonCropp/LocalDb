@@ -1,5 +1,5 @@
-﻿using EfLocalDb;
-using Xunit;
+﻿#if(!NETCOREAPP3_1)
+using EfLocalDb;
 
 namespace StaticConstructor
 {
@@ -16,14 +16,15 @@ namespace StaticConstructor
 
         public async Task Test()
         {
-            TheEntity entity = new()
+            var entity = new TheEntity
             {
                 Property = "prop"
             };
-            List<object> data = new(){entity};
+            var data = new List<object> {entity};
             using var database = await sqlInstance.Build(data);
             Assert.Single(database.Context.TestEntities);
         }
     }
     #endregion
 }
+#endif

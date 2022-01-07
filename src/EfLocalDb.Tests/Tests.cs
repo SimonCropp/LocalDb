@@ -1,6 +1,4 @@
 ﻿using EfLocalDb;
-using VerifyXunit;
-using Xunit;
 
 [UsesVerify]
 public class Tests
@@ -11,7 +9,7 @@ public class Tests
     [Fact]
     public async Task SeedData()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -23,7 +21,7 @@ public class Tests
     [Fact]
     public async Task AddData()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -36,7 +34,7 @@ public class Tests
     [Fact]
     public async Task AddDataUntracked()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -49,7 +47,7 @@ public class Tests
     [Fact]
     public async Task ExistsT()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -68,7 +66,7 @@ public class Tests
     [Fact]
     public async Task FindT()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -81,13 +79,13 @@ public class Tests
     public async Task FindMissingT()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find<TestEntity>(0));
+        await ThrowsTask(() => database.Find<TestEntity>(0));
     }
 
     [Fact]
     public async Task Single()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -100,13 +98,13 @@ public class Tests
     public async Task SingleMissing()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
+        await ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
     }
 
     [Fact]
     public async Task CountT()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -126,13 +124,13 @@ public class Tests
     public async Task FindIncorrectTypeT()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find<TestEntity>("key"));
+        await ThrowsTask(() => database.Find<TestEntity>("key"));
     }
 
     [Fact]
     public async Task Exists()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -158,7 +156,7 @@ public class Tests
     [Fact]
     public async Task Find()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -171,24 +169,24 @@ public class Tests
     public async Task FindMissing()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find(0));
+        await ThrowsTask(() => database.Find(0));
     }
 
     [Fact]
     public async Task FindIncorrectType()
     {
         await using var database = await instance.Build();
-        await Verifier.ThrowsTask(() => database.Find("key"));
+        await ThrowsTask(() => database.Find("key"));
     }
 
     [Fact]
     public async Task AddDataMultiple()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Property = "prop"
         };
@@ -202,15 +200,15 @@ public class Tests
     [Fact]
     public async Task AddDataMultipleMixed()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity3 = new()
+        var entity3 = new TestEntity
         {
             Property = "prop"
         };
@@ -226,11 +224,11 @@ public class Tests
     [Fact]
     public async Task AddDataUntrackedMultiple()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Property = "prop"
         };
@@ -245,11 +243,11 @@ public class Tests
     [Fact]
     public async Task SuffixedContext()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
             storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
 
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -261,11 +259,11 @@ public class Tests
     public async Task SqlOptionsBuilder()
     {
         var optionsBuilderCalled = false;
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
             sqlOptionsBuilder: _ => { optionsBuilderCalled = true; });
 
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -277,12 +275,12 @@ public class Tests
     [Fact]
     public async Task BuildTemplate()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
-            storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
+            async context => { await context.Database.EnsureCreatedAsync(); },
+            Storage.FromSuffix<TestDbContext>("theSuffix"));
 
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -294,9 +292,9 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
+            async context => { await context.Database.EnsureCreatedAsync(); },
             timestamp: dateTime,
             storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
 
@@ -307,8 +305,8 @@ public class Tests
     [Fact]
     public async Task Assembly_TimeStamp()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
             storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
 
         await using var database = await instance.Build();
@@ -318,10 +316,10 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
-            storage: Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
+            async context => { await context.Database.EnsureCreatedAsync(); },
+            Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -331,21 +329,21 @@ public class Tests
     public async Task WithRebuildDbContext()
     {
         var dateTime = DateTime.Now;
-        SqlInstance<WithRebuildDbContext> instance1 = new(
-            constructInstance: builder => new(builder.Options),
+        var instance1 = new SqlInstance<WithRebuildDbContext>(
+            builder => new(builder.Options),
             timestamp: dateTime);
         await using (var database1 = await instance1.Build())
         {
-            TestEntity entity = new()
+            var entity = new TestEntity
             {
                 Property = "prop"
             };
             await database1.AddData(entity);
         }
 
-        SqlInstance<WithRebuildDbContext> instance2 = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: _ => throw new(),
+        var instance2 = new SqlInstance<WithRebuildDbContext>(
+            builder => new(builder.Options),
+            _ => throw new(),
             timestamp: dateTime);
         await using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
@@ -354,7 +352,7 @@ public class Tests
     [Fact]
     public async Task Secondary()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -385,7 +383,7 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "Item1"
         };
@@ -397,7 +395,7 @@ public class Tests
     [Fact]
     public async Task SimpleContext()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "Item1"
         };

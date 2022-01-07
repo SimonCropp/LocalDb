@@ -1,5 +1,4 @@
 ﻿using EfLocalDb;
-using Xunit;
 
 public class Tests
 {
@@ -9,7 +8,7 @@ public class Tests
     [Fact]
     public async Task SeedData()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -21,7 +20,7 @@ public class Tests
     [Fact]
     public async Task AddData()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -34,7 +33,7 @@ public class Tests
     [Fact]
     public async Task AddDataUntracked()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -47,12 +46,12 @@ public class Tests
     [Fact]
     public async Task AddDataMultiple()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Id = 1,
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Id = 2,
             Property = "prop"
@@ -68,12 +67,12 @@ public class Tests
     [Fact]
     public async Task AddDataUntrackedMultiple()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Id = 1,
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Id = 2,
             Property = "prop"
@@ -89,11 +88,11 @@ public class Tests
     [Fact]
     public async Task SuffixedContext()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: connection => new(connection),
+        var instance = new SqlInstance<TestDbContext>(
+            connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"theClassicSuffix{Environment.Version.Major}"));
 
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -107,8 +106,8 @@ public class Tests
     {
         var dateTime = DateTime.Now;
         var instance = new SqlInstance<TestDbContext>(
-            constructInstance: connection => new(connection),
-            buildTemplate: async context => { await context.CreateOnExistingDb(); },
+            connection => new(connection),
+            async context => { await context.CreateOnExistingDb(); },
             timestamp: dateTime,
             storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
 
@@ -119,8 +118,8 @@ public class Tests
     [Fact]
     public async Task Assembly_TimeStamp()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: connection => new(connection),
+        var instance = new SqlInstance<TestDbContext>(
+            connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
@@ -130,10 +129,10 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: connection => new(connection),
-            buildTemplate: async context => { await context.CreateOnExistingDb(); },
-            storage: Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
+        var instance = new SqlInstance<TestDbContext>(
+            connection => new(connection),
+            async context => { await context.CreateOnExistingDb(); },
+            Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -143,7 +142,7 @@ public class Tests
     [Fact]
     public async Task Secondary()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -174,7 +173,7 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "Item1"
         };

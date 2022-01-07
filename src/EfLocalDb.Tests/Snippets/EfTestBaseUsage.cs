@@ -1,5 +1,4 @@
 ﻿using EfLocalDb;
-using Xunit;
 
 namespace TestBase;
 
@@ -31,7 +30,7 @@ public class Tests :
     public async Task Test()
     {
         await using var database = await LocalDb();
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };

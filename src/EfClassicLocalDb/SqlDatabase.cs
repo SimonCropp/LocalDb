@@ -1,5 +1,5 @@
 ﻿using System.Data.Entity;
-using Microsoft.Data.SqlClient;
+using System.Data.SqlClient;
 
 namespace EfLocalDb;
 
@@ -83,6 +83,7 @@ public partial class SqlDatabase<TDbContext> :
 
     public void Dispose()
     {
+        // ReSharper disable once ConstantConditionalAccessQualifier
         Context?.Dispose();
         Connection.Dispose();
     }

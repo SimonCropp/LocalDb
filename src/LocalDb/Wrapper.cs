@@ -1,5 +1,5 @@
-﻿using MethodTimer;
-using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
+using MethodTimer;
 #if EF
 using EfLocalDb;
 #else
@@ -10,10 +10,10 @@ class Wrapper
 {
     public readonly string Directory;
     ushort size;
-    Func<SqlConnection, Task>? callback;
+    Func<DbConnection, Task>? callback;
     SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
-    Func<string, SqlConnection> buildConnection;
+    Func<string, DbConnection> buildConnection;
     string instance;
     public readonly string DataFile;
     string LogFile;
@@ -23,12 +23,12 @@ class Wrapper
     bool templateProvided;
 
     public Wrapper(
-        Func<string, SqlConnection> buildConnection,
+        Func<string, DbConnection> buildConnection,
         string instance,
         string directory,
         ushort size = 3,
         ExistingTemplate? existingTemplate = null,
-        Func<SqlConnection, Task>? callback = null)
+        Func<DbConnection, Task>? callback = null)
     {
         Guard.AgainstDatabaseSize(nameof(size), size);
         Guard.AgainstInvalidFileName(nameof(instance), instance);
@@ -83,7 +83,11 @@ class Wrapper
 
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
 
+#if NET5_0
         await using var masterConnection = await OpenMasterConnection();
+#else
+        using var masterConnection = await OpenMasterConnection();
+#endif
         await masterConnection.ExecuteCommandAsync(commandText);
 
         var connectionString = LocalDbSettings.connectionBuilder(instance,name);
@@ -106,7 +110,11 @@ class Wrapper
                 return;
             }
 
+#if NET5_0
             await using var connection = buildConnection(connectionString);
+#else
+            using var connection = buildConnection(connectionString);
+#endif
             await connection.OpenAsync();
             await callback(connection);
             callback = null;
@@ -117,7 +125,7 @@ class Wrapper
         }
     }
 
-    public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
+    public void Start(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
     {
 #if RELEASE
         try
@@ -142,7 +150,7 @@ class Wrapper
         return startupTask;
     }
 
-    void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
+    void InnerStart(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
     {
         void CleanStart()
         {
@@ -193,13 +201,21 @@ class Wrapper
     [Time("Timestamp: '{timestamp}', Rebuild: '{rebuild}', Optimize: '{optimize}'")]
     async Task CreateAndDetachTemplate(
         DateTime timestamp,
-        Func<SqlConnection, Task> buildTemplate,
+        Func<DbConnection, Task> buildTemplate,
         bool rebuild,
         bool optimize)
     {
+#if NET5_0
         await using var takeOfflineConnection = await OpenMasterConnection();
+#else
+        using var takeOfflineConnection = await OpenMasterConnection();
+#endif
         var takeDbsOffline = takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
+#if NET5_0
         await using var masterConnection = await OpenMasterConnection();
+#else
+        using var masterConnection = await OpenMasterConnection();
+#endif
 
         LocalDbLogging.LogIfVerbose($"SqlServerVersion: {masterConnection.ServerVersion}");
 
@@ -216,14 +232,14 @@ class Wrapper
         await takeDbsOffline;
     }
 
-    async Task<SqlConnection> OpenMasterConnection()
+    async Task<DbConnection> OpenMasterConnection()
     {
         var connection = buildConnection(MasterConnectionString);
         await connection.OpenAsync();
         return connection;
     }
 
-    async Task Rebuild(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, SqlConnection masterConnection)
+    async Task Rebuild(DateTime timestamp, Func<DbConnection, Task> buildTemplate, DbConnection masterConnection)
     {
         DeleteTemplateFiles();
         await masterConnection.ExecuteCommandAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile));
@@ -231,7 +247,11 @@ class Wrapper
         FileExtensions.MarkFileAsWritable(DataFile);
         FileExtensions.MarkFileAsWritable(LogFile);
 
+#if NET5_0
         await using (var connection = buildConnection(TemplateConnectionString))
+#else
+        using (var connection = buildConnection(TemplateConnectionString))
+#endif
         {
             await connection.OpenAsync();
             await buildTemplate(connection);
@@ -259,7 +279,11 @@ class Wrapper
     public async Task DeleteDatabase(string dbName)
     {
         var commandText = SqlBuilder.BuildDeleteDbCommand(dbName);
+#if NET5_0
         await using var connection = await OpenMasterConnection();
+#else
+        using var connection = await OpenMasterConnection();
+#endif
         await connection.ExecuteCommandAsync(commandText);
         var dataFile = Path.Combine(Directory, $"{dbName}.mdf");
         var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");

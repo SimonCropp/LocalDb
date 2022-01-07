@@ -1,5 +1,4 @@
 ﻿using EfLocalDb;
-using Xunit;
 
 namespace StaticConstructor;
 
@@ -17,11 +16,11 @@ public class Tests
 
     public async Task Test()
     {
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
-        List<object> data = new() {entity};
+        var data = new List<object> {entity};
         await using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }

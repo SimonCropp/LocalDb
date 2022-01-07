@@ -1,7 +1,4 @@
-﻿using VerifyXunit;
-using Xunit;
-
-[UsesVerify]
+﻿[UsesVerify]
 public class SqlLocalDbTests
 {
     [Fact]
@@ -28,7 +25,7 @@ public class SqlLocalDbTests
         LocalDbApi.CreateAndStart("InfoTest");
         var info = LocalDbApi.GetInstance("InfoTest");
 
-        await Verify(info);
+        await Verifier.Verify(info);
         LocalDbApi.StopAndDelete("InfoTest");
         Assert.False(LocalDbApi.GetInstance("InfoTest").Exists);
     }

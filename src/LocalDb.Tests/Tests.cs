@@ -1,12 +1,11 @@
 ﻿using LocalDb;
-using Xunit;
 
 public class Tests
 {
     [Fact]
     public async Task Simple()
     {
-        SqlInstance instance = new("Name", TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         var connection = database.Connection;
@@ -18,7 +17,7 @@ public class Tests
     public async Task Callback()
     {
         var callbackCalled = false;
-        SqlInstance instance = new(
+        var instance = new SqlInstance(
             "Tests_Callback",
             TestDbBuilder.CreateTable,
             callback: _ =>
@@ -49,10 +48,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        SqlInstance instance = new(
-            name: "Defined_TimeStamp",
-            buildTemplate: TestDbBuilder.CreateTable,
-            timestamp: dateTime);
+        var instance = new SqlInstance("Defined_TimeStamp", TestDbBuilder.CreateTable, timestamp: dateTime);
 
         await using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -61,9 +57,7 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        SqlInstance instance = new(
-            name: "Delegate_TimeStamp",
-            buildTemplate: TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("Delegate_TimeStamp", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -73,17 +67,17 @@ public class Tests
     public async Task Multiple()
     {
         var stopwatch = Stopwatch.StartNew();
-        SqlInstance instance = new("Multiple", TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
 
-        await using (var database = await instance.Build(databaseSuffix: "one"))
+        await using (await instance.Build(databaseSuffix: "one"))
         {
         }
 
-        await using (var database = await instance.Build(databaseSuffix: "two"))
+        await using (await instance.Build(databaseSuffix: "two"))
         {
         }
 
-        await using (var database = await instance.Build(databaseSuffix: "three"))
+        await using (await instance.Build(databaseSuffix: "three"))
         {
         }
 

@@ -1,5 +1,4 @@
 ﻿using EfLocalDb;
-using Xunit;
 
 #region EfClassicBuildTemplate
 
@@ -14,7 +13,7 @@ public class BuildTemplate
             buildTemplate: async context =>
             {
                 await context.CreateOnExistingDb();
-                TheEntity entity = new()
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };

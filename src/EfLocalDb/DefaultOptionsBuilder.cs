@@ -7,7 +7,7 @@ static class DefaultOptionsBuilder
     public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
         where TDbContext : DbContext
     {
-        DbContextOptionsBuilder<TDbContext> builder = new();
+        var builder = new DbContextOptionsBuilder<TDbContext>();
         if (LocalDbLogging.SqlLoggingEnabled)
         {
             builder.AddInterceptors(interceptor);
