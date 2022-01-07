@@ -10,7 +10,7 @@ public abstract class TestBase
 
     static TestBase()
     {
-        instance = new(
+        instance = new SqlInstance(
             name:"TestBaseUsage",
             buildTemplate: TestDbBuilder.CreateTable);
     }

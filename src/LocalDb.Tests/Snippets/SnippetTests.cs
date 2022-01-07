@@ -6,7 +6,7 @@ public class SnippetTests
 
     static SnippetTests()
     {
-        sqlInstance = new(
+        sqlInstance = new SqlInstance(
             name: "Snippets",
             buildTemplate: TestDbBuilder.CreateTable);
     }

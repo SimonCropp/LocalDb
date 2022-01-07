@@ -8,12 +8,12 @@ public class BuildTemplate
 
     static BuildTemplate()
     {
-        sqlInstance = new(
-            constructInstance: builder => new(builder.Options),
+        sqlInstance = new SqlInstance<BuildTemplateDbContext>(
+            constructInstance: builder => new BuildTemplateDbContext(builder.Options),
             buildTemplate: async context =>
             {
                 await context.Database.EnsureCreatedAsync();
-                TheEntity entity = new()
+                var entity = new TheEntity
                 {
                     Property = "prop"
                 };

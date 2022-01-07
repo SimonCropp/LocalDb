@@ -11,6 +11,6 @@ To cleanup perform the following actions:
  * Execute 'sqllocaldb delete {name}'
  * Delete the directory {directory}'
 ";
-        return new(message, exception);
+        return new Exception(message, exception);
     }
 }

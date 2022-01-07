@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 
 static class DefaultOptionsBuilder
 {
-    static LogCommandInterceptor interceptor = new();
+    static LogCommandInterceptor interceptor = new LogCommandInterceptor();
 
     public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
         where TDbContext : DbContext
     {
-        DbContextOptionsBuilder<TDbContext> builder = new();
+        var builder = new DbContextOptionsBuilder<TDbContext>();
         if (LocalDbLogging.SqlLoggingEnabled)
         {
             builder.AddInterceptors(interceptor);

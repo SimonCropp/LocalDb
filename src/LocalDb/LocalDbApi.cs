@@ -107,7 +107,7 @@ using System.Runtime.InteropServices;
          try
          {
              getInstances(pointer, ref count);
-             List<string> names = new(count);
+             var names = new List<string>(count);
              for (var i = 0; i < count; i++)
              {
                  var idx = IntPtr.Add(pointer, length * i);
@@ -124,7 +124,7 @@ using System.Runtime.InteropServices;
 
      public static LocalDbInstanceInfo GetInstance(string instanceName)
      {
-         LocalDbInstanceInfo info = new();
+         var info = new LocalDbInstanceInfo();
          getInstanceInfo(instanceName, ref info, Marshal.SizeOf(typeof(LocalDbInstanceInfo)));
          return info;
      }
@@ -166,7 +166,7 @@ using System.Runtime.InteropServices;
 
      public static void StartInstance(string instanceName)
      {
-         StringBuilder connection = new(MaxPath);
+         var connection = new StringBuilder(MaxPath);
          var size = connection.Capacity;
 
          startInstance(instanceName, 0, connection, ref size);

@@ -4,7 +4,7 @@ public class ExceptionBuilderTests
     [Fact]
     public Task WrapLocalDbFailure()
     {
-        var wrapped = ExceptionBuilder.WrapLocalDbFailure("InstanceName", @"c:\LocalDBData\InstanceName", new());
+        var wrapped = ExceptionBuilder.WrapLocalDbFailure("InstanceName", @"c:\LocalDBData\InstanceName", new Exception());
         return Verifier.Verify(wrapped.Message);
     }
 }

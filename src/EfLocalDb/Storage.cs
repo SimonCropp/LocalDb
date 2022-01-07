@@ -6,7 +6,7 @@ public struct Storage
     {
         Guard.AgainstNullWhiteSpace(nameof(suffix), suffix);
         var instanceName = GetInstanceName<TDbContext>(suffix);
-        return new(instanceName, DirectoryFinder.Find(instanceName));
+        return new Storage(instanceName, DirectoryFinder.Find(instanceName));
     }
 
     public Storage(string name, string directory)

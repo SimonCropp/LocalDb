@@ -5,7 +5,7 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        SqlInstance instance = new("Name", TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         var connection = database.Connection;
@@ -17,14 +17,11 @@ public class Tests
     public async Task Callback()
     {
         var callbackCalled = false;
-        SqlInstance instance = new(
-            "Tests_Callback",
-            TestDbBuilder.CreateTable,
-            callback: _ =>
-            {
-                callbackCalled = true;
-                return Task.CompletedTask;
-            });
+        var instance = new SqlInstance("Tests_Callback", TestDbBuilder.CreateTable, callback: _ =>
+        {
+            callbackCalled = true;
+            return Task.CompletedTask;
+        });
 
         await using var database = await instance.Build();
         Assert.True(callbackCalled);
@@ -48,10 +45,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        SqlInstance instance = new(
-            name: "Defined_TimeStamp",
-            buildTemplate: TestDbBuilder.CreateTable,
-            timestamp: dateTime);
+        var instance = new SqlInstance(name: "Defined_TimeStamp", buildTemplate: TestDbBuilder.CreateTable, timestamp: dateTime);
 
         await using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -60,9 +54,7 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        SqlInstance instance = new(
-            name: "Delegate_TimeStamp",
-            buildTemplate: TestDbBuilder.CreateTable);
+        var instance = new SqlInstance(name: "Delegate_TimeStamp", buildTemplate: TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -72,7 +64,7 @@ public class Tests
     public async Task Multiple()
     {
         var stopwatch = Stopwatch.StartNew();
-        SqlInstance instance = new("Multiple", TestDbBuilder.CreateTable);
+        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
 
         await using (var database = await instance.Build(databaseSuffix: "one"))
         {

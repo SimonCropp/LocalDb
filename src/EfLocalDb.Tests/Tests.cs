@@ -9,7 +9,7 @@ public class Tests
     [Fact]
     public async Task SeedData()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -21,7 +21,7 @@ public class Tests
     [Fact]
     public async Task AddData()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -34,7 +34,7 @@ public class Tests
     [Fact]
     public async Task AddDataUntracked()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -47,7 +47,7 @@ public class Tests
     [Fact]
     public async Task ExistsT()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -66,7 +66,7 @@ public class Tests
     [Fact]
     public async Task FindT()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -85,7 +85,7 @@ public class Tests
     [Fact]
     public async Task Single()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -104,7 +104,7 @@ public class Tests
     [Fact]
     public async Task CountT()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -130,7 +130,7 @@ public class Tests
     [Fact]
     public async Task Exists()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -156,7 +156,7 @@ public class Tests
     [Fact]
     public async Task Find()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -182,11 +182,11 @@ public class Tests
     [Fact]
     public async Task AddDataMultiple()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Property = "prop"
         };
@@ -200,15 +200,15 @@ public class Tests
     [Fact]
     public async Task AddDataMultipleMixed()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity3 = new()
+        var entity3 = new TestEntity
         {
             Property = "prop"
         };
@@ -224,11 +224,11 @@ public class Tests
     [Fact]
     public async Task AddDataUntrackedMultiple()
     {
-        TestEntity entity1 = new()
+        var entity1 = new TestEntity
         {
             Property = "prop"
         };
-        TestEntity entity2 = new()
+        var entity2 = new TestEntity
         {
             Property = "prop"
         };
@@ -243,11 +243,9 @@ public class Tests
     [Fact]
     public async Task SuffixedContext()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
+        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
 
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -259,11 +257,9 @@ public class Tests
     public async Task SqlOptionsBuilder()
     {
         var optionsBuilderCalled = false;
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            sqlOptionsBuilder: _ => { optionsBuilderCalled = true; });
+        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), sqlOptionsBuilder: _ => { optionsBuilderCalled = true; });
 
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -275,12 +271,9 @@ public class Tests
     [Fact]
     public async Task BuildTemplate()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
-            storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
+        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); }, storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
 
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -292,11 +285,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
-            timestamp: dateTime,
-            storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
+        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); }, timestamp: dateTime, storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -305,9 +294,7 @@ public class Tests
     [Fact]
     public async Task Assembly_TimeStamp()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
+        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -316,10 +303,7 @@ public class Tests
     [Fact]
     public async Task Delegate_TimeStamp()
     {
-        SqlInstance<TestDbContext> instance = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); },
-            storage: Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
+        var instance = new SqlInstance<TestDbContext>(constructInstance: builder => new TestDbContext(builder.Options), buildTemplate: async context => { await context.Database.EnsureCreatedAsync(); }, storage: Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
 
         await using var database = await instance.Build();
         Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -329,22 +313,17 @@ public class Tests
     public async Task WithRebuildDbContext()
     {
         var dateTime = DateTime.Now;
-        SqlInstance<WithRebuildDbContext> instance1 = new(
-            constructInstance: builder => new(builder.Options),
-            timestamp: dateTime);
+        var instance1 = new SqlInstance<WithRebuildDbContext>(constructInstance: builder => new WithRebuildDbContext(builder.Options), timestamp: dateTime);
         await using (var database1 = await instance1.Build())
         {
-            TestEntity entity = new()
+            var entity = new TestEntity
             {
                 Property = "prop"
             };
             await database1.AddData(entity);
         }
 
-        SqlInstance<WithRebuildDbContext> instance2 = new(
-            constructInstance: builder => new(builder.Options),
-            buildTemplate: _ => throw new(),
-            timestamp: dateTime);
+        var instance2 = new SqlInstance<WithRebuildDbContext>(constructInstance: builder => new WithRebuildDbContext(builder.Options), buildTemplate: _ => throw new Exception(), timestamp: dateTime);
         await using var database2 = await instance2.Build();
         Assert.Empty(database2.Context.TestEntities);
     }
@@ -352,7 +331,7 @@ public class Tests
     [Fact]
     public async Task Secondary()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "prop"
         };
@@ -383,7 +362,7 @@ public class Tests
     [Fact]
     public async Task Simple()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "Item1"
         };
@@ -395,7 +374,7 @@ public class Tests
     [Fact]
     public async Task SimpleContext()
     {
-        TestEntity entity = new()
+        var entity = new TestEntity
         {
             Property = "Item1"
         };
@@ -406,8 +385,8 @@ public class Tests
 
     public Tests()
     {
-        instance = new(
-            builder => new(builder.Options),
+        instance = new SqlInstance<TestDbContext>(
+            builder => new TestDbContext(builder.Options),
             callback: (_, _) =>
             {
                 callbackCalled = true;

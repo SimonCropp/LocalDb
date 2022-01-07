@@ -24,7 +24,7 @@ public class SqlInstance
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-        Wrapper = new(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate, callback);
+        Wrapper = new Wrapper(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate, callback);
         Wrapper.Start(resultTimestamp, buildTemplate);
     }
 
@@ -95,10 +95,7 @@ public class SqlInstance
     {
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
         var connection = await BuildContext(dbName);
-        SqlDatabase database = new(
-            connection,
-            dbName,
-            () => Wrapper.DeleteDatabase(dbName));
+        var database = new SqlDatabase(connection, dbName, () => Wrapper.DeleteDatabase(dbName));
         await database.Start();
         return database;
     }

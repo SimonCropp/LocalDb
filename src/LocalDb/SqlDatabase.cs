@@ -16,7 +16,7 @@ public class SqlDatabase :
         this.delete = delete;
         ConnectionString = connectionString;
         Name = name;
-        Connection = new(connectionString);
+        Connection = new SqlConnection(connectionString);
     }
 
     public string ConnectionString { get; }

@@ -25,7 +25,7 @@ values ({addData});";
 
     public static async Task<List<int>> GetData(DbConnection connection)
     {
-        List<int> values = new();
+        var values = new List<int>();
         await using var command = connection.CreateCommand();
         command.CommandText = "select Value from MyTable";
         await using var reader = await command.ExecuteReaderAsync();

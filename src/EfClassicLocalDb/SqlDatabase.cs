@@ -23,7 +23,7 @@ public partial class SqlDatabase<TDbContext> :
         this.delete = delete;
         this.data = data;
         ConnectionString = connectionString;
-        Connection = new(connectionString);
+        Connection = new SqlConnection(connectionString);
     }
 
     public string Name { get; }
@@ -32,7 +32,7 @@ public partial class SqlDatabase<TDbContext> :
 
     public async Task<SqlConnection> OpenNewConnection()
     {
-        SqlConnection connection = new(ConnectionString);
+        var connection = new SqlConnection(ConnectionString);
         await connection.OpenAsync();
         return connection;
     }

@@ -6,8 +6,8 @@ static class SuppliedTemplate
 
     static SuppliedTemplate()
     {
-        sqlInstance = new(
-            connection => new(connection),
-            existingTemplate: new("template.mdf", "template_log.ldf"));
+        sqlInstance = new SqlInstance<MyDbContext>(
+            connection => new MyDbContext(connection),
+            existingTemplate: new ExistingTemplate("template.mdf", "template_log.ldf"));
     }
 }

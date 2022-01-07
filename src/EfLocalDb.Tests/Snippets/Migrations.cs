@@ -11,19 +11,21 @@ public class Migrations
     {
         #region Migrations
 
-        SqlInstance<MyDbContext> sqlInstance = new(
-            buildTemplate: async (connection, options) =>
-            {
-                #region IMigrationsSqlGenerator
-                options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
-                #endregion
-                #region Migrate
+        var sqlInstance = new SqlInstance<MyDbContext>(buildTemplate: async (connection, options) =>
+        {
+            #region IMigrationsSqlGenerator
 
-                await using MyDbContext data = new(options.Options);
-                await data.Database.MigrateAsync();
-                #endregion
-            },
-            constructInstance: builder => new(builder.Options));
+            options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
+
+            #endregion
+
+            #region Migrate
+
+            await using var data = new MyDbContext(options.Options);
+            await data.Database.MigrateAsync();
+
+            #endregion
+        }, constructInstance: builder => new MyDbContext(builder.Options));
 
         #endregion
     }
@@ -36,7 +38,7 @@ public class Migrations
             IModel? model = null,
             MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
         {
-            throw new();
+            throw new Exception();
         }
     }
 

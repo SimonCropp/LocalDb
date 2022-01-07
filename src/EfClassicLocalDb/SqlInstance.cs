@@ -15,7 +15,7 @@ public class SqlInstance<TDbContext>
     static SqlInstance()
     {
         var name = typeof(TDbContext).Name;
-        DefaultStorage = new(name, DirectoryFinder.Find(name));
+        DefaultStorage = new Storage(name, DirectoryFinder.Find(name));
     }
 
     public string ServerName => Wrapper.ServerName;
@@ -65,7 +65,7 @@ public class SqlInstance<TDbContext>
                 await callback(connection, context);
             };
         }
-        Wrapper = new(
+        Wrapper = new Wrapper(
             s => new SqlConnection(s),
             storageValue.Name,
             storageValue.Directory,
@@ -140,12 +140,7 @@ public class SqlInstance<TDbContext>
     {
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
         var connection = await BuildDatabase(dbName);
-        SqlDatabase<TDbContext> database = new(
-            connection,
-            dbName,
-            constructInstance,
-            () => Wrapper.DeleteDatabase(dbName),
-            data);
+        var database = new SqlDatabase<TDbContext>(connection, dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data);
         await database.Start();
         return database;
     }

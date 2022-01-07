@@ -10,8 +10,8 @@ public abstract class TestBase
 
     static TestBase()
     {
-        sqlInstance = new(
-            constructInstance: connection => new(connection));
+        sqlInstance = new SqlInstance<TheDbContext>(
+            constructInstance: connection => new TheDbContext(connection));
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
@@ -30,7 +30,7 @@ public class Tests :
     public async Task Test()
     {
         using var database = await LocalDb();
-        TheEntity entity = new()
+        var entity = new TheEntity
         {
             Property = "prop"
         };
