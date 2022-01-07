@@ -80,7 +80,7 @@ public class Tests
     static Tests()
     {
         sqlInstance = new SqlInstance<TheDbContext>(
-            connection => new TheDbContext(connection));
+            connection => new(connection));
     }
 
     public async Task Test()
@@ -113,7 +113,7 @@ public abstract class TestBase
     static TestBase()
     {
         sqlInstance = new SqlInstance<TheDbContext>(
-            constructInstance: connection => new TheDbContext(connection));
+            constructInstance: connection => new(connection));
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
