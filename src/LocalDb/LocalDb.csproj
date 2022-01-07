@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net5</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5;net6;net461</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests.</Description>
     <PackageTags>LocalDB, Testing</PackageTags>
   </PropertyGroup>
