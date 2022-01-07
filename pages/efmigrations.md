@@ -22,7 +22,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
         await data.Database.MigrateAsync();
 
     },
-    constructInstance: builder => new MyDbContext(builder.Options));
+    constructInstance: builder => new(builder.Options));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L12-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-migrations' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

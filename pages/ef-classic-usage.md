@@ -79,7 +79,7 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
+        sqlInstance = new(
             connection => new(connection));
     }
 
@@ -112,7 +112,7 @@ public abstract class TestBase
 
     static TestBase()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
+        sqlInstance = new(
             constructInstance: connection => new(connection));
     }
 
@@ -159,8 +159,8 @@ public class BuildTemplate
 
     static BuildTemplate()
     {
-        sqlInstance = new SqlInstance<BuildTemplateDbContext>(
-            constructInstance: connection => new BuildTemplateDbContext(connection),
+        sqlInstance = new(
+            constructInstance: connection => new(connection),
             buildTemplate: async context =>
             {
                 await context.CreateOnExistingDb();
@@ -198,7 +198,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L16-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -212,7 +212,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -232,8 +232,7 @@ public class EfSnippetTests
 
     static EfSnippetTests()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            connection => new MyDbContext(connection));
+        sqlInstance = new(connection => new(connection));
     }
 
     [Fact]
@@ -271,7 +270,7 @@ public class EfSnippetTests
 }
 #endif
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -290,9 +289,9 @@ static class SuppliedTemplate
 
     static SuppliedTemplate()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            connection => new MyDbContext(connection),
-            existingTemplate: new ExistingTemplate("template.mdf", "template_log.ldf"));
+        sqlInstance = new(
+            connection => new(connection),
+            existingTemplate: new("template.mdf", "template_log.ldf"));
     }
 }
 ```

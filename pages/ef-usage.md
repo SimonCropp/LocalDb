@@ -78,7 +78,7 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
+        sqlInstance = new(
             builder => new(builder.Options));
     }
 
@@ -111,7 +111,7 @@ public abstract class TestBase
 
     static TestBase()
     {
-        sqlInstance = new SqlInstance<TheDbContext>(
+        sqlInstance = new(
             constructInstance: builder => new(builder.Options));
     }
 
@@ -153,7 +153,7 @@ Some SqlServer options are exposed by passing a `Action<SqlServerDbContextOption
 <a id='snippet-sqloptionsbuilder'></a>
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
-    constructInstance: builder => new MyDbContext(builder.Options),
+    constructInstance: builder => new(builder.Options),
     sqlOptionsBuilder: sqlBuilder => sqlBuilder.EnableRetryOnFailure(5));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/SqlBuilder.cs#L8-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-sqloptionsbuilder' title='Start of snippet'>anchor</a></sup>
@@ -173,8 +173,8 @@ public class BuildTemplate
 
     static BuildTemplate()
     {
-        sqlInstance = new SqlInstance<BuildTemplateDbContext>(
-            constructInstance: builder => new BuildTemplateDbContext(builder.Options),
+        sqlInstance = new(
+            constructInstance: builder => new(builder.Options),
             buildTemplate: async context =>
             {
                 await context.Database.EnsureCreatedAsync();
@@ -244,8 +244,8 @@ public class EfSnippetTests
     static SqlInstance<MyDbContext> sqlInstance;
     static EfSnippetTests()
     {
-        sqlInstance = new SqlInstance<MyDbContext>(
-            builder => new MyDbContext(builder.Options));
+        sqlInstance = new(
+            builder => new(builder.Options));
     }
 
     [Fact]
@@ -298,7 +298,7 @@ using Microsoft.EntityFrameworkCore;
 
 static class DefaultOptionsBuilder
 {
-    static LogCommandInterceptor interceptor = new LogCommandInterceptor();
+    static LogCommandInterceptor interceptor = new();
 
     public static DbContextOptionsBuilder<TDbContext> Build<TDbContext>()
         where TDbContext : DbContext

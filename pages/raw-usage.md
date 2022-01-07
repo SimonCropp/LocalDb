@@ -88,7 +88,7 @@ public class Tests
 
     static Tests()
     {
-        sqlInstance = new SqlInstance(
+        sqlInstance = new(
             name: "StaticConstructorInstance",
             buildTemplate: TestDbBuilder.CreateTable);
     }
@@ -119,7 +119,7 @@ public abstract class TestBase
 
     static TestBase()
     {
-        instance = new SqlInstance(
+        instance = new(
             name:"TestBaseUsage",
             buildTemplate: TestDbBuilder.CreateTable);
     }
@@ -196,7 +196,7 @@ public class SnippetTests
 
     static SnippetTests()
     {
-        sqlInstance = new SqlInstance(
+        sqlInstance = new(
             name: "Snippets",
             buildTemplate: TestDbBuilder.CreateTable);
     }

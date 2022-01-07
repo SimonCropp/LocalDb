@@ -53,7 +53,7 @@ var sqlInstance = new SqlInstance(
 ```cs
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new(builder.Options),
-    storage: new Storage("theInstanceName", @"C:\LocalDb\theInstance"));
+    storage: new("theInstanceName", @"C:\LocalDb\theInstance"));
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
