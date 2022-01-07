@@ -11,7 +11,7 @@ public class Tests
     static Tests()
     {
         sqlInstance = new SqlInstance<TheDbContext>(
-            builder => new TheDbContext(builder.Options));
+            builder => new(builder.Options));
     }
 
     public async Task Test()

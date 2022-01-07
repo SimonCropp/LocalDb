@@ -11,7 +11,7 @@ public abstract class TestBase
     static TestBase()
     {
         sqlInstance = new SqlInstance<TheDbContext>(
-            constructInstance: connection => new TheDbContext(connection));
+            constructInstance: connection => new(connection));
     }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(

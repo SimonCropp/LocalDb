@@ -11,7 +11,7 @@ namespace StaticConstructor
         static Tests()
         {
             sqlInstance = new SqlInstance<TheDbContext>(
-                connection => new TheDbContext(connection));
+                connection => new(connection));
         }
 
         public async Task Test()
