@@ -17,16 +17,29 @@ public class SqlDatabase :
         ConnectionString = connectionString;
         Name = name;
         Connection = new(connectionString);
+        dataConnection = new Lazy<DataSqlConnection>(() =>
+        {
+            var connection = new DataSqlConnection(connectionString);
+            connection.Open();
+            return connection;
+        });
     }
 
     public string ConnectionString { get; }
     public string Name { get; }
 
     public SqlConnection Connection { get; }
+    private Lazy<DataSqlConnection> dataConnection;
+    public DataSqlConnection DataConnection { get => dataConnection.Value; }
 
     public static implicit operator SqlConnection(SqlDatabase instance)
     {
         return instance.Connection;
+    }
+
+    public static implicit operator DataSqlConnection(SqlDatabase instance)
+    {
+        return instance.DataConnection;
     }
 
     public async Task<SqlConnection> OpenNewConnection()
@@ -51,12 +64,20 @@ public class SqlDatabase :
     public void Dispose()
     {
         Connection.Dispose();
+        if (dataConnection.IsValueCreated)
+        {
+            dataConnection.Value.Dispose();
+        }
     }
 
 #if(!NETSTANDARD2_0 && !NET461)
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        return Connection.DisposeAsync();
+        await Connection.DisposeAsync();
+        if (dataConnection.IsValueCreated)
+        {
+            await dataConnection.Value.DisposeAsync();
+        }
     }
 #endif
 
