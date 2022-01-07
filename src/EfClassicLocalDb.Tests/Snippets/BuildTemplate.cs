@@ -8,7 +8,7 @@ public class BuildTemplate
 
     static BuildTemplate()
     {
-        sqlInstance = new SqlInstance<BuildTemplateDbContext>(
+        sqlInstance = new(
             constructInstance: connection => new BuildTemplateDbContext(connection),
             buildTemplate: async context =>
             {
