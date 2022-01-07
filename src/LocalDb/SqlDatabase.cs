@@ -45,7 +45,7 @@ public class SqlDatabase :
         Connection.Dispose();
     }
 
-#if(!NETSTANDARD2_0)
+#if(!NETSTANDARD2_0 && !NET461)
         public ValueTask DisposeAsync()
         {
             return Connection.DisposeAsync();
@@ -54,7 +54,7 @@ public class SqlDatabase :
 
     public async Task Delete()
     {
-#if(NETSTANDARD2_0)
+#if(NETSTANDARD2_0 || NET461)
         Dispose();
 #else
             await DisposeAsync();
