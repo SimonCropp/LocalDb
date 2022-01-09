@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Microsoft.Data.SqlClient;
+using DataSqlConnection = System.Data.SqlClient.SqlConnection;
 
 namespace LocalDb;
 
@@ -16,7 +17,8 @@ public class SqlInstance
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<DbConnection, Task>? callback = null)
+        Func<DbConnection, Task>? callback = null,
+        Func<string, DbConnection>? buildConnection = null)
     {
         Guard.AgainstWhiteSpace(nameof(directory), directory);
         Guard.AgainstNullWhiteSpace(nameof(name), name);
@@ -24,8 +26,67 @@ public class SqlInstance
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-        Wrapper = new(s => new SqlConnection(s), name, directory, templateSize, exitingTemplate, callback);
+        buildConnection ??= s => new SqlConnection(s);
+
+        Wrapper = new(buildConnection, name, directory, templateSize, exitingTemplate, callback);
         Wrapper.Start(resultTimestamp, buildTemplate);
+    }
+
+    public SqlInstance(
+        string name,
+        Func<DataSqlConnection, Task> buildTemplate,
+        string? directory = null,
+        DateTime? timestamp = null,
+        ushort templateSize = 3,
+        ExistingTemplate? exitingTemplate = null,
+        Func<DataSqlConnection, Task>? callback = null) :
+        this(
+            name,
+            connection => buildTemplate((DataSqlConnection) connection),
+            directory,
+            timestamp,
+            templateSize,
+            exitingTemplate,
+            connection =>
+            {
+                if (callback == null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                return callback.Invoke((DataSqlConnection) connection);
+            },
+            s => new DataSqlConnection(s))
+    {
+    }
+
+
+    public SqlInstance(
+        string name,
+        Func<SqlConnection, Task> buildTemplate,
+        string? directory = null,
+        DateTime? timestamp = null,
+        ushort templateSize = 3,
+        ExistingTemplate? exitingTemplate = null,
+        Func<SqlConnection, Task>? callback = null) :
+        this(
+            name,
+            connection => buildTemplate((SqlConnection) connection),
+            directory,
+            timestamp,
+            templateSize,
+            exitingTemplate,
+            connection =>
+            {
+                if (callback == null)
+                {
+                    return Task.CompletedTask;
+                }
+
+                return callback.Invoke((SqlConnection) connection);
+            },
+            s => new SqlConnection(s))
+    {
     }
 
     static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate, Assembly callingAssembly)
