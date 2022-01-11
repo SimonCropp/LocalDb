@@ -12,8 +12,8 @@ public class SnippetTests
         #region BuildDatabase
         await using var database = await sqlInstance.Build();
         #region BuildContext
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        await TestDbBuilder.AddData(database);
+        Assert.Single(await TestDbBuilder.GetData(database));
         #endregion
         #endregion
     }
@@ -24,7 +24,7 @@ public class SnippetTests
         #region WithDbName
         await using var database = await sqlInstance.Build("TheTestWithDbName");
         #endregion
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        await TestDbBuilder.AddData(database);
+        Assert.Single(await TestDbBuilder.GetData(database));
     }
 }

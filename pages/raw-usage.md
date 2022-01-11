@@ -92,8 +92,8 @@ public class Tests
     public async Task Test()
     {
         await using var database = await sqlInstance.Build();
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        await TestDbBuilder.AddData(database);
+        Assert.Single(await TestDbBuilder.GetData(database));
     }
 }
 ```
@@ -135,8 +135,8 @@ public class Tests:
     public async Task Test()
     {
         await using var database = await LocalDb();
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        await TestDbBuilder.AddData(database);
+        Assert.Single(await TestDbBuilder.GetData(database));
     }
 }
 ```
@@ -155,8 +155,8 @@ Usage inside a test consists of two parts:
 <a id='snippet-builddatabase'></a>
 ```cs
 await using var database = await sqlInstance.Build();
-await TestDbBuilder.AddData(database.Connection);
-Assert.Single(await TestDbBuilder.GetData(database.Connection));
+await TestDbBuilder.AddData(database);
+Assert.Single(await TestDbBuilder.GetData(database));
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L12-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -169,8 +169,8 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 <!-- snippet: BuildContext -->
 <a id='snippet-buildcontext'></a>
 ```cs
-await TestDbBuilder.AddData(database.Connection);
-Assert.Single(await TestDbBuilder.GetData(database.Connection));
+await TestDbBuilder.AddData(database);
+Assert.Single(await TestDbBuilder.GetData(database));
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L14-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -194,15 +194,15 @@ public class SnippetTests
     public async Task TheTest()
     {
         await using var database = await sqlInstance.Build();
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        await TestDbBuilder.AddData(database);
+        Assert.Single(await TestDbBuilder.GetData(database));
     }
 
     public async Task TheTestWithDbName()
     {
         await using var database = await sqlInstance.Build("TheTestWithDbName");
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        await TestDbBuilder.AddData(database);
+        Assert.Single(await TestDbBuilder.GetData(database));
     }
 }
 ```

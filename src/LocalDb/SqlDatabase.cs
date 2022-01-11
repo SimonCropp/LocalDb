@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
+using Microsoft.Data.SqlClient;
 using DataSqlConnection = System.Data.SqlClient.SqlConnection;
 
 namespace LocalDb;
@@ -33,6 +34,11 @@ public class SqlDatabase :
     public DataSqlConnection DataConnection { get => dataConnection.Value; }
 
     public static implicit operator SqlConnection(SqlDatabase instance)
+    {
+        return instance.Connection;
+    }
+
+    public static implicit operator DbConnection(SqlDatabase instance)
     {
         return instance.Connection;
     }

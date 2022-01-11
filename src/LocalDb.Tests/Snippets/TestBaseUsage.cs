@@ -31,8 +31,8 @@ public class Tests:
     public async Task Test()
     {
         await using var database = await LocalDb();
-        await TestDbBuilder.AddData(database.Connection);
-        Assert.Single(await TestDbBuilder.GetData(database.Connection));
+        await TestDbBuilder.AddData(database);
+        Assert.Single(await TestDbBuilder.GetData(database));
     }
 }
 

@@ -1,8 +1,10 @@
-﻿using System.Linq.Expressions;
+﻿using System.Data.Common;
+using System.Linq.Expressions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using DataSqlConnection = System.Data.SqlClient.SqlConnection;
 
 namespace EfLocalDb;
 
@@ -30,15 +32,30 @@ public partial class SqlDatabase<TDbContext> :
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         ConnectionString = connectionString;
         Connection = new(connectionString);
+        dataConnection = new Lazy<DataSqlConnection>(() =>
+        {
+            var connection = new DataSqlConnection(connectionString);
+            connection.Open();
+            return connection;
+        });
     }
 
     public string Name { get; }
     public SqlConnection Connection { get; }
+    private Lazy<DataSqlConnection> dataConnection;
+    public DataSqlConnection DataConnection { get => dataConnection.Value; }
     public string ConnectionString { get; }
 
     public async Task<SqlConnection> OpenNewConnection()
     {
         var connection = new SqlConnection(ConnectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+
+    public async Task<DataSqlConnection> OpenNewDataConnection()
+    {
+        var connection = new DataSqlConnection(ConnectionString);
         await connection.OpenAsync();
         return connection;
     }
@@ -51,6 +68,16 @@ public partial class SqlDatabase<TDbContext> :
     public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance)
     {
         return instance.Connection;
+    }
+
+    public static implicit operator DbConnection(SqlDatabase<TDbContext> instance)
+    {
+        return instance.Connection;
+    }
+
+    public static implicit operator DataSqlConnection(SqlDatabase<TDbContext> instance)
+    {
+        return instance.DataConnection;
     }
 
     public async Task Start()
@@ -143,6 +170,11 @@ public partial class SqlDatabase<TDbContext> :
         // ReSharper restore ConditionIsAlwaysTrueOrFalse
 
         await Connection.DisposeAsync();
+
+        if (dataConnection.IsValueCreated)
+        {
+            await dataConnection.Value.DisposeAsync();
+        }
     }
 
     public async Task Delete()
@@ -180,6 +212,7 @@ public partial class SqlDatabase<TDbContext> :
         var keyString = string.Join(", ", keys);
         throw new("No record found with keys: " + keyString);
     }
+
     /// <summary>
     /// Calls <see cref="DbSet{TEntity}.FindAsync(object[])"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
     /// </summary>
