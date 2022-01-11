@@ -84,14 +84,9 @@ If all tests that need to use the SqlInstance existing in the same test class, t
 ```cs
 public class Tests
 {
-    static SqlInstance sqlInstance;
-
-    static Tests()
-    {
-        sqlInstance = new(
+    static SqlInstance sqlInstance = new(
             name: "StaticConstructorInstance",
             buildTemplate: TestDbBuilder.CreateTable);
-    }
 
     [Fact]
     public async Task Test()
@@ -102,7 +97,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L5-L27' title='Snippet source file'>snippet source</a> | <a href='#snippet-staticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L5-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-staticconstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -163,7 +158,7 @@ await using var database = await sqlInstance.Build();
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L17-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L12-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -177,7 +172,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await TestDbBuilder.AddData(database.Connection);
 Assert.Single(await TestDbBuilder.GetData(database.Connection));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L19-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L14-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -192,14 +187,9 @@ using LocalDb;
 
 public class SnippetTests
 {
-    static SqlInstance sqlInstance;
-
-    static SnippetTests()
-    {
-        sqlInstance = new(
-            name: "Snippets",
-            buildTemplate: TestDbBuilder.CreateTable);
-    }
+    static SqlInstance sqlInstance = new(
+        name: "Snippets",
+        buildTemplate: TestDbBuilder.CreateTable);
 
     public async Task TheTest()
     {
@@ -216,5 +206,5 @@ public class SnippetTests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L27' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

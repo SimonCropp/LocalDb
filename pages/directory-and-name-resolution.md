@@ -162,7 +162,7 @@ Which can be used as follows:
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L29-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L24-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

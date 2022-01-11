@@ -2,14 +2,9 @@
 
 public class SnippetTests
 {
-    static SqlInstance sqlInstance;
-
-    static SnippetTests()
-    {
-        sqlInstance = new(
-            name: "Snippets",
-            buildTemplate: TestDbBuilder.CreateTable);
-    }
+    static SqlInstance sqlInstance = new(
+        name: "Snippets",
+        buildTemplate: TestDbBuilder.CreateTable);
 
     #region Test
     public async Task TheTest()
