@@ -9,7 +9,8 @@ using DataSqlConnection = System.Data.SqlClient.SqlConnection;
 namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
-    IAsyncDisposable
+    IAsyncDisposable,
+    IDbContextFactory<TDbContext>
     where TDbContext : DbContext
 {
     ConstructInstance<TDbContext> constructInstance;
@@ -126,6 +127,11 @@ public partial class SqlDatabase<TDbContext> :
     public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellation = default)
     {
         return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
+    }
+
+    TDbContext IDbContextFactory<TDbContext>.CreateDbContext()
+    {
+        return NewDbContext();
     }
 
     public TDbContext NewDbContext(QueryTrackingBehavior? tracking = null)
