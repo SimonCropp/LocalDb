@@ -25,7 +25,7 @@ public class SqlLocalDbTests
         LocalDbApi.CreateAndStart("InfoTest");
         var info = LocalDbApi.GetInstance("InfoTest");
 
-        await Verifier.Verify(info);
+        await Verify(info);
         LocalDbApi.StopAndDelete("InfoTest");
         Assert.False(LocalDbApi.GetInstance("InfoTest").Exists);
     }
