@@ -1,5 +1,8 @@
+using System.Runtime.InteropServices;
+
 static class Guard
 {
+    internal static bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     static char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
 
     public static void AgainstInvalidFileName(string argumentName, string value)
@@ -7,6 +10,14 @@ static class Guard
         if (value.Any(x => invalidFileNameChars.Contains(x)))
         {
             throw new ArgumentException($"Invalid file name: {value}", argumentName);
+        }
+    }
+
+    public static void AgainstBadOS()
+    {
+        if (!IsWindows)
+        {
+            throw new ("Only windows is supported");
         }
     }
 

@@ -30,6 +30,7 @@ class Wrapper
         ExistingTemplate? existingTemplate = null,
         Func<DbConnection, Task>? callback = null)
     {
+        Guard.AgainstBadOS();
         Guard.AgainstDatabaseSize(nameof(size), size);
         Guard.AgainstInvalidFileName(nameof(instance), instance);
 

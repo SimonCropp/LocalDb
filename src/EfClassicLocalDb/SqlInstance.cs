@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
 using System.Data.Entity;
 using System.Data.SqlClient;
+
 // ReSharper disable RedundantCast
 
 namespace EfLocalDb;
@@ -8,8 +9,8 @@ namespace EfLocalDb;
 public class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
-    internal Wrapper Wrapper { get; }
-    ConstructInstance<TDbContext> constructInstance;
+    internal Wrapper Wrapper { get; } = null!;
+    ConstructInstance<TDbContext> constructInstance = null!;
     static Storage DefaultStorage;
 
     static SqlInstance()
@@ -48,6 +49,10 @@ public class SqlInstance<TDbContext>
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null)
     {
+        if (!Guard.IsWindows)
+        {
+            return;
+        }
         storage ??= DefaultStorage;
 
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
@@ -110,6 +115,7 @@ public class SqlInstance<TDbContext>
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
+        Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
         Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
         Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
@@ -131,6 +137,7 @@ public class SqlInstance<TDbContext>
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
+        Guard.AgainstBadOS();
         return Build(null, testFile, databaseSuffix, memberName);
     }
 
@@ -138,6 +145,7 @@ public class SqlInstance<TDbContext>
         string dbName,
         IEnumerable<object>? data)
     {
+        Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
         var connection = await BuildDatabase(dbName);
         var database = new SqlDatabase<TDbContext>(connection, dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data);
@@ -147,6 +155,7 @@ public class SqlInstance<TDbContext>
 
     public Task<SqlDatabase<TDbContext>> Build(string dbName)
     {
+        Guard.AgainstBadOS();
         return Build(dbName, (IEnumerable<object>?) null);
     }
 

@@ -6,7 +6,7 @@ namespace LocalDb;
 
 public class SqlInstance
 {
-    internal readonly Wrapper Wrapper;
+    internal readonly Wrapper Wrapper = null!;
 
     public string ServerName => Wrapper.ServerName;
 
@@ -20,6 +20,11 @@ public class SqlInstance
         Func<DbConnection, Task>? callback = null,
         Func<string, DbConnection>? buildConnection = null)
     {
+        if (!Guard.IsWindows)
+        {
+            return;
+        }
+
         Guard.AgainstWhiteSpace(nameof(directory), directory);
         Guard.AgainstNullWhiteSpace(nameof(name), name);
         directory = DirectoryFinder.Find(name);
@@ -106,6 +111,7 @@ public class SqlInstance
 
     public void Cleanup()
     {
+        Guard.AgainstBadOS();
         Wrapper.DeleteInstance();
     }
 
@@ -136,6 +142,7 @@ public class SqlInstance
             [CallerMemberName] string memberName = "")
         #endregion
     {
+        Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
         Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
         Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
@@ -154,6 +161,7 @@ public class SqlInstance
     public async Task<SqlDatabase> Build(string dbName)
         #endregion
     {
+        Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
         var connection = await BuildContext(dbName);
         var database = new SqlDatabase(connection, dbName, () => Wrapper.DeleteDatabase(dbName));

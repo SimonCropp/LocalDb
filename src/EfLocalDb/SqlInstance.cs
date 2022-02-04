@@ -10,8 +10,8 @@ namespace EfLocalDb;
 public class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
-    internal Wrapper Wrapper { get; }
-    ConstructInstance<TDbContext> constructInstance;
+    internal Wrapper Wrapper { get; } = null!;
+    ConstructInstance<TDbContext> constructInstance = null!;
     static Storage DefaultStorage;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
 
@@ -21,7 +21,7 @@ public class SqlInstance<TDbContext>
         DefaultStorage = new(name, DirectoryFinder.Find(name));
     }
 
-    public IModel Model { get; }
+    public IModel Model { get; } = null!;
 
     public string ServerName => Wrapper.ServerName;
 
@@ -80,6 +80,10 @@ public class SqlInstance<TDbContext>
         Callback<TDbContext>? callback = null,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null)
     {
+        if (!Guard.IsWindows)
+        {
+            return;
+        }
         storage ??= DefaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         Model = BuildModel(constructInstance);
@@ -165,6 +169,7 @@ public class SqlInstance<TDbContext>
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
+        Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
         Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
         Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
@@ -181,6 +186,7 @@ public class SqlInstance<TDbContext>
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
+        Guard.AgainstBadOS();
         await using var build = await Build(data, testFile, databaseSuffix, memberName);
         return build.NewConnectionOwnedDbContext();
     }
@@ -196,6 +202,7 @@ public class SqlInstance<TDbContext>
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
+        Guard.AgainstBadOS();
         return Build(null, testFile, databaseSuffix, memberName);
     }
 
@@ -204,6 +211,7 @@ public class SqlInstance<TDbContext>
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
     {
+        Guard.AgainstBadOS();
         await using var build = await Build(testFile, databaseSuffix, memberName);
         return build.NewConnectionOwnedDbContext();
     }
@@ -212,6 +220,7 @@ public class SqlInstance<TDbContext>
         string dbName,
         IEnumerable<object>? data)
     {
+        Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
         var connection = await BuildDatabase(dbName);
         var database = new SqlDatabase<TDbContext>(connection, dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data, sqlOptionsBuilder);
@@ -223,17 +232,20 @@ public class SqlInstance<TDbContext>
         string dbName,
         IEnumerable<object>? data)
     {
+        Guard.AgainstBadOS();
         await using var build = await Build(dbName, data);
         return build.NewConnectionOwnedDbContext();
     }
 
     public Task<SqlDatabase<TDbContext>> Build(string dbName)
     {
+        Guard.AgainstBadOS();
         return Build(dbName, (IEnumerable<object>?) null);
     }
 
     public async Task<TDbContext> BuildContext(string dbName)
     {
+        Guard.AgainstBadOS();
         await using var build = await Build(dbName, (IEnumerable<object>?) null);
         return build.NewConnectionOwnedDbContext();
     }
