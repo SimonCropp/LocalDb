@@ -100,9 +100,9 @@ public partial class SqlDatabase<TDbContext> :
     /// <summary>
     /// Calls <see cref="DbContext.SaveChanges()"/> on <see cref="Context"/>.
     /// </summary>
-    public int SaveChangesAsync()
+    public Task<int> SaveChangesAsync()
     {
-        return Context.SaveChanges();
+        return Context.SaveChangesAsync();
     }
 
     /// <summary>
