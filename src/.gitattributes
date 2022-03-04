@@ -3,6 +3,8 @@
 *.xml     -text 
 *.targets -text
 *.txt -text
+.editorconfig -text
+*.sln.DotSettings -text
 
 # Denote all files that are truly binary and should not be modified.
 *.ldf binary
