@@ -5,4 +5,5 @@
 *.ldf binary
 *.mdf binary
 *.snk binary
+*.json -text
 *.png binary
