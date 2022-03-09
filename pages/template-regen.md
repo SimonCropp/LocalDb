@@ -35,20 +35,17 @@ public static class Timestamp
             var targetAssembly = @delegate.Target.GetType().Assembly;
             return LastModified(targetAssembly);
         }
+
         var declaringAssembly = @delegate.Method.DeclaringType!.Assembly;
         return LastModified(declaringAssembly);
     }
 
     public static DateTime LastModified(Assembly assembly)
-    {
-        return File.GetLastWriteTime(assembly.Location);
-    }
+        => File.GetLastWriteTime(assembly.Location);
 
     public static DateTime LastModified<T>()
-    {
-        return File.GetLastWriteTime(typeof(T).Assembly.Location);
-    }
+        => File.GetLastWriteTime(typeof(T).Assembly.Location);
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L7-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L7-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

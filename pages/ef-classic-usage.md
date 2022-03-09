@@ -35,13 +35,10 @@ public class TheDbContext :
     {
     }
 
-    protected override void OnModelCreating(DbModelBuilder model)
-    {
-        model.Entity<TheEntity>();
-    }
+    protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TheEntity>();
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheEntity.cs -->
@@ -77,11 +74,9 @@ public class Tests
 {
     static SqlInstance<TheDbContext> sqlInstance;
 
-    static Tests()
-    {
+    static Tests() =>
         sqlInstance = new(
             connection => new(connection));
-    }
 
     public async Task Test()
     {
@@ -89,13 +84,16 @@ public class Tests
         {
             Property = "prop"
         };
-        var data = new List<object> {entity};
+        var data = new List<object>
+        {
+            entity
+        };
         using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L6-L28' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L6-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -110,19 +108,15 @@ public abstract class TestBase
 {
     static SqlInstance<TheDbContext> sqlInstance;
 
-    static TestBase()
-    {
+    static TestBase() =>
         sqlInstance = new(
             constructInstance: connection => new(connection));
-    }
 
     public Task<SqlDatabase<TheDbContext>> LocalDb(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
-    {
-        return sqlInstance.Build(testFile, databaseSuffix, memberName);
-    }
+        [CallerMemberName] string memberName = "") =>
+        sqlInstance.Build(testFile, databaseSuffix, memberName);
 }
 
 public class Tests :
@@ -142,7 +136,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L5-L43' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L5-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -157,8 +151,7 @@ public class BuildTemplate
 {
     static SqlInstance<BuildTemplateDbContext> sqlInstance;
 
-    static BuildTemplate()
-    {
+    static BuildTemplate() =>
         sqlInstance = new(
             constructInstance: connection => new(connection),
             buildTemplate: async context =>
@@ -171,7 +164,6 @@ public class BuildTemplate
                 context.TestEntities.Add(entity);
                 await context.SaveChangesAsync();
             });
-    }
 
     [Fact]
     public async Task Test()
@@ -182,7 +174,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildtemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -198,7 +190,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L16-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L13-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -212,7 +204,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -230,17 +222,20 @@ public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
 
-    static EfSnippetTests()
-    {
-        sqlInstance = new(connection => new(connection));
-    }
+    static EfSnippetTests() => sqlInstance = new(connection => new(connection));
 
     [Fact]
     public async Task TheTest()
     {
+
         using var database = await sqlInstance.Build();
+
+
+
         using (var data = database.NewDbContext())
         {
+
+
             var entity = new TheEntity
             {
                 Property = "prop"
@@ -270,7 +265,7 @@ public class EfSnippetTests
 }
 #endif
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L49' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -287,13 +282,11 @@ static class SuppliedTemplate
 {
     static SqlInstance<MyDbContext> sqlInstance;
 
-    static SuppliedTemplate()
-    {
+    static SuppliedTemplate() =>
         sqlInstance = new(
             connection => new(connection),
             existingTemplate: new("template.mdf", "template_log.ldf"));
-    }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

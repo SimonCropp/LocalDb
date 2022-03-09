@@ -19,7 +19,7 @@ To enable verbose logging use `LocalDbLogging`:
 ```cs
 LocalDbLogging.EnableVerbose();
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L7' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdbloggingusage' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L5-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdbloggingusage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 The full implementation is:
@@ -28,12 +28,12 @@ The full implementation is:
 <a id='snippet-localdblogging'></a>
 ```cs
 /// <summary>
-/// Controls the logging level.
+///     Controls the logging level.
 /// </summary>
 public static class LocalDbLogging
 {
     /// <summary>
-    /// Enable verbose logging to <see cref="Trace.WriteLine(string)"/>
+    ///     Enable verbose logging to <see cref="Trace.WriteLine(string)" />
     /// </summary>
     public static void EnableVerbose(bool sqlLogging = false)
     {
@@ -41,6 +41,7 @@ public static class LocalDbLogging
         {
             throw new("Must be called prior to `SqlInstance` being created.");
         }
+
         Enabled = true;
         SqlLoggingEnabled = sqlLogging;
     }
@@ -70,7 +71,7 @@ public static class LocalDbLogging
     }
 }
 ```
-<sup><a href='/src/LocalDb/LocalDbLogging.cs#L1-L44' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdblogging' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/LocalDbLogging.cs#L1-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdblogging' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which is then combined with [Fody MethodTimer](https://github.com/Fody/MethodTimer):
@@ -86,6 +87,7 @@ static class MethodTimeLogger
         {
             return;
         }
+
         if (message is null)
         {
             LocalDbLogging.Log($"{method.Name} {milliseconds}ms");
@@ -96,7 +98,7 @@ static class MethodTimeLogger
     }
 }
 ```
-<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L1-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/MethodTimeLogger.cs#L1-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-methodtimelogger' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -109,7 +111,7 @@ SQL statements can be logged:
 ```cs
 LocalDbLogging.EnableVerbose(sqlLogging: true);
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L8-L10' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdbloggingusagesqllogging' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/LocalDbLoggingUsage.cs#L11-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-localdbloggingusagesqllogging' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 And an example database creation message would be:

@@ -20,9 +20,11 @@ namespace LocalDb
             return LastModified(declaringAssembly);
         }
 
-        public static DateTime LastModified(Assembly assembly) => File.GetLastWriteTime(assembly.Location);
+        public static DateTime LastModified(Assembly assembly)
+            => File.GetLastWriteTime(assembly.Location);
 
-        public static DateTime LastModified<T>() => File.GetLastWriteTime(typeof(T).Assembly.Location);
+        public static DateTime LastModified<T>()
+            => File.GetLastWriteTime(typeof(T).Assembly.Location);
     }
 
     #endregion

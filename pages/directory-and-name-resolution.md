@@ -42,7 +42,7 @@ var sqlInstance = new SqlInstance(
     buildTemplate: TestDbBuilder.CreateTable,
     directory: @"C:\LocalDb\theInstance");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L7-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -55,7 +55,7 @@ var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new(builder.Options),
     storage: new("theInstanceName", @"C:\LocalDb\theInstance"));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L7-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -94,26 +94,26 @@ The convention signature is as follows:
 <a id='snippet-conventionbuildsignature'></a>
 ```cs
 /// <summary>
-///   Build database with a name based on the calling Method.
+///     Build database with a name based on the calling Method.
 /// </summary>
 /// <param name="testFile">
-/// The path to the test class.
-/// Used to make the database name unique per test type.
+///     The path to the test class.
+///     Used to make the database name unique per test type.
 /// </param>
 /// <param name="databaseSuffix">
-/// For Xunit theories add some text based on the inline data
-/// to make the db name unique.
+///     For Xunit theories add some text based on the inline data
+///     to make the db name unique.
 /// </param>
 /// <param name="memberName">
-/// Used to make the db name unique per method.
-/// Will default to the caller method name is used.
+///     Used to make the db name unique per method.
+///     Will default to the caller method name is used.
 /// </param>
 public Task<SqlDatabase> Build(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L123-L143' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L120-L142' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -130,10 +130,11 @@ public static string DeriveDbName(
     {
         return $"{testClass}_{member}";
     }
+
     return $"{testClass}_{member}_{suffix}";
 }
 ```
-<sup><a href='/src/LocalDb/DbNamer.cs#L3-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-derivename' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/DbNamer.cs#L3-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-derivename' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -145,11 +146,11 @@ If full control over the database name is required, there is an overload that ta
 <a id='snippet-explicitbuildsignature'></a>
 ```cs
 /// <summary>
-///   Build database with an explicit name.
+///     Build database with an explicit name.
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L157-L162' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L157-L164' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:
@@ -162,7 +163,7 @@ Which can be used as follows:
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L24-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L31-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -173,5 +174,5 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L42-L44' title='Snippet source file'>snippet source</a> | <a href='#snippet-efwithdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L48-L52' title='Snippet source file'>snippet source</a> | <a href='#snippet-efwithdbname' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

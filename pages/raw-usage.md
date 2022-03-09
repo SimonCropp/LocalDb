@@ -33,7 +33,7 @@ public static class TestDbBuilder
         await command.ExecuteNonQueryAsync();
     }
 
-    static int intData = 0;
+    static int intData;
 
     public static async Task<int> AddData(DbConnection connection)
     {
@@ -85,8 +85,8 @@ If all tests that need to use the SqlInstance existing in the same test class, t
 public class Tests
 {
     static SqlInstance sqlInstance = new(
-            name: "StaticConstructorInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
+        name: "StaticConstructorInstance",
+        buildTemplate: TestDbBuilder.CreateTable);
 
     [Fact]
     public async Task Test()
@@ -112,23 +112,19 @@ public abstract class TestBase
 {
     static SqlInstance instance;
 
-    static TestBase()
-    {
+    static TestBase() =>
         instance = new(
-            name:"TestBaseUsage",
+            name: "TestBaseUsage",
             buildTemplate: TestDbBuilder.CreateTable);
-    }
 
     public Task<SqlDatabase> LocalDb(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
-    {
-        return instance.Build(testFile, databaseSuffix, memberName);
-    }
+        [CallerMemberName] string memberName = "") =>
+        instance.Build(testFile, databaseSuffix, memberName);
 }
 
-public class Tests:
+public class Tests :
     TestBase
 {
     [Fact]
@@ -140,7 +136,7 @@ public class Tests:
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L5-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-testbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L5-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-testbase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -155,10 +151,11 @@ Usage inside a test consists of two parts:
 <a id='snippet-builddatabase'></a>
 ```cs
 await using var database = await sqlInstance.Build();
+
 await TestDbBuilder.AddData(database);
 Assert.Single(await TestDbBuilder.GetData(database));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L12-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L13-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -172,7 +169,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await TestDbBuilder.AddData(database);
 Assert.Single(await TestDbBuilder.GetData(database));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L14-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L17-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -191,20 +188,30 @@ public class SnippetTests
         name: "Snippets",
         buildTemplate: TestDbBuilder.CreateTable);
 
+
     public async Task TheTest()
     {
+
         await using var database = await sqlInstance.Build();
+
+
         await TestDbBuilder.AddData(database);
         Assert.Single(await TestDbBuilder.GetData(database));
+
+
     }
+
 
     public async Task TheTestWithDbName()
     {
+
         await using var database = await sqlInstance.Build("TheTestWithDbName");
+
+
         await TestDbBuilder.AddData(database);
         Assert.Single(await TestDbBuilder.GetData(database));
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
