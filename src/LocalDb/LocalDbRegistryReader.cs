@@ -41,13 +41,12 @@ static class LocalDbRegistryReader
 
     static RegistryView GetRegistryView()
     {
-        var isWow64Process = RuntimeInformation.OSArchitecture == Architecture.X64 &&
-                             RuntimeInformation.OSArchitecture == Architecture.X86;
-        if (isWow64Process)
+        if (Environment.Is64BitOperatingSystem)
         {
-            return RegistryView.Registry32;
+            return RegistryView.Default;
         }
 
-        return RegistryView.Default;
+        return RegistryView.Registry32;
+
     }
 }
