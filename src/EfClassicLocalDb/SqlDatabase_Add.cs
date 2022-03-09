@@ -8,13 +8,11 @@ public partial class SqlDatabase<TDbContext>
         {
             Context.Set(entity.GetType()).Add(entity);
         }
+
         return Context.SaveChangesAsync();
     }
 
-    public Task AddData(params object[] entities)
-    {
-        return AddData((IEnumerable<object>) entities);
-    }
+    public Task AddData(params object[] entities) => AddData((IEnumerable<object>) entities);
 
     public async Task AddDataUntracked(IEnumerable<object> entities)
     {
@@ -23,11 +21,9 @@ public partial class SqlDatabase<TDbContext>
         {
             Context.Set(entity.GetType()).Add(entity);
         }
+
         await context.SaveChangesAsync();
     }
 
-    public Task AddDataUntracked(params object[] entities)
-    {
-        return AddDataUntracked((IEnumerable<object>) entities);
-    }
+    public Task AddDataUntracked(params object[] entities) => AddDataUntracked((IEnumerable<object>) entities);
 }

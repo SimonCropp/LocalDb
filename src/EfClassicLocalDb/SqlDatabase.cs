@@ -37,15 +37,9 @@ public partial class SqlDatabase<TDbContext> :
         return connection;
     }
 
-    public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
-    {
-        return instance.Context;
-    }
+    public static implicit operator TDbContext(SqlDatabase<TDbContext> instance) => instance.Context;
 
-    public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance)
-    {
-        return instance.Connection;
-    }
+    public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
     public async Task Start()
     {
@@ -61,25 +55,16 @@ public partial class SqlDatabase<TDbContext> :
     public TDbContext Context { get; private set; } = null!;
 
     /// <summary>
-    /// Calls <see cref="DbContext.SaveChanges()"/> on <see cref="Context"/>.
+    ///     Calls <see cref="DbContext.SaveChanges()" /> on <see cref="Context" />.
     /// </summary>
-    public int SaveChanges()
-    {
-        return Context.SaveChanges();
-    }
+    public int SaveChanges() => Context.SaveChanges();
 
     /// <summary>
-    /// Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> on <see cref="Context"/>.
+    ///     Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(CancellationToken cancellation = default)
-    {
-        return Context.SaveChangesAsync(cancellation);
-    }
+    public Task<int> SaveChangesAsync(CancellationToken cancellation = default) => Context.SaveChangesAsync(cancellation);
 
-    public TDbContext NewDbContext()
-    {
-        return constructInstance(Connection);
-    }
+    public TDbContext NewDbContext() => constructInstance(Connection);
 
     public void Dispose()
     {

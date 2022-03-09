@@ -1,11 +1,12 @@
 ﻿#region LocalDbLogging
+
 /// <summary>
-/// Controls the logging level.
+///     Controls the logging level.
 /// </summary>
 public static class LocalDbLogging
 {
     /// <summary>
-    /// Enable verbose logging to <see cref="Trace.WriteLine(string)"/>
+    ///     Enable verbose logging to <see cref="Trace.WriteLine(string)" />
     /// </summary>
     public static void EnableVerbose(bool sqlLogging = false)
     {
@@ -13,6 +14,7 @@ public static class LocalDbLogging
         {
             throw new("Must be called prior to `SqlInstance` being created.");
         }
+
         Enabled = true;
         SqlLoggingEnabled = sqlLogging;
     }
@@ -41,4 +43,5 @@ public static class LocalDbLogging
         }
     }
 }
+
 #endregion

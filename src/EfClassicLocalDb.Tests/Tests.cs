@@ -12,7 +12,10 @@ public class Tests
         {
             Property = "prop"
         };
-        using var database = await instance.Build(new List<object> {entity});
+        using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -96,7 +99,10 @@ public class Tests
         {
             Property = "prop"
         };
-        using var database = await instance.Build(new List<object> {entity});
+        using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
@@ -177,13 +183,15 @@ public class Tests
         {
             Property = "Item1"
         };
-        using var database = await instance.Build(new List<object> {entity});
+        using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
         Assert.True(callbackCalled);
     }
 
-    public Tests()
-    {
+    public Tests() =>
         instance = new(
             connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"Classic{Environment.Version.Major}"),
@@ -192,5 +200,4 @@ public class Tests
                 callbackCalled = true;
                 return Task.CompletedTask;
             });
-    }
 }

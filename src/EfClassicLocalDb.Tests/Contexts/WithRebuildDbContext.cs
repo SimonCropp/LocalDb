@@ -9,11 +9,7 @@ public class WithRebuildDbContext :
     public WithRebuildDbContext(DbConnection connection) :
         base(connection, false)
     {
-
     }
 
-    protected override void OnModelCreating(DbModelBuilder model)
-    {
-        model.Entity<TestEntity>();
-    }
+    protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TestEntity>();
 }

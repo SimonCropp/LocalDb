@@ -11,8 +11,5 @@ public class TestDbContext :
     {
     }
 
-    protected override void OnModelCreating(DbModelBuilder model)
-    {
-        model.Entity<TestEntity>();
-    }
+    protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TestEntity>();
 }

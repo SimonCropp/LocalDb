@@ -4,15 +4,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 class LogCommandInterceptor :
     DbCommandInterceptor
 {
-    static void WriteLine(CommandEventData data)
-    {
-        LocalDbLogging.Log($"EF {data}");
-    }
+    static void WriteLine(CommandEventData data) => LocalDbLogging.Log($"EF {data}");
 
-    public override void CommandFailed(DbCommand command, CommandErrorEventData data)
-    {
-        WriteLine(data);
-    }
+    public override void CommandFailed(DbCommand command, CommandErrorEventData data) => WriteLine(data);
 
     public override Task CommandFailedAsync(DbCommand command, CommandErrorEventData data, CancellationToken cancellation = default)
     {

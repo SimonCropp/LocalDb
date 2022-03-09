@@ -18,7 +18,7 @@ public class SqlDatabase :
         ConnectionString = connectionString;
         Name = name;
         Connection = new(connectionString);
-        dataConnection = new Lazy<DataSqlConnection>(() =>
+        dataConnection = new(() =>
         {
             var connection = new DataSqlConnection(connectionString);
             connection.Open();
@@ -30,23 +30,14 @@ public class SqlDatabase :
     public string Name { get; }
 
     public SqlConnection Connection { get; }
-    private Lazy<DataSqlConnection> dataConnection;
-    public DataSqlConnection DataConnection { get => dataConnection.Value; }
+    Lazy<DataSqlConnection> dataConnection;
+    public DataSqlConnection DataConnection => dataConnection.Value;
 
-    public static implicit operator SqlConnection(SqlDatabase instance)
-    {
-        return instance.Connection;
-    }
+    public static implicit operator SqlConnection(SqlDatabase instance) => instance.Connection;
 
-    public static implicit operator DbConnection(SqlDatabase instance)
-    {
-        return instance.Connection;
-    }
+    public static implicit operator DbConnection(SqlDatabase instance) => instance.Connection;
 
-    public static implicit operator DataSqlConnection(SqlDatabase instance)
-    {
-        return instance.DataConnection;
-    }
+    public static implicit operator DataSqlConnection(SqlDatabase instance) => instance.DataConnection;
 
     public async Task<SqlConnection> OpenNewConnection()
     {
@@ -62,10 +53,7 @@ public class SqlDatabase :
         return connection;
     }
 
-    public async Task Start()
-    {
-        await Connection.OpenAsync();
-    }
+    public async Task Start() => await Connection.OpenAsync();
 
     public void Dispose()
     {

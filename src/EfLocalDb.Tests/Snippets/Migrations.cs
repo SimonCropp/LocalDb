@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+
 // ReSharper disable UnusedParameter.Local
 
 public class Migrations
@@ -38,10 +39,8 @@ public class Migrations
         public IReadOnlyList<MigrationCommand> Generate(
             IReadOnlyList<MigrationOperation> operations,
             IModel? model = null,
-            MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default)
-        {
+            MigrationsSqlGenerationOptions options = MigrationsSqlGenerationOptions.Default) =>
             throw new();
-        }
     }
 
     class MyDbContext :
@@ -54,9 +53,6 @@ public class Migrations
         {
         }
 
-        protected override void OnModelCreating(ModelBuilder model)
-        {
-            model.Entity<TheEntity>();
-        }
+        protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
     }
 }

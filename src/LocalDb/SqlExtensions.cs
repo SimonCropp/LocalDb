@@ -45,7 +45,7 @@ static class SqlExtensions
 {nameof(commandText)}: {commandText}
 connectionString: {connection.ConnectionString}
 ");
-        #if !EF
+#if !EF
         if (exception is SqlException sqlException)
         {
             builder.AppendLine("SqlErrors:");
@@ -54,7 +54,7 @@ connectionString: {connection.ConnectionString}
                 builder.AppendLine($"    {error.Message}");
             }
         }
-        #endif
+#endif
         return new(builder.ToString(), exception);
     }
 }

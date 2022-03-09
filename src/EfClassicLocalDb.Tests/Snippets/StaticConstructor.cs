@@ -4,15 +4,14 @@ using EfLocalDb;
 namespace StaticConstructor
 {
     #region EfClassicStaticConstructor
+
     public class Tests
     {
         static SqlInstance<TheDbContext> sqlInstance;
 
-        static Tests()
-        {
+        static Tests() =>
             sqlInstance = new(
                 connection => new(connection));
-        }
 
         public async Task Test()
         {
@@ -20,11 +19,15 @@ namespace StaticConstructor
             {
                 Property = "prop"
             };
-            var data = new List<object> {entity};
+            var data = new List<object>
+            {
+                entity
+            };
             using var database = await sqlInstance.Build(data);
             Assert.Single(database.Context.TestEntities);
         }
     }
+
     #endregion
 }
 #endif

@@ -8,11 +8,9 @@ public class Tests
 {
     static SqlInstance<TheDbContext> sqlInstance;
 
-    static Tests()
-    {
+    static Tests() =>
         sqlInstance = new(
             builder => new(builder.Options));
-    }
 
     public async Task Test()
     {
@@ -20,7 +18,10 @@ public class Tests
         {
             Property = "prop"
         };
-        var data = new List<object> {entity};
+        var data = new List<object>
+        {
+            entity
+        };
         await using var database = await sqlInstance.Build(data);
         Assert.Single(database.Context.TestEntities);
     }

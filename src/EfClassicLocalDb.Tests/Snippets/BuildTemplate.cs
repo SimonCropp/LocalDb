@@ -6,8 +6,7 @@ public class BuildTemplate
 {
     static SqlInstance<BuildTemplateDbContext> sqlInstance;
 
-    static BuildTemplate()
-    {
+    static BuildTemplate() =>
         sqlInstance = new(
             constructInstance: connection => new(connection),
             buildTemplate: async context =>
@@ -20,7 +19,6 @@ public class BuildTemplate
                 context.TestEntities.Add(entity);
                 await context.SaveChangesAsync();
             });
-    }
 
     [Fact]
     public async Task Test()

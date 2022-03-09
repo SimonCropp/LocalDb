@@ -115,32 +115,32 @@ public class SqlInstance
         Wrapper.DeleteInstance();
     }
 
-    Task<string> BuildContext(string dbName)
-    {
-        return Wrapper.CreateDatabaseFromTemplate(dbName);
-    }
+    Task<string> BuildContext(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     #region ConventionBuildSignature
+
     /// <summary>
-    ///   Build database with a name based on the calling Method.
+    ///     Build database with a name based on the calling Method.
     /// </summary>
     /// <param name="testFile">
-    /// The path to the test class.
-    /// Used to make the database name unique per test type.
+    ///     The path to the test class.
+    ///     Used to make the database name unique per test type.
     /// </param>
     /// <param name="databaseSuffix">
-    /// For Xunit theories add some text based on the inline data
-    /// to make the db name unique.
+    ///     For Xunit theories add some text based on the inline data
+    ///     to make the db name unique.
     /// </param>
     /// <param name="memberName">
-    /// Used to make the db name unique per method.
-    /// Will default to the caller method name is used.
+    ///     Used to make the db name unique per method.
+    ///     Will default to the caller method name is used.
     /// </param>
     public Task<SqlDatabase> Build(
             [CallerFilePath] string testFile = "",
             string? databaseSuffix = null,
             [CallerMemberName] string memberName = "")
+
         #endregion
+
     {
         Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
@@ -155,11 +155,14 @@ public class SqlInstance
     }
 
     #region ExplicitBuildSignature
+
     /// <summary>
-    ///   Build database with an explicit name.
+    ///     Build database with an explicit name.
     /// </summary>
     public async Task<SqlDatabase> Build(string dbName)
+
         #endregion
+
     {
         Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);

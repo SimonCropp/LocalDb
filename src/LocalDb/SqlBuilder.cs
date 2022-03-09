@@ -34,9 +34,8 @@ begin
     execute sp_detach_db 'template', 'true';
 end;";
 
-    public static string GetOptimizationCommand(ushort size)
-    {
-        return $@"
+    public static string GetOptimizationCommand(ushort size) =>
+        $@"
 execute sp_configure 'show advanced options', 1;
 reconfigure;
 execute sp_configure 'user instance timeout', 30;
@@ -47,11 +46,9 @@ use model;
 dbcc shrinkfile(modeldev, {size})
 -- end-snippet
 ";
-    }
 
-    public static string GetCreateTemplateCommand(string dataFile, string logFile)
-    {
-        return $@"
+    public static string GetCreateTemplateCommand(string dataFile, string logFile) =>
+        $@"
 if db_id('template') is not null
 begin
   execute sp_detach_db 'template', 'true';
@@ -70,14 +67,11 @@ log on
     filegrowth = 100KB
 );
 ";
-    }
 
-    public static string BuildDeleteDbCommand(string dbName)
-    {
-        return $@"
+    public static string BuildDeleteDbCommand(string dbName) =>
+        $@"
 alter database [{dbName}] set single_user with rollback immediate;
 drop database [{dbName}];";
-    }
 
     public static string TakeDbsOfflineCommand = @"
 declare @command nvarchar(max)

@@ -11,8 +11,5 @@ public class TheDbContext :
     {
     }
 
-    protected override void OnModelCreating(DbModelBuilder model)
-    {
-        model.Entity<TheEntity>();
-    }
+    protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TheEntity>();
 }

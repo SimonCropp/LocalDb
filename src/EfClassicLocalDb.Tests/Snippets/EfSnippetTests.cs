@@ -5,21 +5,24 @@ public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
 
-    static EfSnippetTests()
-    {
-        sqlInstance = new(connection => new(connection));
-    }
+    static EfSnippetTests() => sqlInstance = new(connection => new(connection));
 
     [Fact]
     public async Task TheTest()
     {
         #region EfClassicBuildDatabase
+
         using var database = await sqlInstance.Build();
+
         #endregion
+
         #region EfClassicBuildContext
+
         using (var data = database.NewDbContext())
         {
+
             #endregion
+
             var entity = new TheEntity
             {
                 Property = "prop"

@@ -1,4 +1,5 @@
 ﻿#region MethodTimeLogger
+
 static class MethodTimeLogger
 {
     public static void Log(MethodBase method, long milliseconds, string? message)
@@ -7,6 +8,7 @@ static class MethodTimeLogger
         {
             return;
         }
+
         if (message is null)
         {
             LocalDbLogging.Log($"{method.Name} {milliseconds}ms");
@@ -16,4 +18,5 @@ static class MethodTimeLogger
         LocalDbLogging.Log($"{method.Name} {milliseconds}ms {message}");
     }
 }
+
 #endregion

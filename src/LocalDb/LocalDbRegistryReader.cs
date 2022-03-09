@@ -34,6 +34,7 @@ static class LocalDbRegistryReader
         {
             throw new("Could not find LocalDb dll. No InstanceAPIPath.");
         }
+
         var path = (string) value;
         return (path, version);
     }

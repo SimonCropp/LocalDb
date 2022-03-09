@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+
 // ReSharper disable RedundantCast
 
 namespace EfLocalDb;
@@ -26,8 +27,9 @@ public class SqlInstance<TDbContext>
     public string ServerName => Wrapper.ServerName;
 
     /// <summary>
-    /// Instantiate a <see cref="SqlInstance{TDbContext}"/>.
-    /// Should usually be scoped as once instance per appdomain. So all tests use the same instance of <see cref="SqlInstance{TDbContext}"/>.
+    ///     Instantiate a <see cref="SqlInstance{TDbContext}" />.
+    ///     Should usually be scoped as once instance per appdomain. So all tests use the same instance of
+    ///     <see cref="SqlInstance{TDbContext}" />.
     /// </summary>
     /// <param name="constructInstance"></param>
     /// <param name="buildTemplate"></param>
@@ -36,7 +38,12 @@ public class SqlInstance<TDbContext>
     /// <param name="templateSize">The size in MB for the template. Optional.</param>
     /// <param name="existingTemplate">Existing mdb and the ldf files to use when building the template. Optional.</param>
     /// <param name="callback">Option callback that is executed after the template database has been created.</param>
-    /// <param name="sqlOptionsBuilder">Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.</param>
+    /// <param name="sqlOptionsBuilder">
+    ///     Passed to
+    ///     <see
+    ///         cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})" />
+    ///     .
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -59,8 +66,9 @@ public class SqlInstance<TDbContext>
     }
 
     /// <summary>
-    /// Instantiate a <see cref="SqlInstance{TDbContext}"/>.
-    /// Should usually be scoped as once instance per appdomain. So all tests use the same instance of <see cref="SqlInstance{TDbContext}"/>.
+    ///     Instantiate a <see cref="SqlInstance{TDbContext}" />.
+    ///     Should usually be scoped as once instance per appdomain. So all tests use the same instance of
+    ///     <see cref="SqlInstance{TDbContext}" />.
     /// </summary>
     /// <param name="constructInstance"></param>
     /// <param name="buildTemplate"></param>
@@ -69,7 +77,12 @@ public class SqlInstance<TDbContext>
     /// <param name="templateSize">The size in MB for the template. Optional.</param>
     /// <param name="existingTemplate">Existing mdb and the ldf files to use when building the template. Optional.</param>
     /// <param name="callback">Callback that is executed after the template database has been created. Optional.</param>
-    /// <param name="sqlOptionsBuilder">Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.</param>
+    /// <param name="sqlOptionsBuilder">
+    ///     Passed to
+    ///     <see
+    ///         cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})" />
+    ///     .
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection<TDbContext> buildTemplate,
@@ -84,6 +97,7 @@ public class SqlInstance<TDbContext>
         {
             return;
         }
+
         storage ??= DefaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         Model = BuildModel(constructInstance);
@@ -110,7 +124,7 @@ public class SqlInstance<TDbContext>
 #if NET5_0
                 await using var context = constructInstance(builder);
 #else
-                    using var context = constructInstance(builder);
+                using var context = constructInstance(builder);
 #endif
                 await callback(connection, context);
             };
@@ -151,13 +165,10 @@ public class SqlInstance<TDbContext>
 
     public void Cleanup() => Wrapper.DeleteInstance();
 
-    Task<string> BuildDatabase(string dbName)
-    {
-        return Wrapper.CreateDatabaseFromTemplate(dbName);
-    }
+    Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     /// <summary>
-    ///   Build DB with a name based on the calling Method.
+    ///     Build DB with a name based on the calling Method.
     /// </summary>
     /// <param name="data">The seed data.</param>
     /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
@@ -192,7 +203,7 @@ public class SqlInstance<TDbContext>
     }
 
     /// <summary>
-    ///   Build DB with a name based on the calling Method.
+    ///     Build DB with a name based on the calling Method.
     /// </summary>
     /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
     /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>

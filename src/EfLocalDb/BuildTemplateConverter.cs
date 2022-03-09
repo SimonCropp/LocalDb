@@ -6,9 +6,8 @@ static class BuildTemplateConverter
     public static TemplateFromConnection<TDbContext> Convert<TDbContext>(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate)
-        where TDbContext : DbContext
-    {
-        return async (_, builder) =>
+        where TDbContext : DbContext =>
+        async (_, builder) =>
         {
             await using var data = constructInstance(builder);
             if (buildTemplate is null)
@@ -20,5 +19,4 @@ static class BuildTemplateConverter
                 await buildTemplate(data);
             }
         };
-    }
 }

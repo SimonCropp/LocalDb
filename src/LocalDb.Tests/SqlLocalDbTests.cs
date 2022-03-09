@@ -9,6 +9,7 @@ public class SqlLocalDbTests
         {
             Trace.WriteLine(instance);
         }
+
         Assert.NotEmpty(collection);
     }
 

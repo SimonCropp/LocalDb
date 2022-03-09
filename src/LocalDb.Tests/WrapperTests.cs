@@ -196,7 +196,7 @@ end;
             new
             {
                 entries,
-                state= await instance.ReadDatabaseState("CreateDatabase")
+                state = await instance.ReadDatabaseState("CreateDatabase")
             });
     }
 

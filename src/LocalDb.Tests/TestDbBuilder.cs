@@ -9,7 +9,7 @@ public static class TestDbBuilder
         await command.ExecuteNonQueryAsync();
     }
 
-    static int intData = 0;
+    static int intData;
 
     public static async Task<int> AddData(DbConnection connection)
     {

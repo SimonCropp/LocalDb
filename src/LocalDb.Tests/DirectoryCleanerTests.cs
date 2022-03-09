@@ -1,13 +1,10 @@
 ﻿public class DirectoryCleanerTests :
     IDisposable
 {
-    private string tempDir;
+    string tempDir;
 
     [Fact]
-    public void Empty()
-    {
-        DirectoryCleaner.CleanRoot(tempDir);
-    }
+    public void Empty() => DirectoryCleaner.CleanRoot(tempDir);
 
     [Fact]
     public void FileAtRoot()
@@ -79,8 +76,5 @@
         Directory.CreateDirectory(tempDir);
     }
 
-    public void Dispose()
-    {
-        Directory.Delete(tempDir, true);
-    }
+    public void Dispose() => Directory.Delete(tempDir, true);
 }

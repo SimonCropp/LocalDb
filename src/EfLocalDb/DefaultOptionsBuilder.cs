@@ -12,6 +12,7 @@ static class DefaultOptionsBuilder
         {
             builder.AddInterceptors(interceptor);
         }
+
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
         return builder;

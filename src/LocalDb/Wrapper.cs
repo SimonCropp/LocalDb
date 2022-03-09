@@ -1,10 +1,10 @@
-﻿using System.Data.Common;
-using MethodTimer;
-#if EF
+﻿#if EF
 using EfLocalDb;
 #else
 using LocalDb;
 #endif
+using System.Data.Common;
+using MethodTimer;
 
 class Wrapper
 {
@@ -91,7 +91,7 @@ class Wrapper
 #endif
         await masterConnection.ExecuteCommandAsync(commandText);
 
-        var connectionString = LocalDbSettings.connectionBuilder(instance,name);
+        var connectionString = LocalDbSettings.connectionBuilder(instance, name);
         await RunCallback(connectionString);
         return connectionString;
     }
@@ -146,10 +146,7 @@ class Wrapper
 #endif
     }
 
-    public Task AwaitStart()
-    {
-        return startupTask;
-    }
+    public Task AwaitStart() => startupTask;
 
     void InnerStart(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
     {

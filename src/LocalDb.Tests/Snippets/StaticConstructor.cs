@@ -7,8 +7,8 @@ namespace StaticConstructor;
 public class Tests
 {
     static SqlInstance sqlInstance = new(
-            name: "StaticConstructorInstance",
-            buildTemplate: TestDbBuilder.CreateTable);
+        name: "StaticConstructorInstance",
+        buildTemplate: TestDbBuilder.CreateTable);
 
     [Fact]
     public async Task Test()

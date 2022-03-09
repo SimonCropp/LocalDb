@@ -10,9 +10,6 @@ namespace LocalDb
     {
         internal static BuildConnection connectionBuilder = (instance, database) => $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true";
 
-        public static void ConnectionBuilder(BuildConnection builder)
-        {
-            connectionBuilder = builder;
-        }
+        public static void ConnectionBuilder(BuildConnection builder) => connectionBuilder = builder;
     }
 }

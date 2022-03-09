@@ -17,7 +17,7 @@ static class Guard
     {
         if (!IsWindows)
         {
-            throw new ("Only windows is supported");
+            throw new("Only windows is supported");
         }
     }
 
@@ -43,6 +43,7 @@ static class Guard
         {
             return;
         }
+
         if (string.IsNullOrWhiteSpace(value))
         {
             throw new ArgumentNullException(argumentName);

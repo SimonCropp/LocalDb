@@ -33,7 +33,7 @@ public partial class SqlDatabase<TDbContext> :
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         ConnectionString = connectionString;
         Connection = new(connectionString);
-        dataConnection = new Lazy<DataSqlConnection>(() =>
+        dataConnection = new(() =>
         {
             var connection = new DataSqlConnection(connectionString);
             connection.Open();
@@ -43,8 +43,8 @@ public partial class SqlDatabase<TDbContext> :
 
     public string Name { get; }
     public SqlConnection Connection { get; }
-    private Lazy<DataSqlConnection> dataConnection;
-    public DataSqlConnection DataConnection { get => dataConnection.Value; }
+    Lazy<DataSqlConnection> dataConnection;
+    public DataSqlConnection DataConnection => dataConnection.Value;
     public string ConnectionString { get; }
 
     public async Task<SqlConnection> OpenNewConnection()
@@ -61,25 +61,13 @@ public partial class SqlDatabase<TDbContext> :
         return connection;
     }
 
-    public static implicit operator TDbContext(SqlDatabase<TDbContext> instance)
-    {
-        return instance.Context;
-    }
+    public static implicit operator TDbContext(SqlDatabase<TDbContext> instance) => instance.Context;
 
-    public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance)
-    {
-        return instance.Connection;
-    }
+    public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
-    public static implicit operator DbConnection(SqlDatabase<TDbContext> instance)
-    {
-        return instance.Connection;
-    }
+    public static implicit operator DbConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
-    public static implicit operator DataSqlConnection(SqlDatabase<TDbContext> instance)
-    {
-        return instance.DataConnection;
-    }
+    public static implicit operator DataSqlConnection(SqlDatabase<TDbContext> instance) => instance.DataConnection;
 
     public async Task Start()
     {
@@ -98,41 +86,26 @@ public partial class SqlDatabase<TDbContext> :
     public TDbContext NoTrackingContext { get; private set; } = null!;
 
     /// <summary>
-    /// Calls <see cref="DbContext.SaveChanges()"/> on <see cref="Context"/>.
+    ///     Calls <see cref="DbContext.SaveChanges()" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync()
-    {
-        return Context.SaveChangesAsync();
-    }
+    public Task<int> SaveChangesAsync() => Context.SaveChangesAsync();
 
     /// <summary>
-    /// Calls <see cref="DbContext.SaveChanges(bool)"/> on <see cref="Context"/>.
+    ///     Calls <see cref="DbContext.SaveChanges(bool)" /> on <see cref="Context" />.
     /// </summary>
-    public int SaveChanges(bool acceptAllChangesOnSuccess)
-    {
-        return Context.SaveChanges(acceptAllChangesOnSuccess);
-    }
+    public int SaveChanges(bool acceptAllChangesOnSuccess) => Context.SaveChanges(acceptAllChangesOnSuccess);
 
     /// <summary>
-    /// Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)"/> on <see cref="Context"/>.
+    ///     Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(CancellationToken cancellation = default)
-    {
-        return Context.SaveChangesAsync(cancellation);
-    }
+    public Task<int> SaveChangesAsync(CancellationToken cancellation = default) => Context.SaveChangesAsync(cancellation);
 
     /// <summary>
-    /// Calls <see cref="DbContext.SaveChangesAsync(bool, CancellationToken)"/> on <see cref="Context"/>.
+    ///     Calls <see cref="DbContext.SaveChangesAsync(bool, CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellation = default)
-    {
-        return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
-    }
+    public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellation = default) => Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
 
-    TDbContext IDbContextFactory<TDbContext>.CreateDbContext()
-    {
-        return NewDbContext();
-    }
+    TDbContext IDbContextFactory<TDbContext>.CreateDbContext() => NewDbContext();
 
     public TDbContext NewDbContext(QueryTrackingBehavior? tracking = null)
     {
@@ -190,7 +163,8 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     /// <summary>
-    /// Calls <see cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
+    ///     Calls <see cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)" />
+    ///     on the <see cref="DbContext.Set{TEntity}()" /> for <typeparamref name="T" />.
     /// </summary>
     public Task<int> Count<T>(Expression<Func<T, bool>>? predicate = null)
         where T : class
@@ -204,7 +178,8 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     /// <summary>
-    /// Calls <see cref="DbSet{TEntity}.FindAsync(object[])"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
+    ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
+    ///     <typeparamref name="T" />.
     /// </summary>
     public async Task<T> Find<T>(params object[] keys)
         where T : class
@@ -220,7 +195,8 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     /// <summary>
-    /// Calls <see cref="DbSet{TEntity}.FindAsync(object[])"/> on the <see cref="DbContext.Set{TEntity}()"/> for <typeparamref name="T"/>.
+    ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
+    ///     <typeparamref name="T" />.
     /// </summary>
     public Task<T> Single<T>(Expression<Func<T, bool>>? predicate = null)
         where T : class
@@ -236,7 +212,7 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     /// <summary>
-    /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns true if the item exists.
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
     public async Task<bool> Exists<T>(params object[] keys)
         where T : class
@@ -246,15 +222,13 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     /// <summary>
-    /// Returns <see cref="DbContext.Set{TEntity}()"/> from <see cref="NoTrackingContext"/>.
+    ///     Returns <see cref="DbContext.Set{TEntity}()" /> from <see cref="NoTrackingContext" />.
     /// </summary>
-    public DbSet<T> Set<T>() where T : class
-    {
-        return NoTrackingContext.Set<T>();
-    }
+    public DbSet<T> Set<T>()
+        where T : class => NoTrackingContext.Set<T>();
 
     /// <summary>
-    /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns all resulting items.
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
     /// </summary>
     public async Task<object> Find(params object[] keys)
     {
@@ -276,7 +250,7 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     /// <summary>
-    /// Calls <see cref="DbContext.FindAsync(Type,object[])"/> on all entity types and returns true if the item exists.
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
     public async Task<bool> Exists(params object[] keys)
     {

@@ -14,7 +14,7 @@ public class SqlBuilder
         #endregion
     }
 
-    class MyDbContext:
+    class MyDbContext :
         DbContext
     {
         public MyDbContext(DbContextOptions options) :

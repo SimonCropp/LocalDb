@@ -28,7 +28,7 @@ public class SqlInstance<TDbContext>
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
-        Callback<TDbContext>? callback = null):
+        Callback<TDbContext>? callback = null) :
         this(
             constructInstance,
             BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -53,6 +53,7 @@ public class SqlInstance<TDbContext>
         {
             return;
         }
+
         storage ??= DefaultStorage;
 
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
@@ -70,6 +71,7 @@ public class SqlInstance<TDbContext>
                 await callback(connection, context);
             };
         }
+
         Wrapper = new(
             s => new SqlConnection(s),
             storageValue.Name,
@@ -97,13 +99,10 @@ public class SqlInstance<TDbContext>
 
     public void Cleanup() => Wrapper.DeleteInstance();
 
-    Task<string> BuildDatabase(string dbName)
-    {
-        return Wrapper.CreateDatabaseFromTemplate(dbName);
-    }
+    Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     /// <summary>
-    ///   Build DB with a name based on the calling Method.
+    ///     Build DB with a name based on the calling Method.
     /// </summary>
     /// <param name="data">The seed data.</param>
     /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
@@ -127,7 +126,7 @@ public class SqlInstance<TDbContext>
     }
 
     /// <summary>
-    ///   Build DB with a name based on the calling Method.
+    ///     Build DB with a name based on the calling Method.
     /// </summary>
     /// <param name="testFile">The path to the test class. Used to make the db name unique per test type.</param>
     /// <param name="databaseSuffix">For Xunit theories add some text based on the inline data to make the db name unique.</param>

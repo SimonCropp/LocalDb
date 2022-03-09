@@ -9,10 +9,7 @@
         DirectoryCleaner.CleanRoot(root);
     }
 
-    public static string Find(string instanceName)
-    {
-        return Path.Combine(dataRoot, instanceName);
-    }
+    public static string Find(string instanceName) => Path.Combine(dataRoot, instanceName);
 
     public static void Delete(string instanceName)
     {

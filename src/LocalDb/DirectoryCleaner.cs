@@ -6,6 +6,7 @@
         {
             return;
         }
+
         foreach (var instanceDirectory in Directory.EnumerateDirectories(root))
         {
             CleanInstance(instanceDirectory);
@@ -18,6 +19,7 @@
         {
             return;
         }
+
         foreach (var file in GetDbFiles(directory))
         {
             if (File.GetLastWriteTime(file) < DateTime.Now.AddDays(-1))

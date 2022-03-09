@@ -13,7 +13,10 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -213,7 +216,11 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddData(new List<object>{entity1, entity2}, entity3);
+        await database.AddData(new List<object>
+        {
+            entity1,
+            entity2
+        }, entity3);
         var testEntities = database.Context.TestEntities;
         Assert.True(await database.Exists(entity1.Id));
         Assert.True(await database.Exists(entity2.Id));
@@ -251,7 +258,10 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.True(await database.Exists(entity.Id));
     }
 
@@ -267,7 +277,10 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.True(await database.Exists(entity.Id));
         Assert.True(optionsBuilderCalled);
     }
@@ -284,7 +297,10 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.True(await database.Exists(entity.Id));
     }
 
@@ -387,7 +403,10 @@ public class Tests
         {
             Property = "Item1"
         };
-        await using var database = await instance.Build(new List<object> {entity});
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -399,13 +418,15 @@ public class Tests
         {
             Property = "Item1"
         };
-        await using var context = await instance.BuildContext(new List<object> {entity});
+        await using var context = await instance.BuildContext(new List<object>
+        {
+            entity
+        });
         Assert.NotNull(await context.TestEntities.FindAsync(entity.Id));
         Assert.True(callbackCalled);
     }
 
-    public Tests()
-    {
+    public Tests() =>
         instance = new(
             builder => new(builder.Options),
             callback: (_, _) =>
@@ -413,5 +434,4 @@ public class Tests
                 callbackCalled = true;
                 return Task.CompletedTask;
             });
-    }
 }

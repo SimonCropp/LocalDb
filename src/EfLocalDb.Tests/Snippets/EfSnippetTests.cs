@@ -3,24 +3,29 @@
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
-    static EfSnippetTests()
-    {
+
+    static EfSnippetTests() =>
         sqlInstance = new(
             builder => new(builder.Options));
-    }
 
     #region EfTest
+
     [Fact]
     public async Task TheTest()
     {
         #region EfBuildDatabase
+
         await using var database = await sqlInstance.Build();
+
         #endregion
 
         #region EfBuildContext
+
         await using (var data = database.NewDbContext())
         {
+
             #endregion
+
             var entity = new TheEntity
             {
                 Property = "prop"
@@ -33,6 +38,7 @@ public class EfSnippetTests
         {
             Assert.Single(data.TestEntities);
         }
+
         #endregion
     }
 
@@ -40,8 +46,11 @@ public class EfSnippetTests
     public async Task TheTestWithDbName()
     {
         #region EfWithDbName
+
         await using var database = await sqlInstance.Build("TheTestWithDbName");
+
         #endregion
+
         var entity = new TheEntity
         {
             Property = "prop"

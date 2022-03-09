@@ -8,23 +8,19 @@ public abstract class TestBase
 {
     static SqlInstance instance;
 
-    static TestBase()
-    {
+    static TestBase() =>
         instance = new(
-            name:"TestBaseUsage",
+            name: "TestBaseUsage",
             buildTemplate: TestDbBuilder.CreateTable);
-    }
 
     public Task<SqlDatabase> LocalDb(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
-    {
-        return instance.Build(testFile, databaseSuffix, memberName);
-    }
+        [CallerMemberName] string memberName = "") =>
+        instance.Build(testFile, databaseSuffix, memberName);
 }
 
-public class Tests:
+public class Tests :
     TestBase
 {
     [Fact]

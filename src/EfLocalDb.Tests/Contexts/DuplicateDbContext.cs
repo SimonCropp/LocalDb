@@ -10,8 +10,5 @@ public class DuplicateDbContext :
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder model)
-    {
-        model.Entity<TestEntity>();
-    }
+    protected override void OnModelCreating(ModelBuilder model) => model.Entity<TestEntity>();
 }
