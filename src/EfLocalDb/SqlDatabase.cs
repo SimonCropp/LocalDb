@@ -110,7 +110,7 @@ public partial class SqlDatabase<TDbContext> :
     public TDbContext NewDbContext(QueryTrackingBehavior? tracking = null)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
-        builder.UseSqlServer(ConnectionString, sqlOptionsBuilder);
+        builder.UseSqlServer(Connection, sqlOptionsBuilder);
 
         if (tracking.HasValue)
         {
@@ -123,7 +123,7 @@ public partial class SqlDatabase<TDbContext> :
     internal TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
-        builder.UseSqlServer(ConnectionString, sqlOptionsBuilder);
+        builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
         if (tracking.HasValue)
         {
             builder.UseQueryTrackingBehavior(tracking.Value);
