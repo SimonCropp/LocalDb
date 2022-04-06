@@ -105,7 +105,7 @@ public partial class SqlDatabase<TDbContext> :
     /// </summary>
     public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellation = default) => Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
 
-    TDbContext IDbContextFactory<TDbContext>.CreateDbContext() => NewDbContext();
+    TDbContext IDbContextFactory<TDbContext>.CreateDbContext() => NewConnectionOwnedDbContext();
 
     public TDbContext NewDbContext(QueryTrackingBehavior? tracking = null)
     {
@@ -120,7 +120,7 @@ public partial class SqlDatabase<TDbContext> :
         return constructInstance(builder);
     }
 
-    internal TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
+    public TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
