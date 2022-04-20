@@ -17,4 +17,13 @@ static class DefaultOptionsBuilder
         builder.EnableDetailedErrors();
         return builder;
     }
+
+    public static void ApplyQueryTracking<T>(this DbContextOptionsBuilder<T> builder, QueryTrackingBehavior? tracking)
+        where T : DbContext
+    {
+        if (tracking.HasValue)
+        {
+            builder.UseQueryTrackingBehavior(tracking.Value);
+        }
+    }
 }

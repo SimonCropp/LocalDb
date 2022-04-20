@@ -314,7 +314,16 @@ static class DefaultOptionsBuilder
         builder.EnableDetailedErrors();
         return builder;
     }
+
+    public static void ApplyQueryTracking<T>(this DbContextOptionsBuilder<T> builder, QueryTrackingBehavior? tracking)
+        where T : DbContext
+    {
+        if (tracking.HasValue)
+        {
+            builder.UseQueryTrackingBehavior(tracking.Value);
+        }
+    }
 }
 ```
-<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

@@ -112,10 +112,7 @@ public partial class SqlDatabase<TDbContext> :
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection, sqlOptionsBuilder);
 
-        if (tracking.HasValue)
-        {
-            builder.UseQueryTrackingBehavior(tracking.Value);
-        }
+        builder.ApplyQueryTracking(tracking);
 
         return constructInstance(builder);
     }
@@ -124,11 +121,7 @@ public partial class SqlDatabase<TDbContext> :
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
-        if (tracking.HasValue)
-        {
-            builder.UseQueryTrackingBehavior(tracking.Value);
-        }
-
+        builder.ApplyQueryTracking(tracking);
         return constructInstance(builder);
     }
 
