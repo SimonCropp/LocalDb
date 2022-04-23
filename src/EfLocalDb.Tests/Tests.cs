@@ -388,6 +388,28 @@ public class Tests
     }
 
     [Fact]
+    public async Task OwnedDbContext()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await using (var data = database.NewConnectionOwnedDbContext())
+        {
+            data.Add(entity);
+            await data.SaveChangesAsync();
+        }
+
+        await using (var data = database.NewConnectionOwnedDbContext())
+        {
+            Assert.NotNull(await data.TestEntities.FindAsync(entity.Id));
+        }
+
+        Assert.True(callbackCalled);
+    }
+
+    [Fact]
     public async Task NewDbContext()
     {
         await using var database = await instance.Build();
