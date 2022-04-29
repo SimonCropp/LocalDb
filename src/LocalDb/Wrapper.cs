@@ -261,9 +261,16 @@ class Wrapper
     }
 
     [Time]
-    public void DeleteInstance()
+    public void DeleteInstance(ShutdownMode shutdownMode = ShutdownMode.KillProcess)
     {
-        LocalDbApi.StopAndDelete(instance);
+        LocalDbApi.StopAndDelete(instance, shutdownMode);
+        System.IO.Directory.Delete(Directory, true);
+    }
+
+    [Time]
+    public void DeleteInstance(ShutdownMode shutdownMode, TimeSpan timeout)
+    {
+        LocalDbApi.StopAndDelete(instance, shutdownMode, timeout);
         System.IO.Directory.Delete(Directory, true);
     }
 

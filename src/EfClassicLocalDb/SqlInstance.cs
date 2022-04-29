@@ -97,7 +97,23 @@ public class SqlInstance<TDbContext>
         return Timestamp.LastModified<TDbContext>();
     }
 
-    public void Cleanup() => Wrapper.DeleteInstance();
+    public void Cleanup()
+    {
+        Guard.AgainstBadOS();
+        Wrapper.DeleteInstance();
+    }
+
+    public void Cleanup(ShutdownMode shutdownMode)
+    {
+        Guard.AgainstBadOS();
+        Wrapper.DeleteInstance(shutdownMode);
+    }
+
+    public void Cleanup(ShutdownMode shutdownMode, TimeSpan timeout)
+    {
+        Guard.AgainstBadOS();
+        Wrapper.DeleteInstance(shutdownMode, timeout);
+    }
 
     Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
