@@ -103,16 +103,16 @@ public class SqlInstance<TDbContext>
         Wrapper.DeleteInstance();
     }
 
-    public void Cleanup(ShutdownMode shutdownMode)
+    public void Cleanup(ShutdownMode mode)
     {
         Guard.AgainstBadOS();
-        Wrapper.DeleteInstance(shutdownMode);
+        Wrapper.DeleteInstance(mode);
     }
 
-    public void Cleanup(ShutdownMode shutdownMode, TimeSpan timeout)
+    public void Cleanup(ShutdownMode mode, TimeSpan timeout)
     {
         Guard.AgainstBadOS();
-        Wrapper.DeleteInstance(shutdownMode, timeout);
+        Wrapper.DeleteInstance(mode, timeout);
     }
 
     Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);

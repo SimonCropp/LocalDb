@@ -133,12 +133,12 @@ static class LocalDbApi
 
     private static readonly TimeSpan DefaultShutdownTimeout = TimeSpan.FromSeconds(10);
 
-    public static void StopAndDelete(string instanceName, ShutdownMode shutdownMode = ShutdownMode.KillProcess) =>
-        StopAndDelete(instanceName, shutdownMode, DefaultShutdownTimeout);
+    public static void StopAndDelete(string instanceName, ShutdownMode mode = ShutdownMode.KillProcess) =>
+        StopAndDelete(instanceName, mode, DefaultShutdownTimeout);
 
-    public static void StopAndDelete(string instanceName, ShutdownMode shutdownMode, TimeSpan timeout)
+    public static void StopAndDelete(string instanceName, ShutdownMode mode, TimeSpan timeout)
     {
-        StopInstance(instanceName, shutdownMode, timeout);
+        StopInstance(instanceName, mode, timeout);
         DeleteInstance(instanceName);
     }
 
@@ -171,9 +171,9 @@ static class LocalDbApi
         startInstance(instanceName, 0, connection, ref size);
     }
 
-    public static void StopInstance(string instanceName, ShutdownMode shutdownMode = ShutdownMode.UseSqlShutdown) =>
-        StopInstance(instanceName, shutdownMode, DefaultShutdownTimeout);
+    public static void StopInstance(string instanceName, ShutdownMode mode = ShutdownMode.UseSqlShutdown) =>
+        StopInstance(instanceName, mode, DefaultShutdownTimeout);
 
-    public static void StopInstance(string instanceName, ShutdownMode shutdownMode, TimeSpan timeout) =>
-        stopInstance(instanceName, (int)shutdownMode, (int)timeout.TotalMilliseconds);
+    public static void StopInstance(string instanceName, ShutdownMode mode, TimeSpan timeout) =>
+        stopInstance(instanceName, (int)mode, (int)timeout.TotalMilliseconds);
 }
