@@ -13,7 +13,7 @@ static class DbFileNameReader
 
     static async Task<string?> ReadFileName(this DbConnection connection, string dbName, string type)
     {
-#if(NET5_0)
+#if(NET5_0_OR_GREATER)
         await using var command = connection.CreateCommand();
 #else
         using var command = connection.CreateCommand();
@@ -26,7 +26,7 @@ f.type_desc
 from sys.master_files f
 inner join sys.databases d on d.database_id = f.database_id
 where d.name = '{dbName}' and f.type_desc = '{type}'";
-#if(NET5_0)
+#if(NET5_0_OR_GREATER)
         await using var reader = await command.ExecuteReaderAsync();
 #else
         using var reader = await command.ExecuteReaderAsync();
