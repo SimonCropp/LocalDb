@@ -1,6 +1,12 @@
 ﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 
+#if EF
+using EfLocalDb;
+#else
+using LocalDb;
+#endif
+
 static class LocalDbApi
 {
     static IntPtr api;
@@ -125,9 +131,14 @@ static class LocalDbApi
 
     public static void DeleteInstance(string instanceName) => deleteInstance(instanceName, 0);
 
-    public static void StopAndDelete(string instanceName)
+    private static readonly TimeSpan DefaultShutdownTimeout = TimeSpan.FromSeconds(10);
+
+    public static void StopAndDelete(string instanceName, ShutdownMode shutdownMode = ShutdownMode.KillProcess) =>
+        StopAndDelete(instanceName, shutdownMode, DefaultShutdownTimeout);
+
+    public static void StopAndDelete(string instanceName, ShutdownMode shutdownMode, TimeSpan timeout)
     {
-        StopInstance(instanceName);
+        StopInstance(instanceName, shutdownMode, timeout);
         DeleteInstance(instanceName);
     }
 
@@ -160,5 +171,9 @@ static class LocalDbApi
         startInstance(instanceName, 0, connection, ref size);
     }
 
-    public static void StopInstance(string instanceName) => stopInstance(instanceName, 0, 10000);
+    public static void StopInstance(string instanceName, ShutdownMode shutdownMode = ShutdownMode.UseSqlShutdown) =>
+        StopInstance(instanceName, shutdownMode, DefaultShutdownTimeout);
+
+    public static void StopInstance(string instanceName, ShutdownMode shutdownMode, TimeSpan timeout) =>
+        stopInstance(instanceName, (int)shutdownMode, (int)timeout.TotalMilliseconds);
 }

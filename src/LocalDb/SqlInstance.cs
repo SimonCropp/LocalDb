@@ -115,6 +115,18 @@ public class SqlInstance
         Wrapper.DeleteInstance();
     }
 
+    public void Cleanup(ShutdownMode shutdownMode)
+    {
+        Guard.AgainstBadOS();
+        Wrapper.DeleteInstance(shutdownMode);
+    }
+
+    public void Cleanup(ShutdownMode shutdownMode, TimeSpan timeout)
+    {
+        Guard.AgainstBadOS();
+        Wrapper.DeleteInstance(shutdownMode, timeout);
+    }
+
     Task<string> BuildContext(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     #region ConventionBuildSignature

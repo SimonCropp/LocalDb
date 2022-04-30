@@ -25,6 +25,7 @@
     <Compile Include="..\LocalDb\LocalDbInstanceInfo.cs" />
     <Compile Include="..\LocalDb\LocalDbApi.cs" />
     <Compile Include="..\LocalDb\MethodTimeLogger.cs" />
+    <Compile Include="..\LocalDb\ShutdownMode.cs" />
     <Compile Include="..\LocalDb\SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\State.cs" />
