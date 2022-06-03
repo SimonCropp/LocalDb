@@ -1,7 +1,10 @@
-{
+﻿{
   Size: 1460,
   InstanceName: InfoTest,
   Exists: true,
+  ConfigurationCorrupted: false,
   IsRunning: true,
-  SharedInstanceName: 
+  IsShared: false,
+  SharedInstanceName: ,
+  IsAutomatic: false
 }

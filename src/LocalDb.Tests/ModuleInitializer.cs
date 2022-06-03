@@ -14,15 +14,12 @@ public static class ModuleInitializer
         LocalDbLogging.EnableVerbose();
         LocalDbSettings.ConnectionBuilder((instance, database) => $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true;Connection Timeout=300");
         VerifierSettings.ScrubLinesContaining("filename = '");
-        VerifierSettings.ModifySerialization(settings =>
-        {
-            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
-            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
-            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
-            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Build);
-            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Major);
-            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Minor);
-            settings.IgnoreMember<LocalDbInstanceInfo>(x => x.Revision);
-        });
+        VerifierSettings.IgnoreMember<LocalDbInstanceInfo>(x => x.OwnerSID);
+        VerifierSettings.IgnoreMember<LocalDbInstanceInfo>(x => x.Connection);
+        VerifierSettings.IgnoreMember<LocalDbInstanceInfo>(x => x.LastStartUtc);
+        VerifierSettings.IgnoreMember<LocalDbInstanceInfo>(x => x.Build);
+        VerifierSettings.IgnoreMember<LocalDbInstanceInfo>(x => x.Major);
+        VerifierSettings.IgnoreMember<LocalDbInstanceInfo>(x => x.Minor);
+        VerifierSettings.IgnoreMember<LocalDbInstanceInfo>(x => x.Revision);
     }
 }
