@@ -1,5 +1,6 @@
 ﻿[
   {
+    HasTransaction: false,
     Text:
 declare @command nvarchar(max)
 set @command = ''
