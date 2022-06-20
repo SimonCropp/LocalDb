@@ -39,5 +39,8 @@
     <PackageReference Include="ProjectDefaults" Version="1.0.78" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" Condition="$(Configuration) == 'Release'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+
+    <Content Include="buildTransitive\EfLocalDb.props" PackagePath="buildTransitive\EfLocalDb.props" />
+    <Content Include="buildTransitive\EfLocalDb.props" PackagePath="build\EfLocalDb.props" />
   </ItemGroup>
 </Project>
