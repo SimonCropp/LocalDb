@@ -1,6 +1,7 @@
 ﻿{
   entries: [
     {
+      HasTransaction: false,
       Text:
 if db_id('CreateDatabase') is null
     begin

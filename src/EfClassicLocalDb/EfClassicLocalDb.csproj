@@ -43,5 +43,8 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" Condition="$(Configuration) == 'Release'" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+
+    <Content Include="buildTransitive\EfClassicLocalDb.props" PackagePath="buildTransitive\EfClassicLocalDb.props" />
+    <Content Include="buildTransitive\EfClassicLocalDb.props" PackagePath="build\EfClassicLocalDb.props" />
   </ItemGroup>
 </Project>

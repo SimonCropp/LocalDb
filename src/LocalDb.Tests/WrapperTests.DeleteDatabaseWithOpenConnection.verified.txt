@@ -1,6 +1,7 @@
 ﻿{
   entries: [
     {
+      HasTransaction: false,
       Text:
 if db_id('ToDelete') is null
     begin
@@ -20,7 +21,10 @@ else
 alter database [ToDelete] set read_write;
     }
   ],
-  deletedState: {},
+  deletedState: {
+    DataFileExists: false,
+    LogFileExists: false
+  },
   createdState: {
     DataFileExists: true,
     LogFileExists: true,
