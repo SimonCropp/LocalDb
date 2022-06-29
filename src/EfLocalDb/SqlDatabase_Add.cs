@@ -6,22 +6,8 @@ public partial class SqlDatabase<TDbContext>
 
     Task Add(IEnumerable<object> entities, TDbContext context)
     {
-        foreach (var entity in entities)
+        foreach (var entity in ExpandEnumerable(entities))
         {
-            if (entity is IEnumerable enumerable)
-            {
-                var entityType = entity.GetType();
-                if (EntityTypes.Any(x => x.ClrType != entityType))
-                {
-                    foreach (var nested in enumerable)
-                    {
-                        context.Add(nested);
-                    }
-
-                    continue;
-                }
-            }
-
             context.Add(entity);
         }
 
