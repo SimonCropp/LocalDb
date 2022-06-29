@@ -293,4 +293,26 @@ public partial class SqlDatabase<TDbContext> :
 
         return list;
     }
+
+    IEnumerable<object> ExpandEnumerable(IEnumerable<object> entities)
+    {
+        foreach (var entity in entities)
+        {
+            if (entity is IEnumerable enumerable)
+            {
+                var entityType = entity.GetType();
+                if (EntityTypes.Any(x => x.ClrType != entityType))
+                {
+                    foreach (var nested in enumerable)
+                    {
+                        yield return nested;
+                    }
+
+                    continue;
+                }
+            }
+
+            yield return entity;
+        }
+    }
 }
