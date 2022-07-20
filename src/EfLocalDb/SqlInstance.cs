@@ -246,7 +246,13 @@ public class SqlInstance<TDbContext>
         Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
         var connection = await BuildDatabase(dbName);
-        var database = new SqlDatabase<TDbContext>(connection, dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data, sqlOptionsBuilder);
+        var database = new SqlDatabase<TDbContext>(
+            connection,
+            dbName,
+            constructInstance,
+            () => Wrapper.DeleteDatabase(dbName),
+            data,
+            sqlOptionsBuilder);
         await database.Start();
         return database;
     }
