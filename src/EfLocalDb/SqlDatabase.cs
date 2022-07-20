@@ -4,7 +4,9 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
 using DataSqlConnection = System.Data.SqlClient.SqlConnection;
+using ExpressionExtensions =Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions;
 
 namespace EfLocalDb;
 
@@ -207,11 +209,25 @@ public partial class SqlDatabase<TDbContext> :
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
-    public async Task<bool> Exists<T>(params object[] keys)
+    public Task<bool> Exists<T>(params object[] keys)
         where T : class
     {
-        var result = await Set<T>().FindAsync(keys);
-        return result != null;
+        var set = Set<T>();
+        var primaryKey = set.EntityType.FindPrimaryKey();
+        if (primaryKey == null)
+        {
+            throw new($"{typeof(T).FullName} does not have a primary key");
+        }
+
+        return set.AnyAsync(BuildLambda<T>(primaryKey.Properties, new(keys)));
+    }
+
+    static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
+    {
+        var entityParameter = Expression.Parameter(typeof(T), "e");
+
+        var predicate = ExpressionExtensions.BuildPredicate(keyProperties, keyValues, entityParameter);
+        return Expression.Lambda<Func<T, bool>>(predicate, entityParameter);
     }
 
     /// <summary>
