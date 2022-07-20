@@ -184,7 +184,7 @@ public partial class SqlDatabase<TDbContext> :
         }
 
         var keyString = string.Join(", ", keys);
-        throw new("No record found with keys: " + keyString);
+        throw new($"No record found with keys: {keyString}");
     }
 
     /// <summary>
@@ -236,10 +236,10 @@ public partial class SqlDatabase<TDbContext> :
 
         if (results.Count > 1)
         {
-            throw new("More than one record found with keys: " + keyString);
+            throw new($"More than one record found with keys: {keyString}");
         }
 
-        throw new("No record found with keys: " + keyString);
+        throw new($"No record found with keys: {keyString}");
     }
 
     /// <summary>
@@ -257,7 +257,7 @@ public partial class SqlDatabase<TDbContext> :
         if (results.Count > 1)
         {
             var keyString = string.Join(", ", keys);
-            throw new("More than one record found with keys: " + keyString);
+            throw new($"More than one record found with keys: {keyString}");
         }
 
         return false;
