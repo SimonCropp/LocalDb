@@ -254,13 +254,13 @@ public partial class SqlDatabase<TDbContext> :
             return true;
         }
 
-        if (results.Count > 1)
+        if (results.Count <= 1)
         {
-            var keyString = string.Join(", ", keys);
-            throw new($"More than one record found with keys: {keyString}");
+            return false;
         }
 
-        return false;
+        var keyString = string.Join(", ", keys);
+        throw new($"More than one record found with keys: {keyString}");
     }
 
     async Task<List<object>> FindResults(object[] keys)
