@@ -11,9 +11,9 @@ class ManifestTokenResolver :
     {
         if (connection is SqlConnection)
         {
-            return defaultResolver.ResolveManifestToken(connection);
+            return "2012";
         }
 
-        return "2012";
+        return defaultResolver.ResolveManifestToken(connection);
     }
 }
