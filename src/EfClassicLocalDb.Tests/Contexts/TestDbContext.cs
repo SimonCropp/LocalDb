@@ -16,8 +16,9 @@ public class TestDbContext :
     protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TestEntity>();
 }
 
-
+#region QuietDbConfiguration
 public class DbConfiguration :
     QuietDbConfiguration
 {
 }
+#endregion

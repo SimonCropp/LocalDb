@@ -76,3 +76,15 @@ snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs
 It is possible to pass the path to a pre-existing template to SqlInstance. This is useful if the database contains stored procedures, or requires a large amount of test data.
 
 snippet: EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs
+
+
+## QuietDbConfiguration
+
+`QuietDbConfiguration` applies the approaches outlined in [Reducing Code First Database Chatter](https://romiller.com/2014/06/10/reducing-code-first-database-chatter/).
+
+
+### Usage
+
+Add the following to the same Assembly that the `DbContext` implementation exists in:
+
+snippet: QuietDbConfiguration
