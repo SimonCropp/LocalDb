@@ -73,7 +73,7 @@ public class SqlInstance<TDbContext>
         }
 
         Wrapper = new(
-            s => new SqlConnection(s),
+            _ => new SqlConnection(_),
             storageValue.Name,
             storageValue.Directory,
             templateSize,
@@ -163,7 +163,12 @@ public class SqlInstance<TDbContext>
         Guard.AgainstBadOS();
         Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
         var connection = await BuildDatabase(dbName);
-        var database = new SqlDatabase<TDbContext>(connection, dbName, constructInstance, () => Wrapper.DeleteDatabase(dbName), data);
+        var database = new SqlDatabase<TDbContext>(
+            connection,
+            dbName,
+            constructInstance,
+            () => Wrapper.DeleteDatabase(dbName),
+            data);
         await database.Start();
         return database;
     }
