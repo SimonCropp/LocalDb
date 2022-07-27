@@ -1,5 +1,7 @@
 ﻿using System.Data.Common;
 using System.Data.Entity;
+using EfLocalDb;
+
 
 public class TestDbContext :
     DbContext
@@ -12,4 +14,10 @@ public class TestDbContext :
     }
 
     protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TestEntity>();
+}
+
+
+public class DbConfiguration :
+    QuietDbConfiguration
+{
 }
