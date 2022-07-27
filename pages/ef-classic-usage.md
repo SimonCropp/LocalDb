@@ -290,3 +290,24 @@ static class SuppliedTemplate
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
+
+
+## QuietDbConfiguration
+
+`QuietDbConfiguration` applies the approaches outlined in [Reducing Code First Database Chatter](https://romiller.com/2014/06/10/reducing-code-first-database-chatter/).
+
+
+### Usage
+
+Add the following to the same Assembly that the `DbContext` implementation exists in:
+
+<!-- snippet: QuietDbConfiguration -->
+<a id='snippet-quietdbconfiguration'></a>
+```cs
+public class DbConfiguration :
+    QuietDbConfiguration
+{
+}
+```
+<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L19-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-quietdbconfiguration' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
