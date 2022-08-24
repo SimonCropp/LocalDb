@@ -20,16 +20,17 @@
             return;
         }
 
+        var cutoff = DateTime.Now.AddHours(-6);
         foreach (var file in GetDbFiles(directory))
         {
-            if (File.GetLastWriteTime(file) < DateTime.Now.AddDays(-1))
+            if (File.GetLastWriteTime(file) < cutoff)
             {
                 File.Delete(file);
             }
         }
 
         if (!Directory.GetFileSystemEntries(directory).Any() &&
-            Directory.GetCreationTime(directory) < DateTime.Now.AddDays(-1))
+            Directory.GetCreationTime(directory) < cutoff)
         {
             Directory.Delete(directory, false);
         }
