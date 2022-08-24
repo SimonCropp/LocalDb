@@ -1,4 +1,4 @@
-Failed to setup a LocalDB instance.
+﻿Failed to setup a LocalDB instance.
 name: InstanceName
 directory: c:\LocalDBData\InstanceName:
 
