@@ -208,7 +208,6 @@ class Wrapper
 #else
         using var connection = await OpenMasterConnection();
 #endif
-        await connection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
         LocalDbLogging.LogIfVerbose($"SqlServerVersion: {connection.ServerVersion}");
 
         if (optimize)
@@ -220,6 +219,8 @@ class Wrapper
         {
             await Rebuild(timestamp, buildTemplate, connection);
         }
+
+        await connection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
     }
 
     async Task<DbConnection> OpenMasterConnection()
