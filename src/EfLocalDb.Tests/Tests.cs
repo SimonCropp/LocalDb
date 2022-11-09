@@ -358,8 +358,7 @@ public class Tests
             sqlOptionsBuilder: _ =>
             {
                 optionsBuilderCalled = true;
-            },
-            storage: Storage.FromSuffix<TestDbContext>("SqlOptionsBuilder"));
+            });
 
         var entity = new TestEntity
         {
@@ -382,17 +381,16 @@ public class Tests
             {
                 await context.Database.EnsureCreatedAsync();
             },
-            Storage.FromSuffix<TestDbContext>("BuildTemplate"));
+            Storage.FromSuffix<TestDbContext>("theSuffix"));
 
         var entity = new TestEntity
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(
-            new List<object>
-            {
-                entity
-            });
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
         Assert.True(await database.Exists(entity.Id));
     }
 
