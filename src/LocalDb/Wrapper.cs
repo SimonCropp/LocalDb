@@ -204,22 +204,30 @@ class Wrapper
         bool optimize)
     {
 #if NET5_0_OR_GREATER
-        await using var connection = await OpenMasterConnection();
+        await using var takeOfflineConnection = await OpenMasterConnection();
 #else
-        using var connection = await OpenMasterConnection();
+        using var takeOfflineConnection = await OpenMasterConnection();
 #endif
-        await connection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
-        LocalDbLogging.LogIfVerbose($"SqlServerVersion: {connection.ServerVersion}");
+        var takeDbsOffline = takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
+#if NET5_0_OR_GREATER
+        await using var masterConnection = await OpenMasterConnection();
+#else
+        using var masterConnection = await OpenMasterConnection();
+#endif
+
+        LocalDbLogging.LogIfVerbose($"SqlServerVersion: {masterConnection.ServerVersion}");
 
         if (optimize)
         {
-            await connection.ExecuteCommandAsync(SqlBuilder.GetOptimizationCommand(size));
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizationCommand(size));
         }
 
         if (rebuild && !templateProvided)
         {
-            await Rebuild(timestamp, buildTemplate, connection);
+            await Rebuild(timestamp, buildTemplate, masterConnection);
         }
+
+        await takeDbsOffline;
     }
 
     async Task<DbConnection> OpenMasterConnection()
