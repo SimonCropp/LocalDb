@@ -2,8 +2,8 @@
 
 public class Tests
 {
-    SqlInstance<TestDbContext> instance;
-    bool callbackCalled;
+    static SqlInstance<TestDbContext> instance;
+    static bool callbackCalled;
 
     [Fact]
     public async Task SeedData()
@@ -191,7 +191,7 @@ public class Tests
         Assert.True(callbackCalled);
     }
 
-    public Tests() =>
+    static Tests() =>
         instance = new(
             connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>($"Classic{Environment.Version.Major}"),
