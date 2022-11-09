@@ -3,8 +3,8 @@
 [UsesVerify]
 public class Tests
 {
-    SqlInstance<TestDbContext> instance;
-    bool callbackCalled;
+    static SqlInstance<TestDbContext> instance;
+    static bool callbackCalled;
 
     [Fact]
     public async Task SeedData()
@@ -358,7 +358,8 @@ public class Tests
             sqlOptionsBuilder: _ =>
             {
                 optionsBuilderCalled = true;
-            });
+            },
+            storage: Storage.FromSuffix<TestDbContext>("SqlOptionsBuilder"));
 
         var entity = new TestEntity
         {
@@ -381,7 +382,7 @@ public class Tests
             {
                 await context.Database.EnsureCreatedAsync();
             },
-            Storage.FromSuffix<TestDbContext>("theSuffix"));
+            storage: Storage.FromSuffix<TestDbContext>("BuildTemplate"));
 
         var entity = new TestEntity
         {
@@ -546,7 +547,7 @@ public class Tests
         Assert.True(callbackCalled);
     }
 
-    public Tests() =>
+    static Tests() =>
         instance = new(
             builder => new(builder.Options),
             callback: (_, _) =>
