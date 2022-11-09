@@ -208,7 +208,7 @@ class Wrapper
 #else
         using var takeOfflineConnection = await OpenMasterConnection();
 #endif
-        var takeDbsOffline = takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
+        await takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
 #if NET5_0_OR_GREATER
         await using var masterConnection = await OpenMasterConnection();
 #else
@@ -226,8 +226,6 @@ class Wrapper
         {
             await Rebuild(timestamp, buildTemplate, masterConnection);
         }
-
-        await takeDbsOffline;
     }
 
     async Task<DbConnection> OpenMasterConnection()
