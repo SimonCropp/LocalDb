@@ -16,9 +16,10 @@ public static class TestDbBuilder
         await using var command = connection.CreateCommand();
         var addData = intData;
         intData++;
-        command.CommandText = $@"
-insert into MyTable (Value)
-values ({addData});";
+        command.CommandText = $"""
+            insert into MyTable (Value)
+            values ({addData});
+            """;
         await command.ExecuteNonQueryAsync();
         return addData;
     }

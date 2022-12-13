@@ -7,10 +7,11 @@ public static class DbPropertyReader
     static IEnumerable<DbFileSettings> ReadFileSettings(DbConnection connection, string name)
     {
         using var command = connection.CreateCommand();
-        command.CommandText = $@"
-select name, filename
-from master.sys.sysaltfiles
-where name like '{name}%'";
+        command.CommandText = $"""
+            select name, filename
+            from master.sys.sysaltfiles
+            where name like '{name}%'
+            """;
         var reader = command.ExecuteReader();
         while (reader.Read())
         {

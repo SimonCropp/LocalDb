@@ -18,14 +18,15 @@ static class DbFileNameReader
 #else
         using var command = connection.CreateCommand();
 #endif
-        command.CommandText = $@"
-select
-d.name,
-f.physical_name,
-f.type_desc
-from sys.master_files f
-inner join sys.databases d on d.database_id = f.database_id
-where d.name = '{dbName}' and f.type_desc = '{type}'";
+        command.CommandText = $"""
+            select
+            d.name,
+            f.physical_name,
+            f.type_desc
+            from sys.master_files f
+            inner join sys.databases d on d.database_id = f.database_id
+            where d.name = '{dbName}' and f.type_desc = '{type}'
+            """;
 #if(NET5_0_OR_GREATER)
         await using var reader = await command.ExecuteReaderAsync();
 #else
