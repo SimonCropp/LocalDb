@@ -40,9 +40,10 @@ public static class TestDbBuilder
         await using var command = connection.CreateCommand();
         var addData = intData;
         intData++;
-        command.CommandText = $@"
-insert into MyTable (Value)
-values ({addData});";
+        command.CommandText = $"""
+            insert into MyTable (Value)
+            values ({addData});
+            """;
         await command.ExecuteNonQueryAsync();
         return addData;
     }
@@ -62,7 +63,7 @@ values ({addData});";
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
