@@ -37,15 +37,17 @@ public class Tests
         Add(list, providerAsyncScope.ServiceProvider);
         Add(list, scopeFactoryAsyncScope.ServiceProvider);
 
-        foreach (var item in list)
+        for (var outerIndex = 0; outerIndex < list.Count; outerIndex++)
         {
+            var item = list[outerIndex];
             Assert.NotNull(item);
-            foreach (var nested in list)
+            for (var innerIndex = 0; innerIndex < list.Count; innerIndex++)
             {
-                if (nested == item)
+                if (innerIndex == outerIndex)
                 {
                     continue;
                 }
+                var nested = list[innerIndex];
                 Assert.NotSame(item, nested);
             }
         }
