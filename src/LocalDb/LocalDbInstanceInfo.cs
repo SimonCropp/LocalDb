@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+﻿[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 struct LocalDbInstanceInfo
 {
     public uint Size;

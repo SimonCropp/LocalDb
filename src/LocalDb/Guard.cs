@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-
 static class Guard
 {
     internal static bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);

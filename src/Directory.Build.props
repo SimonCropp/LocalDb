@@ -10,5 +10,6 @@
     <Using Include="System.Data.Common" />
     <Using Include="System.Security.AccessControl" />
     <Using Include="System.Security.Principal" />
+    <Using Include="System.Runtime.InteropServices" />
   </ItemGroup>
 </Project>
