@@ -6,17 +6,24 @@ public partial class SqlDatabase :
 #endif
     IServiceProvider
 {
-    public object? GetService(Type serviceType)
+    public object? GetService(Type type)
     {
-        if (serviceType == typeof(SqlConnection))
+        if (type == typeof(SqlConnection))
         {
             return Connection;
         }
 
-        if (serviceType == typeof(DataSqlConnection))
+        if (type == typeof(DataSqlConnection))
         {
             return DataConnection;
         }
+
+#if(NET7_0_OR_GREATER)
+        if (type == typeof(IServiceScopeFactory))
+        {
+            return this;
+        }
+#endif
 
         return null;
     }
@@ -30,5 +37,8 @@ public partial class SqlDatabase :
         dataConnection.Open();
         return new ServiceScope(dataConnection, connection);
     }
+
+    public AsyncServiceScope CreateAsyncScope() =>
+        new(CreateScope());
 #endif
 }

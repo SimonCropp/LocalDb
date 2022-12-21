@@ -21,6 +21,41 @@ public class Tests
     }
 
     [Fact]
+    public async Task ServiceScope()
+    {
+        void Add(List<object?> objects, IServiceProvider provider)
+        {
+            objects.Add(provider.GetService<DataSqlConnection>());
+            objects.Add(provider.GetService<TestDbContext>());
+        }
+
+        using var database = await instance.Build();
+        await using var asyncScope = database.CreateAsyncScope();
+        await using var providerAsyncScope = ((IServiceProvider)database).CreateAsyncScope();
+        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory)database).CreateAsyncScope();
+        using var scope = database.CreateScope();
+        var list = new List<object?>();
+        Add(list, database);
+        Add(list, scope.ServiceProvider);
+        Add(list, asyncScope.ServiceProvider);
+        Add(list, providerAsyncScope.ServiceProvider);
+        Add(list, scopeFactoryAsyncScope.ServiceProvider);
+
+        foreach (var item in list)
+        {
+            Assert.NotNull(item);
+            foreach (var nested in list)
+            {
+                if (nested == item)
+                {
+                    continue;
+                }
+                Assert.NotSame(item, nested);
+            }
+        }
+    }
+
+    [Fact]
     public async Task AddData()
     {
         var entity = new TestEntity

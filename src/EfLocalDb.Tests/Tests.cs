@@ -1,4 +1,5 @@
 ﻿using EfLocalDb;
+using Microsoft.Data.SqlClient;
 
 [UsesVerify]
 public class Tests
@@ -19,6 +20,42 @@ public class Tests
         });
         Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
+    }
+
+    [Fact]
+    public async Task ServiceScope()
+    {
+        void Add(List<object?> objects, IServiceProvider provider)
+        {
+            objects.Add(provider.GetService<DataSqlConnection>());
+            objects.Add(provider.GetService<SqlConnection>());
+            objects.Add(provider.GetService<TestDbContext>());
+        }
+
+        await using var database = await instance.Build();
+        await using var asyncScope = database.CreateAsyncScope();
+        await using var providerAsyncScope = ((IServiceProvider)database).CreateAsyncScope();
+        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory)database).CreateAsyncScope();
+        using var scope = database.CreateScope();
+        var list = new List<object?>();
+        Add(list, database);
+        Add(list, scope.ServiceProvider);
+        Add(list, asyncScope.ServiceProvider);
+        Add(list, providerAsyncScope.ServiceProvider);
+        Add(list, scopeFactoryAsyncScope.ServiceProvider);
+
+        foreach (var item in list)
+        {
+            Assert.NotNull(item);
+            foreach (var nested in list)
+            {
+                if (nested == item)
+                {
+                    continue;
+                }
+                Assert.NotSame(item, nested);
+            }
+        }
     }
 
     [Fact]
