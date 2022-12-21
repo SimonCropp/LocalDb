@@ -1,5 +1,7 @@
 class ServiceScope :
+#if(NET7_0_OR_GREATER)
     IServiceScope,
+#endif
     IServiceProvider,
     IAsyncDisposable
 {

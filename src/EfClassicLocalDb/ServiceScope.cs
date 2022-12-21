@@ -1,3 +1,4 @@
+#if(NET7_0_OR_GREATER)
 class ServiceScope :
     IServiceScope,
     IServiceProvider
@@ -34,3 +35,4 @@ class ServiceScope :
         return null;
     }
 }
+#endif

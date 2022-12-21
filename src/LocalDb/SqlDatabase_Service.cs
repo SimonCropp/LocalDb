@@ -1,6 +1,9 @@
 ﻿namespace LocalDb;
 
 public partial class SqlDatabase :
+#if(NET7_0_OR_GREATER)
+    IServiceScopeFactory,
+#endif
     IServiceProvider
 {
     public object? GetService(Type serviceType)
@@ -18,6 +21,7 @@ public partial class SqlDatabase :
         return null;
     }
 
+#if(NET7_0_OR_GREATER)
     public IServiceScope CreateScope()
     {
         var connection = new SqlConnection(ConnectionString);
@@ -26,4 +30,5 @@ public partial class SqlDatabase :
         dataConnection.Open();
         return new ServiceScope(dataConnection, connection);
     }
+#endif
 }

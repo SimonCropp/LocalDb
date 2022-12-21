@@ -1,8 +1,10 @@
 ﻿namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
-    IServiceProvider,
-    IServiceScopeFactory
+#if(NET7_0_OR_GREATER)
+    IServiceScopeFactory,
+#endif
+    IServiceProvider
 {
     public object? GetService(Type serviceType)
     {
@@ -19,10 +21,12 @@ public partial class SqlDatabase<TDbContext> :
         return null;
     }
 
+#if(NET7_0_OR_GREATER)
     public IServiceScope CreateScope()
     {
         var connection = new DataSqlConnection(ConnectionString);
         connection.Open();
         return new ServiceScope(NewDbContext(), connection);
     }
+#endif
 }

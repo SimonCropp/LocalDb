@@ -2,7 +2,9 @@ class ServiceScope :
 #if(NET5_0_OR_GREATER)
     IAsyncDisposable,
 #endif
+#if(NET7_0_OR_GREATER)
     IServiceScope,
+#endif
     IServiceProvider
 {
     DataSqlConnection dataConnection;
