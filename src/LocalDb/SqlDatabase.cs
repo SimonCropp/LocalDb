@@ -1,6 +1,6 @@
 ﻿namespace LocalDb;
 
-public class SqlDatabase :
+public partial class SqlDatabase :
 #if(NET5_0_OR_GREATER)
     IAsyncDisposable,
 #endif
