@@ -228,7 +228,7 @@ end;
     static WrapperTests()
     {
         LocalDbApi.StopAndDelete("WrapperTests");
-        instance = new(s => new SqlConnection(s), "WrapperTests", DirectoryFinder.Find("WrapperTests"));
+        instance = new(_ => new SqlConnection(_), "WrapperTests", DirectoryFinder.Find("WrapperTests"));
         instance.Start(timestamp, TestDbBuilder.CreateTable);
         instance.AwaitStart().GetAwaiter().GetResult();
     }
