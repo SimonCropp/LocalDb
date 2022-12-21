@@ -13,5 +13,6 @@
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.ComponentModel" />
     <Using Include="System.Linq.Expressions" />
+    <Using Include="System.Data.SqlClient.SqlConnection" Alias="DataSqlConnection" />
   </ItemGroup>
 </Project>

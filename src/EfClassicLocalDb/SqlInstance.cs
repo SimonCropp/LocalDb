@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Data.SqlClient;
 
 // ReSharper disable RedundantCast
 
@@ -72,7 +71,7 @@ public class SqlInstance<TDbContext>
         }
 
         Wrapper = new(
-            _ => new SqlConnection(_),
+            _ => new DataSqlConnection(_),
             storageValue.Name,
             storageValue.Directory,
             templateSize,

@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity.Infrastructure;
-using System.Data.SqlClient;
 
 class ManifestTokenResolver :
     IManifestTokenResolver
@@ -8,7 +7,7 @@ class ManifestTokenResolver :
 
     public string ResolveManifestToken(DbConnection connection)
     {
-        if (connection is SqlConnection)
+        if (connection is DataSqlConnection)
         {
             return "2012";
         }

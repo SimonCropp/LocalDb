@@ -1,5 +1,4 @@
 ﻿using System.Data.Entity;
-using System.Data.SqlClient;
 
 namespace EfLocalDb;
 
@@ -27,19 +26,19 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     public string Name { get; }
-    public SqlConnection Connection { get; }
+    public DataSqlConnection Connection { get; }
     public string ConnectionString { get; }
 
-    public async Task<SqlConnection> OpenNewConnection()
+    public async Task<DataSqlConnection> OpenNewConnection()
     {
-        var connection = new SqlConnection(ConnectionString);
+        var connection = new DataSqlConnection(ConnectionString);
         await connection.OpenAsync();
         return connection;
     }
 
     public static implicit operator TDbContext(SqlDatabase<TDbContext> instance) => instance.Context;
 
-    public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
+    public static implicit operator DataSqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
     public async Task Start()
     {
