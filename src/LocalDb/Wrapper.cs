@@ -3,7 +3,6 @@ using EfLocalDb;
 #else
 using LocalDb;
 #endif
-using System.Data.Common;
 using MethodTimer;
 
 class Wrapper

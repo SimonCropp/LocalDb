@@ -1,4 +1,3 @@
-using System.Data.Common;
 using System.Data.Entity;
 
 namespace EfLocalDb;

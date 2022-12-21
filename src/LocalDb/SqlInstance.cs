@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using DataSqlConnection = System.Data.SqlClient.SqlConnection;
 
 namespace LocalDb;

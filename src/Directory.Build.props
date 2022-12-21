@@ -6,4 +6,7 @@
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
   </PropertyGroup>
+  <ItemGroup>
+    <Using Include="System.Data.Common" />
+  </ItemGroup>
 </Project>

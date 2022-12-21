@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 
 public class TheDbContext :
     DbContext

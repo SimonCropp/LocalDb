@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-#if !EF
+﻿#if !EF
 using Microsoft.Data.SqlClient;
 #endif
 

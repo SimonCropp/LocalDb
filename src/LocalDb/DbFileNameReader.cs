@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-static class DbFileNameReader
+﻿static class DbFileNameReader
 {
     public static async Task<(string? data, string? log)> ReadFileInfo(this DbConnection connection, string dbName)
     {

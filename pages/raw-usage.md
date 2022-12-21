@@ -22,8 +22,6 @@ The snippets use the following helper class:
 <!-- snippet: TestDbBuilder.cs -->
 <a id='snippet-TestDbBuilder.cs'></a>
 ```cs
-using System.Data.Common;
-
 public static class TestDbBuilder
 {
     public static async Task CreateTable(DbConnection connection)
@@ -63,7 +61,7 @@ public static class TestDbBuilder
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/TestDbBuilder.cs#L1-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestDbBuilder.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

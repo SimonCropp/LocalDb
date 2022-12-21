@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-public static class DbPropertyReader
+﻿public static class DbPropertyReader
 {
     public static DbSettings Read(DbConnection connection, string name) => new(ReadFileSettings(connection, name).ToList());
 

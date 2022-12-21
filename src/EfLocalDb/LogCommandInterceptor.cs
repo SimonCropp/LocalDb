@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 
 class LogCommandInterceptor :
     DbCommandInterceptor

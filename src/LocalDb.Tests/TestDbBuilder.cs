@@ -1,6 +1,4 @@
-﻿using System.Data.Common;
-
-public static class TestDbBuilder
+﻿public static class TestDbBuilder
 {
     public static async Task CreateTable(DbConnection connection)
     {
