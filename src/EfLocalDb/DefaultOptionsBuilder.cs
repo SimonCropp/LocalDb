@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 static class DefaultOptionsBuilder
 {
     static LogCommandInterceptor interceptor = new();

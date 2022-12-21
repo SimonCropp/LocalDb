@@ -1,5 +1,4 @@
 using EfLocalDb;
-using Microsoft.EntityFrameworkCore;
 
 static class BuildTemplateConverter
 {

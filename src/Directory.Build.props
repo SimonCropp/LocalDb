@@ -12,5 +12,6 @@
     <Using Include="System.Security.Principal" />
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.ComponentModel" />
+    <Using Include="System.Linq.Expressions" />
   </ItemGroup>
 </Project>
