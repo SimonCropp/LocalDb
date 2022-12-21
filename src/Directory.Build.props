@@ -8,5 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System.Data.Common" />
+    <Using Include="System.Security.AccessControl" />
+    <Using Include="System.Security.Principal" />
   </ItemGroup>
 </Project>

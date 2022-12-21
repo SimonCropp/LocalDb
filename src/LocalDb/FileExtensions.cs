@@ -1,7 +1,4 @@
-﻿using System.Security.AccessControl;
-using System.Security.Principal;
-
-static class FileExtensions
+﻿static class FileExtensions
 {
     public static void MarkFileAsWritable(string dataFile)
     {
