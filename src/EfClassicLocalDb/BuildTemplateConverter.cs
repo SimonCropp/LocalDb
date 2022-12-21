@@ -1,4 +1,3 @@
-using System.Data.Entity;
 using EfLocalDb;
 
 static class BuildTemplateConverter

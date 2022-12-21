@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+﻿
 
 // ReSharper disable RedundantCast
 

@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
-namespace LocalDb;
+﻿namespace LocalDb;
 
 public class SqlDatabase :
 #if(NET5_0_OR_GREATER)

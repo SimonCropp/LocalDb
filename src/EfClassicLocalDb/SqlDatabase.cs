@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-
-namespace EfLocalDb;
+﻿namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
     IDisposable

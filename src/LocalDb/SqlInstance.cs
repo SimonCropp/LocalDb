@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
-namespace LocalDb;
+﻿namespace LocalDb;
 
 public class SqlInstance
 {

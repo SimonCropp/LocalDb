@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-
-// ReSharper disable RedundantCast
+﻿// ReSharper disable RedundantCast
 
 namespace EfLocalDb;
 

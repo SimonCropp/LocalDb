@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using ExpressionExtensions = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions;
+﻿using ExpressionExtensions = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions;
 
 namespace EfLocalDb;
 

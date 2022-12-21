@@ -1,5 +1,3 @@
-using System.Data.Entity;
-
 namespace EfLocalDb;
 
 public delegate TDbContext ConstructInstance<out TDbContext>(DbConnection connection)

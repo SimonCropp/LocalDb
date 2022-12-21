@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
-
-class LogCommandInterceptor :
+﻿class LogCommandInterceptor :
     DbCommandInterceptor
 {
     static void WriteLine(CommandEventData data) => LocalDbLogging.Log($"EF {data}");

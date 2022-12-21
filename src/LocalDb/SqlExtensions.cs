@@ -1,8 +1,4 @@
-﻿#if !EF
-using Microsoft.Data.SqlClient;
-#endif
-
-static class SqlExtensions
+﻿static class SqlExtensions
 {
     public static async Task ExecuteCommandAsync(this DbConnection connection, string commandText)
     {
