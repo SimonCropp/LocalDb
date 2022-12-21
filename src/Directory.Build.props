@@ -11,5 +11,6 @@
     <Using Include="System.Security.AccessControl" />
     <Using Include="System.Security.Principal" />
     <Using Include="System.Runtime.InteropServices" />
+    <Using Include="System.ComponentModel" />
   </ItemGroup>
 </Project>

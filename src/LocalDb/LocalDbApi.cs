@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-#if EF
+﻿#if EF
 using EfLocalDb;
 #else
 using LocalDb;
