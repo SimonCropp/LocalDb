@@ -17,4 +17,13 @@ public partial class SqlDatabase :
 
         return null;
     }
+
+    public IServiceScope CreateScope()
+    {
+        var connection = new SqlConnection(ConnectionString);
+        connection.Open();
+        var dataConnection = new DataSqlConnection(ConnectionString);
+        dataConnection.Open();
+        return new ServiceScope(dataConnection, connection);
+    }
 }

@@ -1,7 +1,8 @@
 ﻿namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
-    IServiceProvider
+    IServiceProvider,
+    IServiceScopeFactory
 {
     public object? GetService(Type serviceType)
     {
@@ -16,5 +17,12 @@ public partial class SqlDatabase<TDbContext> :
         }
 
         return null;
+    }
+
+    public IServiceScope CreateScope()
+    {
+        var connection = new DataSqlConnection(ConnectionString);
+        connection.Open();
+        return new ServiceScope(NewDbContext(), connection);
     }
 }

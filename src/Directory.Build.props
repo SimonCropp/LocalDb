@@ -14,5 +14,6 @@
     <Using Include="System.ComponentModel" />
     <Using Include="System.Linq.Expressions" />
     <Using Include="System.Data.SqlClient.SqlConnection" Alias="DataSqlConnection" />
+    <Using Include="Microsoft.Extensions.DependencyInjection" />
   </ItemGroup>
 </Project>
