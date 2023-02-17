@@ -73,6 +73,13 @@ public class Tests
         Assert.True(callbackCalled);
     }
 
+    [Fact]
+    public async Task ThrowOnSaveForNoData()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.SaveChangesAsync())
+            .IgnoreStackTrace();
+    }
 
     [Fact]
     public async Task RemoveData()
