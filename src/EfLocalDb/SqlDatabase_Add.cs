@@ -2,9 +2,9 @@
 
 public partial class SqlDatabase<TDbContext>
 {
-    public Task AddData(IEnumerable<object> entities) => Add(entities, Context);
+    public Task Add(IEnumerable<object> entities) => AddInner(entities, Context);
 
-    Task Add(IEnumerable<object> entities, TDbContext context)
+    Task AddInner(IEnumerable<object> entities, TDbContext context)
     {
         foreach (var entity in ExpandEnumerable(entities))
         {
@@ -14,13 +14,13 @@ public partial class SqlDatabase<TDbContext>
         return context.SaveChangesAsync();
     }
 
-    public Task AddData(params object[] entities) => AddData((IEnumerable<object>) entities);
+    public Task Add(params object[] entities) => Add((IEnumerable<object>) entities);
 
-    public async Task AddDataUntracked(IEnumerable<object> entities)
+    public async Task AddUntracked(IEnumerable<object> entities)
     {
         await using var context = NewDbContext();
-        await Add(entities, context);
+        await AddInner(entities, context);
     }
 
-    public Task AddDataUntracked(params object[] entities) => AddDataUntracked((IEnumerable<object>) entities);
+    public Task AddUntracked(params object[] entities) => AddUntracked((IEnumerable<object>) entities);
 }

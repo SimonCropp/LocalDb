@@ -2,9 +2,9 @@
 
 public partial class SqlDatabase<TDbContext>
 {
-    public Task RemoveData(IEnumerable<object> entities) => Remove(entities, Context);
+    public Task Remove(IEnumerable<object> entities) => RemoveInner(entities, Context);
 
-    Task Remove(IEnumerable<object> entities, TDbContext context)
+    Task RemoveInner(IEnumerable<object> entities, TDbContext context)
     {
         foreach (var entity in ExpandEnumerable(entities))
         {
@@ -14,13 +14,13 @@ public partial class SqlDatabase<TDbContext>
         return context.SaveChangesAsync();
     }
 
-    public Task RemoveData(params object[] entities) => RemoveData((IEnumerable<object>) entities);
+    public Task Remove(params object[] entities) => Remove((IEnumerable<object>) entities);
 
-    public async Task RemoveDataUntracked(IEnumerable<object> entities)
+    public async Task RemoveUntracked(IEnumerable<object> entities)
     {
         await using var context = NewDbContext();
-        await Remove(entities, context);
+        await RemoveInner(entities, context);
     }
 
-    public Task RemoveDataUntracked(params object[] entities) => RemoveDataUntracked((IEnumerable<object>) entities);
+    public Task RemoveUntracked(params object[] entities) => RemoveUntracked((IEnumerable<object>) entities);
 }

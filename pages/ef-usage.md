@@ -129,7 +129,7 @@ public class Tests :
         {
             Property = "prop"
         };
-        await database.AddData(entity);
+        await database.Add(entity);
 
         Assert.Single(database.Context.TestEntities);
     }
@@ -278,7 +278,7 @@ public class EfSnippetTests
         {
             Property = "prop"
         };
-        await database.AddData(entity);
+        await database.Add(entity);
 
         Assert.Single(database.Context.TestEntities);
     }

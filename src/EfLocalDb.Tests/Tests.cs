@@ -68,11 +68,31 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddData(entity);
+        await database.Add(entity);
         Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
 
+    [Fact]
+    public async Task Save()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        database.Context.Add(entity);
+        await database.SaveChangesAsync();
+        Assert.True(await database.Exists(entity.Id));
+    }
+
+    [Fact]
+    public async Task ThrowOnSaveForNoData()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.SaveChangesAsync())
+            .IgnoreStackTrace();
+    }
 
     [Fact]
     public async Task RemoveData()
@@ -82,8 +102,8 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddData(entity);
-        await database.RemoveData(entity);
+        await database.Add(entity);
+        await database.Remove(entity);
         Assert.False(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -96,7 +116,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+        await database.AddUntracked(entity);
         Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -109,8 +129,8 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        await database.RemoveDataUntracked(entity);
+        await database.AddUntracked(entity);
+        await database.RemoveUntracked(entity);
         Assert.False(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -123,7 +143,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+        await database.AddUntracked(entity);
         Assert.True(await database.Exists<TestEntity>(entity.Id));
     }
 
@@ -142,7 +162,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+        await database.AddUntracked(entity);
         await Verify(database.Find<TestEntity>(entity.Id));
     }
 
@@ -161,7 +181,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+        await database.AddUntracked(entity);
         await Verify(database.Single<TestEntity>(_ => _.Id == entity.Id));
     }
 
@@ -180,7 +200,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+        await database.AddUntracked(entity);
         Assert.Equal(1, await database.Count<TestEntity>());
     }
 
@@ -206,7 +226,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+        await database.AddUntracked(entity);
         Assert.True(await database.Exists(entity.Id));
     }
 
@@ -232,7 +252,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+        await database.AddUntracked(entity);
         await Verify(database.Find(entity.Id));
     }
 
@@ -262,7 +282,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddData(entity1, entity2);
+        await database.Add(entity1, entity2);
         Assert.True(await database.Exists(entity1.Id));
         Assert.True(await database.Exists(entity2.Id));
         Assert.True(callbackCalled);
@@ -284,7 +304,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddData(
+        await database.Add(
             new List<object>
             {
                 entity1,
@@ -313,14 +333,14 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddData(
+        await database.Add(
             new List<object>
             {
                 entity1,
                 entity2
             },
             entity3);
-        await database.RemoveData(
+        await database.Remove(
             new List<object>
             {
                 entity1,
@@ -345,7 +365,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity1, entity2);
+        await database.AddUntracked(entity1, entity2);
         Assert.True(await database.Exists(entity1.Id));
         Assert.True(await database.Exists(entity2.Id));
         Assert.True(callbackCalled);
@@ -363,8 +383,8 @@ public class Tests
             Property = "prop"
         };
         await using var database = await instance.Build();
-        await database.AddDataUntracked(entity1, entity2);
-        await database.RemoveDataUntracked(entity1, entity2);
+        await database.AddUntracked(entity1, entity2);
+        await database.RemoveUntracked(entity1, entity2);
         Assert.False(await database.Exists(entity1.Id));
         Assert.False(await database.Exists(entity2.Id));
         Assert.True(callbackCalled);
@@ -490,7 +510,7 @@ public class Tests
             {
                 Property = "prop"
             };
-            await database1.AddData(entity);
+            await database1.Add(entity);
         }
 
         var instance2 = new SqlInstance<WithRebuildDbContext>(
