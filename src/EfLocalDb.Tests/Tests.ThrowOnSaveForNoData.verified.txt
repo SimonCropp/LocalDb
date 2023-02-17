@@ -1,4 +1,0 @@
-﻿{
-  Type: Exception,
-  Message: No pending changes. It is possible Find or Single has been used, and the returned entity then modified. Find or Single use a non tracking context. Use the Context to dor modifications.
-}

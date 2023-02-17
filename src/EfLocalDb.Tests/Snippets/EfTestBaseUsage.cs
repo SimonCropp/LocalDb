@@ -30,7 +30,7 @@ public class Tests :
         {
             Property = "prop"
         };
-        await database.Add(entity);
+        await database.AddData(entity);
 
         Assert.Single(database.Context.TestEntities);
     }
