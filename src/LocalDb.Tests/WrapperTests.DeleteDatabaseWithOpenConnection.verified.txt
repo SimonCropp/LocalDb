@@ -5,7 +5,6 @@
       Text:
 if db_id('ToDelete') is null
     begin
-       
 create database [ToDelete] on
 (
     name = [ToDelete],

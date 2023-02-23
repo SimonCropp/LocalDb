@@ -5,7 +5,6 @@
       Text:
 if db_id('CreateDatabase') is null
     begin
-       
 create database [CreateDatabase] on
 (
     name = [CreateDatabase],

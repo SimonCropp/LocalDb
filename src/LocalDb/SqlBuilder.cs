@@ -17,7 +17,7 @@
         return $"""
             if db_id('{name}') is null
                 begin
-                   {createCommand}
+            {createCommand}
                 end;
             else
                 begin
