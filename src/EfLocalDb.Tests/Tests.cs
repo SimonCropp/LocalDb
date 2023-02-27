@@ -180,6 +180,25 @@ public class Tests
     }
 
     [Fact]
+    public async Task Any()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.Any<TestEntity>(_ => _.Id == entity.Id));
+    }
+
+    [Fact]
+    public async Task AnyMissing()
+    {
+        await using var database = await instance.Build();
+        await Verify(database.Any<TestEntity>(entity => entity.Id == 10));
+    }
+
+    [Fact]
     public async Task CountT()
     {
         var entity = new TestEntity
