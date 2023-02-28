@@ -173,10 +173,29 @@ public class Tests
     }
 
     [Fact]
+    public async Task SingleIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.SingleIgnoreFilters<TestEntity>(_ => _.Id == entity.Id));
+    }
+
+    [Fact]
     public async Task SingleMissing()
     {
         await using var database = await instance.Build();
         await ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
+    }
+
+    [Fact]
+    public async Task SingleMissingIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.SingleIgnoreFilters<TestEntity>(entity => entity.Id == 10));
     }
 
     [Fact]
