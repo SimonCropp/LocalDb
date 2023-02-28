@@ -81,7 +81,7 @@ public partial class SqlDatabase<TDbContext> :
 
             var find = findResult.MakeGenericMethod(entity.ClrType);
             var keyTypes = key.Properties.Select(_ => _.ClrType).ToList();
-            entityKeyMap.Add(new(keyTypes, key, find));
+            entityKeyMap.Add(new(entity, keyTypes, key, find));
         }
         if (data is not null)
         {
@@ -89,7 +89,7 @@ public partial class SqlDatabase<TDbContext> :
         }
     }
 
-    record EntityKeyMap(List<Type> KeyTypes, IKey Key, MethodInfo Find);
+    record EntityKeyMap(IEntityType Entity, List<Type> KeyTypes, IKey Key, MethodInfo Find);
 
     List<EntityKeyMap> entityKeyMap = null!;
 

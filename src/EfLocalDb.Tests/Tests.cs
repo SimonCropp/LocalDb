@@ -14,10 +14,11 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object>
-        {
-            entity
-        });
+        await using var database = await instance.Build(
+            new List<object>
+            {
+                entity
+            });
         Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -140,7 +141,7 @@ public class Tests
     {
         var entity = new TestEntity
         {
-            Property = "prop"
+            Property = "filtered"
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
@@ -174,10 +175,29 @@ public class Tests
     }
 
     [Fact]
+    public async Task FindTIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.FindIgnoreFilters<TestEntity>(entity.Id));
+    }
+
+    [Fact]
     public async Task FindMissingT()
     {
         await using var database = await instance.Build();
         await ThrowsTask(() => database.Find<TestEntity>(0));
+    }
+
+    [Fact]
+    public async Task FindMissingTIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.FindIgnoreFilters<TestEntity>(0));
     }
 
     [Fact]
@@ -197,7 +217,7 @@ public class Tests
     {
         var entity = new TestEntity
         {
-            Property = "prop"
+            Property = "filtered"
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
@@ -235,7 +255,7 @@ public class Tests
     {
         var entity = new TestEntity
         {
-            Property = "prop"
+            Property = "filtered"
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
@@ -287,12 +307,13 @@ public class Tests
     {
         var entity = new TestEntity
         {
-            Property = "prop"
+            Property = "filtered"
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
         Assert.True(await database.ExistsIgnoreFilter(entity.Id));
     }
+
     [Fact]
     public async Task Exists()
     {
@@ -344,12 +365,13 @@ public class Tests
         await using var database = await instance.Build();
         await ThrowsTask(() => database.Find(0));
     }
+
     [Fact]
     public async Task FindIgnoreFilters()
     {
         var entity = new TestEntity
         {
-            Property = "prop"
+            Property = "filtered"
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);

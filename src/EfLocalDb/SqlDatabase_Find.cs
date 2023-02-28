@@ -6,13 +6,32 @@ public partial class SqlDatabase<TDbContext>
     ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
     ///     <typeparamref name="T" />.
     /// </summary>
-    public async Task<T> Find<T>(params object[] keys)
-        where T : class
+    public Task<T> Find<T>(params object[] keys)
+        where T : class =>
+        InnerFind<T>(keys, false);
+
+    /// <summary>
+    ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
+    ///     <typeparamref name="T" />.
+    /// </summary>
+    public Task<T> FindIgnoreFilters<T>(params object[] keys)
+        where T : class =>
+        InnerFind<T>(keys, true);
+
+    async Task<T> InnerFind<T>(object[] keys, bool ignoreFilters) where T : class
     {
-        var result = await Set<T>().FindAsync(keys);
+        var (_, keyTypes, key, find) = entityKeyMap.Single(_ => _.Entity.ClrType == typeof(T));
+
+        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
+        if (!keyTypes.SequenceEqual(inputKeyTypes))
+        {
+            throw new("Key types dont match");
+        }
+
+        var result = await InvokeFind(ignoreFilters, keys, find, key);
         if (result is not null)
         {
-            return result;
+            return (T) result;
         }
 
         var keyString = string.Join(", ", keys);
@@ -56,21 +75,14 @@ public partial class SqlDatabase<TDbContext>
 
         var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
 
-        foreach (var (keyTypes, key, find) in entityKeyMap)
+        foreach (var (_, keyTypes, key, find) in entityKeyMap)
         {
             if (!keyTypes.SequenceEqual(inputKeyTypes))
             {
                 continue;
             }
 
-            var result = await (Task<object?>) find.Invoke(
-                this,
-                new object?[]
-                {
-                    ignoreFilters,
-                    key,
-                    keys
-                })!;
+            var result = await InvokeFind(ignoreFilters, keys, find, key);
             if (result is not null)
             {
                 list.Add(result);
@@ -79,6 +91,16 @@ public partial class SqlDatabase<TDbContext>
 
         return list;
     }
+
+    Task<object?> InvokeFind(bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
+        (Task<object?>) find.Invoke(
+            this,
+            new object?[]
+            {
+                ignoreFilters,
+                key,
+                keys
+            })!;
 
     async Task<object?> FindResult<T>(bool ignoreFilters, IKey key, object[] keys)
         where T : class
