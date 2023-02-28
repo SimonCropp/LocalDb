@@ -59,14 +59,12 @@ public partial class SqlDatabase<TDbContext>
             return results[0];
         }
 
-        var keyString = string.Join(", ", keys);
-
         if (results.Count > 1)
         {
-            throw new($"More than one record found with keys: {keyString}");
+            throw new MoreThanOneException(keys, results);
         }
 
-        throw new($"No record found with keys: {keyString}");
+        throw new($"No record found with keys: {string.Join(", ", keys)}");
     }
 
     async Task<List<object>> FindResults(bool ignoreFilters, object[] keys)
@@ -112,6 +110,6 @@ public partial class SqlDatabase<TDbContext>
             set = set.IgnoreQueryFilters();
         }
 
-        return await set.FirstOrDefaultAsync(lambda);
+        return await set.SingleOrDefaultAsync(lambda);
     }
 }

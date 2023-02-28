@@ -50,13 +50,12 @@ public partial class SqlDatabase<TDbContext>
             return true;
         }
 
-        if (results.Count <= 1)
+        if (results.Count > 1)
         {
-            return false;
+            throw new MoreThanOneException(keys, results);
         }
 
-        var keyString = string.Join(", ", keys);
-        throw new($"More than one record found with keys: {keyString}");
+        return false;
     }
 
     static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
