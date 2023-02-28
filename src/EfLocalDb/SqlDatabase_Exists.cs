@@ -6,10 +6,20 @@ public partial class SqlDatabase<TDbContext>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
     public Task<bool> Exists<T>(params object[] keys)
-        where T : class
+        where T : class =>
+        Exists(Set<T>(), keys);
+
+    /// <summary>
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
+    /// </summary>
+    public Task<bool> ExistsIgnoreFilters<T>(params object[] keys)
+        where T : class =>
+        Exists(Set<T>().IgnoreQueryFilters(), keys);
+
+    Task<bool> Exists<T>(IQueryable<T> set, object[] keys) where T : class
     {
-        var set = Set<T>();
-        var primaryKey = set.EntityType.FindPrimaryKey();
+        var entityType = EntityTypes.Single(_ => _.ClrType == typeof(T));
+        var primaryKey = entityType.FindPrimaryKey();
         if (primaryKey == null)
         {
             throw new($"{typeof(T).FullName} does not have a primary key");
