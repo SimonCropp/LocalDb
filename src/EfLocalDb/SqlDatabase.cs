@@ -70,11 +70,22 @@ public partial class SqlDatabase<TDbContext> :
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
         EntityTypes = Context.Model.GetEntityTypes().ToList();
+        entityKeyMap = new();
+        foreach (var entity in EntityTypes)
+        {
+            var key = entity.FindPrimaryKey();
+            if (key is not null)
+            {
+                entityKeyMap.Add(entity, key);
+            }
+        }
         if (data is not null)
         {
             await AddData(data);
         }
     }
+
+    Dictionary<IEntityType, IKey> entityKeyMap = null!;
 
     public TDbContext Context { get; private set; } = null!;
     public TDbContext NoTrackingContext { get; private set; } = null!;

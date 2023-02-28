@@ -47,23 +47,21 @@ public partial class SqlDatabase<TDbContext>
 
         var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
 
-        var entitiesToQuery = EntityTypes
-            .Where(entity =>
-            {
-                var primaryKey = entity.FindPrimaryKey();
-                if (primaryKey is null)
-                {
-                    return false;
-                }
-
-                var entityKeys = primaryKey.Properties.Select(_ => _.ClrType);
-                return entityKeys.SequenceEqual(inputKeyTypes);
-            });
-
-        foreach (var entity in entitiesToQuery)
+        foreach (var (entity, key) in entityKeyMap)
         {
+            if (!key.Properties.Select(_ => _.ClrType).SequenceEqual(inputKeyTypes))
+            {
+                continue;
+            }
+
             var genericFindResult = findResult.MakeGenericMethod(entity.ClrType);
-            var result = await (Task<object?>) genericFindResult.Invoke(this, new object?[]{entity.FindPrimaryKey()!,keys})!;
+            var result = await (Task<object?>) genericFindResult.Invoke(
+                this,
+                new object?[]
+                {
+                    key,
+                    keys
+                })!;
             if (result is not null)
             {
                 list.Add(result);
