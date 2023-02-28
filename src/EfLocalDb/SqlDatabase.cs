@@ -245,7 +245,7 @@ public partial class SqlDatabase<TDbContext> :
     {
         var list = new List<object>();
 
-        var inputKeyTypes = keys.Select(x => x.GetType()).ToList();
+        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
 
         var entitiesToQuery = EntityTypes
             .Where(entity =>
@@ -256,7 +256,7 @@ public partial class SqlDatabase<TDbContext> :
                     return false;
                 }
 
-                var entityKeys = primaryKey.Properties.Select(x => x.ClrType);
+                var entityKeys = primaryKey.Properties.Select(_ => _.ClrType);
                 return entityKeys.SequenceEqual(inputKeyTypes);
             });
 
@@ -279,7 +279,7 @@ public partial class SqlDatabase<TDbContext> :
             if (entity is IEnumerable enumerable)
             {
                 var entityType = entity.GetType();
-                if (EntityTypes.Any(x => x.ClrType != entityType))
+                if (EntityTypes.Any(_ => _.ClrType != entityType))
                 {
                     foreach (var nested in enumerable)
                     {
