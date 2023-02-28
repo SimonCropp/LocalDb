@@ -38,4 +38,12 @@ public partial class SqlDatabase<TDbContext>
         var keyString = string.Join(", ", keys);
         throw new($"More than one record found with keys: {keyString}");
     }
+
+    static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
+    {
+        var entityParameter = Expression.Parameter(typeof(T), "e");
+
+        var predicate = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions.BuildPredicate(keyProperties, keyValues, entityParameter);
+        return Expression.Lambda<Func<T, bool>>(predicate, entityParameter);
+    }
 }

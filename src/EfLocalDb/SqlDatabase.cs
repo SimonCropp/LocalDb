@@ -1,6 +1,4 @@
-﻿using ExpressionExtensions = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions;
-
-namespace EfLocalDb;
+﻿namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
     IAsyncDisposable,
@@ -171,14 +169,6 @@ public partial class SqlDatabase<TDbContext> :
     {
         await DisposeAsync();
         await delete();
-    }
-
-    static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
-    {
-        var entityParameter = Expression.Parameter(typeof(T), "e");
-
-        var predicate = ExpressionExtensions.BuildPredicate(keyProperties, keyValues, entityParameter);
-        return Expression.Lambda<Func<T, bool>>(predicate, entityParameter);
     }
 
     /// <summary>
