@@ -51,9 +51,9 @@ public partial class SqlDatabase<TDbContext>
 
     static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
     {
-        var entityParameter = Expression.Parameter(typeof(T), "e");
+        var parameter = Expression.Parameter(typeof(T), "e");
 
-        var predicate = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions.BuildPredicate(keyProperties, keyValues, entityParameter);
-        return Expression.Lambda<Func<T, bool>>(predicate, entityParameter);
+        var predicate = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions.BuildPredicate(keyProperties, keyValues, parameter);
+        return Expression.Lambda<Func<T, bool>>(predicate, parameter);
     }
 }
