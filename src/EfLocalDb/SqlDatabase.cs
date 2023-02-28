@@ -25,6 +25,7 @@ public partial class SqlDatabase<TDbContext> :
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         ConnectionString = connectionString;
         Connection = new(connectionString);
+        findResult = GetType().GetMethod("FindResult", BindingFlags.Instance | BindingFlags.NonPublic)!;
         dataConnection = new(() =>
         {
             var connection = new DataSqlConnection(connectionString);
@@ -36,6 +37,7 @@ public partial class SqlDatabase<TDbContext> :
     public string Name { get; }
     public SqlConnection Connection { get; }
     Lazy<DataSqlConnection> dataConnection;
+    MethodInfo findResult;
     public DataSqlConnection DataConnection => dataConnection.Value;
     public string ConnectionString { get; }
 

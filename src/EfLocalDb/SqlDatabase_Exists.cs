@@ -25,7 +25,8 @@ public partial class SqlDatabase<TDbContext>
             throw new($"{typeof(T).FullName} does not have a primary key");
         }
 
-        return set.AnyAsync(BuildLambda<T>(primaryKey.Properties, new(keys)));
+        var lambda = BuildLambda<T>(primaryKey.Properties, new(keys));
+        return set.AnyAsync(lambda);
     }
 
     /// <summary>

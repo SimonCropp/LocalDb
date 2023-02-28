@@ -62,7 +62,8 @@ public partial class SqlDatabase<TDbContext>
 
         foreach (var entity in entitiesToQuery)
         {
-            var result = await NoTrackingContext.FindAsync(entity.ClrType, keys);
+            var genericFindResult = findResult.MakeGenericMethod(entity.ClrType);
+            var result = await (Task<object?>) genericFindResult.Invoke(this, new object?[]{entity.FindPrimaryKey()!,keys})!;
             if (result is not null)
             {
                 list.Add(result);
@@ -70,5 +71,12 @@ public partial class SqlDatabase<TDbContext>
         }
 
         return list;
+    }
+
+    async Task<object?> FindResult<T>(IKey key,object[] keys)
+        where T : class
+    {
+        var lambda = BuildLambda<T>(key.Properties, new(keys));
+        return await NoTrackingContext.Set<T>().FirstOrDefaultAsync(lambda);
     }
 }
