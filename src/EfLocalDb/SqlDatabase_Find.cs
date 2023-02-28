@@ -47,15 +47,14 @@ public partial class SqlDatabase<TDbContext>
 
         var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
 
-        foreach (var (entity, key) in entityKeyMap)
+        foreach (var (keyTypes, key, find) in entityKeyMap)
         {
-            if (!key.Properties.Select(_ => _.ClrType).SequenceEqual(inputKeyTypes))
+            if (!keyTypes.SequenceEqual(inputKeyTypes))
             {
                 continue;
             }
 
-            var genericFindResult = findResult.MakeGenericMethod(entity.ClrType);
-            var result = await (Task<object?>) genericFindResult.Invoke(
+            var result = await (Task<object?>) find.Invoke(
                 this,
                 new object?[]
                 {

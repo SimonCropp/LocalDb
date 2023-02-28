@@ -74,10 +74,14 @@ public partial class SqlDatabase<TDbContext> :
         foreach (var entity in EntityTypes)
         {
             var key = entity.FindPrimaryKey();
-            if (key is not null)
+            if (key is null)
             {
-                entityKeyMap.Add(entity, key);
+                continue;
             }
+
+            var find = findResult.MakeGenericMethod(entity.ClrType);
+            var keyTypes = key.Properties.Select(_ => _.ClrType).ToList();
+            entityKeyMap.Add(new(keyTypes, key, find));
         }
         if (data is not null)
         {
@@ -85,7 +89,9 @@ public partial class SqlDatabase<TDbContext> :
         }
     }
 
-    Dictionary<IEntityType, IKey> entityKeyMap = null!;
+    record EntityKeyMap(List<Type> KeyTypes, IKey Key, MethodInfo Find);
+
+    List<EntityKeyMap> entityKeyMap = null!;
 
     public TDbContext Context { get; private set; } = null!;
     public TDbContext NoTrackingContext { get; private set; } = null!;
