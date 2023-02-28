@@ -231,10 +231,29 @@ public class Tests
     }
 
     [Fact]
+    public async Task AnyIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.AnyIgnoreFilters<TestEntity>(_ => _.Id == entity.Id));
+    }
+
+    [Fact]
     public async Task AnyMissing()
     {
         await using var database = await instance.Build();
         await Verify(database.Any<TestEntity>(entity => entity.Id == 10));
+    }
+
+    [Fact]
+    public async Task AnyMissingIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await Verify(database.AnyIgnoreFilters<TestEntity>(entity => entity.Id == 10));
     }
 
     [Fact]
