@@ -173,38 +173,6 @@ public partial class SqlDatabase<TDbContext> :
         await delete();
     }
 
-    /// <summary>
-    ///     Calls <see cref="EntityFrameworkQueryableExtensions.CountAsync{TSource}(IQueryable{TSource}, CancellationToken)" />
-    ///     on the <see cref="DbContext.Set{TEntity}()" /> for <typeparamref name="T" />.
-    /// </summary>
-    public Task<int> Count<T>(Expression<Func<T, bool>>? predicate = null)
-        where T : class
-    {
-        if (predicate is null)
-        {
-            return Set<T>().CountAsync();
-        }
-
-        return Set<T>().CountAsync(predicate);
-    }
-
-    /// <summary>
-    ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
-    ///     <typeparamref name="T" />.
-    /// </summary>
-    public async Task<T> Find<T>(params object[] keys)
-        where T : class
-    {
-        var result = await Set<T>().FindAsync(keys);
-        if (result is not null)
-        {
-            return result;
-        }
-
-        var keyString = string.Join(", ", keys);
-        throw new($"No record found with keys: {keyString}");
-    }
-
     static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
     {
         var entityParameter = Expression.Parameter(typeof(T), "e");
@@ -218,59 +186,6 @@ public partial class SqlDatabase<TDbContext> :
     /// </summary>
     public DbSet<T> Set<T>()
         where T : class => NoTrackingContext.Set<T>();
-
-    /// <summary>
-    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
-    /// </summary>
-    public async Task<object> Find(params object[] keys)
-    {
-        var results = await FindResults(keys);
-
-        if (results.Count == 1)
-        {
-            return results[0];
-        }
-
-        var keyString = string.Join(", ", keys);
-
-        if (results.Count > 1)
-        {
-            throw new($"More than one record found with keys: {keyString}");
-        }
-
-        throw new($"No record found with keys: {keyString}");
-    }
-
-    async Task<List<object>> FindResults(object[] keys)
-    {
-        var list = new List<object>();
-
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
-
-        var entitiesToQuery = EntityTypes
-            .Where(entity =>
-            {
-                var primaryKey = entity.FindPrimaryKey();
-                if (primaryKey is null)
-                {
-                    return false;
-                }
-
-                var entityKeys = primaryKey.Properties.Select(_ => _.ClrType);
-                return entityKeys.SequenceEqual(inputKeyTypes);
-            });
-
-        foreach (var entity in entitiesToQuery)
-        {
-            var result = await NoTrackingContext.FindAsync(entity.ClrType, keys);
-            if (result is not null)
-            {
-                list.Add(result);
-            }
-        }
-
-        return list;
-    }
 
     IEnumerable<object> ExpandEnumerable(IEnumerable<object> entities)
     {

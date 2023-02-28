@@ -1,0 +1,74 @@
+﻿namespace EfLocalDb;
+
+public partial class SqlDatabase<TDbContext>
+{
+    /// <summary>
+    ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
+    ///     <typeparamref name="T" />.
+    /// </summary>
+    public async Task<T> Find<T>(params object[] keys)
+        where T : class
+    {
+        var result = await Set<T>().FindAsync(keys);
+        if (result is not null)
+        {
+            return result;
+        }
+
+        var keyString = string.Join(", ", keys);
+        throw new($"No record found with keys: {keyString}");
+    }
+
+    /// <summary>
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
+    /// </summary>
+    public async Task<object> Find(params object[] keys)
+    {
+        var results = await FindResults(keys);
+
+        if (results.Count == 1)
+        {
+            return results[0];
+        }
+
+        var keyString = string.Join(", ", keys);
+
+        if (results.Count > 1)
+        {
+            throw new($"More than one record found with keys: {keyString}");
+        }
+
+        throw new($"No record found with keys: {keyString}");
+    }
+
+    async Task<List<object>> FindResults(object[] keys)
+    {
+        var list = new List<object>();
+
+        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
+
+        var entitiesToQuery = EntityTypes
+            .Where(entity =>
+            {
+                var primaryKey = entity.FindPrimaryKey();
+                if (primaryKey is null)
+                {
+                    return false;
+                }
+
+                var entityKeys = primaryKey.Properties.Select(_ => _.ClrType);
+                return entityKeys.SequenceEqual(inputKeyTypes);
+            });
+
+        foreach (var entity in entitiesToQuery)
+        {
+            var result = await NoTrackingContext.FindAsync(entity.ClrType, keys);
+            if (result is not null)
+            {
+                list.Add(result);
+            }
+        }
+
+        return list;
+    }
+}
