@@ -6,13 +6,32 @@ public partial class SqlDatabase<TDbContext>
     ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
     ///     <typeparamref name="T" />.
     /// </summary>
-    public async Task<T> Find<T>(params object[] keys)
-        where T : class
+    public Task<T> Find<T>(params object[] keys)
+        where T : class =>
+        InnerFind<T>(keys, false);
+
+    /// <summary>
+    ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
+    ///     <typeparamref name="T" />.
+    /// </summary>
+    public Task<T> FindIgnoreFilters<T>(params object[] keys)
+        where T : class =>
+        InnerFind<T>(keys, true);
+
+    async Task<T> InnerFind<T>(object[] keys, bool ignoreFilters) where T : class
     {
-        var result = await Set<T>().FindAsync(keys);
+        var (_, keyTypes, key, find) = entityKeyMap.Single(_ => _.Entity.ClrType == typeof(T));
+
+        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
+        if (!keyTypes.SequenceEqual(inputKeyTypes))
+        {
+            throw new("Key types dont match");
+        }
+
+        var result = await InvokeFind(ignoreFilters, keys, find, key);
         if (result is not null)
         {
-            return result;
+            return (T) result;
         }
 
         var keyString = string.Join(", ", keys);
@@ -22,9 +41,18 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
     /// </summary>
-    public async Task<object> Find(params object[] keys)
+    public Task<object> Find(params object[] keys) =>
+        InnerFind(false, keys);
+
+    /// <summary>
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
+    /// </summary>
+    public Task<object> FindIgnoreFilters(params object[] keys) =>
+        InnerFind(true, keys);
+
+    async Task<object> InnerFind(bool ignoreFilters, object[] keys)
     {
-        var results = await FindResults(keys);
+        var results = await FindResults(ignoreFilters, keys);
 
         if (results.Count == 1)
         {
@@ -41,28 +69,20 @@ public partial class SqlDatabase<TDbContext>
         throw new($"No record found with keys: {keyString}");
     }
 
-    async Task<List<object>> FindResults(object[] keys)
+    async Task<List<object>> FindResults(bool ignoreFilters, object[] keys)
     {
         var list = new List<object>();
 
         var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
 
-        var entitiesToQuery = EntityTypes
-            .Where(entity =>
-            {
-                var primaryKey = entity.FindPrimaryKey();
-                if (primaryKey is null)
-                {
-                    return false;
-                }
-
-                var entityKeys = primaryKey.Properties.Select(_ => _.ClrType);
-                return entityKeys.SequenceEqual(inputKeyTypes);
-            });
-
-        foreach (var entity in entitiesToQuery)
+        foreach (var (_, keyTypes, key, find) in entityKeyMap)
         {
-            var result = await NoTrackingContext.FindAsync(entity.ClrType, keys);
+            if (!keyTypes.SequenceEqual(inputKeyTypes))
+            {
+                continue;
+            }
+
+            var result = await InvokeFind(ignoreFilters, keys, find, key);
             if (result is not null)
             {
                 list.Add(result);
@@ -70,5 +90,28 @@ public partial class SqlDatabase<TDbContext>
         }
 
         return list;
+    }
+
+    Task<object?> InvokeFind(bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
+        (Task<object?>) find.Invoke(
+            this,
+            new object?[]
+            {
+                ignoreFilters,
+                key,
+                keys
+            })!;
+
+    async Task<object?> FindResult<T>(bool ignoreFilters, IKey key, object[] keys)
+        where T : class
+    {
+        var lambda = BuildLambda<T>(key.Properties, new(keys));
+        IQueryable<T> set = NoTrackingContext.Set<T>();
+        if (ignoreFilters)
+        {
+            set = set.IgnoreQueryFilters();
+        }
+
+        return await set.FirstOrDefaultAsync(lambda);
     }
 }

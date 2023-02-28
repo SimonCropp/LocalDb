@@ -6,24 +6,44 @@ public partial class SqlDatabase<TDbContext>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
     public Task<bool> Exists<T>(params object[] keys)
-        where T : class
+        where T : class =>
+        Exists(Set<T>(), keys);
+
+    /// <summary>
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
+    /// </summary>
+    public Task<bool> ExistsIgnoreFilters<T>(params object[] keys)
+        where T : class =>
+        Exists(Set<T>().IgnoreQueryFilters(), keys);
+
+    Task<bool> Exists<T>(IQueryable<T> set, object[] keys) where T : class
     {
-        var set = Set<T>();
-        var primaryKey = set.EntityType.FindPrimaryKey();
+        var entityType = EntityTypes.Single(_ => _.ClrType == typeof(T));
+        var primaryKey = entityType.FindPrimaryKey();
         if (primaryKey == null)
         {
             throw new($"{typeof(T).FullName} does not have a primary key");
         }
 
-        return set.AnyAsync(BuildLambda<T>(primaryKey.Properties, new(keys)));
+        var lambda = BuildLambda<T>(primaryKey.Properties, new(keys));
+        return set.AnyAsync(lambda);
     }
 
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
-    public async Task<bool> Exists(params object[] keys)
+    public Task<bool> Exists(params object[] keys) =>
+        InnerExists(false, keys);
+
+    /// <summary>
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
+    /// </summary>
+    public Task<bool> ExistsIgnoreFilter(params object[] keys) =>
+        InnerExists(true, keys);
+
+    async Task<bool> InnerExists(bool ignoreFilters, object[] keys)
     {
-        var results = await FindResults(keys);
+        var results = await FindResults(ignoreFilters, keys);
 
         if (results.Count == 1)
         {
@@ -41,9 +61,9 @@ public partial class SqlDatabase<TDbContext>
 
     static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
     {
-        var entityParameter = Expression.Parameter(typeof(T), "e");
+        var parameter = Expression.Parameter(typeof(T), "e");
 
-        var predicate = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions.BuildPredicate(keyProperties, keyValues, entityParameter);
-        return Expression.Lambda<Func<T, bool>>(predicate, entityParameter);
+        var predicate = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions.BuildPredicate(keyProperties, keyValues, parameter);
+        return Expression.Lambda<Func<T, bool>>(predicate, parameter);
     }
 }

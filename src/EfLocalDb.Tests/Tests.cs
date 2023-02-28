@@ -14,10 +14,11 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object>
-        {
-            entity
-        });
+        await using var database = await instance.Build(
+            new List<object>
+            {
+                entity
+            });
         Assert.True(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -34,8 +35,8 @@ public class Tests
 
         await using var database = await instance.Build();
         await using var asyncScope = database.CreateAsyncScope();
-        await using var providerAsyncScope = ((IServiceProvider)database).CreateAsyncScope();
-        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory)database).CreateAsyncScope();
+        await using var providerAsyncScope = ((IServiceProvider) database).CreateAsyncScope();
+        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory) database).CreateAsyncScope();
         using var scope = database.CreateScope();
         var list = new List<object?>();
         Add(list, database);
@@ -54,6 +55,7 @@ public class Tests
                 {
                     continue;
                 }
+
                 var nested = list[innerIndex];
                 Assert.NotSame(item, nested);
             }
@@ -135,10 +137,29 @@ public class Tests
     }
 
     [Fact]
+    public async Task ExistsTIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.True(await database.ExistsIgnoreFilters<TestEntity>(entity.Id));
+    }
+
+    [Fact]
     public async Task ExistsMissingT()
     {
         await using var database = await instance.Build();
         Assert.False(await database.Exists<TestEntity>(0));
+    }
+
+    [Fact]
+    public async Task ExistsMissingTIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        Assert.False(await database.ExistsIgnoreFilters<TestEntity>(0));
     }
 
     [Fact]
@@ -154,10 +175,29 @@ public class Tests
     }
 
     [Fact]
+    public async Task FindTIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.FindIgnoreFilters<TestEntity>(entity.Id));
+    }
+
+    [Fact]
     public async Task FindMissingT()
     {
         await using var database = await instance.Build();
         await ThrowsTask(() => database.Find<TestEntity>(0));
+    }
+
+    [Fact]
+    public async Task FindMissingTIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.FindIgnoreFilters<TestEntity>(0));
     }
 
     [Fact]
@@ -173,10 +213,29 @@ public class Tests
     }
 
     [Fact]
+    public async Task SingleIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.SingleIgnoreFilters<TestEntity>(_ => _.Id == entity.Id));
+    }
+
+    [Fact]
     public async Task SingleMissing()
     {
         await using var database = await instance.Build();
         await ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
+    }
+
+    [Fact]
+    public async Task SingleMissingIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.SingleIgnoreFilters<TestEntity>(entity => entity.Id == 10));
     }
 
     [Fact]
@@ -192,10 +251,29 @@ public class Tests
     }
 
     [Fact]
+    public async Task AnyIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.AnyIgnoreFilters<TestEntity>(_ => _.Id == entity.Id));
+    }
+
+    [Fact]
     public async Task AnyMissing()
     {
         await using var database = await instance.Build();
         await Verify(database.Any<TestEntity>(entity => entity.Id == 10));
+    }
+
+    [Fact]
+    public async Task AnyMissingIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await Verify(database.AnyIgnoreFilters<TestEntity>(entity => entity.Id == 10));
     }
 
     [Fact]
@@ -225,6 +303,18 @@ public class Tests
     }
 
     [Fact]
+    public async Task ExistsIgnoreFilter()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.True(await database.ExistsIgnoreFilter(entity.Id));
+    }
+
+    [Fact]
     public async Task Exists()
     {
         var entity = new TestEntity
@@ -234,6 +324,13 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
         Assert.True(await database.Exists(entity.Id));
+    }
+
+    [Fact]
+    public async Task ExistsMissingIgnoreFilter()
+    {
+        await using var database = await instance.Build();
+        Assert.False(await database.ExistsIgnoreFilter(0));
     }
 
     [Fact]
@@ -267,6 +364,25 @@ public class Tests
     {
         await using var database = await instance.Build();
         await ThrowsTask(() => database.Find(0));
+    }
+
+    [Fact]
+    public async Task FindIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.FindIgnoreFilters(entity.Id));
+    }
+
+    [Fact]
+    public async Task FindMissingIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.FindIgnoreFilters(0));
     }
 
     [Fact]

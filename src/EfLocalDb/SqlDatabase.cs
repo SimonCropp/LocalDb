@@ -25,6 +25,7 @@ public partial class SqlDatabase<TDbContext> :
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         ConnectionString = connectionString;
         Connection = new(connectionString);
+        findResult = GetType().GetMethod("FindResult", BindingFlags.Instance | BindingFlags.NonPublic)!;
         dataConnection = new(() =>
         {
             var connection = new DataSqlConnection(connectionString);
@@ -36,6 +37,7 @@ public partial class SqlDatabase<TDbContext> :
     public string Name { get; }
     public SqlConnection Connection { get; }
     Lazy<DataSqlConnection> dataConnection;
+    MethodInfo findResult;
     public DataSqlConnection DataConnection => dataConnection.Value;
     public string ConnectionString { get; }
 
@@ -68,11 +70,28 @@ public partial class SqlDatabase<TDbContext> :
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
         EntityTypes = Context.Model.GetEntityTypes().ToList();
+        entityKeyMap = new();
+        foreach (var entity in EntityTypes)
+        {
+            var key = entity.FindPrimaryKey();
+            if (key is null)
+            {
+                continue;
+            }
+
+            var find = findResult.MakeGenericMethod(entity.ClrType);
+            var keyTypes = key.Properties.Select(_ => _.ClrType).ToList();
+            entityKeyMap.Add(new(entity, keyTypes, key, find));
+        }
         if (data is not null)
         {
             await AddData(data);
         }
     }
+
+    record EntityKeyMap(IEntityType Entity, List<Type> KeyTypes, IKey Key, MethodInfo Find);
+
+    List<EntityKeyMap> entityKeyMap = null!;
 
     public TDbContext Context { get; private set; } = null!;
     public TDbContext NoTrackingContext { get; private set; } = null!;

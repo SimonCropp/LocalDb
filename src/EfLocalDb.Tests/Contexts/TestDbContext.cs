@@ -10,5 +10,7 @@ public class TestDbContext :
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder model) => model.Entity<TestEntity>();
+    protected override void OnModelCreating(ModelBuilder model) =>
+        model.Entity<TestEntity>()
+            .HasQueryFilter(_ => _.Property != "filtered");
 }
