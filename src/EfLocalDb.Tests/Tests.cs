@@ -283,6 +283,17 @@ public class Tests
     }
 
     [Fact]
+    public async Task ExistsIgnoreFilter()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.True(await database.ExistsIgnoreFilter(entity.Id));
+    }
+    [Fact]
     public async Task Exists()
     {
         var entity = new TestEntity
@@ -292,6 +303,13 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
         Assert.True(await database.Exists(entity.Id));
+    }
+
+    [Fact]
+    public async Task ExistsMissingIgnoreFilter()
+    {
+        await using var database = await instance.Build();
+        Assert.False(await database.ExistsIgnoreFilter(0));
     }
 
     [Fact]
@@ -325,6 +343,24 @@ public class Tests
     {
         await using var database = await instance.Build();
         await ThrowsTask(() => database.Find(0));
+    }
+    [Fact]
+    public async Task FindIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.FindIgnoreFilters(entity.Id));
+    }
+
+    [Fact]
+    public async Task FindMissingIgnoreFilters()
+    {
+        await using var database = await instance.Build();
+        await ThrowsTask(() => database.FindIgnoreFilters(0));
     }
 
     [Fact]

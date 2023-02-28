@@ -22,9 +22,18 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
     /// </summary>
-    public async Task<object> Find(params object[] keys)
+    public Task<object> Find(params object[] keys) =>
+        InnerFind(false, keys);
+
+    /// <summary>
+    ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
+    /// </summary>
+    public Task<object> FindIgnoreFilters(params object[] keys) =>
+        InnerFind(true, keys);
+
+    async Task<object> InnerFind(bool ignoreFilters, object[] keys)
     {
-        var results = await FindResults(keys);
+        var results = await FindResults(ignoreFilters, keys);
 
         if (results.Count == 1)
         {
@@ -41,7 +50,7 @@ public partial class SqlDatabase<TDbContext>
         throw new($"No record found with keys: {keyString}");
     }
 
-    async Task<List<object>> FindResults(object[] keys)
+    async Task<List<object>> FindResults(bool ignoreFilters, object[] keys)
     {
         var list = new List<object>();
 
@@ -58,6 +67,7 @@ public partial class SqlDatabase<TDbContext>
                 this,
                 new object?[]
                 {
+                    ignoreFilters,
                     key,
                     keys
                 })!;
@@ -70,10 +80,16 @@ public partial class SqlDatabase<TDbContext>
         return list;
     }
 
-    async Task<object?> FindResult<T>(IKey key,object[] keys)
+    async Task<object?> FindResult<T>(bool ignoreFilters, IKey key, object[] keys)
         where T : class
     {
         var lambda = BuildLambda<T>(key.Properties, new(keys));
-        return await NoTrackingContext.Set<T>().FirstOrDefaultAsync(lambda);
+        IQueryable<T> set = NoTrackingContext.Set<T>();
+        if (ignoreFilters)
+        {
+            set = set.IgnoreQueryFilters();
+        }
+
+        return await set.FirstOrDefaultAsync(lambda);
     }
 }
