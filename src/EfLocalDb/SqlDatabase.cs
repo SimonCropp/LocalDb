@@ -73,6 +73,11 @@ public partial class SqlDatabase<TDbContext> :
         entityKeyMap = new();
         foreach (var entity in EntityTypes)
         {
+            if (entity.IsOwned())
+            {
+                continue;
+            }
+
             var key = entity.FindPrimaryKey();
             if (key is null)
             {
