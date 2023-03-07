@@ -31,7 +31,7 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(CancellationToken cancellation = default)
+    public Task<int> SaveChangesAsync(Cancellation cancellation = default)
     {
         ThrowForNoChanges();
         return Context.SaveChangesAsync(cancellation);
@@ -40,7 +40,7 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.SaveChangesAsync(bool, CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellation = default)
+    public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, Cancellation cancellation = default)
     {
         ThrowForNoChanges();
         return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
