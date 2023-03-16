@@ -110,7 +110,7 @@ Interactions with SqlLocalDB via a [SqlConnection](https://docs.microsoft.com/en
 
 Interactions with SqlLocalDB via [Entity Framework Classic](https://docs.microsoft.com/en-us/ef/ef6/).
 
-[Full Usage](/pages/ef--classic-usage.md)
+[Full Usage](/pages/ef-classic-usage.md)
 
 
 ### EntityFramework Core
