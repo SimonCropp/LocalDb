@@ -1,5 +1,7 @@
-﻿using EfLocalDb;
+using System.Threading.Tasks;
+using EfLocalDb;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 [UsesVerify]
 public class Tests
@@ -122,6 +124,21 @@ public class Tests
         await database.RemoveDataUntracked(entity);
         Assert.False(await database.Exists(entity.Id));
         Assert.True(callbackCalled);
+    }
+
+    [Fact]
+    public async Task GetDatabaseTwice()
+    {
+        {
+            await using var db = await instance.Build();
+            var entity = db.Context.TestEntities.FirstOrDefaultAsync();
+        }
+        {
+            await Assert.ThrowsAsync<Exception>(async () =>
+            {
+                await using var db = await instance.Build();
+            });
+        }
     }
 
     [Fact]
