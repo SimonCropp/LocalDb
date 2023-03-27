@@ -20,8 +20,10 @@
 
             if (LocalDbLogging.SqlLoggingEnabled)
             {
-                LocalDbLogging.Log($@"Executed SQL ({stopwatch.ElapsedMilliseconds}.ms):
-{commandText.IndentLines()}");
+                LocalDbLogging.Log($"""
+                    Executed SQL ({stopwatch.ElapsedMilliseconds}.ms):
+                    {commandText.IndentLines()}
+                    """);
             }
         }
         catch (DbException exception)
@@ -36,10 +38,12 @@
 
     static Exception BuildException(DbConnection connection, string commandText, Exception exception)
     {
-        var builder = new StringBuilder($@"Failed to execute SQL command.
-{nameof(commandText)}: {commandText}
-connectionString: {connection.ConnectionString}
-");
+        var builder = new StringBuilder($"""
+            Failed to execute SQL command.
+            {nameof(commandText)}: {commandText}
+            connectionString: {connection.ConnectionString}
+
+            """);
 #if !EF
         if (exception is SqlException sqlException)
         {

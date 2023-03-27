@@ -57,7 +57,7 @@ public class SqlInstance
 
                 return callback.Invoke((DataSqlConnection) connection);
             },
-            s => new DataSqlConnection(s))
+            _ => new DataSqlConnection(_))
     {
     }
 
@@ -86,7 +86,7 @@ public class SqlInstance
 
                 return callback.Invoke((SqlConnection) connection);
             },
-            s => new SqlConnection(s))
+            _ => new SqlConnection(_))
     {
     }
 

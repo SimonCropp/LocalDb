@@ -46,6 +46,5 @@ static class LocalDbRegistryReader
         }
 
         return RegistryView.Registry32;
-
     }
 }
