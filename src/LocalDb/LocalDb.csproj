@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net461</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests.</Description>
@@ -9,7 +9,7 @@
     <PackageReference Include="Fody" Version="6.6.4" PrivateAssets="all" />
     <PackageReference Include="MethodTimer.Fody" Version="3.2.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="Polyfill" Version="1.8.0" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" Version="1.0.90" PrivateAssets="all" />
