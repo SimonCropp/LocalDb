@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.6.4" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.7.0" PrivateAssets="all" />
     <PackageReference Include="MethodTimer.Fody" Version="3.2.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
