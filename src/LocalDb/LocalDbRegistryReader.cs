@@ -13,9 +13,8 @@ static class LocalDbRegistryReader
         }
 
         var latest = versions.GetSubKeyNames()
-            .Select(s => new Version(s))
-            .OrderByDescending(s => s)
-            .FirstOrDefault();
+            .Select(_ => new Version(_))
+            .MaxBy(_ => _);
         if (latest is null)
         {
             throw new("LocalDb not installed.");
