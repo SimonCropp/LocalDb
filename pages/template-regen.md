@@ -47,5 +47,5 @@ public static class Timestamp
         => File.GetLastWriteTime(typeof(T).Assembly.Location);
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L7-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L6-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

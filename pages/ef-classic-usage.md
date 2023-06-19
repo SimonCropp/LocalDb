@@ -92,7 +92,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L6-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L5-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
