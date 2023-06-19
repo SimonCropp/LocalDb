@@ -59,7 +59,7 @@ public partial class SqlDatabase<TDbContext> :
     /// <summary>
     ///     Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(Cancellation cancellation = default) => Context.SaveChangesAsync(cancellation);
+    public Task<int> SaveChangesAsync(Cancel cancel = default) => Context.SaveChangesAsync(cancel);
 
     public TDbContext NewDbContext() => constructInstance(Connection);
 

@@ -1,31 +1,29 @@
 ﻿#if EF
-namespace EfLocalDb
+namespace EfLocalDb;
 #else
-namespace LocalDb
+namespace LocalDb;
 #endif
+#region Timestamp
+
+public static class Timestamp
 {
-    #region Timestamp
-
-    public static class Timestamp
+    public static DateTime LastModified(Delegate @delegate)
     {
-        public static DateTime LastModified(Delegate @delegate)
+        if (@delegate.Target is not null)
         {
-            if (@delegate.Target is not null)
-            {
-                var targetAssembly = @delegate.Target.GetType().Assembly;
-                return LastModified(targetAssembly);
-            }
-
-            var declaringAssembly = @delegate.Method.DeclaringType!.Assembly;
-            return LastModified(declaringAssembly);
+            var targetAssembly = @delegate.Target.GetType().Assembly;
+            return LastModified(targetAssembly);
         }
 
-        public static DateTime LastModified(Assembly assembly)
-            => File.GetLastWriteTime(assembly.Location);
-
-        public static DateTime LastModified<T>()
-            => File.GetLastWriteTime(typeof(T).Assembly.Location);
+        var declaringAssembly = @delegate.Method.DeclaringType!.Assembly;
+        return LastModified(declaringAssembly);
     }
 
-    #endregion
+    public static DateTime LastModified(Assembly assembly)
+        => File.GetLastWriteTime(assembly.Location);
+
+    public static DateTime LastModified<T>()
+        => File.GetLastWriteTime(typeof(T).Assembly.Location);
 }
+
+#endregion

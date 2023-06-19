@@ -31,18 +31,18 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(Cancellation cancellation = default)
+    public Task<int> SaveChangesAsync(Cancel cancel = default)
     {
         ThrowForNoChanges();
-        return Context.SaveChangesAsync(cancellation);
+        return Context.SaveChangesAsync(cancel);
     }
 
     /// <summary>
     ///     Calls <see cref="DbContext.SaveChangesAsync(bool, CancellationToken)" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, Cancellation cancellation = default)
+    public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, Cancel cancel = default)
     {
         ThrowForNoChanges();
-        return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellation);
+        return Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancel);
     }
 }

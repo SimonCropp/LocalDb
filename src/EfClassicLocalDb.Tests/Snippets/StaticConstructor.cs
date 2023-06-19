@@ -1,33 +1,31 @@
 ﻿#if(!NETCOREAPP3_1)
 using EfLocalDb;
 
-namespace StaticConstructor
+namespace StaticConstructor;
+#region EfClassicStaticConstructor
+
+public class Tests
 {
-    #region EfClassicStaticConstructor
+    static SqlInstance<TheDbContext> sqlInstance;
 
-    public class Tests
+    static Tests() =>
+        sqlInstance = new(
+            connection => new(connection));
+
+    public async Task Test()
     {
-        static SqlInstance<TheDbContext> sqlInstance;
-
-        static Tests() =>
-            sqlInstance = new(
-                connection => new(connection));
-
-        public async Task Test()
+        var entity = new TheEntity
         {
-            var entity = new TheEntity
-            {
-                Property = "prop"
-            };
-            var data = new List<object>
-            {
-                entity
-            };
-            using var database = await sqlInstance.Build(data);
-            Assert.Single(database.Context.TestEntities);
-        }
+            Property = "prop"
+        };
+        var data = new List<object>
+        {
+            entity
+        };
+        using var database = await sqlInstance.Build(data);
+        Assert.Single(database.Context.TestEntities);
     }
-
-    #endregion
 }
+
+#endregion
 #endif
