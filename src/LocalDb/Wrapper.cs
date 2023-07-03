@@ -70,6 +70,11 @@ class Wrapper
             throw new("The database name 'template' is reserved.");
         }
 
+        if (name.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+        {
+            throw new ArgumentException($"Invalid database name. Name must be valid to use as a file name. Value: {name}", nameof(name));
+        }
+
         // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
