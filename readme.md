@@ -25,7 +25,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
     * [Why not SQLite](#why-not-sqlite)
     * [Why not SQL Express or full SQL Server](#why-not-sql-express-or-full-sql-server)
     * [Why not EntityFramework InMemory](#why-not-entityframework-inmemory)
-  * [References:](#references)
+  * [References](#references)
   * [Usage](#usage)
     * [Raw SqlConnection](#raw-sqlconnection)
     * [EntityFramework Classic](#entityframework-classic)
@@ -87,11 +87,12 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 See the official guidance: [InMemory is not a relational database](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/in-memory#inmemory-is-not-a-relational-database).
 
 
-## References:
+## References
 
  * [Which Edition of SQL Server is Best for Development Work?](https://www.red-gate.com/simple-talk/sql/sql-development/edition-sql-server-best-development-work/#8)
  * [Introducing SqlLocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
  * [SQL LocalDB 2019 Download](https://download.microsoft.com/download/7/c/1/7c14e92e-bdcb-4f89-b7cf-93543e7112d1/SqlLocalDB.msi)
+ * [SQL LocalDB 2022 Download](https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi)
 
 
 ## Usage
