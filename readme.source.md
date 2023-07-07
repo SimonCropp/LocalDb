@@ -33,7 +33,7 @@ toc
 ## Why
 
 
-### Goals:
+### Goals
 
  * Have a isolated SQL Server Database for each unit test method.
  * Does not overly impact performance.
