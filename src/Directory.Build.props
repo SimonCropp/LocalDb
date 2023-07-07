@@ -5,6 +5,8 @@
     <Version>15.0.1</Version>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System.Data.Common" />
