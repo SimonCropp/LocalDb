@@ -34,7 +34,7 @@
     <PackageReference Include="MethodTimer.Fody" Version="3.2.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" Condition="$(TargetFramework) == 'net7.0'" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.7.0" PrivateAssets="all" />
+    <PackageReference Include="Fody" Version="6.8.0" PrivateAssets="all" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
