@@ -70,6 +70,7 @@ See the official guidance: [InMemory is not a relational database](https://docs.
  * [Introducing SqlLocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
  * [SQL LocalDB 2019 Download](https://download.microsoft.com/download/7/c/1/7c14e92e-bdcb-4f89-b7cf-93543e7112d1/SqlLocalDB.msi)
  * [SQL LocalDB 2022 Download](https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi)
+ * [SQL Server 2022 Express via Chocolatey](https://community.chocolatey.org/packages/sql-server-express): `choco install sql-server-express`
 
 
 ## Usage
