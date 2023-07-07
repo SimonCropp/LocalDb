@@ -21,7 +21,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 ## Contents
 
   * [Why](#why)
-    * [Goals:](#goals)
+    * [Goals](#goals)
     * [Why not SQLite](#why-not-sqlite)
     * [Why not SQL Express or full SQL Server](#why-not-sql-express-or-full-sql-server)
     * [Why not EntityFramework InMemory](#why-not-entityframework-inmemory)
@@ -56,7 +56,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 ## Why
 
 
-### Goals:
+### Goals
 
  * Have a isolated SQL Server Database for each unit test method.
  * Does not overly impact performance.
