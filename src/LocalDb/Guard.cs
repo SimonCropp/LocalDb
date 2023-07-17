@@ -3,11 +3,11 @@ static class Guard
     internal static bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     static char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
 
-    public static void AgainstInvalidFileName(string argumentName, string value)
+    public static void AgainstInvalidFileName(string name, string value)
     {
-        if (value.Any(x => invalidFileNameChars.Contains(x)))
+        if (value.Any(invalidFileNameChars.Contains))
         {
-            throw new ArgumentException($"Invalid file name: {value}", argumentName);
+            throw new ArgumentException($"Invalid file name: {value}", name);
         }
     }
 
@@ -19,23 +19,23 @@ static class Guard
         }
     }
 
-    public static void AgainstDatabaseSize(string argumentName, ushort size)
+    public static void AgainstDatabaseSize(string name, ushort size)
     {
         if (size < 3)
         {
-            throw new ArgumentOutOfRangeException(argumentName, size, "3MB is the min allowed value");
+            throw new ArgumentOutOfRangeException(name, size, "3MB is the min allowed value");
         }
     }
 
-    public static void AgainstNullWhiteSpace(string argumentName, string? value)
+    public static void AgainstNullWhiteSpace(string name, string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(argumentName);
+            throw new ArgumentNullException(name);
         }
     }
 
-    public static void AgainstWhiteSpace(string argumentName, string? value)
+    public static void AgainstWhiteSpace(string name, string? value)
     {
         if (value is null)
         {
@@ -44,15 +44,15 @@ static class Guard
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new ArgumentNullException(argumentName);
+            throw new ArgumentNullException(name);
         }
     }
 
-    public static void AgainstNegative(string argumentName, int value)
+    public static void AgainstNegative(string name, int value)
     {
         if (value < 0)
         {
-            throw new ArgumentNullException(argumentName);
+            throw new ArgumentNullException(name);
         }
     }
 }
