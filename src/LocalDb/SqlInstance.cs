@@ -21,8 +21,8 @@ public class SqlInstance
             return;
         }
 
-        Guard.AgainstWhiteSpace(nameof(directory), directory);
-        Guard.AgainstNullWhiteSpace(nameof(name), name);
+        Guard.AgainstWhiteSpace(directory);
+        Guard.AgainstNullWhiteSpace(name);
         directory = DirectoryFinder.Find(name);
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
@@ -151,9 +151,9 @@ public class SqlInstance
 
     {
         Guard.AgainstBadOS();
-        Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
-        Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
-        Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
+        Guard.AgainstNullWhiteSpace(testFile);
+        Guard.AgainstNullWhiteSpace(memberName);
+        Guard.AgainstWhiteSpace(databaseSuffix);
 
         var testClass = Path.GetFileNameWithoutExtension(testFile);
 
@@ -173,7 +173,7 @@ public class SqlInstance
 
     {
         Guard.AgainstBadOS();
-        Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
+        Guard.AgainstNullWhiteSpace(dbName);
         var connection = await BuildContext(dbName);
         var database = new SqlDatabase(connection, dbName, () => Wrapper.DeleteDatabase(dbName));
         await database.Start();

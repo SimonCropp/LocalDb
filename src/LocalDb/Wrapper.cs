@@ -30,8 +30,8 @@ class Wrapper
         Func<DbConnection, Task>? callback = null)
     {
         Guard.AgainstBadOS();
-        Guard.AgainstDatabaseSize(nameof(size), size);
-        Guard.AgainstInvalidFileName(nameof(instance), instance);
+        Guard.AgainstDatabaseSize(size);
+        Guard.AgainstInvalidFileName(instance);
 
         LocalDbLogging.WrapperCreated = true;
         this.buildConnection = buildConnection;

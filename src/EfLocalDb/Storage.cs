@@ -4,15 +4,15 @@ public struct Storage
 {
     public static Storage FromSuffix<TDbContext>(string suffix)
     {
-        Guard.AgainstNullWhiteSpace(nameof(suffix), suffix);
+        Guard.AgainstNullWhiteSpace(suffix);
         var instanceName = GetInstanceName<TDbContext>(suffix);
         return new(instanceName, DirectoryFinder.Find(instanceName));
     }
 
     public Storage(string name, string directory)
     {
-        Guard.AgainstNullWhiteSpace(nameof(directory), directory);
-        Guard.AgainstNullWhiteSpace(nameof(name), name);
+        Guard.AgainstNullWhiteSpace(directory);
+        Guard.AgainstNullWhiteSpace(name,);
         Name = name;
         Directory = directory;
     }
@@ -23,7 +23,7 @@ public struct Storage
 
     static string GetInstanceName<TDbContext>(string? scopeSuffix)
     {
-        Guard.AgainstWhiteSpace(nameof(scopeSuffix), scopeSuffix);
+        Guard.AgainstWhiteSpace(scopeSuffix);
 
         #region GetInstanceName
 

@@ -189,9 +189,9 @@ public class SqlInstance<TDbContext>
         [CallerMemberName] string memberName = "")
     {
         Guard.AgainstBadOS();
-        Guard.AgainstNullWhiteSpace(nameof(testFile), testFile);
-        Guard.AgainstNullWhiteSpace(nameof(memberName), memberName);
-        Guard.AgainstWhiteSpace(nameof(databaseSuffix), databaseSuffix);
+        Guard.AgainstNullWhiteSpace(testFile);
+        Guard.AgainstNullWhiteSpace(memberName);
+        Guard.AgainstWhiteSpace(databaseSuffix);
 
         var testClass = Path.GetFileNameWithoutExtension(testFile);
 
@@ -240,7 +240,7 @@ public class SqlInstance<TDbContext>
         IEnumerable<object>? data)
     {
         Guard.AgainstBadOS();
-        Guard.AgainstNullWhiteSpace(nameof(dbName), dbName);
+        Guard.AgainstNullWhiteSpace(dbName);
         var connection = await BuildDatabase(dbName);
         var database = new SqlDatabase<TDbContext>(
             connection,

@@ -3,7 +3,7 @@ static class Guard
     internal static bool IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
     static char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
 
-    public static void AgainstInvalidFileName(string name, string value)
+    public static void AgainstInvalidFileName(string value, [CallerArgumentExpression("value")] string? name = null)
     {
         if (value.Any(invalidFileNameChars.Contains))
         {
@@ -19,7 +19,7 @@ static class Guard
         }
     }
 
-    public static void AgainstDatabaseSize(string name, ushort size)
+    public static void AgainstDatabaseSize(ushort size, [CallerArgumentExpression("size")] string? name = null)
     {
         if (size < 3)
         {
@@ -27,7 +27,7 @@ static class Guard
         }
     }
 
-    public static void AgainstNullWhiteSpace(string name, string? value)
+    public static void AgainstNullWhiteSpace(string? value, [CallerArgumentExpression("value")] string? name = null)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -35,7 +35,7 @@ static class Guard
         }
     }
 
-    public static void AgainstWhiteSpace(string name, string? value)
+    public static void AgainstWhiteSpace(string? value, [CallerArgumentExpression("value")] string? name = null)
     {
         if (value is null)
         {
@@ -48,7 +48,7 @@ static class Guard
         }
     }
 
-    public static void AgainstNegative(string name, int value)
+    public static void AgainstNegative(int value, [CallerArgumentExpression("value")] string? name = null)
     {
         if (value < 0)
         {
