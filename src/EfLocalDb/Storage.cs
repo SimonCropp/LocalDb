@@ -12,7 +12,7 @@ public struct Storage
     public Storage(string name, string directory)
     {
         Guard.AgainstNullWhiteSpace(directory);
-        Guard.AgainstNullWhiteSpace(name,);
+        Guard.AgainstNullWhiteSpace(name);
         Name = name;
         Directory = directory;
     }
