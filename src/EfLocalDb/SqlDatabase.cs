@@ -110,7 +110,14 @@ public partial class SqlDatabase<TDbContext> :
 
         builder.ApplyQueryTracking(tracking);
 
-        return constructInstance(builder);
+        return Construct(builder);
+    }
+
+    TDbContext Construct(DbContextOptionsBuilder<TDbContext> builder)
+    {
+        var context = constructInstance(builder);
+        context.Model.SetRuntimeAnnotation("SqlDatabase", this);
+        return context;
     }
 
     public TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
@@ -118,7 +125,7 @@ public partial class SqlDatabase<TDbContext> :
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
         builder.ApplyQueryTracking(tracking);
-        return constructInstance(builder);
+        return Construct(builder);
     }
 
     public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;

@@ -360,6 +360,18 @@ public class Tests
     }
 
     [Fact]
+    public async Task FindObject()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.Context.Find(entity.Id));
+    }
+
+    [Fact]
     public async Task FindMissing()
     {
         await using var database = await instance.Build();
@@ -376,6 +388,18 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
         await Verify(database.FindIgnoreFilters(entity.Id));
+    }
+
+    [Fact]
+    public async Task FindObjectIgnoreFilters()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        await Verify(database.Context.FindIgnoreFilters(entity.Id));
     }
 
     [Fact]

@@ -18,7 +18,7 @@ public partial class SqlDatabase<TDbContext>
         where T : class =>
         InnerFind<T>(keys, true);
 
-    async Task<T> InnerFind<T>(object[] keys, bool ignoreFilters) where T : class
+    internal async Task<T> InnerFind<T>(object[] keys, bool ignoreFilters) where T : class
     {
         var (_, keyTypes, key, find) = entityKeyMap.Single(_ => _.Entity.ClrType == typeof(T));
 
@@ -50,7 +50,7 @@ public partial class SqlDatabase<TDbContext>
     public Task<object> FindIgnoreFilters(params object[] keys) =>
         InnerFind(true, keys);
 
-    async Task<object> InnerFind(bool ignoreFilters, object[] keys)
+    internal async Task<object> InnerFind(bool ignoreFilters, object[] keys)
     {
         var results = await FindResults(ignoreFilters, keys);
 
