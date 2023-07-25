@@ -19,7 +19,11 @@ public static class DbContextExtensions
     static Task<object> InnerFind<TDbContext>(this TDbContext context, bool ignoreFilters, object[] keys)
         where TDbContext : DbContext
     {
-        var database = (SqlDatabase<TDbContext>) context.Model.FindRuntimeAnnotationValue("SqlDatabase")!;
+        var database = SqlDatabase(context);
         return database.InnerFind(context, ignoreFilters, keys);
     }
+
+    static SqlDatabase<TDbContext> SqlDatabase<TDbContext>(TDbContext context)
+        where TDbContext : DbContext =>
+        (SqlDatabase<TDbContext>) context.Model.FindRuntimeAnnotationValue("SqlDatabase")!;
 }
