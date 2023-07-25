@@ -20,9 +20,9 @@ public partial class SqlDatabase<TDbContext>
 
     internal async Task<T> InnerFind<T>(TDbContext context, object[] keys, bool ignoreFilters) where T : class
     {
-        var key = FindKey<T>(keys, out var find);
+        var key = instance.FindKey<T>(keys, out var find);
 
-        var result = await InvokeFind(context, ignoreFilters, keys, find, key);
+        var result = await SqlInstance<TDbContext>.InvokeFind(context, ignoreFilters, keys, find, key);
         if (result is not null)
         {
             return (T) result;
@@ -30,20 +30,6 @@ public partial class SqlDatabase<TDbContext>
 
         var keyString = string.Join(", ", keys);
         throw new($"No record found with keys: {keyString}");
-    }
-
-    IKey FindKey<T>(object[] keys, out MethodInfo find)
-        where T : class
-    {
-        (var keyTypes, var key, find) = entityKeyMap[typeof(T)];
-
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
-        if (keyTypes.SequenceEqual(inputKeyTypes))
-        {
-            return key;
-        }
-
-        throw new("Key types dont match");
     }
 
     /// <summary>
@@ -60,7 +46,7 @@ public partial class SqlDatabase<TDbContext>
 
     internal async Task<object> InnerFind(TDbContext context, bool ignoreFilters, object[] keys)
     {
-        var results = await FindResults(context, ignoreFilters, keys);
+        var results = await instance.FindResults(context, ignoreFilters, keys);
 
         if (results.Count == 1)
         {
@@ -73,58 +59,5 @@ public partial class SqlDatabase<TDbContext>
         }
 
         throw new($"No record found with keys: {string.Join(", ", keys)}");
-    }
-
-    async Task<List<object>> FindResults(TDbContext context, bool ignoreFilters, object[] keys)
-    {
-        var list = new List<object>();
-
-        foreach (var (key, find) in FindKeys(keys))
-        {
-            var result = await InvokeFind(context, ignoreFilters, keys, find, key);
-            if (result is not null)
-            {
-                list.Add(result);
-            }
-        }
-
-        return list;
-    }
-
-    IEnumerable<(IKey key, MethodInfo find)> FindKeys(object[] keys)
-    {
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToArray();
-
-        foreach (var (keyTypes, key, find) in entityKeyMap.Values)
-        {
-            if (keyTypes.SequenceEqual(inputKeyTypes))
-            {
-                yield return new(key, find);
-            }
-        }
-    }
-
-    static Task<object?> InvokeFind(TDbContext context, bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
-        (Task<object?>) find.Invoke(
-            null,
-            new object?[]
-            {
-                context,
-                ignoreFilters,
-                key,
-                keys
-            })!;
-
-    static async Task<object?> FindResult<T>(TDbContext context, bool ignoreFilters, IKey key, object[] keys)
-        where T : class
-    {
-        var lambda = Lambda<T>.Build(key.Properties, new(keys));
-        IQueryable<T> set = context.Set<T>();
-        if (ignoreFilters)
-        {
-            set = set.IgnoreQueryFilters();
-        }
-
-        return await set.SingleOrDefaultAsync(lambda);
     }
 }

@@ -43,7 +43,7 @@ public partial class SqlDatabase<TDbContext>
 
     internal async Task<bool> InnerExists(TDbContext context, bool ignoreFilters, object[] keys)
     {
-        var results = await FindResults(context, ignoreFilters, keys);
+        var results = await instance.FindResults(context, ignoreFilters, keys);
 
         if (results.Count == 1)
         {

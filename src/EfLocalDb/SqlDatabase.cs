@@ -39,7 +39,6 @@ public partial class SqlDatabase<TDbContext> :
     public string Name { get; }
     public SqlConnection Connection { get; }
     Lazy<DataSqlConnection> dataConnection;
-    static MethodInfo findResult = typeof(SqlDatabase<TDbContext>).GetMethod("FindResult", BindingFlags.Static | BindingFlags.NonPublic)!;
     public DataSqlConnection DataConnection => dataConnection.Value;
     public string ConnectionString { get; }
 
@@ -72,32 +71,11 @@ public partial class SqlDatabase<TDbContext> :
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
 
-        foreach (var entity in instance.EntityTypes)
-        {
-            if (entity.IsOwned())
-            {
-                continue;
-            }
-
-            var key = entity.FindPrimaryKey();
-            if (key is null)
-            {
-                continue;
-            }
-
-            var find = findResult.MakeGenericMethod(entity.ClrType);
-            var keyTypes = key.Properties.Select(_ => _.ClrType).ToArray();
-            entityKeyMap.Add(entity.ClrType, new(keyTypes, key, find));
-        }
         if (data is not null)
         {
             await AddData(data);
         }
     }
-
-    record EntityKeyMap(Type[] KeyTypes, IKey Key, MethodInfo Find);
-
-    Dictionary<Type, EntityKeyMap> entityKeyMap = new();
 
     public TDbContext Context { get; private set; } = null!;
     public TDbContext NoTrackingContext { get; private set; } = null!;

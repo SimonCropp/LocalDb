@@ -7,7 +7,6 @@ public partial class SqlInstance<TDbContext>
     ConstructInstance<TDbContext> constructInstance = null!;
     static Storage DefaultStorage;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
-    public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;
 
     static SqlInstance()
     {
@@ -84,7 +83,7 @@ public partial class SqlInstance<TDbContext>
         storage ??= DefaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         Model = BuildModel(constructInstance);
-        EntityTypes = Model.GetEntityTypes().ToList();
+        InitEntityMapping();
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
 
