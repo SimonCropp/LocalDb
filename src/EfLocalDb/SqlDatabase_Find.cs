@@ -101,7 +101,7 @@ public partial class SqlDatabase<TDbContext>
                 keys
             })!;
 
-    async Task<object?> FindResult<T>(TDbContext context, bool ignoreFilters, IKey key, object[] keys)
+    static async Task<object?> FindResult<T>(TDbContext context, bool ignoreFilters, IKey key, object[] keys)
         where T : class
     {
         var lambda = BuildLambda<T>(key.Properties, new(keys));
