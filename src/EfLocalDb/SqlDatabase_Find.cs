@@ -118,7 +118,7 @@ public partial class SqlDatabase<TDbContext>
     static async Task<object?> FindResult<T>(TDbContext context, bool ignoreFilters, IKey key, object[] keys)
         where T : class
     {
-        var lambda = BuildLambda<T>(key.Properties, new(keys));
+        var lambda = Lambda<T>.Build(key.Properties, new(keys));
         IQueryable<T> set = context.Set<T>();
         if (ignoreFilters)
         {
