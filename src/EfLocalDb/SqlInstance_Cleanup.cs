@@ -1,6 +1,4 @@
-﻿// ReSharper disable RedundantCast
-
-namespace EfLocalDb;
+﻿namespace EfLocalDb;
 
 public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
