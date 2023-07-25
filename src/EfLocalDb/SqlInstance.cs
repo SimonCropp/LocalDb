@@ -1,6 +1,4 @@
-﻿
-
-// ReSharper disable RedundantCast
+﻿// ReSharper disable RedundantCast
 
 namespace EfLocalDb;
 
@@ -34,12 +32,7 @@ public class SqlInstance<TDbContext>
     /// <param name="templateSize">The size in MB for the template. Optional.</param>
     /// <param name="existingTemplate">Existing mdb and the ldf files to use when building the template. Optional.</param>
     /// <param name="callback">Option callback that is executed after the template database has been created.</param>
-    /// <param name="sqlOptionsBuilder">
-    ///     Passed to
-    ///     <see
-    ///         cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})" />
-    ///     .
-    /// </param>
+    /// <param name="sqlOptionsBuilder">Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})" />.</param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -73,12 +66,7 @@ public class SqlInstance<TDbContext>
     /// <param name="templateSize">The size in MB for the template. Optional.</param>
     /// <param name="existingTemplate">Existing mdb and the ldf files to use when building the template. Optional.</param>
     /// <param name="callback">Callback that is executed after the template database has been created. Optional.</param>
-    /// <param name="sqlOptionsBuilder">
-    ///     Passed to
-    ///     <see
-    ///         cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})" />
-    ///     .
-    /// </param>
+    /// <param name="sqlOptionsBuilder">Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})" />.</param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection<TDbContext> buildTemplate,
