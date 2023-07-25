@@ -20,13 +20,7 @@ public partial class SqlDatabase<TDbContext>
 
     internal async Task<T> InnerFind<T>(TDbContext context, object[] keys, bool ignoreFilters) where T : class
     {
-        var (keyTypes, key, find) = entityKeyMap[ typeof(T)];
-
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
-        if (!keyTypes.SequenceEqual(inputKeyTypes))
-        {
-            throw new("Key types dont match");
-        }
+        var key = FindKey<T>(keys, out var find);
 
         var result = await InvokeFind(context, ignoreFilters, keys, find, key);
         if (result is not null)
@@ -36,6 +30,20 @@ public partial class SqlDatabase<TDbContext>
 
         var keyString = string.Join(", ", keys);
         throw new($"No record found with keys: {keyString}");
+    }
+
+    IKey FindKey<T>(object[] keys, out MethodInfo find)
+        where T : class
+    {
+        (var keyTypes, var key, find) = entityKeyMap[typeof(T)];
+
+        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
+        if (keyTypes.SequenceEqual(inputKeyTypes))
+        {
+            return key;
+        }
+
+        throw new("Key types dont match");
     }
 
     /// <summary>
