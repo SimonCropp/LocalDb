@@ -2,6 +2,6 @@
   Type: Exception,
   Message: Key types dont match,
   StackTrace:
-at EfLocalDb.SqlDatabase`1.FindKey[T](Object[] keys, MethodInfo& find)
+at EfLocalDb.SqlInstance`1.FindKey[T](Object[] keys, MethodInfo& find)
 at EfLocalDb.SqlDatabase`1.InnerFind[T](TDbContext context, Object[] keys, Boolean ignoreFilters)
 }

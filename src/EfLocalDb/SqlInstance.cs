@@ -83,6 +83,7 @@ public partial class SqlInstance<TDbContext>
         storage ??= DefaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         Model = BuildModel(constructInstance);
+        InitEntityMapping();
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
 

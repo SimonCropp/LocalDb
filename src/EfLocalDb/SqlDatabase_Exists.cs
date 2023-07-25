@@ -18,7 +18,7 @@ public partial class SqlDatabase<TDbContext>
 
     Task<bool> Exists<T>(IQueryable<T> set, object[] keys) where T : class
     {
-        var entityType = EntityTypes.Single(_ => _.ClrType == typeof(T));
+        var entityType = instance.EntityTypes.Single(_ => _.ClrType == typeof(T));
         var primaryKey = entityType.FindPrimaryKey();
         if (primaryKey == null)
         {
@@ -43,7 +43,7 @@ public partial class SqlDatabase<TDbContext>
 
     internal async Task<bool> InnerExists(TDbContext context, bool ignoreFilters, object[] keys)
     {
-        var results = await FindResults(context, ignoreFilters, keys);
+        var results = await instance.FindResults(context, ignoreFilters, keys);
 
         if (results.Count == 1)
         {
