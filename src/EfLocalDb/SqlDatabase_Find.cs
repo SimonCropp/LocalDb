@@ -20,7 +20,7 @@ public partial class SqlDatabase<TDbContext>
 
     internal async Task<T> InnerFind<T>(TDbContext context, object[] keys, bool ignoreFilters) where T : class
     {
-        var (_, keyTypes, key, find) = entityKeyMap.Single(_ => _.Entity.ClrType == typeof(T));
+        var (keyTypes, key, find) = entityKeyMap[ typeof(T)];
 
         var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
         if (!keyTypes.SequenceEqual(inputKeyTypes))
@@ -73,7 +73,7 @@ public partial class SqlDatabase<TDbContext>
 
         var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
 
-        foreach (var (_, keyTypes, key, find) in entityKeyMap)
+        foreach (var (keyTypes, key, find) in entityKeyMap.Values)
         {
             if (!keyTypes.SequenceEqual(inputKeyTypes))
             {
