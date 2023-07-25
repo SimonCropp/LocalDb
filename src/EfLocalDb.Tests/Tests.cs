@@ -315,6 +315,18 @@ public class Tests
     }
 
     [Fact]
+    public async Task ExistsIgnoreFilterContext()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.True(await database.Context.ExistsIgnoreFilter(entity.Id));
+    }
+
+    [Fact]
     public async Task Exists()
     {
         var entity = new TestEntity
@@ -324,6 +336,18 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
         Assert.True(await database.Exists(entity.Id));
+    }
+
+    [Fact]
+    public async Task ExistsContext()
+    {
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+        Assert.True(await database.Context.Exists(entity.Id));
     }
 
     [Fact]

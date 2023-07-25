@@ -41,7 +41,7 @@ public partial class SqlDatabase<TDbContext>
     public Task<bool> ExistsIgnoreFilter(params object[] keys) =>
         InnerExists(NoTrackingContext, true, keys);
 
-    async Task<bool> InnerExists(TDbContext context, bool ignoreFilters, object[] keys)
+    internal async Task<bool> InnerExists(TDbContext context, bool ignoreFilters, object[] keys)
     {
         var results = await FindResults(context, ignoreFilters, keys);
 

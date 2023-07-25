@@ -1,6 +1,6 @@
 ﻿namespace EfLocalDb;
 
-public static class DbContextExtensions
+public static partial  class DbContextExtensions
 {
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
@@ -19,11 +19,11 @@ public static class DbContextExtensions
     static Task<object> InnerFind<TDbContext>(this TDbContext context, bool ignoreFilters, object[] keys)
         where TDbContext : DbContext
     {
-        var database = SqlDatabase(context);
+        var database = DatabaseFromAnnotations(context);
         return database.InnerFind(context, ignoreFilters, keys);
     }
 
-    static SqlDatabase<TDbContext> SqlDatabase<TDbContext>(TDbContext context)
+    static SqlDatabase<TDbContext> DatabaseFromAnnotations<TDbContext>(TDbContext context)
         where TDbContext : DbContext =>
         (SqlDatabase<TDbContext>) context.Model.FindRuntimeAnnotationValue("SqlDatabase")!;
 }
