@@ -72,6 +72,7 @@ public partial class SqlInstance<TDbContext>
         Guard.AgainstNullWhiteSpace(dbName);
         var connection = await BuildDatabase(dbName);
         var database = new SqlDatabase<TDbContext>(
+            this,
             connection,
             dbName,
             constructInstance,
