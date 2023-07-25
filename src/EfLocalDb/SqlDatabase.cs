@@ -69,7 +69,7 @@ public partial class SqlDatabase<TDbContext> :
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
         EntityTypes = Context.Model.GetEntityTypes().ToList();
-        entityKeyMap = new();
+
         foreach (var entity in EntityTypes)
         {
             if (entity.IsOwned())
@@ -95,7 +95,7 @@ public partial class SqlDatabase<TDbContext> :
 
     record EntityKeyMap(Type[] KeyTypes, IKey Key, MethodInfo Find);
 
-    Dictionary<Type, EntityKeyMap> entityKeyMap = null!;
+    Dictionary<Type, EntityKeyMap> entityKeyMap = new();
 
     public TDbContext Context { get; private set; } = null!;
     public TDbContext NoTrackingContext { get; private set; } = null!;
