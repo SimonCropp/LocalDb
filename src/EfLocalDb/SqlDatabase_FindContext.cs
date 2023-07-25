@@ -20,6 +20,6 @@ public static class DbContextExtensions
         where TDbContext : DbContext
     {
         var database = (SqlDatabase<TDbContext>) context.Model.FindRuntimeAnnotationValue("SqlDatabase")!;
-        return database.InnerFind(ignoreFilters, keys);
+        return database.InnerFind(context, ignoreFilters, keys);
     }
 }

@@ -33,17 +33,17 @@ public partial class SqlDatabase<TDbContext>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
     public Task<bool> Exists(params object[] keys) =>
-        InnerExists(false, keys);
+        InnerExists(NoTrackingContext, false, keys);
 
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
     public Task<bool> ExistsIgnoreFilter(params object[] keys) =>
-        InnerExists(true, keys);
+        InnerExists(NoTrackingContext, true, keys);
 
-    async Task<bool> InnerExists(bool ignoreFilters, object[] keys)
+    async Task<bool> InnerExists(TDbContext context, bool ignoreFilters, object[] keys)
     {
-        var results = await FindResults(ignoreFilters, keys);
+        var results = await FindResults(context, ignoreFilters, keys);
 
         if (results.Count == 1)
         {
