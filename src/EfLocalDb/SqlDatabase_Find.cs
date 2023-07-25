@@ -104,9 +104,9 @@ public partial class SqlDatabase<TDbContext>
         }
     }
 
-    Task<object?> InvokeFind(TDbContext context, bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
+    static Task<object?> InvokeFind(TDbContext context, bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
         (Task<object?>) find.Invoke(
-            this,
+            null,
             new object?[]
             {
                 context,
