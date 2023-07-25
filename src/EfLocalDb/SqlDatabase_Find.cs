@@ -71,15 +71,8 @@ public partial class SqlDatabase<TDbContext>
     {
         var list = new List<object>();
 
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
-
-        foreach (var (keyTypes, key, find) in entityKeyMap.Values)
+        foreach (var (key, find) in FindKeys(keys))
         {
-            if (!keyTypes.SequenceEqual(inputKeyTypes))
-            {
-                continue;
-            }
-
             var result = await InvokeFind(context, ignoreFilters, keys, find, key);
             if (result is not null)
             {
@@ -88,6 +81,19 @@ public partial class SqlDatabase<TDbContext>
         }
 
         return list;
+    }
+
+    IEnumerable<(IKey key, MethodInfo find)> FindKeys(object[] keys)
+    {
+        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
+
+        foreach (var (keyTypes, key, find) in entityKeyMap.Values)
+        {
+            if (keyTypes.SequenceEqual(inputKeyTypes))
+            {
+                yield return new(key, find);
+            }
+        }
     }
 
     Task<object?> InvokeFind(TDbContext context, bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
