@@ -85,7 +85,7 @@ public partial class SqlDatabase<TDbContext>
 
     IEnumerable<(IKey key, MethodInfo find)> FindKeys(object[] keys)
     {
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
+        var inputKeyTypes = keys.Select(_ => _.GetType()).ToArray();
 
         foreach (var (keyTypes, key, find) in entityKeyMap.Values)
         {
