@@ -25,7 +25,7 @@ public partial class SqlDatabase<TDbContext>
             throw new($"{typeof(T).FullName} does not have a primary key");
         }
 
-        var lambda = BuildLambda<T>(primaryKey.Properties, new(keys));
+        var lambda = Lambda<T>.Build(primaryKey.Properties, new(keys));
         return set.AnyAsync(lambda);
     }
 
@@ -56,13 +56,5 @@ public partial class SqlDatabase<TDbContext>
         }
 
         return false;
-    }
-
-    static Expression<Func<T, bool>> BuildLambda<T>(IReadOnlyList<IProperty> keyProperties, ValueBuffer keyValues)
-    {
-        var parameter = Expression.Parameter(typeof(T), "e");
-
-        var predicate = Microsoft.EntityFrameworkCore.Internal.ExpressionExtensions.BuildPredicate(keyProperties, keyValues, parameter);
-        return Expression.Lambda<Func<T, bool>>(predicate, parameter);
     }
 }
