@@ -9,6 +9,7 @@ public class SqlInstance<TDbContext>
     ConstructInstance<TDbContext> constructInstance = null!;
     static Storage DefaultStorage;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
+    public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;
 
     static SqlInstance()
     {
@@ -85,6 +86,7 @@ public class SqlInstance<TDbContext>
         storage ??= DefaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         Model = BuildModel(constructInstance);
+        EntityTypes = Model.GetEntityTypes().ToList();
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
 
@@ -231,6 +233,7 @@ public class SqlInstance<TDbContext>
         Guard.AgainstNullWhiteSpace(dbName);
         var connection = await BuildDatabase(dbName);
         var database = new SqlDatabase<TDbContext>(
+            this,
             connection,
             dbName,
             constructInstance,

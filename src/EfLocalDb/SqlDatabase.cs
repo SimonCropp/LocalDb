@@ -5,12 +5,14 @@ public partial class SqlDatabase<TDbContext> :
     IDbContextFactory<TDbContext>
     where TDbContext : DbContext
 {
+    SqlInstance<TDbContext> instance;
     ConstructInstance<TDbContext> constructInstance;
     Func<Task> delete;
     IEnumerable<object>? data;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
 
     internal SqlDatabase(
+        SqlInstance<TDbContext> instance,
         string connectionString,
         string name,
         ConstructInstance<TDbContext> constructInstance,
@@ -19,6 +21,7 @@ public partial class SqlDatabase<TDbContext> :
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
     {
         Name = name;
+        this.instance = instance;
         this.constructInstance = constructInstance;
         this.delete = delete;
         this.data = data;
@@ -68,9 +71,8 @@ public partial class SqlDatabase<TDbContext> :
 
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
-        EntityTypes = Context.Model.GetEntityTypes().ToList();
 
-        foreach (var entity in EntityTypes)
+        foreach (var entity in instance.EntityTypes)
         {
             if (entity.IsOwned())
             {
@@ -127,8 +129,6 @@ public partial class SqlDatabase<TDbContext> :
         return Construct(builder);
     }
 
-    public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;
-
     public async ValueTask DisposeAsync()
     {
         // ReSharper disable ConditionIsAlwaysTrueOrFalse
@@ -170,7 +170,7 @@ public partial class SqlDatabase<TDbContext> :
             if (entity is IEnumerable enumerable)
             {
                 var entityType = entity.GetType();
-                if (EntityTypes.Any(_ => _.ClrType != entityType))
+                if (instance.EntityTypes.Any(_ => _.ClrType != entityType))
                 {
                     foreach (var nested in enumerable)
                     {

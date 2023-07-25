@@ -18,7 +18,7 @@ public partial class SqlDatabase<TDbContext>
 
     Task<bool> Exists<T>(IQueryable<T> set, object[] keys) where T : class
     {
-        var entityType = EntityTypes.Single(_ => _.ClrType == typeof(T));
+        var entityType = instance.EntityTypes.Single(_ => _.ClrType == typeof(T));
         var primaryKey = entityType.FindPrimaryKey();
         if (primaryKey == null)
         {
