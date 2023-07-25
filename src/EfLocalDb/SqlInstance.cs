@@ -2,7 +2,7 @@
 
 namespace EfLocalDb;
 
-public class SqlInstance<TDbContext>
+public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
     internal Wrapper Wrapper { get; } = null!;
@@ -141,24 +141,6 @@ public class SqlInstance<TDbContext>
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer("Fake");
         return constructInstance(builder).Model;
-    }
-
-    public void Cleanup()
-    {
-        Guard.AgainstBadOS();
-        Wrapper.DeleteInstance();
-    }
-
-    public void Cleanup(ShutdownMode mode)
-    {
-        Guard.AgainstBadOS();
-        Wrapper.DeleteInstance(mode);
-    }
-
-    public void Cleanup(ShutdownMode mode, TimeSpan timeout)
-    {
-        Guard.AgainstBadOS();
-        Wrapper.DeleteInstance(mode, timeout);
     }
 
     Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
