@@ -5,6 +5,7 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
+    [Obsolete]
     public Task<bool> Exists<T>(params object[] keys)
         where T : class =>
         Exists(Set<T>(), keys);
@@ -12,6 +13,7 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
+    [Obsolete]
     public Task<bool> ExistsIgnoreFilters<T>(params object[] keys)
         where T : class =>
         Exists(Set<T>().IgnoreQueryFilters(), keys);
@@ -32,12 +34,14 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
+    [Obsolete]
     public Task<bool> Exists(params object[] keys) =>
         InnerExists(NoTrackingContext, false, keys);
 
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns true if the item exists.
     /// </summary>
+    [Obsolete]
     public Task<bool> ExistsIgnoreFilter(params object[] keys) =>
         InnerExists(NoTrackingContext, true, keys);
 

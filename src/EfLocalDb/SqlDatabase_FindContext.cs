@@ -5,6 +5,7 @@ public static partial  class DbContextExtensions
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
     /// </summary>
+    [Obsolete]
     public static Task<object> Find<TDbContext>(this TDbContext context, params object[] keys)
         where TDbContext : DbContext =>
         InnerFind(context, false, keys);
@@ -12,6 +13,7 @@ public static partial  class DbContextExtensions
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
     /// </summary>
+    [Obsolete]
     public static Task<object> FindIgnoreFilters<TDbContext>(this TDbContext context, params object[] keys)
         where TDbContext : DbContext =>
         InnerFind(context, true, keys);

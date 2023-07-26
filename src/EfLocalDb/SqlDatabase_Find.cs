@@ -6,6 +6,7 @@ public partial class SqlDatabase<TDbContext>
     ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
     ///     <typeparamref name="T" />.
     /// </summary>
+    [Obsolete]
     public Task<T> Find<T>(params object[] keys)
         where T : class =>
         InnerFind<T>(NoTrackingContext, keys, false);
@@ -14,6 +15,7 @@ public partial class SqlDatabase<TDbContext>
     ///     Calls <see cref="DbSet{TEntity}.FindAsync(object[])" /> on the <see cref="DbContext.Set{TEntity}()" /> for
     ///     <typeparamref name="T" />.
     /// </summary>
+    [Obsolete]
     public Task<T> FindIgnoreFilters<T>(params object[] keys)
         where T : class =>
         InnerFind<T>(NoTrackingContext, keys, true);
@@ -35,12 +37,14 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
     /// </summary>
+    [Obsolete]
     public Task<object> Find(params object[] keys) =>
         InnerFind(NoTrackingContext, false, keys);
 
     /// <summary>
     ///     Calls <see cref="DbContext.FindAsync(Type,object[])" /> on all entity types and returns all resulting items.
     /// </summary>
+    [Obsolete]
     public Task<object> FindIgnoreFilters(params object[] keys) =>
         InnerFind(NoTrackingContext, true, keys);
 

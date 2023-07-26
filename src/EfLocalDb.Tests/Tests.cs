@@ -1,5 +1,6 @@
 ﻿using EfLocalDb;
 using Microsoft.Data.SqlClient;
+#pragma warning disable CS0612 // Type or member is obsolete
 
 [UsesVerify]
 public class Tests
