@@ -42,4 +42,23 @@ public static partial class DbContextExtensions
 
         return context.SaveChangesAsync();
     }
+
+    public static Task RemoveData<TDbContext>(this TDbContext context, IEnumerable<object> entities)
+        where TDbContext : DbContext =>
+        context.RemoveData(entities, context.Model.GetEntityTypes().ToArray());
+
+    public static Task RemoveData<TDbContext>(this TDbContext context, params object[] entities)
+        where TDbContext : DbContext =>
+        context.RemoveData((IEnumerable<object>) entities);
+
+    internal static Task RemoveData<TDbContext>(this TDbContext context, IEnumerable<object> entities, IReadOnlyList<IEntityType> entityTypes)
+        where TDbContext : DbContext
+    {
+        foreach (var entity in ExpandEnumerable(entities, entityTypes))
+        {
+            context.Remove(entity);
+        }
+
+        return context.SaveChangesAsync();
+    }
 }
