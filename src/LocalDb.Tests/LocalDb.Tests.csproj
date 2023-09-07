@@ -18,6 +18,6 @@
     <PackageReference Include="MarkdownSnippets.MsBuild" Version="25.1.0" PrivateAssets="all" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.93" PrivateAssets="all" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.94" PrivateAssets="all" />
   </ItemGroup>
 </Project>
