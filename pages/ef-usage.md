@@ -24,20 +24,15 @@ The snippets use a DbContext of the following form:
 ```cs
 using Microsoft.EntityFrameworkCore;
 
-public class TheDbContext :
-    DbContext
+public class TheDbContext(DbContextOptions options) :
+    DbContext(options)
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
-
-    public TheDbContext(DbContextOptions options) :
-        base(options)
-    {
-    }
 
     protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfLocalDb.Tests/Snippets/TheEntity.cs -->

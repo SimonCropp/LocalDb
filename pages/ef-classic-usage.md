@@ -24,20 +24,15 @@ The snippets use a DbContext of the following form:
 ```cs
 using System.Data.Entity;
 
-public class TheDbContext :
-    DbContext
+public class TheDbContext(DbConnection connection) :
+    DbContext(connection, false)
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
-
-    public TheDbContext(DbConnection connection) :
-        base(connection, false)
-    {
-    }
 
     protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TheEntity>();
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheEntity.cs -->
@@ -309,5 +304,5 @@ public class DbConfiguration :
 {
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L18-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-quietdbconfiguration' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L13-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-quietdbconfiguration' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
