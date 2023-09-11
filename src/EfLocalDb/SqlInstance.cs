@@ -16,6 +16,7 @@ public partial class SqlInstance<TDbContext>
 
     public IModel Model { get; } = null!;
 
+    // ReSharper disable once UnusedMember.Global
     public string ServerName => Wrapper.ServerName;
 
     /// <summary>
