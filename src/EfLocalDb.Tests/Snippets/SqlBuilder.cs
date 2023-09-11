@@ -1,5 +1,6 @@
 ﻿using EfLocalDb;
 using Microsoft.EntityFrameworkCore;
+// ReSharper disable UnusedVariable
 
 public class SqlBuilder
 {
@@ -14,12 +15,6 @@ public class SqlBuilder
         #endregion
     }
 
-    class MyDbContext :
-        DbContext
-    {
-        public MyDbContext(DbContextOptions options) :
-            base(options)
-        {
-        }
-    }
+    class MyDbContext(DbContextOptions options) :
+        DbContext(options);
 }

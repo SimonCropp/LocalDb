@@ -276,6 +276,7 @@ It is possible to pass the path to a pre-existing template to SqlInstance. This 
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs'></a>
 ```cs
 using EfLocalDb;
+// ReSharper disable NotAccessedField.Local
 
 static class SuppliedTemplate
 {
@@ -287,7 +288,7 @@ static class SuppliedTemplate
             existingTemplate: new("template.mdf", "template_log.ldf"));
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

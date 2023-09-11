@@ -1,4 +1,5 @@
 ﻿using LocalDb;
+// ReSharper disable UnusedVariable
 
 class ExplicitName
 {

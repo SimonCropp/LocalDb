@@ -66,6 +66,7 @@ public partial class SqlDatabase<TDbContext> :
     public void Dispose()
     {
         // ReSharper disable once ConstantConditionalAccessQualifier
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         Context?.Dispose();
         Connection.Dispose();
     }

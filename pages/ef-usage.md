@@ -150,7 +150,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
     constructInstance: builder => new(builder.Options),
     sqlOptionsBuilder: sqlBuilder => sqlBuilder.EnableRetryOnFailure(5));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/SqlBuilder.cs#L8-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-sqloptionsbuilder' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/SqlBuilder.cs#L9-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-sqloptionsbuilder' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

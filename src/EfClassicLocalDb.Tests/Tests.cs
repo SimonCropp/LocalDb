@@ -23,7 +23,7 @@ public class Tests
     [Fact]
     public async Task ServiceScope()
     {
-        void Add(List<object?> objects, IServiceProvider provider)
+        static void Add(List<object?> objects, IServiceProvider provider)
         {
             objects.Add(provider.GetService<DataSqlConnection>());
             objects.Add(provider.GetService<TestDbContext>());

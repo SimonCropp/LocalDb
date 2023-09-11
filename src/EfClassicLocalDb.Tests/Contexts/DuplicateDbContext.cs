@@ -1,14 +1,9 @@
 ﻿using System.Data.Entity;
 
-public class DuplicateDbContext :
-    DbContext
+public class DuplicateDbContext(DbConnection connection) :
+    DbContext(connection, false)
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;
-
-    public DuplicateDbContext(DbConnection connection) :
-        base(connection, false)
-    {
-    }
 
     protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TestEntity>();
 }

@@ -1,4 +1,5 @@
 ﻿using EfLocalDb;
+// ReSharper disable NotAccessedField.Local
 
 static class SuppliedTemplate
 {

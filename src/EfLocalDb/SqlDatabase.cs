@@ -110,11 +110,13 @@ public partial class SqlDatabase<TDbContext> :
     public async ValueTask DisposeAsync()
     {
         // ReSharper disable ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (Context is not null)
         {
             await Context.DisposeAsync();
         }
 
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (NoTrackingContext is not null)
         {
             await NoTrackingContext.DisposeAsync();
