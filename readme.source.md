@@ -7,6 +7,8 @@
 
 Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
 
+**See [Milestones](../../milestones?state=closed) for release notes.**
+
 
 **SqlLocalDB is only supported on Windows**
 
