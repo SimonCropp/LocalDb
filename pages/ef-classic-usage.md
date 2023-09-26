@@ -300,9 +300,7 @@ Add the following to the same Assembly that the `DbContext` implementation exist
 <a id='snippet-quietdbconfiguration'></a>
 ```cs
 public class DbConfiguration :
-    QuietDbConfiguration
-{
-}
+    QuietDbConfiguration;
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L13-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-quietdbconfiguration' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L13-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-quietdbconfiguration' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
