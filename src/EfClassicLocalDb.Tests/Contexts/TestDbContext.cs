@@ -12,7 +12,5 @@ public class TestDbContext(DbConnection connection) :
 
 #region QuietDbConfiguration
 public class DbConfiguration :
-    QuietDbConfiguration
-{
-}
+    QuietDbConfiguration;
 #endregion

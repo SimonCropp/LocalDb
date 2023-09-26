@@ -49,7 +49,7 @@ public partial class SqlDatabase :
         return connection;
     }
 
-    public async Task Start() => await Connection.OpenAsync();
+    public Task Start() => Connection.OpenAsync();
 
     public void Dispose()
     {
@@ -71,6 +71,7 @@ public partial class SqlDatabase :
     }
 #endif
 
+    // ReSharper disable once ReplaceAsyncWithTaskReturn
     public async Task Delete()
     {
 #if(NETSTANDARD2_0 || NET461)

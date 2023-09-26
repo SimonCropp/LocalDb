@@ -71,9 +71,9 @@ public partial class SqlDatabase<TDbContext> :
         Connection.Dispose();
     }
 
-    public async Task Delete()
+    public Task Delete()
     {
         Dispose();
-        await delete();
+        return delete();
     }
 }

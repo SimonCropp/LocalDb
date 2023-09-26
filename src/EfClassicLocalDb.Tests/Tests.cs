@@ -150,7 +150,7 @@ public class Tests
         var dateTime = DateTime.Now;
         var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
-            async context => { await context.CreateOnExistingDb(); },
+            context => context.CreateOnExistingDb(),
             timestamp: dateTime,
             storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
 
@@ -174,7 +174,7 @@ public class Tests
     {
         var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
-            async context => { await context.CreateOnExistingDb(); },
+            context => context.CreateOnExistingDb(),
             Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
