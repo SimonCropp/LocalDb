@@ -19,6 +19,6 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
     <ProjectReference Include="..\EfClassicLocalDb\EfClassicLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.99" PrivateAssets="all" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.100" PrivateAssets="all" />
   </ItemGroup>
 </Project>
