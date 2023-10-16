@@ -8,6 +8,7 @@
     <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+    <ResolveAssemblyReferencesSilent>true</ResolveAssemblyReferencesSilent>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System.Data.Common" />
