@@ -9,7 +9,7 @@
     <PackageReference Include="Fody" Version="6.8.0" PrivateAssets="all" />
     <PackageReference Include="MethodTimer.Fody" Version="3.2.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="Polyfill" Version="1.29.0" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" Version="1.0.101" PrivateAssets="all" />
