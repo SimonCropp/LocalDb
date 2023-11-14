@@ -157,10 +157,9 @@ end;
     public async Task DeleteDatabase()
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
-        SqlRecording.StartRecording();
+        Recording.Start();
         await instance.DeleteDatabase("ToDelete");
-        var entries = SqlRecording.FinishRecording();
-        await Verify(entries);
+        await Verify();
     }
 
     [Fact]
@@ -179,19 +178,18 @@ end;
     {
         var instance2 = new Wrapper(s => new SqlConnection(s), "WrapperTests", DirectoryFinder.Find("WrapperTests"));
 
-        SqlRecording.StartRecording();
+        Recording.Start();
         instance2.Start(timestamp, _ => throw new());
         await instance2.AwaitStart();
-        var entries = SqlRecording.FinishRecording();
-        await Verify(entries);
+        await Verify();
     }
 
     [Fact]
     public async Task CreateDatabase()
     {
-        SqlRecording.StartRecording();
+        Recording.Start();
         await instance.CreateDatabaseFromTemplate("CreateDatabase");
-        var entries = SqlRecording.FinishRecording();
+        var entries = Recording.Stop();
         await Verify(
             new
             {
@@ -210,9 +208,9 @@ end;
         await instance.DeleteDatabase(name);
         var deletedState = await instance.ReadDatabaseState(name);
 
-        SqlRecording.StartRecording();
+        Recording.Start();
         await instance.CreateDatabaseFromTemplate(name);
-        var entries = SqlRecording.FinishRecording();
+        var entries = Recording.Stop();
 
         var createdState = await instance.ReadDatabaseState(name);
         await Verify(new
