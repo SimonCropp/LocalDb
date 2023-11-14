@@ -1,8 +1,9 @@
 ﻿{
   entries: [
     {
-      HasTransaction: false,
-      Text:
+      sql: {
+        HasTransaction: false,
+        Text:
 if db_id('ToDelete') is null
     begin
 create database [ToDelete] on
@@ -18,6 +19,7 @@ else
         alter database [ToDelete] set online;
     end;
 alter database [ToDelete] set read_write;
+      }
     }
   ],
   deletedState: {
