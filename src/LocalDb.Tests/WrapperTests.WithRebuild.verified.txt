@@ -1,5 +1,5 @@
-﻿[
-  {
+﻿{
+  sql: {
     HasTransaction: false,
     Text:
 declare @command nvarchar(max)
@@ -15,4 +15,4 @@ from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
 execute sp_executesql @command
   }
-]
+}
