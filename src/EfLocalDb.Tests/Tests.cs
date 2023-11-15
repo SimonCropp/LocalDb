@@ -1,5 +1,7 @@
 ﻿using EfLocalDb;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.DependencyInjection;
+
 #pragma warning disable CS0612 // Type or member is obsolete
 
 [UsesVerify]
