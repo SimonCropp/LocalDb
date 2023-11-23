@@ -4,7 +4,7 @@ public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
     record EntityKeyMap(Type[] KeyTypes, IKey Key, MethodInfo Find);
-    Dictionary<Type, EntityKeyMap> entityKeyMap = new();
+    Dictionary<Type, EntityKeyMap> entityKeyMap = [];
     public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;
 
     static MethodInfo findResult = typeof(SqlInstance<TDbContext>).GetMethod("FindResult", BindingFlags.Static | BindingFlags.NonPublic)!;
