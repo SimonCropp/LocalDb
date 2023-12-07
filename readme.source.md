@@ -139,7 +139,6 @@ To avoid this error spawned processes can be ignored:
 SqlLocalDB API code sourced from https://github.com/skyguy94/Simple.LocalDb
 
 
-
 ## Icon
 
 [Robot](https://thenounproject.com/term/robot/960055/) designed by [Creaticca Creative Agency](https://thenounproject.com/creaticca/) from [The Noun Project](https://thenounproject.com/).
