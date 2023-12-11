@@ -1,15 +1,10 @@
 namespace EfLocalDb;
 
-class MoreThanOneException : Exception
+class MoreThanOneException(object[] keys, List<object> results) :
+    Exception
 {
-    public object[] Keys { get; }
-    public List<object> Results { get; }
-
-    public MoreThanOneException(object[] keys, List<object> results)
-    {
-        Keys = keys;
-        Results = results;
-    }
+    public object[] Keys { get; } = keys;
+    public List<object> Results { get; } = results;
 
     public override string Message =>
         $"""

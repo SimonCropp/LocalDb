@@ -1,9 +1,9 @@
 ﻿static class FileExtensions
 {
-    public static void MarkFileAsWritable(string dataFile)
+    public static void MarkFileAsWritable(string file)
     {
-        var di = new FileInfo(dataFile);
-        di.Attributes &= ~FileAttributes.ReadOnly;
+        var info = new FileInfo(file);
+        info.Attributes &= ~FileAttributes.ReadOnly;
     }
 
     public static void FlushDirectory(string directory)

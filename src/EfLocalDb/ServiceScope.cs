@@ -1,21 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 
-class ServiceScope :
+class ServiceScope(DbContext context, DataSqlConnection dataConnection, SqlConnection connection) :
     IServiceScope,
     IServiceProvider,
     IAsyncDisposable
 {
-    DbContext context;
-    DataSqlConnection dataConnection;
-    SqlConnection connection;
-
-    public ServiceScope(DbContext context, DataSqlConnection dataConnection, SqlConnection connection)
-    {
-        this.context = context;
-        this.dataConnection = dataConnection;
-        this.connection = connection;
-    }
-
     public void Dispose()
     {
         connection.Dispose();

@@ -1,4 +1,4 @@
-class ServiceScope :
+class ServiceScope(DataSqlConnection dataConnection, SqlConnection connection) :
 #if(NET5_0_OR_GREATER)
     IAsyncDisposable,
 #endif
@@ -7,15 +7,6 @@ class ServiceScope :
 #endif
     IServiceProvider
 {
-    DataSqlConnection dataConnection;
-    SqlConnection connection;
-
-    public ServiceScope(DataSqlConnection dataConnection, SqlConnection connection)
-    {
-        this.dataConnection = dataConnection;
-        this.connection = connection;
-    }
-
     public void Dispose()
     {
         connection.Dispose();
