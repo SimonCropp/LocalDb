@@ -14,8 +14,8 @@
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="XunitContext" Version="3.3.1" />
     <PackageReference Include="Verify.Xunit" Version="22.8.0" />
-    <PackageReference Include="Xunit" Version="2.6.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" PrivateAssets="all" />
+    <PackageReference Include="Xunit" Version="2.6.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.5" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <ProjectReference Include="..\EfClassicLocalDb\EfClassicLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
