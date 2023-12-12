@@ -303,6 +303,7 @@ static class DefaultOptionsBuilder
             builder.AddInterceptors(interceptor);
         }
 
+        builder.ConfigureWarnings(_ => _.Default(WarningBehavior.Throw));
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
         return builder;
@@ -318,5 +319,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L27' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L28' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

@@ -11,6 +11,7 @@ static class DefaultOptionsBuilder
             builder.AddInterceptors(interceptor);
         }
 
+        builder.ConfigureWarnings(_ => _.Default(WarningBehavior.Throw));
         builder.EnableSensitiveDataLogging();
         builder.EnableDetailedErrors();
         return builder;
