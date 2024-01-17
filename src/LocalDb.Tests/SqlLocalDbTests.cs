@@ -1,5 +1,4 @@
-﻿[UsesVerify]
-public class SqlLocalDbTests
+﻿public class SqlLocalDbTests
 {
     [Fact]
     public void Instances()

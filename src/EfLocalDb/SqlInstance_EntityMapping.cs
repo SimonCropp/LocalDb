@@ -63,13 +63,12 @@ public partial class SqlInstance<TDbContext>
     internal static Task<object?> InvokeFind(TDbContext context, bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
         (Task<object?>) find.Invoke(
             null,
-            new object?[]
-            {
+            [
                 context,
                 ignoreFilters,
                 key,
                 keys
-            })!;
+            ])!;
 
     static async Task<object?> FindResult<T>(TDbContext context, bool ignoreFilters, IKey key, object[] keys)
         where T : class

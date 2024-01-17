@@ -1,5 +1,4 @@
-﻿[UsesVerify]
-public class ExceptionBuilderTests
+﻿public class ExceptionBuilderTests
 {
     [Fact]
     public Task WrapLocalDbFailure()

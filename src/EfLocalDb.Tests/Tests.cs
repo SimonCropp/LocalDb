@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
-[UsesVerify]
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;

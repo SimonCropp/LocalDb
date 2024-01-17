@@ -15,10 +15,7 @@ public abstract class QuietDbConfiguration :
         foreach (var contextType in contextTypes)
         {
             var genericMethod = databaseInitializerMethod.MakeGenericMethod(contextType);
-            genericMethod.Invoke(this, new object?[]
-            {
-                null
-            });
+            genericMethod.Invoke(this, [null]);
         }
 
         SetManifestTokenResolver(new ManifestTokenResolver());

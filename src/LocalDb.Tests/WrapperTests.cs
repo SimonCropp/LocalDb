@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
 
-[UsesVerify]
 public class WrapperTests
 {
     static Wrapper instance;
