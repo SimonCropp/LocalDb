@@ -39,7 +39,7 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Polyfill" Version="3.0.0" PrivateAssets="all" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.112" PrivateAssets="all" />
+    <PackageReference Include="ProjectDefaults" Version="1.0.113" PrivateAssets="all" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
 
