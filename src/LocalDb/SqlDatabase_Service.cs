@@ -1,7 +1,7 @@
 ﻿namespace LocalDb;
 
 public partial class SqlDatabase :
-#if(NET7_0_OR_GREATER)
+#if NET7_0_OR_GREATER
     IServiceScopeFactory,
 #endif
     IServiceProvider
@@ -18,7 +18,7 @@ public partial class SqlDatabase :
             return DataConnection;
         }
 
-#if(NET7_0_OR_GREATER)
+#if NET7_0_OR_GREATER
         if (type == typeof(IServiceScopeFactory))
         {
             return this;
@@ -28,7 +28,7 @@ public partial class SqlDatabase :
         return null;
     }
 
-#if(NET7_0_OR_GREATER)
+#if NET7_0_OR_GREATER
     public IServiceScope CreateScope()
     {
         var connection = new SqlConnection(ConnectionString);

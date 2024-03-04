@@ -29,7 +29,7 @@
             }
         }
 
-        if (!Directory.GetFileSystemEntries(directory).Any() &&
+        if (Directory.GetFileSystemEntries(directory).Length == 0 &&
             Directory.GetCreationTime(directory) < cutoff)
         {
             Directory.Delete(directory, false);
