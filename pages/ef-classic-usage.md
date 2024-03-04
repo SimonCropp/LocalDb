@@ -72,6 +72,7 @@ public class Tests
         sqlInstance = new(
             connection => new(connection));
 
+    [Fact]
     public async Task Test()
     {
         var entity = new TheEntity
@@ -87,7 +88,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L5-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L5-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -106,7 +107,7 @@ public abstract class TestBase
         sqlInstance = new(
             constructInstance: connection => new(connection));
 
-    public Task<SqlDatabase<TheDbContext>> LocalDb(
+    public static Task<SqlDatabase<TheDbContext>> LocalDb(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "") =>

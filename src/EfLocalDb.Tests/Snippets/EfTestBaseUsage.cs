@@ -12,7 +12,7 @@ public abstract class TestBase
         sqlInstance = new(
             constructInstance: builder => new(builder.Options));
 
-    public Task<SqlDatabase<TheDbContext>> LocalDb(
+    public static Task<SqlDatabase<TheDbContext>> LocalDb(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "") =>

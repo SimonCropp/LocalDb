@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace EfLocalDb;
+﻿namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
 #if(NET7_0_OR_GREATER)

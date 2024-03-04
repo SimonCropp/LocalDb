@@ -17,6 +17,6 @@
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="System.Linq.Expressions" />
     <Using Include="System.Data.SqlClient.SqlConnection" Alias="DataSqlConnection" />
-    <Using Include="Microsoft.Extensions.DependencyInjection" Condition="$(TargetFramework) == 'net7.0'" />
+    <Using Include="Microsoft.Extensions.DependencyInjection" Condition="$(TargetFramework) == 'net7.0' or $(TargetFramework) == 'net8.0'" />
   </ItemGroup>
 </Project>

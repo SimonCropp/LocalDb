@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0;net8.0;net461</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests.</Description>
     <PackageTags>LocalDB, Testing</PackageTags>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <PackageReference Include="Polyfill" Version="3.0.0" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" Version="1.0.125" PrivateAssets="all" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" Condition="$(TargetFramework) == 'net7.0'" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" Condition="$(TargetFramework) == 'net7.0' or $(TargetFramework) == 'net8.0'" />
 
     <Content Include="buildTransitive\LocalDb.props" PackagePath="buildTransitive\LocalDb.props" />
     <Content Include="buildTransitive\LocalDb.props" PackagePath="build\LocalDb.props" />

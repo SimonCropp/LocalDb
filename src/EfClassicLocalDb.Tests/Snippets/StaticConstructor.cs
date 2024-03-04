@@ -12,6 +12,7 @@ public class Tests
         sqlInstance = new(
             connection => new(connection));
 
+    [Fact]
     public async Task Test()
     {
         var entity = new TheEntity

@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net48;netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net48;netcoreapp3.1;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
     <PackageTags>EntityFramework, LocalDB, Testing</PackageTags>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
@@ -32,7 +32,7 @@
 
     <PackageReference Include="System.Memory" Version="4.5.5" Condition="$(TargetFrameworkIdentifier) == '.NETFramework'" />
     <PackageReference Include="MethodTimer.Fody" Version="3.2.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" Condition="$(TargetFramework) == 'net7.0'" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" Condition="$(TargetFramework) == 'net7.0' or $(TargetFramework) == 'net8.0'" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="6.8.0" PrivateAssets="all" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />

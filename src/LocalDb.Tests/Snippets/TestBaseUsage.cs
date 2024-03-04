@@ -13,7 +13,7 @@ public abstract class TestBase
             name: "TestBaseUsage",
             buildTemplate: TestDbBuilder.CreateTable);
 
-    public Task<SqlDatabase> LocalDb(
+    public static Task<SqlDatabase> LocalDb(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "") =>

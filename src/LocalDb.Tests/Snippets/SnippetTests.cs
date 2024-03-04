@@ -8,6 +8,7 @@ public class SnippetTests
 
     #region Test
 
+    [Fact]
     public async Task TheTest()
     {
         #region BuildDatabase
@@ -26,6 +27,7 @@ public class SnippetTests
 
     #endregion
 
+    [Fact]
     public async Task TheTestWithDbName()
     {
         #region WithDbName

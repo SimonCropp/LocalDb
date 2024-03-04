@@ -1,5 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-
 class ServiceScope(DbContext context, DataSqlConnection dataConnection, SqlConnection connection) :
     IServiceScope,
     IServiceProvider,
