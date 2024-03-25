@@ -142,7 +142,8 @@ static class LocalDbApi
         DeleteInstance(instanceName);
     }
 
-    public static void CreateInstance(string instanceName) => createInstance(ApiVersion, instanceName, 0);
+    public static void CreateInstance(string instanceName) =>
+        createInstance(ApiVersion, instanceName, 0);
 
     public static State CreateAndStart(string instance)
     {
