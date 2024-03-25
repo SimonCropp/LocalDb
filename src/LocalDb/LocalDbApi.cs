@@ -130,7 +130,7 @@ static class LocalDbApi
 
     public static void DeleteInstance(string instanceName) => deleteInstance(instanceName, 0);
 
-    private static readonly TimeSpan DefaultShutdownTimeout = TimeSpan.FromSeconds(10);
+    static readonly TimeSpan DefaultShutdownTimeout = TimeSpan.FromSeconds(10);
 
     public static void StopAndDelete(string instanceName, ShutdownMode mode = ShutdownMode.KillProcess) =>
         StopAndDelete(instanceName, mode, DefaultShutdownTimeout);
