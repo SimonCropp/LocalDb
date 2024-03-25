@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿// ReSharper disable PartialTypeWithSinglePart
 #if EF
 using EfLocalDb;
 #else
