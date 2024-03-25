@@ -100,6 +100,7 @@ static partial class LocalDbApi
     [LibraryImport(
         "kernel32",
         SetLastError = true,
+        EntryPoint = "LoadLibraryExA",
         StringMarshalling = StringMarshalling.Utf8)]
     internal static partial IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, uint dwFlags);
 #else
