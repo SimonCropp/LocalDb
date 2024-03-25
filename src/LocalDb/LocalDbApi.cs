@@ -90,10 +90,22 @@ static class LocalDbApi
         int dwFlags,
         int ulTimeout);
 
-    [DllImport("kernel32", SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    [DllImport(
+        "kernel32",
+        BestFitMapping = false,
+        SetLastError = false,
+        ThrowOnUnmappableChar = true,
+        CharSet = CharSet.Ansi)]
     static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
-    [DllImport("kernel32", SetLastError = true)]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.UserDirectories)]
+    [DllImport(
+        "kernel32",
+        BestFitMapping = false,
+        SetLastError = false,
+        ThrowOnUnmappableChar = true,
+        CharSet = CharSet.Ansi)]
     static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, uint dwFlags);
 
     public static List<string> GetInstanceNames()
