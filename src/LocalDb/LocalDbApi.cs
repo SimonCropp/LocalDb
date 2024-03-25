@@ -5,7 +5,7 @@ using EfLocalDb;
 using LocalDb;
 #endif
 
-static class LocalDbApi
+static partial class LocalDbApi
 {
     static IntPtr api;
 
@@ -90,11 +90,25 @@ static class LocalDbApi
         int dwFlags,
         int ulTimeout);
 
+#if NET7_0_OR_GREATER
+    [LibraryImport(
+        "kernel32",
+        SetLastError = true,
+        StringMarshalling = StringMarshalling.Utf8)]
+    internal static partial IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
+
+    [LibraryImport(
+        "kernel32",
+        SetLastError = true,
+        StringMarshalling = StringMarshalling.Utf8)]
+    internal static partial IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, uint dwFlags);
+#else
     [DllImport("kernel32", SetLastError = true)]
     static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
     [DllImport("kernel32", SetLastError = true)]
     static extern IntPtr LoadLibraryEx(string lpFileName, IntPtr hReservedNull, uint dwFlags);
+#endif
 
     public static List<string> GetInstanceNames()
     {
