@@ -121,10 +121,12 @@ static class LocalDbApi
         }
     }
 
+    static int localDbInstanceInfoSize = Marshal.SizeOf(typeof(LocalDbInstanceInfo));
+
     public static LocalDbInstanceInfo GetInstance(string instanceName)
     {
         var info = new LocalDbInstanceInfo();
-        getInstanceInfo(instanceName, ref info, Marshal.SizeOf(typeof(LocalDbInstanceInfo)));
+        getInstanceInfo(instanceName, ref info, localDbInstanceInfoSize);
         return info;
     }
 
