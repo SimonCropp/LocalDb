@@ -1,5 +1,4 @@
-﻿#if(!NETCOREAPP3_1)
-using EfLocalDb;
+﻿using EfLocalDb;
 
 [Collection("Sequential")]
 public class EfSnippetTests
@@ -51,4 +50,3 @@ public class EfSnippetTests
         Assert.Single(database.Context.TestEntities);
     }
 }
-#endif
