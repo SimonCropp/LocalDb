@@ -2,6 +2,7 @@
 
 namespace StaticConstructor;
 
+[Collection("Sequential")]
 #region EfStaticConstructor
 
 public class Tests

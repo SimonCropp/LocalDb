@@ -1,4 +1,5 @@
-﻿public class ExceptionBuilderTests
+﻿[Collection("Sequential")]
+public class ExceptionBuilderTests
 {
     [Fact]
     public Task WrapLocalDbFailure()

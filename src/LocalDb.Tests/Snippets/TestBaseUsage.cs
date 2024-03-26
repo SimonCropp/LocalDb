@@ -2,6 +2,7 @@
 
 namespace TestBase;
 
+[Collection("Sequential")]
 #region TestBase
 
 public abstract class TestBase

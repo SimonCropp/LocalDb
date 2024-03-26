@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
+[Collection("Sequential")]
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;
