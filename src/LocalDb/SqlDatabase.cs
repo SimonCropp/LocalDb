@@ -60,7 +60,7 @@ public partial class SqlDatabase :
         }
     }
 
-#if(!NETSTANDARD2_0 && !NET461)
+#if(!NET48)
     public async ValueTask DisposeAsync()
     {
         await Connection.DisposeAsync();
@@ -74,7 +74,7 @@ public partial class SqlDatabase :
     // ReSharper disable once ReplaceAsyncWithTaskReturn
     public async Task Delete()
     {
-#if(NETSTANDARD2_0 || NET461)
+#if(NET48)
         Dispose();
 #else
         await DisposeAsync();

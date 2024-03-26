@@ -1,5 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
+﻿[Collection("Sequential")]
 public class DanglingLogWrapperTests
 {
     [Fact]

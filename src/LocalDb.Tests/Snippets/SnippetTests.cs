@@ -1,5 +1,6 @@
 ﻿using LocalDb;
 
+[Collection("Sequential")]
 public class SnippetTests
 {
     static SqlInstance sqlInstance = new(

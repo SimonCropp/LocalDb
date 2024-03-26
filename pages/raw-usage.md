@@ -79,7 +79,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: StaticConstructor -->
-<a id='snippet-staticconstructor'></a>
+<a id='snippet-StaticConstructor'></a>
 ```cs
 public class Tests
 {
@@ -96,7 +96,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L5-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-staticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L5-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -105,7 +105,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: TestBase -->
-<a id='snippet-testbase'></a>
+<a id='snippet-TestBase'></a>
 ```cs
 public abstract class TestBase
 {
@@ -135,7 +135,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L5-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-testbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L6-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -147,14 +147,14 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: BuildDatabase -->
-<a id='snippet-builddatabase'></a>
+<a id='snippet-BuildDatabase'></a>
 ```cs
 await using var database = await sqlInstance.Build();
 
 await TestDbBuilder.AddData(database);
 Assert.Single(await TestDbBuilder.GetData(database));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L14-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-builddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L15-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -163,12 +163,12 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using SQLConnection
 
 <!-- snippet: BuildContext -->
-<a id='snippet-buildcontext'></a>
+<a id='snippet-BuildContext'></a>
 ```cs
 await TestDbBuilder.AddData(database);
 Assert.Single(await TestDbBuilder.GetData(database));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L18-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-buildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L19-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -181,6 +181,7 @@ The above are combined in a full test:
 ```cs
 using LocalDb;
 
+[Collection("Sequential")]
 public class SnippetTests
 {
     static SqlInstance sqlInstance = new(
@@ -214,5 +215,5 @@ public class SnippetTests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

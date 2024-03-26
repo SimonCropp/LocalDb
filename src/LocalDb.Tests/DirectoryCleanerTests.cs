@@ -1,4 +1,5 @@
-﻿public class DirectoryCleanerTests :
+﻿[Collection("Sequential")]
+public class DirectoryCleanerTests :
     IDisposable
 {
     string tempDir;

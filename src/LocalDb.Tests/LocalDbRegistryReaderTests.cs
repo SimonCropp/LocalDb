@@ -1,4 +1,5 @@
-﻿public class LocalDbRegistryReaderTests
+﻿[Collection("Sequential")]
+public class LocalDbRegistryReaderTests
 {
     [Fact]
     public void GetInfo()

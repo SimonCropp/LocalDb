@@ -62,7 +62,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: EfStaticConstructor -->
-<a id='snippet-efstaticconstructor'></a>
+<a id='snippet-EfStaticConstructor'></a>
 ```cs
 public class Tests
 {
@@ -88,7 +88,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L5-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-efstaticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L6-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -97,7 +97,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: EfTestBase -->
-<a id='snippet-eftestbase'></a>
+<a id='snippet-EfTestBase'></a>
 ```cs
 public abstract class TestBase
 {
@@ -131,7 +131,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L5-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-eftestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L6-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -140,13 +140,13 @@ public class Tests :
 Some SqlServer options are exposed by passing a `Action<SqlServerDbContextOptionsBuilder>` to the ` SqlServerDbContextOptionsExtensions.UseSqlServer`. In this project the `UseSqlServer` is handled internally, so the SqlServerDbContextOptionsBuilder functionality is achieved by passing a action to the SqlInstance.
 
 <!-- snippet: sqlOptionsBuilder -->
-<a id='snippet-sqloptionsbuilder'></a>
+<a id='snippet-sqlOptionsBuilder'></a>
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
     constructInstance: builder => new(builder.Options),
     sqlOptionsBuilder: sqlBuilder => sqlBuilder.EnableRetryOnFailure(5));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/SqlBuilder.cs#L9-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-sqloptionsbuilder' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/SqlBuilder.cs#L9-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-sqlOptionsBuilder' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -155,7 +155,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
 Data can be seeded into the template database for use across all tests:
 
 <!-- snippet: EfBuildTemplate -->
-<a id='snippet-efbuildtemplate'></a>
+<a id='snippet-EfBuildTemplate'></a>
 ```cs
 public class BuildTemplate
 {
@@ -184,7 +184,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -196,11 +196,11 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: EfBuildDatabase -->
-<a id='snippet-efbuilddatabase'></a>
+<a id='snippet-EfBuildDatabase'></a>
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L16-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuilddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -209,12 +209,12 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using DbContexts
 
 <!-- snippet: EfBuildContext -->
-<a id='snippet-efbuildcontext'></a>
+<a id='snippet-EfBuildContext'></a>
 ```cs
 await using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L22-L27' title='Snippet source file'>snippet source</a> | <a href='#snippet-efbuildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L23-L28' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -227,6 +227,7 @@ The above are combined in a full test:
 ```cs
 using EfLocalDb;
 
+[Collection("Sequential")]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
@@ -280,7 +281,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L55' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

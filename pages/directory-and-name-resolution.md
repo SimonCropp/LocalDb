@@ -10,7 +10,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 The instance name is defined as:
 
 <!-- snippet: GetInstanceName -->
-<a id='snippet-getinstancename'></a>
+<a id='snippet-GetInstanceName'></a>
 ```cs
 if (scopeSuffix is null)
 {
@@ -19,7 +19,7 @@ if (scopeSuffix is null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfLocalDb/Storage.cs#L28-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-getinstancename' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/Storage.cs#L28-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-GetInstanceName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -35,27 +35,27 @@ There is an explicit registration override that takes an instance name and a dir
 ## For SQL:
 
 <!-- snippet: ExplicitName -->
-<a id='snippet-explicitname'></a>
+<a id='snippet-ExplicitName'></a>
 ```cs
 var sqlInstance = new SqlInstance(
     name: "theInstanceName",
     buildTemplate: TestDbBuilder.CreateTable,
     directory: @"C:\LocalDb\theInstance");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L8-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/ExplicitName.cs#L8-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
 ## For EntityFramework:
 
 <!-- snippet: EfExplicitName -->
-<a id='snippet-efexplicitname'></a>
+<a id='snippet-EfExplicitName'></a>
 ```cs
 var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new(builder.Options),
     storage: new("theInstanceName", @"C:\LocalDb\theInstance"));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L8-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-efexplicitname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L8-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfExplicitName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -91,7 +91,7 @@ A design goal is to have an isolated database per test. To facilitate this the `
 The convention signature is as follows:
 
 <!-- snippet: ConventionBuildSignature -->
-<a id='snippet-conventionbuildsignature'></a>
+<a id='snippet-ConventionBuildSignature'></a>
 ```cs
 /// <summary>
 ///     Build database with a name based on the calling Method.
@@ -113,13 +113,13 @@ public Task<SqlDatabase> Build(
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L128-L150' title='Snippet source file'>snippet source</a> | <a href='#snippet-conventionbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L128-L150' title='Snippet source file'>snippet source</a> | <a href='#snippet-ConventionBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
 
 <!-- snippet: DeriveName -->
-<a id='snippet-derivename'></a>
+<a id='snippet-DeriveName'></a>
 ```cs
 public static string DeriveDbName(
     string? suffix,
@@ -134,7 +134,7 @@ public static string DeriveDbName(
     return $"{testClass}_{member}_{suffix}";
 }
 ```
-<sup><a href='/src/LocalDb/DbNamer.cs#L3-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-derivename' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/DbNamer.cs#L3-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-DeriveName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -143,14 +143,14 @@ public static string DeriveDbName(
 If full control over the database name is required, there is an overload that takes an explicit name:
 
 <!-- snippet: ExplicitBuildSignature -->
-<a id='snippet-explicitbuildsignature'></a>
+<a id='snippet-ExplicitBuildSignature'></a>
 ```cs
 /// <summary>
 ///     Build database with an explicit name.
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L165-L172' title='Snippet source file'>snippet source</a> | <a href='#snippet-explicitbuildsignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L165-L172' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:
@@ -159,20 +159,20 @@ Which can be used as follows:
 ### For SQL:
 
 <!-- snippet: WithDbName -->
-<a id='snippet-withdbname'></a>
+<a id='snippet-WithDbName'></a>
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-withdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L34-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-WithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
 ### For EntityFramework:
 
-<!-- snippet: EFWithDbName -->
-<a id='snippet-efwithdbname'></a>
+<!-- snippet: EfWithDbName -->
+<a id='snippet-EfWithDbName'></a>
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L48-L52' title='Snippet source file'>snippet source</a> | <a href='#snippet-efwithdbname' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L49-L53' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfWithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
