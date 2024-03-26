@@ -64,4 +64,4 @@ snippet: WithDbName
 
 ### For EntityFramework:
 
-snippet: EFWithDbName
+snippet: EfWithDbName

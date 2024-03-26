@@ -62,7 +62,7 @@ In the static constructor of a test.
 If all tests that need to use the SqlInstance existing in the same test class, then the SqlInstance can be initialized in the static constructor of that test class.
 
 <!-- snippet: EfClassicStaticConstructor -->
-<a id='snippet-efclassicstaticconstructor'></a>
+<a id='snippet-EfClassicStaticConstructor'></a>
 ```cs
 public class Tests
 {
@@ -88,7 +88,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L5-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicstaticconstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L5-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -97,7 +97,7 @@ public class Tests
 If multiple tests need to use the SqlInstance, then the SqlInstance should be initialized in the static constructor of test base class.
 
 <!-- snippet: EfClassicTestBase -->
-<a id='snippet-efclassictestbase'></a>
+<a id='snippet-EfClassicTestBase'></a>
 ```cs
 public abstract class TestBase
 {
@@ -131,7 +131,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L5-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassictestbase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L6-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -140,7 +140,7 @@ public class Tests :
 Data can be seeded into the template database for use across all tests:
 
 <!-- snippet: EfClassicBuildTemplate -->
-<a id='snippet-efclassicbuildtemplate'></a>
+<a id='snippet-EfClassicBuildTemplate'></a>
 ```cs
 public class BuildTemplate
 {
@@ -169,7 +169,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildtemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -181,11 +181,11 @@ Usage inside a test consists of two parts:
 ### Build a SqlDatabase
 
 <!-- snippet: EfClassicBuildDatabase -->
-<a id='snippet-efclassicbuilddatabase'></a>
+<a id='snippet-EfClassicBuildDatabase'></a>
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L13-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuilddatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L14-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -194,12 +194,12 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ### Using DbContexts
 
 <!-- snippet: EfClassicBuildContext -->
-<a id='snippet-efclassicbuildcontext'></a>
+<a id='snippet-EfClassicBuildContext'></a>
 ```cs
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-efclassicbuildcontext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -213,6 +213,7 @@ The above are combined in a full test:
 #if(!NETCOREAPP3_1)
 using EfLocalDb;
 
+[Collection("Sequential")]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
@@ -260,7 +261,7 @@ public class EfSnippetTests
 }
 #endif
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L49' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L50' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -298,10 +299,10 @@ static class SuppliedTemplate
 Add the following to the same Assembly that the `DbContext` implementation exists in:
 
 <!-- snippet: QuietDbConfiguration -->
-<a id='snippet-quietdbconfiguration'></a>
+<a id='snippet-QuietDbConfiguration'></a>
 ```cs
 public class DbConfiguration :
     QuietDbConfiguration;
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L13-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-quietdbconfiguration' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L13-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-QuietDbConfiguration' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

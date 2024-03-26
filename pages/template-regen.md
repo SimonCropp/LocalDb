@@ -24,7 +24,7 @@ If `timestamp` parameter is not defined the following conventions are used:
 There is a timestamp helper class to help derive last modified time of an Assembly (if the above conventions do not suffice):
 
 <!-- snippet: Timestamp -->
-<a id='snippet-timestamp'></a>
+<a id='snippet-Timestamp'></a>
 ```cs
 public static class Timestamp
 {
@@ -47,5 +47,5 @@ public static class Timestamp
         => File.GetLastWriteTime(typeof(T).Assembly.Location);
 }
 ```
-<sup><a href='/src/LocalDb/Timestamp.cs#L6-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-timestamp' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/Timestamp.cs#L6-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-Timestamp' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
