@@ -1,5 +1,6 @@
 ﻿using EfLocalDb;
 
+[Collection("Sequential")]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;

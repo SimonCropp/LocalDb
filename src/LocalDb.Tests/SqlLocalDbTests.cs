@@ -1,4 +1,5 @@
-﻿public class SqlLocalDbTests
+﻿[Collection("Sequential")]
+public class SqlLocalDbTests
 {
     [Fact]
     public void Instances()

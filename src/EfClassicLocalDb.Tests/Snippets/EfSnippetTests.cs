@@ -1,6 +1,7 @@
 ﻿#if(!NETCOREAPP3_1)
 using EfLocalDb;
 
+[Collection("Sequential")]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;

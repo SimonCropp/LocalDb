@@ -2,6 +2,7 @@
 
 namespace TestBase;
 
+[Collection("Sequential")]
 #region EfClassicTestBase
 
 public abstract class TestBase

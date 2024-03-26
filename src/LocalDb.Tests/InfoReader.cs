@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
-static class InfoReader
+﻿static class InfoReader
 {
     public static async Task<DatabaseState> ReadDatabaseState(this Wrapper wrapper, string dbName)
     {
