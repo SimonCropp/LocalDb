@@ -1,5 +1,4 @@
-﻿#if(!NETCOREAPP3_1)
-using EfLocalDb;
+﻿using EfLocalDb;
 
 namespace StaticConstructor;
 #region EfClassicStaticConstructor
@@ -29,4 +28,3 @@ public class Tests
 }
 
 #endregion
-#endif
