@@ -9,7 +9,7 @@
     <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <PackageReference Include="Verify.SqlServer" Version="8.0.2" />
+    <PackageReference Include="Verify.SqlServer" Version="8.0.3" />
     <PackageReference Include="XunitContext" Version="3.3.2" />
     <PackageReference Include="Verify.Xunit" Version="23.7.2" />
     <PackageReference Include="Xunit" Version="2.7.0" />
