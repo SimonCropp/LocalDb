@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!--CVE Microsoft.Data.SqlClient 5.2.0 depends on Azure.Identity 1.10.3 with CVE-2024-29992 vulnerability -->
-    <PackageReference Include="Azure.Identity" Version="1.11.0" />
+    <PackageReference Include="Azure.Identity" Version="1.11.1" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="6.8.0" PrivateAssets="all" />
     <PackageReference Include="MethodTimer.Fody" Version="3.2.2" PrivateAssets="All" />
