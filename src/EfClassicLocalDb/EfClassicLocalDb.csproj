@@ -39,11 +39,11 @@
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="6.8.0" PrivateAssets="all" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
-    <!--CVE Microsoft.Data.SqlClient 5.2.0 depends on Azure.Identity 1.10.3 with CVE-2024-29992 vulnerability -->
+    <!-- explicit due to CVE -->
     <PackageReference Include="Azure.Identity" Version="1.11.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Polyfill" Version="4.6.1" PrivateAssets="all" />
+    <PackageReference Include="Polyfill" Version="4.7.0" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" Version="1.0.126" PrivateAssets="all" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
