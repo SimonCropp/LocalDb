@@ -11,7 +11,7 @@ public abstract class QuietDbConfiguration :
     protected QuietDbConfiguration()
     {
         var contextTypes = GetType().Assembly.GetTypes()
-            .Where(_ => !_.IsAbstract && typeof(DbContext).IsAssignableFrom(_));
+            .Where(_ => !_.IsAbstract && _.IsAssignableTo<DbContext>());
         foreach (var contextType in contextTypes)
         {
             var genericMethod = databaseInitializerMethod.MakeGenericMethod(contextType);
