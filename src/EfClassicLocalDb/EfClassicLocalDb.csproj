@@ -43,7 +43,7 @@
     <PackageReference Include="Azure.Identity" Version="1.11.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Polyfill" Version="5.2.1" PrivateAssets="all" />
+    <PackageReference Include="Polyfill" Version="5.2.2" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" Version="1.0.127" PrivateAssets="all" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
