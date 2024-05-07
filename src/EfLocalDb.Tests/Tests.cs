@@ -21,7 +21,7 @@ public class Tests
             {
                 entity
             });
-        Assert.True(await database.Exists(entity.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -73,7 +73,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddData(entity);
-        Assert.True(await database.Exists(entity.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -95,7 +95,7 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddData(entity);
         await database.RemoveData(entity);
-        Assert.False(await database.Exists(entity.Id));
+        Assert.Null(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -108,7 +108,7 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        Assert.True(await database.Exists(entity.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -122,83 +122,8 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
         await database.RemoveDataUntracked(entity);
-        Assert.False(await database.Exists(entity.Id));
+        Assert.Null(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
-    }
-
-    [Fact]
-    public async Task ExistsT()
-    {
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        Assert.True(await database.Exists<TestEntity>(entity.Id));
-    }
-
-    [Fact]
-    public async Task ExistsTIgnoreFilters()
-    {
-        var entity = new TestEntity
-        {
-            Property = "filtered"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        Assert.True(await database.ExistsIgnoreFilters<TestEntity>(entity.Id));
-    }
-    [Fact]
-    public async Task ExistsMissingT()
-    {
-        await using var database = await instance.Build();
-        Assert.False(await database.Exists<TestEntity>(0));
-    }
-
-    [Fact]
-    public async Task ExistsMissingTIgnoreFilters()
-    {
-        await using var database = await instance.Build();
-        Assert.False(await database.ExistsIgnoreFilters<TestEntity>(0));
-    }
-
-    [Fact]
-    public async Task FindT()
-    {
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        await Verify(database.Find<TestEntity>(entity.Id));
-    }
-
-    [Fact]
-    public async Task FindTIgnoreFilters()
-    {
-        var entity = new TestEntity
-        {
-            Property = "filtered"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        await Verify(database.FindIgnoreFilters<TestEntity>(entity.Id));
-    }
-
-    [Fact]
-    public async Task FindMissingT()
-    {
-        await using var database = await instance.Build();
-        await ThrowsTask(() => database.Find<TestEntity>(0));
-    }
-
-    [Fact]
-    public async Task FindMissingTIgnoreFilters()
-    {
-        await using var database = await instance.Build();
-        await ThrowsTask(() => database.FindIgnoreFilters<TestEntity>(0));
     }
 
     [Fact]
@@ -297,151 +222,6 @@ public class Tests
     }
 
     [Fact]
-    public async Task FindIncorrectTypeT()
-    {
-        await using var database = await instance.Build();
-        await ThrowsTask(() => database.Find<TestEntity>("key"));
-    }
-
-    [Fact]
-    public async Task ExistsIgnoreFilter()
-    {
-        var entity = new TestEntity
-        {
-            Property = "filtered"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        Assert.True(await database.ExistsIgnoreFilter(entity.Id));
-    }
-
-    [Fact]
-    public async Task ExistsIgnoreFilterContext()
-    {
-        var entity = new TestEntity
-        {
-            Property = "filtered"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        Assert.True(await database.Context.ExistsIgnoreFilter(entity.Id));
-    }
-
-    [Fact]
-    public async Task Exists()
-    {
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        Assert.True(await database.Exists(entity.Id));
-    }
-
-    [Fact]
-    public async Task ExistsContext()
-    {
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        Assert.True(await database.Context.Exists(entity.Id));
-    }
-
-    [Fact]
-    public async Task ExistsMissingIgnoreFilter()
-    {
-        await using var database = await instance.Build();
-        Assert.False(await database.ExistsIgnoreFilter(0));
-    }
-
-    [Fact]
-    public async Task ExistsMissing()
-    {
-        await using var database = await instance.Build();
-        Assert.False(await database.Exists(0));
-    }
-
-    [Fact]
-    public async Task ExistsIncorrectType()
-    {
-        await using var database = await instance.Build();
-        Assert.False(await database.Exists("key"));
-    }
-
-    [Fact]
-    public async Task Find()
-    {
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        await Verify(database.Find(entity.Id));
-    }
-
-    [Fact]
-    public async Task FindObject()
-    {
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        await Verify(database.Context.Find(entity.Id));
-    }
-
-    [Fact]
-    public async Task FindMissing()
-    {
-        await using var database = await instance.Build();
-        await ThrowsTask(() => database.Find(0));
-    }
-
-    [Fact]
-    public async Task FindIgnoreFilters()
-    {
-        var entity = new TestEntity
-        {
-            Property = "filtered"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        await Verify(database.FindIgnoreFilters(entity.Id));
-    }
-
-    [Fact]
-    public async Task FindObjectIgnoreFilters()
-    {
-        var entity = new TestEntity
-        {
-            Property = "filtered"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
-        await Verify(database.Context.FindIgnoreFilters(entity.Id));
-    }
-
-    [Fact]
-    public async Task FindMissingIgnoreFilters()
-    {
-        await using var database = await instance.Build();
-        await ThrowsTask(() => database.FindIgnoreFilters(0));
-    }
-
-    [Fact]
-    public async Task FindIncorrectType()
-    {
-        await using var database = await instance.Build();
-        await ThrowsTask(() => database.Find("key"));
-    }
-
-    [Fact]
     public async Task AddDataMultiple()
     {
         var entity1 = new TestEntity
@@ -454,8 +234,8 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddData(entity1, entity2);
-        Assert.True(await database.Exists(entity1.Id));
-        Assert.True(await database.Exists(entity2.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity1.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity2.Id));
         Assert.True(callbackCalled);
     }
 
@@ -482,9 +262,9 @@ public class Tests
                 entity2
             },
             entity3);
-        Assert.True(await database.Exists(entity1.Id));
-        Assert.True(await database.Exists(entity2.Id));
-        Assert.True(await database.Exists(entity3.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity1.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity2.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity3.Id));
         Assert.True(callbackCalled);
     }
 
@@ -518,9 +298,9 @@ public class Tests
                 entity2
             },
             entity3);
-        Assert.False(await database.Exists(entity1.Id));
-        Assert.False(await database.Exists(entity2.Id));
-        Assert.False(await database.Exists(entity3.Id));
+        Assert.Null(await database.Context.FindAsync<TestEntity>(entity1.Id));
+        Assert.Null(await database.Context.FindAsync<TestEntity>(entity2.Id));
+        Assert.Null(await database.Context.FindAsync<TestEntity>(entity3.Id));
         Assert.True(callbackCalled);
     }
 
@@ -537,8 +317,8 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity1, entity2);
-        Assert.True(await database.Exists(entity1.Id));
-        Assert.True(await database.Exists(entity2.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity1.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity2.Id));
         Assert.True(callbackCalled);
     }
 
@@ -556,8 +336,8 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity1, entity2);
         await database.RemoveDataUntracked(entity1, entity2);
-        Assert.False(await database.Exists(entity1.Id));
-        Assert.False(await database.Exists(entity2.Id));
+        Assert.Null(await database.Context.FindAsync<TestEntity>(entity1.Id));
+        Assert.Null(await database.Context.FindAsync<TestEntity>(entity2.Id));
         Assert.True(callbackCalled);
     }
 
@@ -576,7 +356,7 @@ public class Tests
         {
             entity
         });
-        Assert.True(await database.Exists(entity.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
     }
 
     [Fact]
@@ -599,7 +379,7 @@ public class Tests
         {
             entity
         });
-        Assert.True(await database.Exists(entity.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(optionsBuilderCalled);
     }
 
@@ -735,7 +515,7 @@ public class Tests
             {
                 entity
             });
-        Assert.True(await database.Exists(entity.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
     }
 
@@ -783,7 +563,7 @@ public class Tests
         {
             entity
         });
-        Assert.True(await database.Exists(entity.Id));
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
     }
 
     [Fact]
