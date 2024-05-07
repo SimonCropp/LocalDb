@@ -13,11 +13,7 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(
-            new List<object>
-            {
-                entity
-            });
+        await using var database = await instance.Build([entity]);
         Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -349,10 +345,7 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object>
-        {
-            entity
-        });
+        await using var database = await instance.Build([entity]);
         Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
     }
 
@@ -372,10 +365,7 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object>
-        {
-            entity
-        });
+        await using var database = await instance.Build([entity]);
         Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(optionsBuilderCalled);
     }
@@ -507,11 +497,7 @@ public class Tests
         {
             Property = "Item1"
         };
-        await using var database = await instance.Build(
-            new List<object>
-            {
-                entity
-            });
+        await using var database = await instance.Build([entity]);
         Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         Assert.True(callbackCalled);
     }
@@ -556,10 +542,7 @@ public class Tests
         {
             Property = "prop"
         };
-        await using var database = await instance.Build(new List<object>
-        {
-            entity
-        });
+        await using var database = await instance.Build([entity]);
         Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
     }
 

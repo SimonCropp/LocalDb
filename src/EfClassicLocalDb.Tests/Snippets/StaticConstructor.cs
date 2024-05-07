@@ -16,11 +16,7 @@ public class Tests
         {
             Property = "prop"
         };
-        var data = new List<object>
-        {
-            entity
-        };
-        using var database = await sqlInstance.Build(data);
+        using var database = await sqlInstance.Build([entity]);
         Assert.Single(database.Context.TestEntities);
     }
 }
