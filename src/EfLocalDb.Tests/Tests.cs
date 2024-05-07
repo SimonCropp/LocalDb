@@ -567,20 +567,59 @@ public class Tests
     }
 
     [Fact]
-    public async Task ExistsFiltersDisabled()
+    public async Task FiltersDisabled()
     {
         var entity = new TestEntity
         {
             Property = "filtered"
         };
         await using var database = await instance.Build(data: [entity]);
-        await using var filteredContext = database.NewDbContext();
-        Assert.Null(await filteredContext.FindAsync<TestEntity>(entity.Id));
-        filteredContext.DisableQueryFilters();
-        Assert.NotNull(await filteredContext.FindAsync<TestEntity>(entity.Id));
+        await using var context = database.NewDbContext();
+        context.DisableQueryFilters();
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+    }
 
-        await using var disableFilteredContext = database.NewDbContext();
-        disableFilteredContext.DisableQueryFilters();
-        Assert.NotNull(await disableFilteredContext.FindAsync<TestEntity>(entity.Id));
+    [Fact]
+    public async Task FiltersDisabled_AfterWithEnabled()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build(data: [entity]);
+        await using var context = database.NewDbContext();
+        Assert.Null(await context.FindAsync<TestEntity>(entity.Id));
+        context.DisableQueryFilters();
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+    }
+
+    [Fact]
+    public async Task FiltersEnabled_AfterWithDisabled()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build(data: [entity]);
+        await using var context = database.NewDbContext();
+        context.DisableQueryFilters();
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+        context.EnableQueryFilters();
+        Assert.Null(await context.FindAsync<TestEntity>(entity.Id));
+    }
+
+    [Fact]
+    public async Task FiltersEnabled_AfterWithDisabled_DifferentContext()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build(data: [entity]);
+        await using var context1 = database.NewDbContext();
+        context1.DisableQueryFilters();
+        Assert.NotNull(await context1.FindAsync<TestEntity>(entity.Id));
+        await using var context2 = database.NewDbContext();
+        Assert.Null(await context2.FindAsync<TestEntity>(entity.Id));
     }
 }
