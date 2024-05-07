@@ -77,16 +77,12 @@ public class Tests
         {
             Property = "prop"
         };
-        var data = new List<object>
-        {
-            entity
-        };
-        await using var database = await sqlInstance.Build(data);
+        await using var database = await sqlInstance.Build([entity]);
         Assert.Single(database.Context.TestEntities);
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L4-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L4-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
