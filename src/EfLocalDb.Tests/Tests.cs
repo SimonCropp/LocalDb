@@ -1,9 +1,5 @@
-﻿
-#pragma warning disable EF1001
-using EfLocalDb;
+﻿using EfLocalDb;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
