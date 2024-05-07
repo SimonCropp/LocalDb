@@ -793,29 +793,18 @@ public class Tests
     [Fact]
     public async Task ExistsFiltersDisabled()
     {
-        await using (var filteredDatabase = await instance.Build("filteredDatabase"))
+        await using var database = await instance.Build();
+        var entity = new TestEntity
         {
-            var entity = new TestEntity
-            {
-                Property = "filtered"
-            };
+            Property = "filtered"
+        };
 
-            await filteredDatabase.AddData(entity);
-            await using var filteredContext = filteredDatabase.NewDbContext();
-            Assert.Null(await filteredContext.FindAsync<TestEntity>(entity.Id));
-        }
+        await database.AddData(entity);
+        await using var filteredContext = database.NewDbContext();
+        Assert.Null(await filteredContext.FindAsync<TestEntity>(entity.Id));
 
-        await using (var disableFilteredDatabase = await instance.Build("disableFilteredDatabase"))
-        {
-            var entity = new TestEntity
-            {
-                Property = "filtered"
-            };
-
-            await disableFilteredDatabase.AddData(entity);
-            await using var disableFilteredContext = disableFilteredDatabase.NewDbContext();
-            disableFilteredContext.DisableQueryFilters();
-            Assert.NotNull(await disableFilteredContext.FindAsync<TestEntity>(entity.Id));
-        }
+        await using var disableFilteredContext = database.NewDbContext();
+        disableFilteredContext.DisableQueryFilters();
+        Assert.NotNull(await disableFilteredContext.FindAsync<TestEntity>(entity.Id));
     }
 }
