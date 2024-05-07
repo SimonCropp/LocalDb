@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
-
-namespace EfLocalDb;
+﻿namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
     IAsyncDisposable,

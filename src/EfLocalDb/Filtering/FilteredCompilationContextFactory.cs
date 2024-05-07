@@ -1,4 +1,5 @@
 #pragma warning disable EF1001
+using EfLocalDb;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
@@ -6,8 +7,6 @@ using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 class FilteredCompilationContextFactory(QueryCompilationContextDependencies dependencies, RelationalQueryCompilationContextDependencies relationalDependencies, ISqlServerConnection connection)
     : SqlServerQueryCompilationContextFactory(dependencies, relationalDependencies, connection)
 {
-    internal AsyncLocal<bool> FilterFlag = new();
-
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<IgnoreQueryFilters>k__BackingField")]
     private static extern ref bool IgnoreQueryFilters(QueryCompilationContext context);
 
@@ -15,7 +14,7 @@ class FilteredCompilationContextFactory(QueryCompilationContextDependencies depe
     {
         var context = base.Create(async);
 
-        if (FilterFlag.Value)
+        if (QueryFilter.IsDisabled)
         {
             IgnoreQueryFilters(context) = true;
         }

@@ -1,29 +1,43 @@
 #pragma warning disable EF1001
+using EfLocalDb;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 
-class FilteredSqlServerCompiledQueryCacheKeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection)
-    : SqlServerCompiledQueryCacheKeyGenerator(dependencies, relationalDependencies, connection)
+class FilteredSqlServerCompiledQueryCacheKeyGenerator : SqlServerCompiledQueryCacheKeyGenerator
 {
-    public override object GenerateCacheKey(Expression query, bool async) =>
-        new QueryFilterRespectingKey(base.GenerateCacheKey(query, async), ShouldIgnoreQueryFilter(query));
+    readonly ISqlServerConnection connection;
 
-    static bool ShouldIgnoreQueryFilter(Expression expression)
+    public FilteredSqlServerCompiledQueryCacheKeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection)
+        : base(dependencies, relationalDependencies, connection) =>
+        this.connection = connection;
+
+    public override object GenerateCacheKey(Expression query, bool async)
+        => new SqlServerCompiledQueryCacheKey(
+            GenerateCacheKeyCore(query, async),
+            connection.IsMultipleActiveResultSetsEnabled,
+            QueryFilter.IsEnabled);
+
+    readonly struct SqlServerCompiledQueryCacheKey(
+        RelationalCompiledQueryCacheKey relationalCompiledQueryCacheKey,
+        bool multipleActiveResultSetsEnabled,
+        bool queryFilterEnabled)
+        : IEquatable<SqlServerCompiledQueryCacheKey>
     {
-        if (expression is MethodCallExpression call)
-        {
-            var method = call.Method;
-            return method.Name == "IgnoreQueryFilters" &&
-                   method.DeclaringType == typeof(EntityFrameworkQueryableExtensions);
-        }
+        readonly RelationalCompiledQueryCacheKey relationalCompiledQueryCacheKey = relationalCompiledQueryCacheKey;
+        readonly bool multipleActiveResultSetsEnabled = multipleActiveResultSetsEnabled;
+        readonly bool queryFilterEnabled = queryFilterEnabled;
 
-        return false;
-    }
+        public override bool Equals(object? obj)
+            => obj is SqlServerCompiledQueryCacheKey sqlServerCompiledQueryCacheKey &&
+               Equals(sqlServerCompiledQueryCacheKey);
 
-    class QueryFilterRespectingKey(object inner, bool ignoreQueryFilter)
-    {
+        public bool Equals(SqlServerCompiledQueryCacheKey other)
+            => relationalCompiledQueryCacheKey.Equals(other.relationalCompiledQueryCacheKey) &&
+               multipleActiveResultSetsEnabled == other.multipleActiveResultSetsEnabled &&
+               queryFilterEnabled == other.queryFilterEnabled;
+
         public override int GetHashCode()
-            => HashCode.Combine(inner, ignoreQueryFilter);
+            => HashCode.Combine(relationalCompiledQueryCacheKey, multipleActiveResultSetsEnabled, queryFilterEnabled);
     }
 }
