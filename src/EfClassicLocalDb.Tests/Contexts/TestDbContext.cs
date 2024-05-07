@@ -1,8 +1,4 @@
-﻿using System.Data.Entity;
-using EfLocalDb;
-
-
-public class TestDbContext(DbConnection connection) :
+﻿public class TestDbContext(DbConnection connection) :
     DbContext(connection, false)
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;

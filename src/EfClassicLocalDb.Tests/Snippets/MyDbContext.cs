@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-
-public class MyDbContext(DbConnection connection) :
+﻿public class MyDbContext(DbConnection connection) :
     DbContext(connection, false)
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;

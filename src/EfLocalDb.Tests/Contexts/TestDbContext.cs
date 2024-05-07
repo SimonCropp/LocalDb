@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-public class TestDbContext(DbContextOptions options) :
+﻿public class TestDbContext(DbContextOptions options) :
     DbContext(options)
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;

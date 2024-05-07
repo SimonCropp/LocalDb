@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-
-public class DuplicateDbContext(DbConnection connection) :
+﻿public class DuplicateDbContext(DbConnection connection) :
     DbContext(connection, false)
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;

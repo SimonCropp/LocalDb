@@ -1,7 +1,4 @@
-﻿using EfLocalDb;
-using Microsoft.Data.SqlClient;
-
-[Collection("Sequential")]
+﻿[Collection("Sequential")]
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;

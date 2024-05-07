@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-public class WithRebuildDbContext(DbContextOptions options) :
+﻿public class WithRebuildDbContext(DbContextOptions options) :
     DbContext(options)
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;

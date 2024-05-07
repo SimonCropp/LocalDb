@@ -1,6 +1,4 @@
-﻿using LocalDb;
-
-namespace StaticConstructor;
+﻿namespace StaticConstructor;
 
 #region StaticConstructor
 

@@ -1,8 +1,5 @@
-﻿using LocalDb;
+﻿namespace TestBase;
 
-namespace TestBase;
-
-[Collection("Sequential")]
 #region TestBase
 
 public abstract class TestBase

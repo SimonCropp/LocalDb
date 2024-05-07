@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-
-public class BuildTemplateDbContext(DbConnection connection) :
+﻿public class BuildTemplateDbContext(DbConnection connection) :
     DbContext(connection, false)
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;

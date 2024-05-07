@@ -1,6 +1,4 @@
-﻿using System.Data.Entity;
-
-public class WithRebuildDbContext(DbConnection connection) :
+﻿public class WithRebuildDbContext(DbConnection connection) :
     DbContext(connection, false)
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;
