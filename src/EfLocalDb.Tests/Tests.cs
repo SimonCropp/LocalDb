@@ -3,11 +3,7 @@
 using EfLocalDb;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
-using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
@@ -795,13 +791,14 @@ public class Tests
         var ignoreQueryFilters = await dbContext.TestEntities.ToListAsync();
         Debug.WriteLine("d");
     }
+
     [Fact]
     public async Task ExistsFiltersDisabled()
     {
         var instance = new SqlInstance<TestDbContext>(
             builder =>
             {
-                builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
+              //  builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
 
                 return new(builder.Options);
             },
@@ -811,47 +808,29 @@ public class Tests
             },
             storage: Storage.FromSuffix<TestDbContext>("ExistsFiltersDisabled"));
 
-        var entity = new TestEntity
+        await using (var filteredDatabase = await instance.Build("filteredDatabase"))
         {
-            Property = "filtered"
-        };
-        await using var database = await instance.Build();
-        await database.AddDataUntracked(entity);
+            var entity = new TestEntity
+            {
+                Property = "filtered"
+            };
 
-        await using var disableFilteredContext = database.NewDbContext();
-        disableFilteredContext.DisableQueryFilters();
-        Assert.NotNull(await disableFilteredContext.FindAsync<TestEntity>(entity.Id));
-    }
-}
-
-public class FilteredCompilationContextFactory(QueryCompilationContextDependencies dependencies, RelationalQueryCompilationContextDependencies relationalDependencies, ISqlServerConnection connection)
-    : SqlServerQueryCompilationContextFactory(dependencies, relationalDependencies, connection)
-{
-    internal AsyncLocal<bool> FilterFlag = new();
-
-    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<IgnoreQueryFilters>k__BackingField")]
-    private static extern ref bool IgnoreQueryFilters(QueryCompilationContext context);
-
-
-    public override QueryCompilationContext Create(bool async)
-    {
-        var context = base.Create(async);
-
-        if (FilterFlag.Value)
-        {
-            IgnoreQueryFilters(context) = true;
+            await filteredDatabase.AddData(entity);
+            await using var filteredContext = filteredDatabase.NewDbContext();
+            Assert.Null(await filteredContext.FindAsync<TestEntity>(entity.Id));
         }
 
-        return context;
-    }
-}
+        await using (var disableFilteredDatabase = await instance.Build("disableFilteredDatabase"))
+        {
+            var entity = new TestEntity
+            {
+                Property = "filtered"
+            };
 
-
-public static class FilterToggle
-{
-    public static void DisableQueryFilters(this DbContext context)
-    {
-        var provider = (FilteredCompilationContextFactory)context.GetService<IQueryCompilationContextFactory>();
-        provider.FilterFlag.Value = true;
+            await disableFilteredDatabase.AddData(entity);
+            await using var disableFilteredContext = disableFilteredDatabase.NewDbContext();
+            disableFilteredContext.DisableQueryFilters();
+            Assert.NotNull(await disableFilteredContext.FindAsync<TestEntity>(entity.Id));
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace EfLocalDb;
+﻿using Microsoft.EntityFrameworkCore.Query;
+
+namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
     IAsyncDisposable,
@@ -85,6 +87,8 @@ public partial class SqlDatabase<TDbContext> :
     public TDbContext NewDbContext(QueryTrackingBehavior? tracking = null)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
+        builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
+        builder.ReplaceService<ICompiledQueryCacheKeyGenerator, FilteredSqlServerCompiledQueryCacheKeyGenerator>();
         builder.UseSqlServer(Connection, sqlOptionsBuilder);
 
         builder.ApplyQueryTracking(tracking);
@@ -102,6 +106,9 @@ public partial class SqlDatabase<TDbContext> :
     public TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
+        builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
+        builder.ReplaceService<ICompiledQueryCacheKeyGenerator, FilteredSqlServerCompiledQueryCacheKeyGenerator>();
+
         builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
         builder.ApplyQueryTracking(tracking);
         return Construct(builder);

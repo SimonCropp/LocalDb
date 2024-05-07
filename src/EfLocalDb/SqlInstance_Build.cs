@@ -80,6 +80,7 @@ public partial class SqlInstance<TDbContext>
             data,
             sqlOptionsBuilder);
         await database.Start();
+
         return database;
     }
 
