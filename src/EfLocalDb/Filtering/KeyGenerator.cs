@@ -4,13 +4,10 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 
-class FilteredSqlServerCompiledQueryCacheKeyGenerator : SqlServerCompiledQueryCacheKeyGenerator
+class KeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection)
+    : SqlServerCompiledQueryCacheKeyGenerator(dependencies, relationalDependencies, connection)
 {
-    readonly ISqlServerConnection connection;
-
-    public FilteredSqlServerCompiledQueryCacheKeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection)
-        : base(dependencies, relationalDependencies, connection) =>
-        this.connection = connection;
+    readonly ISqlServerConnection connection = connection;
 
     public override object GenerateCacheKey(Expression query, bool async)
         => new SqlServerCompiledQueryCacheKey(
