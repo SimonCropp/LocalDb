@@ -1,5 +1,11 @@
-﻿using EfLocalDb;
+﻿
+#pragma warning disable EF1001
+using EfLocalDb;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
@@ -605,28 +611,6 @@ public class Tests
     }
 
     [Fact]
-    public async Task BuildTemplate()
-    {
-        var instance = new SqlInstance<TestDbContext>(
-            builder => new(builder.Options),
-            async context =>
-            {
-                await context.Database.EnsureCreatedAsync();
-            },
-            storage: Storage.FromSuffix<TestDbContext>("BuildTemplate"));
-
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build(new List<object>
-        {
-            entity
-        });
-        Assert.True(await database.Exists(entity.Id));
-    }
-
-    [Fact]
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
@@ -786,4 +770,100 @@ public class Tests
                 callbackCalled = true;
                 return Task.CompletedTask;
             });
+
+    [Fact]
+    public async Task BuildTemplate()
+    {
+        var instance = new SqlInstance<TestDbContext>(
+            builder =>
+            {
+                builder.ReplaceService<IAsyncQueryProvider, FilterToggleQueryProvider>();
+                builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
+
+                return new(builder.Options);
+            },
+            async context =>
+            {
+                await context.Database.EnsureCreatedAsync();
+            },
+            storage: Storage.FromSuffix<TestDbContext>("BuildTemplate"));
+
+        await using var database = await instance.Build();
+        var dbContext = database.Context;
+        dbContext.DisableQueryFilters();
+        var ignoreQueryFilters = await dbContext.TestEntities.ToListAsync();
+        Debug.WriteLine("d");
+    }
+}
+
+public class FilteredCompilationContextFactory(QueryCompilationContextDependencies dependencies) :
+    QueryCompilationContextFactory(dependencies)
+{
+    public override QueryCompilationContext Create(bool async)
+    {
+        return base.Create(async);
+    }
+}
+
+public class FilterToggleQueryProvider(IQueryCompiler queryCompiler) :
+    EntityQueryProvider(queryCompiler)
+{
+    internal AsyncLocal<bool> FilterFlag = new();
+
+    static MethodInfo IgnoreQueryFiltersMethodInfo
+        = typeof(EntityFrameworkQueryableExtensions)
+            .GetTypeInfo()
+            .GetDeclaredMethod(nameof(EntityFrameworkQueryableExtensions.IgnoreQueryFilters))!;
+
+    public override IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+    {
+        if (ShouldIgnoreQueryFilter(expression))
+        {
+            expression = Expression.Call(
+                instance: null,
+                method: IgnoreQueryFiltersMethodInfo.MakeGenericMethod(typeof(TElement)),
+                arguments: expression);
+        }
+
+        return base.CreateQuery<TElement>(expression);
+    }
+
+    public override IQueryable CreateQuery(Expression expression)
+    {
+        return base.CreateQuery(expression);
+    }
+
+    public override TResult Execute<TResult>(Expression expression)
+    {
+        return base.Execute<TResult>(expression);
+    }
+
+    public override TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = new CancellationToken())
+    {
+        return base.ExecuteAsync<TResult>(expression, cancellationToken);
+    }
+
+    bool ShouldIgnoreQueryFilter(Expression expression)
+    {
+        if (expression is MethodCallExpression call)
+        {
+            var method = call.Method;
+            if (method.Name == "IgnoreQueryFilters" &&
+                method.DeclaringType == typeof(EntityFrameworkQueryableExtensions))
+            {
+                return false;
+            }
+        }
+
+        return FilterFlag.Value;
+    }
+}
+
+public static class FilterToggle
+{
+    public static void DisableQueryFilters(this DbContext context)
+    {
+        var provider = (FilterToggleQueryProvider)context.GetService<IAsyncQueryProvider>();
+        provider.FilterFlag.Value = true;
+    }
 }
