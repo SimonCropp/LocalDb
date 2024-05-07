@@ -772,42 +772,27 @@ public class Tests
     public async Task BuildTemplate()
     {
         var instance = new SqlInstance<TestDbContext>(
-            builder =>
-            {
-                //builder.ReplaceService<IAsyncQueryProvider, FilterToggleQueryProvider>();
-                builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
-
-                return new(builder.Options);
-            },
+            builder => new(builder.Options),
             async context =>
             {
                 await context.Database.EnsureCreatedAsync();
             },
             storage: Storage.FromSuffix<TestDbContext>("BuildTemplate"));
 
-        await using var database = await instance.Build();
-        var dbContext = database.Context;
-        dbContext.DisableQueryFilters();
-        var ignoreQueryFilters = await dbContext.TestEntities.ToListAsync();
-        Debug.WriteLine("d");
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
+        Assert.True(await database.Exists(entity.Id));
     }
 
     [Fact]
     public async Task ExistsFiltersDisabled()
     {
-        var instance = new SqlInstance<TestDbContext>(
-            builder =>
-            {
-              //  builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
-
-                return new(builder.Options);
-            },
-            async context =>
-            {
-                await context.Database.EnsureCreatedAsync();
-            },
-            storage: Storage.FromSuffix<TestDbContext>("ExistsFiltersDisabled"));
-
         await using (var filteredDatabase = await instance.Build("filteredDatabase"))
         {
             var entity = new TestEntity
