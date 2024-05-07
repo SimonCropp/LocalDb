@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
@@ -155,7 +157,6 @@ public class Tests
         await database.AddDataUntracked(entity);
         Assert.True(await database.ExistsIgnoreFilters<TestEntity>(entity.Id));
     }
-
     [Fact]
     public async Task ExistsMissingT()
     {
@@ -794,15 +795,43 @@ public class Tests
         var ignoreQueryFilters = await dbContext.TestEntities.ToListAsync();
         Debug.WriteLine("d");
     }
+    [Fact]
+    public async Task ExistsFiltersDisabled()
+    {
+        var instance = new SqlInstance<TestDbContext>(
+            builder =>
+            {
+                builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
+
+                return new(builder.Options);
+            },
+            async context =>
+            {
+                await context.Database.EnsureCreatedAsync();
+            },
+            storage: Storage.FromSuffix<TestDbContext>("ExistsFiltersDisabled"));
+
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build();
+        await database.AddDataUntracked(entity);
+
+        await using var disableFilteredContext = database.NewDbContext();
+        disableFilteredContext.DisableQueryFilters();
+        Assert.NotNull(await disableFilteredContext.FindAsync<TestEntity>(entity.Id));
+    }
 }
 
-public class FilteredCompilationContextFactory(QueryCompilationContextDependencies dependencies) :
-    QueryCompilationContextFactory(dependencies)
+public class FilteredCompilationContextFactory(QueryCompilationContextDependencies dependencies, RelationalQueryCompilationContextDependencies relationalDependencies, ISqlServerConnection connection)
+    : SqlServerQueryCompilationContextFactory(dependencies, relationalDependencies, connection)
 {
     internal AsyncLocal<bool> FilterFlag = new();
 
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<IgnoreQueryFilters>k__BackingField")]
     private static extern ref bool IgnoreQueryFilters(QueryCompilationContext context);
+
 
     public override QueryCompilationContext Create(bool async)
     {
@@ -817,59 +846,6 @@ public class FilteredCompilationContextFactory(QueryCompilationContextDependenci
     }
 }
 
-// public class FilterToggleQueryProvider(IQueryCompiler queryCompiler) :
-//     EntityQueryProvider(queryCompiler)
-// {
-//     internal AsyncLocal<bool> FilterFlag = new();
-//
-//     static MethodInfo IgnoreQueryFiltersMethodInfo
-//         = typeof(EntityFrameworkQueryableExtensions)
-//             .GetTypeInfo()
-//             .GetDeclaredMethod(nameof(EntityFrameworkQueryableExtensions.IgnoreQueryFilters))!;
-//
-//     public override IQueryable<TElement> CreateQuery<TElement>(Expression expression)
-//     {
-//         if (ShouldIgnoreQueryFilter(expression))
-//         {
-//             expression = Expression.Call(
-//                 instance: null,
-//                 method: IgnoreQueryFiltersMethodInfo.MakeGenericMethod(typeof(TElement)),
-//                 arguments: expression);
-//         }
-//
-//         return base.CreateQuery<TElement>(expression);
-//     }
-//
-//     public override IQueryable CreateQuery(Expression expression)
-//     {
-//         return base.CreateQuery(expression);
-//     }
-//
-//     public override TResult Execute<TResult>(Expression expression)
-//     {
-//         return base.Execute<TResult>(expression);
-//     }
-//
-//     public override TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = new CancellationToken())
-//     {
-//         return base.ExecuteAsync<TResult>(expression, cancellationToken);
-//     }
-//
-//     bool ShouldIgnoreQueryFilter(Expression expression)
-//     {
-//         if (expression is MethodCallExpression call)
-//         {
-//             var method = call.Method;
-//             if (method.Name == "IgnoreQueryFilters" &&
-//                 method.DeclaringType == typeof(EntityFrameworkQueryableExtensions))
-//             {
-//                 return false;
-//             }
-//         }
-//
-//         return FilterFlag.Value;
-//     }
-// }
 
 public static class FilterToggle
 {
