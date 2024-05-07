@@ -802,6 +802,8 @@ public class Tests
         await database.AddData(entity);
         await using var filteredContext = database.NewDbContext();
         Assert.Null(await filteredContext.FindAsync<TestEntity>(entity.Id));
+        filteredContext.DisableQueryFilters();
+        Assert.NotNull(await filteredContext.FindAsync<TestEntity>(entity.Id));
 
         await using var disableFilteredContext = database.NewDbContext();
         disableFilteredContext.DisableQueryFilters();
