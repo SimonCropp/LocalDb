@@ -306,8 +306,8 @@ static class DefaultOptionsBuilder
         {
             builder.AddInterceptors(interceptor);
         }
-        builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
-        builder.ReplaceService<ICompiledQueryCacheKeyGenerator, FilteredSqlServerCompiledQueryCacheKeyGenerator>();
+        builder.ReplaceService<IQueryCompilationContextFactory, QueryContextFactory>();
+        builder.ReplaceService<ICompiledQueryCacheKeyGenerator, KeyGenerator>();
 
         builder.ConfigureWarnings(_ =>
         {
