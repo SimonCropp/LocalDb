@@ -1,6 +1,6 @@
 namespace EfLocalDb;
 
-public static partial class DbContextExtensions
+public static class DbContextExtensions
 {
     internal static IEnumerable<object> ExpandEnumerable(IEnumerable<object> entities, IReadOnlyList<IEntityType> entityTypes)
     {
