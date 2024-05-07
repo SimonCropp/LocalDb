@@ -509,11 +509,7 @@ public class Tests
         {
             Property = "Item1"
         };
-        await using var context = await instance.BuildContext(
-            new List<object>
-            {
-                entity
-            });
+        await using var context = await instance.BuildContext([entity]);
         Assert.NotNull(await context.TestEntities.FindAsync(entity.Id));
         Assert.True(callbackCalled);
     }
