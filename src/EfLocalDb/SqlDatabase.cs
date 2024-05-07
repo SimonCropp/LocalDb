@@ -86,9 +86,7 @@ public partial class SqlDatabase<TDbContext> :
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection, sqlOptionsBuilder);
-
         builder.ApplyQueryTracking(tracking);
-
         return constructInstance(builder);
     }
 

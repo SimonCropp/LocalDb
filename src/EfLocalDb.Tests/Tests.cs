@@ -1,4 +1,6 @@
-﻿[Collection("Sequential")]
+﻿#pragma warning disable CS0612 // Type or member is obsolete
+
+[Collection("Sequential")]
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;
@@ -379,28 +381,6 @@ public class Tests
     }
 
     [Fact]
-    public async Task BuildTemplate()
-    {
-        var instance = new SqlInstance<TestDbContext>(
-            builder => new(builder.Options),
-            async context =>
-            {
-                await context.Database.EnsureCreatedAsync();
-            },
-            storage: Storage.FromSuffix<TestDbContext>("BuildTemplate"));
-
-        var entity = new TestEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await instance.Build(new List<object>
-        {
-            entity
-        });
-        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
-    }
-
-    [Fact]
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
@@ -560,4 +540,82 @@ public class Tests
                 callbackCalled = true;
                 return Task.CompletedTask;
             });
+
+    [Fact]
+    public async Task BuildTemplate()
+    {
+        var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
+            async context =>
+            {
+                await context.Database.EnsureCreatedAsync();
+            },
+            storage: Storage.FromSuffix<TestDbContext>("BuildTemplate"));
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var database = await instance.Build(new List<object>
+        {
+            entity
+        });
+        Assert.NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
+    }
+
+    [Fact]
+    public async Task FiltersDisabled()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build(data: [entity]);
+        var context = database.NoTrackingContext;
+        QueryFilter.Disable();
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+    }
+
+    [Fact]
+    public async Task FiltersDisabled_Multiple()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build(data: [entity]);
+        var context = database.NoTrackingContext;
+        QueryFilter.Disable();
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+    }
+
+    [Fact]
+    public async Task FiltersDisabled_AfterWithEnabled()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build(data: [entity]);
+        var context = database.NoTrackingContext;
+        Assert.Null(await context.FindAsync<TestEntity>(entity.Id));
+        QueryFilter.Disable();
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+    }
+
+    [Fact]
+    public async Task FiltersEnabled_AfterWithDisabled()
+    {
+        var entity = new TestEntity
+        {
+            Property = "filtered"
+        };
+        await using var database = await instance.Build(data: [entity]);
+        var context = database.NoTrackingContext;
+        QueryFilter.Disable();
+        Assert.NotNull(await context.FindAsync<TestEntity>(entity.Id));
+        QueryFilter.Enable();
+        Assert.Null(await context.FindAsync<TestEntity>(entity.Id));
+    }
 }

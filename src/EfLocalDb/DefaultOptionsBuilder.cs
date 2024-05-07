@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Query;
+
 static class DefaultOptionsBuilder
 {
     static LogCommandInterceptor interceptor = new();
@@ -10,6 +12,8 @@ static class DefaultOptionsBuilder
         {
             builder.AddInterceptors(interceptor);
         }
+        builder.ReplaceService<IQueryCompilationContextFactory, QueryContextFactory>();
+        builder.ReplaceService<ICompiledQueryCacheKeyGenerator, KeyGenerator>();
 
         builder.ConfigureWarnings(_ =>
         {
