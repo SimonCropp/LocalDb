@@ -569,13 +569,11 @@ public class Tests
     [Fact]
     public async Task ExistsFiltersDisabled()
     {
-        await using var database = await instance.Build();
         var entity = new TestEntity
         {
             Property = "filtered"
         };
-
-        await database.AddData(entity);
+        await using var database = await instance.Build(data: [entity]);
         await using var filteredContext = database.NewDbContext();
         Assert.Null(await filteredContext.FindAsync<TestEntity>(entity.Id));
         filteredContext.DisableQueryFilters();
