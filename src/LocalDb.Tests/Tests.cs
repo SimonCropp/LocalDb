@@ -1,6 +1,4 @@
-﻿using LocalDb;
-
-[Collection("Sequential")]
+﻿[Collection("Sequential")]
 public class Tests
 {
     [Fact]

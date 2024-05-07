@@ -1,4 +1,4 @@
-﻿using EfLocalDb;
+﻿
 // ReSharper disable UnusedVariable
 
 class EfExplicitName

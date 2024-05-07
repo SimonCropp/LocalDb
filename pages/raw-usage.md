@@ -96,7 +96,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L5-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L3-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -135,7 +135,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L6-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L3-L33' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -154,7 +154,7 @@ await using var database = await sqlInstance.Build();
 await TestDbBuilder.AddData(database);
 Assert.Single(await TestDbBuilder.GetData(database));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L15-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L13-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -168,7 +168,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await TestDbBuilder.AddData(database);
 Assert.Single(await TestDbBuilder.GetData(database));
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L19-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L17-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -179,8 +179,6 @@ The above are combined in a full test:
 <!-- snippet: SnippetTests.cs -->
 <a id='snippet-SnippetTests.cs'></a>
 ```cs
-using LocalDb;
-
 [Collection("Sequential")]
 public class SnippetTests
 {
@@ -215,5 +213,5 @@ public class SnippetTests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L33' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

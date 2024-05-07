@@ -1,6 +1,4 @@
-﻿using EfLocalDb;
-
-#region EfClassicBuildTemplate
+﻿#region EfClassicBuildTemplate
 
 public class BuildTemplate
 {

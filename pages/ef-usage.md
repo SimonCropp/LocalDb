@@ -22,8 +22,6 @@ The snippets use a DbContext of the following form:
 <!-- snippet: EfLocalDb.Tests/Snippets/TheDbContext.cs -->
 <a id='snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs'></a>
 ```cs
-using Microsoft.EntityFrameworkCore;
-
 public class TheDbContext(DbContextOptions options) :
     DbContext(options)
 {
@@ -32,7 +30,7 @@ public class TheDbContext(DbContextOptions options) :
     protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L7' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfLocalDb.Tests/Snippets/TheEntity.cs -->
@@ -88,7 +86,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L6-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L4-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -131,7 +129,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L6-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L4-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -184,7 +182,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L1-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -200,7 +198,7 @@ Usage inside a test consists of two parts:
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L14-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -214,7 +212,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L23-L28' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -225,9 +223,6 @@ The above are combined in a full test:
 <!-- snippet: EfLocalDb.Tests/Snippets/EfSnippetTests.cs -->
 <a id='snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
-using EfLocalDb;
-
-[Collection("Sequential")]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
@@ -281,7 +276,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L55' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L52' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

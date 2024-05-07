@@ -1,6 +1,4 @@
-﻿using EfLocalDb;
-
-namespace TestBase;
+﻿namespace TestBase;
 
 [Collection("Sequential")]
 #region EfTestBase

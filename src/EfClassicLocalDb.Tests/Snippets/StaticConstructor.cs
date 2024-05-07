@@ -1,6 +1,4 @@
-﻿using EfLocalDb;
-
-namespace StaticConstructor;
+﻿namespace StaticConstructor;
 #region EfClassicStaticConstructor
 
 public class Tests

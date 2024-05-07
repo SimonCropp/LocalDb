@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-// ReSharper disable UnusedMember.Global
+﻿// ReSharper disable UnusedMember.Global
 
 public class DuplicateDbContext(DbContextOptions options) :
     DbContext(options)

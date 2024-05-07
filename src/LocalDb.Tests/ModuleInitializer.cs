@@ -1,11 +1,4 @@
-﻿#if EF
-using EfLocalDb;
-
-#else
-using LocalDb;
-#endif
-
-public static class ModuleInitializer
+﻿public static class ModuleInitializer
 {
     [ModuleInitializer]
     public static void Initialize()

@@ -22,8 +22,6 @@ The snippets use a DbContext of the following form:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheDbContext.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs'></a>
 ```cs
-using System.Data.Entity;
-
 public class TheDbContext(DbConnection connection) :
     DbContext(connection, false)
 {
@@ -32,7 +30,7 @@ public class TheDbContext(DbConnection connection) :
     protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TheEntity>();
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L7' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheEntity.cs -->
@@ -88,7 +86,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L4-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L2-L28' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -131,7 +129,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L6-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicTestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L4-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -169,7 +167,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L3-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildTemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L1-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -185,7 +183,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L13-L17' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L11-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -199,7 +197,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L19-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -210,8 +208,6 @@ The above are combined in a full test:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
-using EfLocalDb;
-
 [Collection("Sequential")]
 public class EfSnippetTests
 {
@@ -259,7 +255,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L48' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -270,7 +266,6 @@ It is possible to pass the path to a pre-existing template to SqlInstance. This 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs'></a>
 ```cs
-using EfLocalDb;
 // ReSharper disable NotAccessedField.Local
 
 static class SuppliedTemplate
@@ -283,7 +278,7 @@ static class SuppliedTemplate
             existingTemplate: new("template.mdf", "template_log.ldf"));
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs#L1-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/SuppliedTemplate.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -302,5 +297,5 @@ Add the following to the same Assembly that the `DbContext` implementation exist
 public class DbConfiguration :
     QuietDbConfiguration;
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L13-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-QuietDbConfiguration' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Contexts/TestDbContext.cs#L9-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-QuietDbConfiguration' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

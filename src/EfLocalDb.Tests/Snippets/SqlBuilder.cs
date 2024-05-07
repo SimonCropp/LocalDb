@@ -1,5 +1,5 @@
-﻿using EfLocalDb;
-using Microsoft.EntityFrameworkCore;
+﻿
+
 // ReSharper disable UnusedVariable
 
 public class SqlBuilder

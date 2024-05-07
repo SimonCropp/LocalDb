@@ -163,7 +163,7 @@ Which can be used as follows:
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L34-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-WithDbName' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L32-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-WithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -174,5 +174,5 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L49-L53' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfWithDbName' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L46-L50' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfWithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

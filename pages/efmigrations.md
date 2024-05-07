@@ -24,7 +24,7 @@ var sqlInstance = new SqlInstance<MyDbContext>(
     },
     constructInstance: builder => new(builder.Options));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L13-L33' title='Snippet source file'>snippet source</a> | <a href='#snippet-Migrations' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L7-L27' title='Snippet source file'>snippet source</a> | <a href='#snippet-Migrations' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 The above performs the following actions:
@@ -39,7 +39,7 @@ Optionally use [Custom Migrations Operations](https://docs.microsoft.com/en-us/e
 ```cs
 options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-IMigrationsSqlGenerator' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L12-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-IMigrationsSqlGenerator' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -53,5 +53,5 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 await using var data = new MyDbContext(options.Options);
 await data.Database.MigrateAsync();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L24-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-Migrate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-Migrate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

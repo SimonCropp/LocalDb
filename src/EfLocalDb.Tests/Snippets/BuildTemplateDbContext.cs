@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-public class BuildTemplateDbContext(DbContextOptions options) :
+﻿public class BuildTemplateDbContext(DbContextOptions options) :
     DbContext(options)
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
