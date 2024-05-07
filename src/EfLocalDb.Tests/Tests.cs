@@ -777,7 +777,7 @@ public class Tests
         var instance = new SqlInstance<TestDbContext>(
             builder =>
             {
-                builder.ReplaceService<IAsyncQueryProvider, FilterToggleQueryProvider>();
+                //builder.ReplaceService<IAsyncQueryProvider, FilterToggleQueryProvider>();
                 builder.ReplaceService<IQueryCompilationContextFactory, FilteredCompilationContextFactory>();
 
                 return new(builder.Options);
@@ -799,71 +799,83 @@ public class Tests
 public class FilteredCompilationContextFactory(QueryCompilationContextDependencies dependencies) :
     QueryCompilationContextFactory(dependencies)
 {
-    public override QueryCompilationContext Create(bool async)
-    {
-        return base.Create(async);
-    }
-}
-
-public class FilterToggleQueryProvider(IQueryCompiler queryCompiler) :
-    EntityQueryProvider(queryCompiler)
-{
     internal AsyncLocal<bool> FilterFlag = new();
 
-    static MethodInfo IgnoreQueryFiltersMethodInfo
-        = typeof(EntityFrameworkQueryableExtensions)
-            .GetTypeInfo()
-            .GetDeclaredMethod(nameof(EntityFrameworkQueryableExtensions.IgnoreQueryFilters))!;
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<IgnoreQueryFilters>k__BackingField")]
+    private static extern ref bool IgnoreQueryFilters(QueryCompilationContext context);
 
-    public override IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+    public override QueryCompilationContext Create(bool async)
     {
-        if (ShouldIgnoreQueryFilter(expression))
+        var context = base.Create(async);
+
+        if (FilterFlag.Value)
         {
-            expression = Expression.Call(
-                instance: null,
-                method: IgnoreQueryFiltersMethodInfo.MakeGenericMethod(typeof(TElement)),
-                arguments: expression);
+            IgnoreQueryFilters(context) = true;
         }
 
-        return base.CreateQuery<TElement>(expression);
-    }
-
-    public override IQueryable CreateQuery(Expression expression)
-    {
-        return base.CreateQuery(expression);
-    }
-
-    public override TResult Execute<TResult>(Expression expression)
-    {
-        return base.Execute<TResult>(expression);
-    }
-
-    public override TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = new CancellationToken())
-    {
-        return base.ExecuteAsync<TResult>(expression, cancellationToken);
-    }
-
-    bool ShouldIgnoreQueryFilter(Expression expression)
-    {
-        if (expression is MethodCallExpression call)
-        {
-            var method = call.Method;
-            if (method.Name == "IgnoreQueryFilters" &&
-                method.DeclaringType == typeof(EntityFrameworkQueryableExtensions))
-            {
-                return false;
-            }
-        }
-
-        return FilterFlag.Value;
+        return context;
     }
 }
+
+// public class FilterToggleQueryProvider(IQueryCompiler queryCompiler) :
+//     EntityQueryProvider(queryCompiler)
+// {
+//     internal AsyncLocal<bool> FilterFlag = new();
+//
+//     static MethodInfo IgnoreQueryFiltersMethodInfo
+//         = typeof(EntityFrameworkQueryableExtensions)
+//             .GetTypeInfo()
+//             .GetDeclaredMethod(nameof(EntityFrameworkQueryableExtensions.IgnoreQueryFilters))!;
+//
+//     public override IQueryable<TElement> CreateQuery<TElement>(Expression expression)
+//     {
+//         if (ShouldIgnoreQueryFilter(expression))
+//         {
+//             expression = Expression.Call(
+//                 instance: null,
+//                 method: IgnoreQueryFiltersMethodInfo.MakeGenericMethod(typeof(TElement)),
+//                 arguments: expression);
+//         }
+//
+//         return base.CreateQuery<TElement>(expression);
+//     }
+//
+//     public override IQueryable CreateQuery(Expression expression)
+//     {
+//         return base.CreateQuery(expression);
+//     }
+//
+//     public override TResult Execute<TResult>(Expression expression)
+//     {
+//         return base.Execute<TResult>(expression);
+//     }
+//
+//     public override TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = new CancellationToken())
+//     {
+//         return base.ExecuteAsync<TResult>(expression, cancellationToken);
+//     }
+//
+//     bool ShouldIgnoreQueryFilter(Expression expression)
+//     {
+//         if (expression is MethodCallExpression call)
+//         {
+//             var method = call.Method;
+//             if (method.Name == "IgnoreQueryFilters" &&
+//                 method.DeclaringType == typeof(EntityFrameworkQueryableExtensions))
+//             {
+//                 return false;
+//             }
+//         }
+//
+//         return FilterFlag.Value;
+//     }
+// }
 
 public static class FilterToggle
 {
     public static void DisableQueryFilters(this DbContext context)
     {
-        var provider = (FilterToggleQueryProvider)context.GetService<IAsyncQueryProvider>();
+        var provider = (FilteredCompilationContextFactory)context.GetService<IQueryCompilationContextFactory>();
         provider.FilterFlag.Value = true;
     }
 }
