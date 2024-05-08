@@ -16,25 +16,25 @@ class KeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, Rela
             QueryFilter.IsEnabled);
 
     readonly struct SqlServerCompiledQueryCacheKey(
-        RelationalCompiledQueryCacheKey relationalCompiledQueryCacheKey,
-        bool multipleActiveResultSetsEnabled,
+        RelationalCompiledQueryCacheKey relationalKey,
+        bool mars,
         bool queryFilterEnabled)
         : IEquatable<SqlServerCompiledQueryCacheKey>
     {
-        readonly RelationalCompiledQueryCacheKey relationalCompiledQueryCacheKey = relationalCompiledQueryCacheKey;
-        readonly bool multipleActiveResultSetsEnabled = multipleActiveResultSetsEnabled;
+        readonly RelationalCompiledQueryCacheKey relationalKey = relationalKey;
+        readonly bool mars = mars;
         readonly bool queryFilterEnabled = queryFilterEnabled;
 
         public override bool Equals(object? obj)
-            => obj is SqlServerCompiledQueryCacheKey sqlServerCompiledQueryCacheKey &&
-               Equals(sqlServerCompiledQueryCacheKey);
+            => obj is SqlServerCompiledQueryCacheKey key &&
+               Equals(key);
 
         public bool Equals(SqlServerCompiledQueryCacheKey other)
-            => relationalCompiledQueryCacheKey.Equals(other.relationalCompiledQueryCacheKey) &&
-               multipleActiveResultSetsEnabled == other.multipleActiveResultSetsEnabled &&
+            => relationalKey.Equals(other.relationalKey) &&
+               mars == other.mars &&
                queryFilterEnabled == other.queryFilterEnabled;
 
         public override int GetHashCode()
-            => HashCode.Combine(relationalCompiledQueryCacheKey, multipleActiveResultSetsEnabled, queryFilterEnabled);
+            => HashCode.Combine(relationalKey, mars, queryFilterEnabled);
     }
 }
