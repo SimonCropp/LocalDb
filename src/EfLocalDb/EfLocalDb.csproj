@@ -33,7 +33,7 @@
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
     <PackageReference Include="Fody" Version="6.8.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
     <!-- explicit due to CVE -->
     <PackageReference Include="Azure.Identity" Version="1.11.3" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0" />
