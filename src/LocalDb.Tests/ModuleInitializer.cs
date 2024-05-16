@@ -1,4 +1,6 @@
-﻿public static class ModuleInitializer
+﻿[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
+
+public static class ModuleInitializer
 {
     [ModuleInitializer]
     public static void Initialize()
