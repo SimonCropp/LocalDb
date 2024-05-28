@@ -1,0 +1,30 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Azure.Identity" Version="1.11.3" />
+    <PackageVersion Include="ConfigureAwait.Fody" Version="3.3.2" />
+    <PackageVersion Include="EntityFramework" Version="6.4.4" />
+    <PackageVersion Include="Fody" Version="6.8.1" />
+    <PackageVersion Include="MarkdownSnippets.MsBuild" Version="27.0.2" />
+    <PackageVersion Include="MethodTimer.Fody" Version="3.2.2" />
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="5.2.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.5" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageVersion Include="Polyfill" Version="5.2.2" />
+    <PackageVersion Include="ProjectDefaults" Version="1.0.127" />
+    <PackageVersion Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageVersion Include="System.Drawing.Common" Version="8.0.5" />
+    <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+    <PackageVersion Include="System.Memory" Version="4.5.5" />
+    <PackageVersion Include="Verify.SqlServer" Version="8.0.4" />
+    <PackageVersion Include="Verify.Xunit" Version="24.2.0" />
+    <PackageVersion Include="Xunit" Version="2.8.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.0" />
+    <PackageVersion Include="XunitContext" Version="3.3.2" />
+  </ItemGroup>
+</Project>

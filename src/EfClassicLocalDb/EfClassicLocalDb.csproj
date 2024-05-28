@@ -31,22 +31,22 @@
     <Compile Include="..\LocalDb\State.cs" />
     
     <!-- explicit ref to avoid CVE -->
-    <PackageReference Include="System.Drawing.Common" Version="8.0.5" />
+    <PackageReference Include="System.Drawing.Common" />
 
-    <PackageReference Include="System.Memory" Version="4.5.5" Condition="$(TargetFrameworkIdentifier) == '.NETFramework'" />
-    <PackageReference Include="MethodTimer.Fody" Version="3.2.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" Condition="$(TargetFramework) == 'net7.0' or $(TargetFramework) == 'net8.0'" />
-    <PackageReference Include="ConfigureAwait.Fody" Version="3.3.2" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="6.8.1" PrivateAssets="all" />
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="System.Memory" Condition="$(TargetFrameworkIdentifier) == '.NETFramework'" />
+    <PackageReference Include="MethodTimer.Fody" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Condition="$(TargetFramework) == 'net7.0' or $(TargetFramework) == 'net8.0'" />
+    <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="All" />
+    <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="EntityFramework" />
     <!-- explicit due to CVE -->
-    <PackageReference Include="Azure.Identity" Version="1.11.3" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Polyfill" Version="5.2.2" PrivateAssets="all" />
-    <PackageReference Include="ProjectDefaults" Version="1.0.127" PrivateAssets="all" />
+    <PackageReference Include="Azure.Identity" />
+    <PackageReference Include="System.Data.SqlClient" />
+    <PackageReference Include="Microsoft.Win32.Registry" />
+    <PackageReference Include="Polyfill" PrivateAssets="all" />
+    <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" />
 
     <Content Include="buildTransitive\EfClassicLocalDb.props" PackagePath="buildTransitive\EfClassicLocalDb.props" />
     <Content Include="buildTransitive\EfClassicLocalDb.props" PackagePath="build\EfClassicLocalDb.props" />
