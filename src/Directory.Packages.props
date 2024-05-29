@@ -18,7 +18,7 @@
     <PackageVersion Include="Polyfill" Version="5.2.2" />
     <PackageVersion Include="ProjectDefaults" Version="1.0.127" />
     <PackageVersion Include="System.Data.SqlClient" Version="4.8.6" />
-    <PackageVersion Include="System.Drawing.Common" Version="8.0.5" />
+    <PackageVersion Include="System.Drawing.Common" Version="8.0.6" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageVersion Include="System.Memory" Version="4.5.5" />
     <PackageVersion Include="Verify.SqlServer" Version="8.0.4" />
