@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="ConfigureAwait.Fody" Version="3.3.2" />
-    <PackageVersion Include="EntityFramework" Version="6.4.4" />
+    <PackageVersion Include="EntityFramework" Version="6.5.0" />
     <PackageVersion Include="Fody" Version="6.8.1" />
     <PackageVersion Include="MarkdownSnippets.MsBuild" Version="27.0.2" />
     <PackageVersion Include="MethodTimer.Fody" Version="3.2.2" />
