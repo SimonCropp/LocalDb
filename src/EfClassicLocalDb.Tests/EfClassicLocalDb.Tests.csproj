@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <NoWarn>xUnit1051</NoWarn>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -12,8 +14,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <PackageReference Include="XunitContext" />
-    <PackageReference Include="Verify.Xunit" />
-    <PackageReference Include="Xunit" />
+    <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <ProjectReference Include="..\EfClassicLocalDb\EfClassicLocalDb.csproj" />
