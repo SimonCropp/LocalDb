@@ -11,6 +11,7 @@
     <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <PackageReference Include="System.Drawing.Common" />
     <PackageReference Include="Verify.SqlServer" />
     <PackageReference Include="Verify.XunitV3" />
     <PackageReference Include="xunit.v3" />
