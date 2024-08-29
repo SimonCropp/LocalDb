@@ -7,7 +7,8 @@ public partial class SqlInstance<TDbContext>
     Dictionary<Type, EntityKeyMap> entityKeyMap = [];
     public IReadOnlyList<IEntityType> EntityTypes { get; private set; } = null!;
 
-    static MethodInfo findResult = typeof(SqlInstance<TDbContext>).GetMethod("FindResult", BindingFlags.Static | BindingFlags.NonPublic)!;
+    static MethodInfo findResult = typeof(SqlInstance<TDbContext>)
+        .GetMethod("FindResult", BindingFlags.Static | BindingFlags.NonPublic)!;
 
     void InitEntityMapping()
     {
@@ -15,8 +16,9 @@ public partial class SqlInstance<TDbContext>
 
         foreach (var entity in EntityTypes)
         {
-            // join entities ClrTypes are dicionaries
-            if (entity.ClrType.Assembly.FullName!.StartsWith("System"))
+            // join entities ClrTypes are dictionaries
+            var clrType = entity.ClrType;
+            if (clrType.Assembly.FullName!.StartsWith("System"))
             {
                 continue;
             }
@@ -32,9 +34,9 @@ public partial class SqlInstance<TDbContext>
                 continue;
             }
 
-            var find = findResult.MakeGenericMethod(entity.ClrType);
+            var find = findResult.MakeGenericMethod(clrType);
             var keyTypes = key.Properties.Select(_ => _.ClrType).ToArray();
-            entityKeyMap.Add(entity.ClrType, new(keyTypes, key, find));
+            entityKeyMap.Add(clrType, new(keyTypes, key, find));
         }
     }
 
