@@ -15,6 +15,12 @@ public partial class SqlInstance<TDbContext>
 
         foreach (var entity in EntityTypes)
         {
+            // join entities ClrTypes are dicionaries
+            if (entity.ClrType.Assembly.FullName!.StartsWith("System"))
+            {
+                continue;
+            }
+
             if (entity.IsOwned())
             {
                 continue;
@@ -31,7 +37,6 @@ public partial class SqlInstance<TDbContext>
             entityKeyMap.Add(entity.ClrType, new(keyTypes, key, find));
         }
     }
-
 
     internal IKey FindKey<T>(object[] keys, out MethodInfo find)
         where T : class
