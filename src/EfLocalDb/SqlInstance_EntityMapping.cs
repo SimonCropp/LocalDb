@@ -16,8 +16,9 @@ public partial class SqlInstance<TDbContext>
 
         foreach (var entity in EntityTypes)
         {
-            // join entities ClrTypes are dictionaries
             var clrType = entity.ClrType;
+
+            // join entities ClrTypes are dictionaries
             if (clrType.Assembly.FullName!.StartsWith("System"))
             {
                 continue;
