@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Description>.</Description>
+    <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB, Testing, VerifyTests</PackageTags>
+    <DefineConstants>$(DefineConstants);EF</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Verify.EntityFramework" />
+    <PackageReference Include="Verify.NUnit" />
+  </ItemGroup>
+</Project>
