@@ -1,4 +1,5 @@
-﻿public class DanglingLogWrapperTests
+﻿[TestFixture]
+public class DanglingLogWrapperTests
 {
     [Test]
     public void Run()

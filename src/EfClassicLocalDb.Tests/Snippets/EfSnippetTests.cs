@@ -1,4 +1,5 @@
-﻿public class EfSnippetTests
+﻿[TestFixture]
+public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
 

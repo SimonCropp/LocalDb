@@ -1,4 +1,5 @@
-﻿public class DirectoryCleanerTests :
+﻿[TestFixture]
+public class DirectoryCleanerTests :
     IDisposable
 {
     string tempDir;

@@ -1,4 +1,5 @@
-﻿public class ExceptionBuilderTests
+﻿[TestFixture]
+public class ExceptionBuilderTests
 {
     [Test]
     public Task WrapLocalDbFailure()

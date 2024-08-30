@@ -1,4 +1,5 @@
-﻿public class WrapperTests
+﻿[TestFixture]
+public class WrapperTests
 {
     static Wrapper instance;
 

@@ -1,4 +1,5 @@
-﻿public class LocalDbRegistryReaderTests
+﻿[TestFixture]
+public class LocalDbRegistryReaderTests
 {
     [Test]
     public void GetInfo()

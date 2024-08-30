@@ -1,4 +1,5 @@
-﻿public class InversePropertyTests
+﻿[TestFixture]
+public class InversePropertyTests
 {
     [Test]
     public async Task Run()

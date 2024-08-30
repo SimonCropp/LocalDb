@@ -1,4 +1,5 @@
-﻿public class SnippetTests
+﻿[TestFixture]
+public class SnippetTests
 {
     static SqlInstance sqlInstance = new(
         name: "Snippets",

@@ -2,6 +2,7 @@
 
 #region EfStaticConstructor
 
+[TestFixture]
 public class Tests
 {
     static SqlInstance<TheDbContext> sqlInstance;

@@ -1,4 +1,5 @@
-﻿public class Tests
+﻿[TestFixture]
+public class Tests
 {
     [Test]
     public async Task Simple()

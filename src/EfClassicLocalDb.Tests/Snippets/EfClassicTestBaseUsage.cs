@@ -2,6 +2,7 @@
 
 #region EfClassicTestBase
 
+[TestFixture]
 public abstract class TestBase
 {
     static SqlInstance<TheDbContext> sqlInstance;

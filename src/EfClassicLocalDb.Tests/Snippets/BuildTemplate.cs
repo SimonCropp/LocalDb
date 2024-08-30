@@ -1,5 +1,6 @@
 ﻿#region EfClassicBuildTemplate
 
+[TestFixture]
 public class BuildTemplate
 {
     static SqlInstance<BuildTemplateDbContext> sqlInstance;

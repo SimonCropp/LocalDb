@@ -1,4 +1,5 @@
-﻿public class SqlLocalDbTests
+﻿[TestFixture]
+public class SqlLocalDbTests
 {
     [Test]
     public void Instances()

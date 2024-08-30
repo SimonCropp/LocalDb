@@ -2,6 +2,7 @@
 
 #region StaticConstructor
 
+[TestFixture]
 public class Tests
 {
     static SqlInstance sqlInstance = new(

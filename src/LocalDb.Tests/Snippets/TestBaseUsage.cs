@@ -2,6 +2,7 @@
 
 #region TestBase
 
+[TestFixture]
 public abstract class TestBase
 {
     static SqlInstance instance;
