@@ -1,6 +1,4 @@
-﻿using NUnit.Framework.Legacy;
-
-public class SnippetTests
+﻿public class SnippetTests
 {
     static SqlInstance sqlInstance = new(
         name: "Snippets",
@@ -19,7 +17,7 @@ public class SnippetTests
 
         await TestDbBuilder.AddData(database);
         var data = await TestDbBuilder.GetData(database);
-        ClassicAssert.Equals(1, data.Count);
+        Equals(1, data.Count);
 
         #endregion
 
