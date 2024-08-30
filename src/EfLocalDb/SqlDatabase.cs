@@ -28,18 +28,10 @@ public partial class SqlDatabase<TDbContext> :
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         ConnectionString = connectionString;
         Connection = new(connectionString);
-        dataConnection = new(() =>
-        {
-            var connection = new DataSqlConnection(connectionString);
-            connection.Open();
-            return connection;
-        });
     }
 
     public string Name { get; }
     public SqlConnection Connection { get; }
-    Lazy<DataSqlConnection> dataConnection;
-    public DataSqlConnection DataConnection => dataConnection.Value;
     public string ConnectionString { get; }
 
     public async Task<SqlConnection> OpenNewConnection()
@@ -49,20 +41,11 @@ public partial class SqlDatabase<TDbContext> :
         return connection;
     }
 
-    public async Task<DataSqlConnection> OpenNewDataConnection()
-    {
-        var connection = new DataSqlConnection(ConnectionString);
-        await connection.OpenAsync();
-        return connection;
-    }
-
     public static implicit operator TDbContext(SqlDatabase<TDbContext> instance) => instance.Context;
 
     public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
     public static implicit operator DbConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
-
-    public static implicit operator DataSqlConnection(SqlDatabase<TDbContext> instance) => instance.DataConnection;
 
     public async Task Start()
     {
@@ -115,11 +98,6 @@ public partial class SqlDatabase<TDbContext> :
         // ReSharper restore ConditionIsAlwaysTrueOrFalse
 
         await Connection.DisposeAsync();
-
-        if (dataConnection.IsValueCreated)
-        {
-            await dataConnection.Value.DisposeAsync();
-        }
     }
 
     public async Task Delete()

@@ -13,11 +13,6 @@ public partial class SqlDatabase<TDbContext> :
             return Connection;
         }
 
-        if (type == typeof(DataSqlConnection))
-        {
-            return DataConnection;
-        }
-
         if (type == typeof(TDbContext))
         {
             return Context;
@@ -38,9 +33,7 @@ public partial class SqlDatabase<TDbContext> :
     {
         var connection = new SqlConnection(ConnectionString);
         connection.Open();
-        var dataConnection = new DataSqlConnection(ConnectionString);
-        dataConnection.Open();
-        return new ServiceScope(NewDbContext(), dataConnection, connection);
+        return new ServiceScope(NewDbContext(), connection);
     }
 
     public AsyncServiceScope CreateAsyncScope() =>

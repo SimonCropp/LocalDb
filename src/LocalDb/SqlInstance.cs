@@ -35,35 +35,6 @@ public class SqlInstance
 
     public SqlInstance(
         string name,
-        Func<DataSqlConnection, Task> buildTemplate,
-        string? directory = null,
-        DateTime? timestamp = null,
-        ushort templateSize = 3,
-        ExistingTemplate? exitingTemplate = null,
-        Func<DataSqlConnection, Task>? callback = null) :
-        this(
-            name,
-            connection => buildTemplate((DataSqlConnection) connection),
-            directory,
-            timestamp,
-            templateSize,
-            exitingTemplate,
-            connection =>
-            {
-                if (callback == null)
-                {
-                    return Task.CompletedTask;
-                }
-
-                return callback.Invoke((DataSqlConnection) connection);
-            },
-            _ => new DataSqlConnection(_))
-    {
-    }
-
-
-    public SqlInstance(
-        string name,
         Func<SqlConnection, Task> buildTemplate,
         string? directory = null,
         DateTime? timestamp = null,

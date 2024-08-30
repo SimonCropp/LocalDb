@@ -1,4 +1,4 @@
-class ServiceScope(DataSqlConnection dataConnection, SqlConnection connection) :
+class ServiceScope(SqlConnection connection) :
 #if(NET5_0_OR_GREATER)
     IAsyncDisposable,
 #endif
@@ -7,29 +7,18 @@ class ServiceScope(DataSqlConnection dataConnection, SqlConnection connection) :
 #endif
     IServiceProvider
 {
-    public void Dispose()
-    {
+    public void Dispose() =>
         connection.Dispose();
-        dataConnection.Dispose();
-    }
 
 #if(NET5_0_OR_GREATER)
-    public async ValueTask DisposeAsync()
-    {
-        await connection.DisposeAsync();
-        await dataConnection.DisposeAsync();
-    }
+    public ValueTask DisposeAsync() =>
+        connection.DisposeAsync();
 #endif
 
     public IServiceProvider ServiceProvider => this;
 
     public object? GetService(Type type)
     {
-        if (type == typeof(DataSqlConnection))
-        {
-            return dataConnection;
-        }
-
         if (type == typeof(SqlConnection))
         {
             return connection;

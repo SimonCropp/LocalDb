@@ -15,11 +15,8 @@ public class Tests
     [Fact]
     public async Task ServiceScope()
     {
-        static void Add(List<object?> objects, IServiceProvider provider)
-        {
-            objects.Add(provider.GetService<DataSqlConnection>());
+        static void Add(List<object?> objects, IServiceProvider provider) =>
             objects.Add(provider.GetService<SqlConnection>());
-        }
 
         var instance = new SqlInstance("ServiceScope", TestDbBuilder.CreateTable);
 
