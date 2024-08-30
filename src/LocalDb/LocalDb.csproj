@@ -10,7 +10,6 @@
     <PackageReference Include="MethodTimer.Fody" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Win32.Registry" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
-    <PackageReference Include="System.Data.SqlClient" />
     <PackageReference Include="Polyfill" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />

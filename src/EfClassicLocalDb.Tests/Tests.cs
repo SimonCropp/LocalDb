@@ -1,4 +1,6 @@
-﻿[Collection("Sequential")]
+﻿using System.Data.SqlClient;
+
+[Collection("Sequential")]
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;
@@ -21,7 +23,7 @@ public class Tests
     {
         static void Add(List<object?> objects, IServiceProvider provider)
         {
-            objects.Add(provider.GetService<DataSqlConnection>());
+            objects.Add(provider.GetService<SqlConnection>());
             objects.Add(provider.GetService<TestDbContext>());
         }
 

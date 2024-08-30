@@ -35,7 +35,6 @@
     <PackageReference Include="Fody" PrivateAssets="all" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
-    <PackageReference Include="System.Data.SqlClient" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />

@@ -24,19 +24,19 @@ public partial class SqlDatabase<TDbContext> :
     }
 
     public string Name { get; }
-    public DataSqlConnection Connection { get; }
+    public SqlConnection Connection { get; }
     public string ConnectionString { get; }
 
-    public async Task<DataSqlConnection> OpenNewConnection()
+    public async Task<SqlConnection> OpenNewConnection()
     {
-        var connection = new DataSqlConnection(ConnectionString);
+        var connection = new SqlConnection(ConnectionString);
         await connection.OpenAsync();
         return connection;
     }
 
     public static implicit operator TDbContext(SqlDatabase<TDbContext> instance) => instance.Context;
 
-    public static implicit operator DataSqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
+    public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
     public async Task Start()
     {

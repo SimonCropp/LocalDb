@@ -7,7 +7,7 @@ class ManifestTokenResolver :
 
     public string ResolveManifestToken(DbConnection connection)
     {
-        if (connection is DataSqlConnection)
+        if (connection is SqlConnection)
         {
             return "2012";
         }

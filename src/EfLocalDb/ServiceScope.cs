@@ -1,4 +1,4 @@
-class ServiceScope(DbContext context, DataSqlConnection dataConnection, SqlConnection connection) :
+class ServiceScope(DbContext context, SqlConnection connection) :
     IServiceScope,
     IServiceProvider,
     IAsyncDisposable
@@ -6,14 +6,12 @@ class ServiceScope(DbContext context, DataSqlConnection dataConnection, SqlConne
     public void Dispose()
     {
         connection.Dispose();
-        dataConnection.Dispose();
         context.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
         await connection.DisposeAsync();
-        await dataConnection.DisposeAsync();
         await context.DisposeAsync();
     }
 
@@ -21,11 +19,6 @@ class ServiceScope(DbContext context, DataSqlConnection dataConnection, SqlConne
 
     public object? GetService(Type type)
     {
-        if (type == typeof(DataSqlConnection))
-        {
-            return dataConnection;
-        }
-
         if (type == typeof(SqlConnection))
         {
             return connection;

@@ -8,7 +8,7 @@ public partial class SqlDatabase<TDbContext> :
 {
     public object? GetService(Type type)
     {
-        if (type == typeof(DataSqlConnection))
+        if (type == typeof(SqlConnection))
         {
             return Connection;
         }
@@ -31,7 +31,7 @@ public partial class SqlDatabase<TDbContext> :
 #if(NET7_0_OR_GREATER)
     public IServiceScope CreateScope()
     {
-        var connection = new DataSqlConnection(ConnectionString);
+        var connection = new SqlConnection(ConnectionString);
         connection.Open();
         return new ServiceScope(NewDbContext(), connection);
     }

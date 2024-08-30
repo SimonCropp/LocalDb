@@ -1,16 +1,10 @@
 #if(NET7_0_OR_GREATER)
-class ServiceScope :
+class ServiceScope(DbContext context, SqlConnection connection) :
     IServiceScope,
     IServiceProvider
 {
-    DbContext context;
-    DataSqlConnection connection;
-
-    public ServiceScope(DbContext context, DataSqlConnection connection)
-    {
-        this.context = context;
-        this.connection = connection;
-    }
+    DbContext context = context;
+    SqlConnection connection = connection;
 
     public void Dispose()
     {
@@ -22,7 +16,7 @@ class ServiceScope :
 
     public object? GetService(Type type)
     {
-        if (type == typeof(DataSqlConnection))
+        if (type == typeof(SqlConnection))
         {
             return connection;
         }

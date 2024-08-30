@@ -13,11 +13,6 @@ public partial class SqlDatabase :
             return Connection;
         }
 
-        if (type == typeof(DataSqlConnection))
-        {
-            return DataConnection;
-        }
-
 #if NET7_0_OR_GREATER
         if (type == typeof(IServiceScopeFactory))
         {
@@ -33,9 +28,7 @@ public partial class SqlDatabase :
     {
         var connection = new SqlConnection(ConnectionString);
         connection.Open();
-        var dataConnection = new DataSqlConnection(ConnectionString);
-        dataConnection.Open();
-        return new ServiceScope(dataConnection, connection);
+        return new ServiceScope(connection);
     }
 
     public AsyncServiceScope CreateAsyncScope() =>

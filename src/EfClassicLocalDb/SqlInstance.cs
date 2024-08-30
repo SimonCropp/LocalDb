@@ -69,7 +69,7 @@ public class SqlInstance<TDbContext>
         }
 
         Wrapper = new(
-            _ => new DataSqlConnection(_),
+            _ => new SqlConnection(_),
             storageValue.Name,
             storageValue.Directory,
             templateSize,
