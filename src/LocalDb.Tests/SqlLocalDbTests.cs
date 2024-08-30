@@ -1,7 +1,6 @@
-﻿[Collection("Sequential")]
-public class SqlLocalDbTests
+﻿public class SqlLocalDbTests
 {
-    [Fact]
+    [Test]
     public void Instances()
     {
         var collection = LocalDbApi.GetInstanceNames();
@@ -10,17 +9,17 @@ public class SqlLocalDbTests
             Trace.WriteLine(instance);
         }
 
-        Assert.NotEmpty(collection);
+        IsNotEmpty(collection);
     }
 
-    [Fact]
+    [Test]
     public void NonInstanceInfo()
     {
         var info = LocalDbApi.GetInstance("Missing");
-        Assert.False(info.Exists);
+        False(info.Exists);
     }
 
-    [Fact]
+    [Test]
     public async Task Info()
     {
         LocalDbApi.CreateAndStart("InfoTest");
@@ -28,10 +27,10 @@ public class SqlLocalDbTests
 
         await Verify(info);
         LocalDbApi.StopAndDelete("InfoTest");
-        Assert.False(LocalDbApi.GetInstance("InfoTest").Exists);
+        False(LocalDbApi.GetInstance("InfoTest").Exists);
     }
 
-    //[Fact]
+    //[Test]
     //public void DeleteAll()
     //{
     //    foreach (var instance in LocalDbApi.GetInstanceNames())

@@ -1,6 +1,5 @@
 ﻿namespace TestBase;
 
-[Collection("Sequential")]
 #region EfTestBase
 
 public abstract class TestBase
@@ -21,7 +20,7 @@ public abstract class TestBase
 public class Tests :
     TestBase
 {
-    [Fact]
+    [Test]
     public async Task Test()
     {
         await using var database = await LocalDb();
@@ -31,7 +30,7 @@ public class Tests :
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 

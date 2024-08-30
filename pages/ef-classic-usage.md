@@ -70,7 +70,7 @@ public class Tests
         sqlInstance = new(
             connection => new(connection));
 
-    [Fact]
+    [Test]
     public async Task Test()
     {
         var entity = new TheEntity
@@ -78,7 +78,7 @@ public class Tests
             Property = "prop"
         };
         using var database = await sqlInstance.Build([entity]);
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
@@ -111,7 +111,7 @@ public abstract class TestBase
 public class Tests :
     TestBase
 {
-    [Fact]
+    [Test]
     public async Task Test()
     {
         using var database = await LocalDb();
@@ -121,11 +121,11 @@ public class Tests :
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L4-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicTestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L3-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -154,12 +154,12 @@ public class BuildTemplate
                 await context.SaveChangesAsync();
             });
 
-    [Fact]
+    [Test]
     public async Task Test()
     {
         using var database = await sqlInstance.Build();
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
@@ -179,7 +179,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L11-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L10-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -193,7 +193,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L16-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -204,14 +204,13 @@ The above are combined in a full test:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
-[Collection("Sequential")]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
 
     static EfSnippetTests() => sqlInstance = new(connection => new(connection));
 
-    [Fact]
+    [Test]
     public async Task TheTest()
     {
 
@@ -233,11 +232,11 @@ public class EfSnippetTests
 
         using (var data = database.NewDbContext())
         {
-            Assert.Single(data.TestEntities);
+            AreEqual(1, data.TestEntities.Count());
         }
     }
 
-    [Fact]
+    [Test]
     public async Task TheTestWithDbName()
     {
         using var database = await sqlInstance.Build("TheTestWithDbName");
@@ -247,11 +246,11 @@ public class EfSnippetTests
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

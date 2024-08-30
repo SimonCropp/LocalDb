@@ -70,7 +70,7 @@ public class Tests
         sqlInstance = new(
             builder => new(builder.Options));
 
-    [Fact]
+    [Test]
     public async Task Test()
     {
         var entity = new TheEntity
@@ -78,11 +78,11 @@ public class Tests
             Property = "prop"
         };
         await using var database = await sqlInstance.Build([entity]);
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L4-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L3-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -111,7 +111,7 @@ public abstract class TestBase
 public class Tests :
     TestBase
 {
-    [Fact]
+    [Test]
     public async Task Test()
     {
         await using var database = await LocalDb();
@@ -121,11 +121,11 @@ public class Tests :
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L4-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L3-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -169,12 +169,12 @@ public class BuildTemplate
                 await context.SaveChangesAsync();
             });
 
-    [Fact]
+    [Test]
     public async Task BuildTemplateTest()
     {
         await using var database = await sqlInstance.Build();
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
@@ -228,7 +228,7 @@ public class EfSnippetTests
             builder => new(builder.Options));
 
 
-    [Fact]
+    [Test]
     public async Task TheTest()
     {
 
@@ -250,12 +250,12 @@ public class EfSnippetTests
 
         await using (var data = database.NewDbContext())
         {
-            Assert.Single(data.TestEntities);
+            AreEqual(1, data.TestEntities.Count());
         }
 
     }
 
-    [Fact]
+    [Test]
     public async Task TheTestWithDbName()
     {
 
@@ -268,7 +268,7 @@ public class EfSnippetTests
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```

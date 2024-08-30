@@ -3,7 +3,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
     <OutputType>Exe</OutputType>
-    <NoWarn>xUnit1051</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\LocalDb.Tests\ModuleInitializer.cs" Link="ModuleInitializer.cs" />
@@ -13,13 +12,14 @@
     <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-
-    <PackageReference Include="Verify.XunitV3" />
-    <PackageReference Include="xunit.v3" />
-    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Verify.NUnit" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <ProjectReference Include="..\Helpers\Helpers.csproj" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
+    <Using Include="NUnit.Framework.Legacy.ClassicAssert" Static="True" />
+    <Using Include="NUnit.Framework.Assert" Static="True" />
   </ItemGroup>
 </Project>

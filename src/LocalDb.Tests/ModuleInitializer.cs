@@ -1,4 +1,4 @@
-﻿[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
+﻿[assembly: NonParallelizable]
 
 public static class ModuleInitializer
 {

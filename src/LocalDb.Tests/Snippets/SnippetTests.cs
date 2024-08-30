@@ -1,4 +1,5 @@
-﻿[Collection("Sequential")]
+﻿using NUnit.Framework.Legacy;
+
 public class SnippetTests
 {
     static SqlInstance sqlInstance = new(
@@ -7,7 +8,7 @@ public class SnippetTests
 
     #region Test
 
-    [Fact]
+    [Test]
     public async Task TheTest()
     {
         #region BuildDatabase
@@ -17,7 +18,8 @@ public class SnippetTests
         #region BuildContext
 
         await TestDbBuilder.AddData(database);
-        Assert.Single(await TestDbBuilder.GetData(database));
+        var data = await TestDbBuilder.GetData(database);
+        ClassicAssert.Equals(1, data.Count);
 
         #endregion
 
@@ -26,7 +28,7 @@ public class SnippetTests
 
     #endregion
 
-    [Fact]
+    [Test]
     public async Task TheTestWithDbName()
     {
         #region WithDbName
@@ -36,6 +38,7 @@ public class SnippetTests
         #endregion
 
         await TestDbBuilder.AddData(database);
-        Assert.Single(await TestDbBuilder.GetData(database));
+        var data = await TestDbBuilder.GetData(database);
+        AreEqual(1, data.Count);
     }
 }

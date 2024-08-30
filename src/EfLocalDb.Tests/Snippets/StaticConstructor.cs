@@ -1,6 +1,5 @@
 ﻿namespace StaticConstructor;
 
-[Collection("Sequential")]
 #region EfStaticConstructor
 
 public class Tests
@@ -11,7 +10,7 @@ public class Tests
         sqlInstance = new(
             builder => new(builder.Options));
 
-    [Fact]
+    [Test]
     public async Task Test()
     {
         var entity = new TheEntity
@@ -19,7 +18,7 @@ public class Tests
             Property = "prop"
         };
         await using var database = await sqlInstance.Build([entity]);
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 

@@ -1,6 +1,6 @@
 ﻿public class InversePropertyTests
 {
-    [Fact]
+    [Test]
     public async Task Run()
     {
         var sqlInstance = new SqlInstance<InversePropertyDbContext>(
@@ -9,7 +9,7 @@
 
         var database = await sqlInstance.Build("InverseProperty");
         var items = await database.Context.Employees.ToListAsync();
-        Assert.NotEmpty(items);
+        IsNotEmpty(items);
     }
 
     static async Task CreateDb(InversePropertyDbContext context)

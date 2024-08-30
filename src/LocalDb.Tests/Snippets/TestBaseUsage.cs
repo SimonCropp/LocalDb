@@ -21,12 +21,13 @@ public abstract class TestBase
 public class Tests :
     TestBase
 {
-    [Fact]
+    [Test]
     public async Task Test()
     {
         await using var database = await LocalDb();
         await TestDbBuilder.AddData(database);
-        Assert.Single(await TestDbBuilder.GetData(database));
+        var data = await TestDbBuilder.GetData(database);
+        AreEqual(1, data.Count);
     }
 }
 

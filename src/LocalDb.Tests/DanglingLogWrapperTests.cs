@@ -1,7 +1,6 @@
-﻿[Collection("Sequential")]
-public class DanglingLogWrapperTests
+﻿public class DanglingLogWrapperTests
 {
-    [Fact]
+    [Test]
     public void Run()
     {
         var name = "DanglingLogWrapperTests";

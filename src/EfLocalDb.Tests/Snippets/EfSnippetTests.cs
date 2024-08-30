@@ -8,7 +8,7 @@
 
     #region EfTest
 
-    [Fact]
+    [Test]
     public async Task TheTest()
     {
         #region EfBuildDatabase
@@ -34,13 +34,13 @@
 
         await using (var data = database.NewDbContext())
         {
-            Assert.Single(data.TestEntities);
+            AreEqual(1, data.TestEntities.Count());
         }
 
         #endregion
     }
 
-    [Fact]
+    [Test]
     public async Task TheTestWithDbName()
     {
         #region EfWithDbName
@@ -55,6 +55,6 @@
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }

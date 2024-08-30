@@ -18,12 +18,12 @@ public class BuildTemplate
                 await context.SaveChangesAsync();
             });
 
-    [Fact]
+    [Test]
     public async Task Test()
     {
         using var database = await sqlInstance.Build();
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 

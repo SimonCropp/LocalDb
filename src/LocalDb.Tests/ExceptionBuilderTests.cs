@@ -1,7 +1,6 @@
-﻿[Collection("Sequential")]
-public class ExceptionBuilderTests
+﻿public class ExceptionBuilderTests
 {
-    [Fact]
+    [Test]
     public Task WrapLocalDbFailure()
     {
         var wrapped = ExceptionBuilder.WrapLocalDbFailure("InstanceName", @"c:\LocalDBData\InstanceName", new());
