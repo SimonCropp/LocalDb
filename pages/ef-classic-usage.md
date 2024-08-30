@@ -93,6 +93,7 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 <!-- snippet: EfClassicTestBase -->
 <a id='snippet-EfClassicTestBase'></a>
 ```cs
+[TestFixture]
 public abstract class TestBase
 {
     static SqlInstance<TheDbContext> sqlInstance;
@@ -125,7 +126,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L3-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicTestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfClassicTestBaseUsage.cs#L3-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -136,6 +137,7 @@ Data can be seeded into the template database for use across all tests:
 <!-- snippet: EfClassicBuildTemplate -->
 <a id='snippet-EfClassicBuildTemplate'></a>
 ```cs
+[TestFixture]
 public class BuildTemplate
 {
     static SqlInstance<BuildTemplateDbContext> sqlInstance;
@@ -163,7 +165,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L1-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildTemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/BuildTemplate.cs#L1-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -179,7 +181,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L10-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L11-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -193,7 +195,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L16-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L17-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -204,6 +206,7 @@ The above are combined in a full test:
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs -->
 <a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
 ```cs
+[TestFixture]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
@@ -250,7 +253,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

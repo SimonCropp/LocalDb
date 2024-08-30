@@ -62,6 +62,7 @@ If all tests that need to use the SqlInstance existing in the same test class, t
 <!-- snippet: EfStaticConstructor -->
 <a id='snippet-EfStaticConstructor'></a>
 ```cs
+[TestFixture]
 public class Tests
 {
     static SqlInstance<TheDbContext> sqlInstance;
@@ -82,7 +83,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L3-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L3-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

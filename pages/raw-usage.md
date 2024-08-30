@@ -81,6 +81,7 @@ If all tests that need to use the SqlInstance existing in the same test class, t
 <!-- snippet: StaticConstructor -->
 <a id='snippet-StaticConstructor'></a>
 ```cs
+[TestFixture]
 public class Tests
 {
     static SqlInstance sqlInstance = new(
@@ -97,7 +98,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L3-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L3-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -108,6 +109,7 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 <!-- snippet: TestBase -->
 <a id='snippet-TestBase'></a>
 ```cs
+[TestFixture]
 public abstract class TestBase
 {
     static SqlInstance instance;
@@ -137,7 +139,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L3-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/TestBaseUsage.cs#L3-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -157,7 +159,7 @@ await TestDbBuilder.AddData(database);
 var data = await TestDbBuilder.GetData(database);
 Equals(1, data.Count);
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L12-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L13-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -172,7 +174,7 @@ await TestDbBuilder.AddData(database);
 var data = await TestDbBuilder.GetData(database);
 Equals(1, data.Count);
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L16-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L17-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -183,6 +185,7 @@ The above are combined in a full test:
 <!-- snippet: SnippetTests.cs -->
 <a id='snippet-SnippetTests.cs'></a>
 ```cs
+[TestFixture]
 public class SnippetTests
 {
     static SqlInstance sqlInstance = new(
@@ -218,5 +221,5 @@ public class SnippetTests
     }
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
