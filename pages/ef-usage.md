@@ -83,7 +83,7 @@ public class Tests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L3-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L11-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -126,7 +126,7 @@ public class Tests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L3-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L11-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -154,7 +154,7 @@ Data can be seeded into the template database for use across all tests:
 ```cs
 public class BuildTemplate
 {
-    static SqlInstance<BuildTemplateDbContext> sqlInstance;
+    static SqlInstance<TheDbContext> sqlInstance;
 
     static BuildTemplate() =>
         sqlInstance = new(
@@ -179,7 +179,7 @@ public class BuildTemplate
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L1-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L11-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -195,7 +195,7 @@ Usage inside a test consists of two parts:
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L14-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L22-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -209,7 +209,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L28-L33' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -222,6 +222,14 @@ The above are combined in a full test:
 ```cs
 public class EfSnippetTests
 {
+    public class MyDbContext(DbContextOptions options) :
+        DbContext(options)
+    {
+        public DbSet<TheEntity> TestEntities { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
+    }
+
     static SqlInstance<MyDbContext> sqlInstance;
 
     static EfSnippetTests() =>
@@ -273,7 +281,7 @@ public class EfSnippetTests
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L52' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L60' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
