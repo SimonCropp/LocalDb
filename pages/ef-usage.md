@@ -27,10 +27,11 @@ public class TheDbContext(DbContextOptions options) :
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
+    protected override void OnModelCreating(ModelBuilder model)
+        => model.Entity<TheEntity>();
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L7' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TheDbContext.cs#L1-L8' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfLocalDb.Tests/Snippets/TheEntity.cs -->
@@ -62,6 +63,7 @@ If all tests that need to use the SqlInstance existing in the same test class, t
 <!-- snippet: EfStaticConstructor -->
 <a id='snippet-EfStaticConstructor'></a>
 ```cs
+[TestFixture]
 public class Tests
 {
     static SqlInstance<TheDbContext> sqlInstance;
@@ -70,7 +72,7 @@ public class Tests
         sqlInstance = new(
             builder => new(builder.Options));
 
-    [Fact]
+    [Test]
     public async Task Test()
     {
         var entity = new TheEntity
@@ -78,11 +80,11 @@ public class Tests
             Property = "prop"
         };
         await using var database = await sqlInstance.Build([entity]);
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L4-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L11-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -111,7 +113,7 @@ public abstract class TestBase
 public class Tests :
     TestBase
 {
-    [Fact]
+    [Test]
     public async Task Test()
     {
         await using var database = await LocalDb();
@@ -121,11 +123,11 @@ public class Tests :
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L4-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfTestBaseUsage.cs#L11-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfTestBase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -153,7 +155,7 @@ Data can be seeded into the template database for use across all tests:
 ```cs
 public class BuildTemplate
 {
-    static SqlInstance<BuildTemplateDbContext> sqlInstance;
+    static SqlInstance<TheDbContext> sqlInstance;
 
     static BuildTemplate() =>
         sqlInstance = new(
@@ -169,16 +171,16 @@ public class BuildTemplate
                 await context.SaveChangesAsync();
             });
 
-    [Fact]
+    [Test]
     public async Task BuildTemplateTest()
     {
         await using var database = await sqlInstance.Build();
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L1-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L11-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -194,7 +196,7 @@ Usage inside a test consists of two parts:
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L14-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L22-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -208,7 +210,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L28-L33' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -221,6 +223,14 @@ The above are combined in a full test:
 ```cs
 public class EfSnippetTests
 {
+    public class MyDbContext(DbContextOptions options) :
+        DbContext(options)
+    {
+        public DbSet<TheEntity> TestEntities { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
+    }
+
     static SqlInstance<MyDbContext> sqlInstance;
 
     static EfSnippetTests() =>
@@ -228,7 +238,7 @@ public class EfSnippetTests
             builder => new(builder.Options));
 
 
-    [Fact]
+    [Test]
     public async Task TheTest()
     {
 
@@ -250,12 +260,12 @@ public class EfSnippetTests
 
         await using (var data = database.NewDbContext())
         {
-            Assert.Single(data.TestEntities);
+            AreEqual(1, data.TestEntities.Count());
         }
 
     }
 
-    [Fact]
+    [Test]
     public async Task TheTestWithDbName()
     {
 
@@ -268,11 +278,11 @@ public class EfSnippetTests
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L52' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L60' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

@@ -1,6 +1,5 @@
 ﻿{
   sql: {
-    HasTransaction: false,
     Text:
 declare @command nvarchar(max)
 set @command = ''
@@ -13,6 +12,7 @@ select @command = @command
 '
 from master.sys.databases
 where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
-execute sp_executesql @command
+execute sp_executesql @command,
+    HasTransaction: false
   }
 }

@@ -1,11 +1,11 @@
-﻿[Collection("Sequential")]
+﻿[TestFixture]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
 
     static EfSnippetTests() => sqlInstance = new(connection => new(connection));
 
-    [Fact]
+    [Test]
     public async Task TheTest()
     {
         #region EfClassicBuildDatabase
@@ -31,11 +31,11 @@ public class EfSnippetTests
 
         using (var data = database.NewDbContext())
         {
-            Assert.Single(data.TestEntities);
+            AreEqual(1, data.TestEntities.Count());
         }
     }
 
-    [Fact]
+    [Test]
     public async Task TheTestWithDbName()
     {
         using var database = await sqlInstance.Build("TheTestWithDbName");
@@ -45,6 +45,6 @@ public class EfSnippetTests
         };
         await database.AddData(entity);
 
-        Assert.Single(database.Context.TestEntities);
+        AreEqual(1, database.Context.TestEntities.Count());
     }
 }

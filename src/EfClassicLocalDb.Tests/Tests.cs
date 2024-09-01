@@ -1,12 +1,12 @@
 ﻿using System.Data.SqlClient;
 
-[Collection("Sequential")]
+[TestFixture]
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;
     static bool callbackCalled;
 
-    [Fact]
+    [Test]
     public async Task SeedData()
     {
         var entity = new TestEntity
@@ -14,11 +14,11 @@ public class Tests
             Property = "prop"
         };
         using var database = await instance.Build([entity]);
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
-        Assert.True(callbackCalled);
+        NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        True(callbackCalled);
     }
 
-    [Fact]
+    [Test]
     public async Task ServiceScope()
     {
         static void Add(List<object?> objects, IServiceProvider provider)
@@ -42,7 +42,7 @@ public class Tests
         for (var outerIndex = 0; outerIndex < list.Count; outerIndex++)
         {
             var item = list[outerIndex];
-            Assert.NotNull(item);
+            NotNull(item);
             for (var innerIndex = 0; innerIndex < list.Count; innerIndex++)
             {
                 if (innerIndex == outerIndex)
@@ -50,12 +50,12 @@ public class Tests
                     continue;
                 }
                 var nested = list[innerIndex];
-                Assert.NotSame(item, nested);
+                AreNotEqual(item, nested);
             }
         }
     }
 
-    [Fact]
+    [Test]
     public async Task AddData()
     {
         var entity = new TestEntity
@@ -64,11 +64,11 @@ public class Tests
         };
         using var database = await instance.Build();
         await database.AddData(entity);
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
-        Assert.True(callbackCalled);
+        NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        True(callbackCalled);
     }
 
-    [Fact]
+    [Test]
     public async Task AddDataUntracked()
     {
         var entity = new TestEntity
@@ -77,11 +77,11 @@ public class Tests
         };
         using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
-        Assert.True(callbackCalled);
+        NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        True(callbackCalled);
     }
 
-    [Fact]
+    [Test]
     public async Task AddDataMultiple()
     {
         var entity1 = new TestEntity
@@ -97,12 +97,12 @@ public class Tests
         using var database = await instance.Build();
         await database.AddData(entity1, entity2);
         var entities = database.Context.TestEntities;
-        Assert.NotNull(await entities.FindAsync(entity1.Id));
-        Assert.NotNull(await entities.FindAsync(entity2.Id));
-        Assert.True(callbackCalled);
+        NotNull(await entities.FindAsync(entity1.Id));
+        NotNull(await entities.FindAsync(entity2.Id));
+        True(callbackCalled);
     }
 
-    [Fact]
+    [Test]
     public async Task AddDataUntrackedMultiple()
     {
         var entity1 = new TestEntity
@@ -118,12 +118,12 @@ public class Tests
         using var database = await instance.Build();
         await database.AddDataUntracked(entity1, entity2);
         var entities = database.Context.TestEntities;
-        Assert.NotNull(await entities.FindAsync(entity1.Id));
-        Assert.NotNull(await entities.FindAsync(entity2.Id));
-        Assert.True(callbackCalled);
+        NotNull(await entities.FindAsync(entity1.Id));
+        NotNull(await entities.FindAsync(entity2.Id));
+        True(callbackCalled);
     }
 
-    [Fact]
+    [Test]
     public async Task SuffixedContext()
     {
         var instance = new SqlInstance<TestDbContext>(
@@ -135,11 +135,11 @@ public class Tests
             Property = "prop"
         };
         using var database = await instance.Build([entity]);
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
     }
 
 #if DEBUG
-    [Fact]
+    [Test]
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
@@ -150,10 +150,10 @@ public class Tests
             storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
 
         using var database = await instance.Build();
-        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
+        AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
-    [Fact]
+    [Test]
     public async Task Assembly_TimeStamp()
     {
         var instance = new SqlInstance<TestDbContext>(
@@ -161,10 +161,10 @@ public class Tests
             storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
-        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
-    [Fact]
+    [Test]
     public async Task Delegate_TimeStamp()
     {
         var instance = new SqlInstance<TestDbContext>(
@@ -173,11 +173,11 @@ public class Tests
             Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
 
         using var database = await instance.Build();
-        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 #endif
 
-    [Fact]
+    [Test]
     public async Task Secondary()
     {
         var entity = new TestEntity
@@ -193,22 +193,22 @@ public class Tests
 
         using (var data = database.NewDbContext())
         {
-            Assert.NotNull(await data.TestEntities.FindAsync(entity.Id));
+            NotNull(await data.TestEntities.FindAsync(entity.Id));
         }
 
-        Assert.True(callbackCalled);
+        True(callbackCalled);
     }
 
-    [Fact]
+    [Test]
     public async Task NewDbContext()
     {
         using var database = await instance.Build();
         using var data = database.NewDbContext();
-        Assert.NotSame(database.Context, data);
-        Assert.True(callbackCalled);
+        AreNotEqual(database.Context, data);
+        True(callbackCalled);
     }
 
-    [Fact]
+    [Test]
     public async Task Simple()
     {
         var entity = new TestEntity
@@ -216,8 +216,8 @@ public class Tests
             Property = "Item1"
         };
         using var database = await instance.Build([entity]);
-        Assert.NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
-        Assert.True(callbackCalled);
+        NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        True(callbackCalled);
     }
 
     static Tests() =>

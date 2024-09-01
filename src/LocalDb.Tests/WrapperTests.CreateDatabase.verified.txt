@@ -2,7 +2,6 @@
   entries: [
     {
       sql: {
-        HasTransaction: false,
         Text:
 if db_id('CreateDatabase') is null
     begin
@@ -18,7 +17,8 @@ else
     begin
         alter database [CreateDatabase] set online;
     end;
-alter database [CreateDatabase] set read_write;
+alter database [CreateDatabase] set read_write;,
+        HasTransaction: false
       }
     }
   ],

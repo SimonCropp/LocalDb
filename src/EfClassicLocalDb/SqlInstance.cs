@@ -11,7 +11,12 @@ public class SqlInstance<TDbContext>
 
     static SqlInstance()
     {
-        var name = typeof(TDbContext).Name;
+        var type = typeof(TDbContext);
+        var name = type.Name;
+        if (type.IsNested)
+        {
+            name = $"{type.DeclaringType!.Name}_{name}";
+        }
         DefaultStorage = new(name, DirectoryFinder.Find(name));
     }
 

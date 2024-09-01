@@ -1,11 +1,11 @@
-﻿[Collection("Sequential")]
+﻿[TestFixture]
 public class LocalDbRegistryReaderTests
 {
-    [Fact]
+    [Test]
     public void GetInfo()
     {
         var info = LocalDbRegistryReader.GetInfo();
-        Assert.NotNull(info.path);
-        Assert.NotNull(info.version);
+        NotNull(info.path);
+        NotNull(info.version);
     }
 }
