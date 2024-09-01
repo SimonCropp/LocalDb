@@ -1,16 +1,17 @@
-﻿[Collection("Sequential")]
+﻿[TestFixture]
 public class WrapperTests
 {
     static Wrapper instance;
 
-    [Fact]
+    [Test]
     public Task InvalidInstanceName()
     {
-        var exception = Assert.Throws<ArgumentException>(() => new Wrapper(s => new SqlConnection(s), "<", "s"));
+        var exception = Throws<ArgumentException>(() => new Wrapper(_ => new SqlConnection(_), "<", "s"))!;
         return Verify(exception.Message);
     }
 
-    [Fact(Skip = "no supported")]
+    [Test]
+    [Explicit]
     public async Task RecreateWithOpenConnectionAfterStartup()
     {
         /*
@@ -28,7 +29,7 @@ end;
         LocalDbApi.StopAndDelete(name);
         DirectoryFinder.Delete(name);
 
-        var wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        var wrapper = new Wrapper(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
         await using (var connection = new SqlConnection(connectionString))
@@ -36,7 +37,7 @@ end;
             await connection.OpenAsync();
             await wrapper.CreateDatabaseFromTemplate("Simple");
 
-            wrapper = new(s => new SqlConnection(s), name, DirectoryFinder.Find("RecreateWithOpenConnection"));
+            wrapper = new(_ => new SqlConnection(_), name, DirectoryFinder.Find("RecreateWithOpenConnection"));
             wrapper.Start(timestamp, TestDbBuilder.CreateTable);
             await wrapper.CreateDatabaseFromTemplate("Simple");
         }
@@ -45,20 +46,20 @@ end;
         LocalDbApi.StopInstance(name);
     }
 
-    [Fact]
+    [Test]
     public async Task RecreateWithOpenConnection()
     {
         var name = "RecreateWithOpenConnection";
         LocalDbApi.StopAndDelete(name);
         DirectoryFinder.Delete(name);
 
-        var wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        var wrapper = new Wrapper(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
         await using (var connection = new SqlConnection(connectionString))
         {
             await connection.OpenAsync();
-            wrapper = new(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+            wrapper = new(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
             wrapper.Start(timestamp, TestDbBuilder.CreateTable);
             await wrapper.CreateDatabaseFromTemplate("Simple");
         }
@@ -67,60 +68,60 @@ end;
         LocalDbApi.StopInstance(name);
     }
 
-    [Fact]
+    [Test]
     public async Task NoFileAndNoInstance()
     {
         var name = "NoFileAndNoInstance";
         LocalDbApi.StopAndDelete(name);
         DirectoryFinder.Delete(name);
 
-        var wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        var wrapper = new Wrapper(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
         await Verify(wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance(name);
     }
 
-    [Fact]
+    [Test]
     public async Task Callback()
     {
         var name = "WrapperTests_Callback";
 
         var callbackCalled = false;
-        var wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name), callback: _ =>
+        var wrapper = new Wrapper(_ => new SqlConnection(_), name, DirectoryFinder.Find(name), callback: _ =>
         {
             callbackCalled = true;
             return Task.CompletedTask;
         });
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        Assert.True(callbackCalled);
+        True(callbackCalled);
         LocalDbApi.StopAndDelete(name);
     }
 
-    [Fact]
+    [Test]
     public async Task WithFileAndNoInstance()
     {
         var name = "WithFileAndNoInstance";
-        var wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        var wrapper = new Wrapper(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         wrapper.DeleteInstance();
-        wrapper = new(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        wrapper = new(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
         await Verify(wrapper.ReadDatabaseState("Simple"));
         LocalDbApi.StopInstance(name);
     }
 
-    [Fact]
+    [Test]
     public async Task NoFileAndWithInstanceAndNamedDb()
     {
         var instanceName = "NoFileAndWithInstanceAndNamedDb";
         LocalDbApi.StopAndDelete(instanceName);
         LocalDbApi.CreateInstance(instanceName);
         DirectoryFinder.Delete(instanceName);
-        var wrapper = new Wrapper(s => new SqlConnection(s), instanceName, DirectoryFinder.Find(instanceName));
+        var wrapper = new Wrapper(_ => new SqlConnection(_), instanceName, DirectoryFinder.Find(instanceName));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
@@ -128,7 +129,7 @@ end;
         Thread.Sleep(3000);
         DirectoryFinder.Delete(instanceName);
 
-        wrapper = new(s => new SqlConnection(s), instanceName, DirectoryFinder.Find(instanceName));
+        wrapper = new(_ => new SqlConnection(_), instanceName, DirectoryFinder.Find(instanceName));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
@@ -136,14 +137,14 @@ end;
         await Verify(wrapper.ReadDatabaseState("Simple"));
     }
 
-    [Fact]
+    [Test]
     public async Task NoFileAndWithInstance()
     {
         var name = "NoFileAndWithInstance";
         LocalDbApi.StopAndDelete(name);
         LocalDbApi.CreateInstance(name);
         DirectoryFinder.Delete(name);
-        var wrapper = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        var wrapper = new Wrapper(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
@@ -151,7 +152,7 @@ end;
         LocalDbApi.StopInstance(name);
     }
 
-    [Fact]
+    [Test]
     public async Task DeleteDatabase()
     {
         await instance.CreateDatabaseFromTemplate("ToDelete");
@@ -160,21 +161,21 @@ end;
         await Verify();
     }
 
-    [Fact]
+    [Test]
     public async Task DefinedTimestamp()
     {
         var name = "DefinedTimestamp";
-        var instance2 = new Wrapper(s => new SqlConnection(s), name, DirectoryFinder.Find(name));
+        var instance2 = new Wrapper(_ => new SqlConnection(_), name, DirectoryFinder.Find(name));
         var dateTime = DateTime.Now;
         instance2.Start(dateTime, _ => Task.CompletedTask);
         await instance2.AwaitStart();
-        Assert.Equal(dateTime, File.GetCreationTime(instance2.DataFile));
+        AreEqual(dateTime, File.GetCreationTime(instance2.DataFile));
     }
 
-    [Fact]
+    [Test]
     public async Task WithRebuild()
     {
-        var instance2 = new Wrapper(s => new SqlConnection(s), "WrapperTests", DirectoryFinder.Find("WrapperTests"));
+        var instance2 = new Wrapper(_ => new SqlConnection(_), "WrapperTests", DirectoryFinder.Find("WrapperTests"));
 
         Recording.Start();
         instance2.Start(timestamp, _ => throw new());
@@ -182,7 +183,7 @@ end;
         await Verify();
     }
 
-    [Fact]
+    [Test]
     public async Task CreateDatabase()
     {
         Recording.Start();
@@ -196,7 +197,7 @@ end;
             });
     }
 
-    [Fact]
+    [Test]
     public async Task DeleteDatabaseWithOpenConnection()
     {
         var name = "ToDelete";

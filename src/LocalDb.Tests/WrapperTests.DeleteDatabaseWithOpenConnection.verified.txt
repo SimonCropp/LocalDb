@@ -2,7 +2,6 @@
   entries: [
     {
       sql: {
-        HasTransaction: false,
         Text:
 if db_id('ToDelete') is null
     begin
@@ -18,7 +17,8 @@ else
     begin
         alter database [ToDelete] set online;
     end;
-alter database [ToDelete] set read_write;
+alter database [ToDelete] set read_write;,
+        HasTransaction: false
       }
     }
   ],

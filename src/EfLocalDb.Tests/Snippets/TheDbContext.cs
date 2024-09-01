@@ -3,5 +3,6 @@
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
+    protected override void OnModelCreating(ModelBuilder model)
+        => model.Entity<TheEntity>();
 }

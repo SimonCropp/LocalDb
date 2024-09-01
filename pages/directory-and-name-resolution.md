@@ -55,7 +55,7 @@ var sqlInstance = new SqlInstance<TheDbContext>(
     constructInstance: builder => new(builder.Options),
     storage: new("theInstanceName", @"C:\LocalDb\theInstance"));
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L8-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfExplicitName' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfExplicitName.cs#L15-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfExplicitName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -163,7 +163,7 @@ Which can be used as follows:
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L32-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-WithDbName' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L33-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-WithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -174,5 +174,5 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```cs
 await using var database = await sqlInstance.Build("TheTestWithDbName");
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L46-L50' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfWithDbName' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L54-L58' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfWithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

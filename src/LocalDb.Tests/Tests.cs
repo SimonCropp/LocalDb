@@ -1,7 +1,7 @@
-﻿[Collection("Sequential")]
+﻿[TestFixture]
 public class Tests
 {
-    [Fact]
+    [Test]
     public async Task Simple()
     {
         var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
@@ -9,10 +9,10 @@ public class Tests
         await using var database = await instance.Build();
         var connection = database.Connection;
         var data = await TestDbBuilder.AddData(connection);
-        Assert.Contains(data, await TestDbBuilder.GetData(connection));
+        Contains(data, await TestDbBuilder.GetData(connection));
     }
 
-    [Fact]
+    [Test]
     public async Task ServiceScope()
     {
         static void Add(List<object?> objects, IServiceProvider provider) =>
@@ -35,7 +35,7 @@ public class Tests
         for (var outerIndex = 0; outerIndex < list.Count; outerIndex++)
         {
             var item = list[outerIndex];
-            Assert.NotNull(item);
+            NotNull(item);
             for (var innerIndex = 0; innerIndex < list.Count; innerIndex++)
             {
                 if (innerIndex == outerIndex)
@@ -43,12 +43,12 @@ public class Tests
                     continue;
                 }
                 var nested = list[innerIndex];
-                Assert.NotSame(item, nested);
+                AreNotEqual(item, nested);
             }
         }
     }
 
-    [Fact]
+    [Test]
     public async Task Callback()
     {
         var callbackCalled = false;
@@ -62,10 +62,10 @@ public class Tests
             });
 
         await using var database = await instance.Build();
-        Assert.True(callbackCalled);
+        True(callbackCalled);
     }
 
-    //[Fact]
+    //[Test]
     //public async Task SuppliedTemplate()
     //{
     //    // The template has been pre-created with 2 test entities
@@ -79,26 +79,26 @@ public class Tests
     //    //Assert.Contains(data, await TestDbBuilder.GetData(connection));
     //}
 
-    [Fact]
+    [Test]
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
         var instance = new SqlInstance("Defined_TimeStamp", TestDbBuilder.CreateTable, timestamp: dateTime);
 
         await using var database = await instance.Build();
-        Assert.Equal(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
+        AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
-    [Fact]
+    [Test]
     public async Task Delegate_TimeStamp()
     {
         var instance = new SqlInstance("Delegate_TimeStamp", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
-        Assert.Equal(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
-    [Fact]
+    [Test]
     public async Task Multiple()
     {
         var stopwatch = Stopwatch.StartNew();

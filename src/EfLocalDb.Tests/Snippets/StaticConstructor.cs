@@ -1,26 +1,35 @@
-﻿namespace StaticConstructor;
-
-[Collection("Sequential")]
-#region EfStaticConstructor
-
-public class Tests
+﻿public class StaticConstructor
 {
-    static SqlInstance<TheDbContext> sqlInstance;
-
-    static Tests() =>
-        sqlInstance = new(
-            builder => new(builder.Options));
-
-    [Fact]
-    public async Task Test()
+    public class TheDbContext(DbContextOptions options) :
+        DbContext(options)
     {
-        var entity = new TheEntity
-        {
-            Property = "prop"
-        };
-        await using var database = await sqlInstance.Build([entity]);
-        Assert.Single(database.Context.TestEntities);
-    }
-}
+        public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-#endregion
+        protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
+    }
+
+    #region EfStaticConstructor
+
+    [TestFixture]
+    public class Tests
+    {
+        static SqlInstance<TheDbContext> sqlInstance;
+
+        static Tests() =>
+            sqlInstance = new(
+                builder => new(builder.Options));
+
+        [Test]
+        public async Task Test()
+        {
+            var entity = new TheEntity
+            {
+                Property = "prop"
+            };
+            await using var database = await sqlInstance.Build([entity]);
+            AreEqual(1, database.Context.TestEntities.Count());
+        }
+    }
+
+    #endregion
+}
