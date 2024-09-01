@@ -116,7 +116,7 @@ public partial class SqlInstance<TDbContext>
         }
 
         Wrapper = new(
-            s => new SqlConnection(s),
+            _ => new SqlConnection(_),
             storageValue.Name,
             storageValue.Directory,
             templateSize,

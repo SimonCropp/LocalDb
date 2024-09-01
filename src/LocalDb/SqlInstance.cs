@@ -27,7 +27,7 @@ public class SqlInstance
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-        buildConnection ??= s => new SqlConnection(s);
+        buildConnection ??= _ => new SqlConnection(_);
 
         Wrapper = new(buildConnection, name, directory, templateSize, exitingTemplate, callback);
         Wrapper.Start(resultTimestamp, buildTemplate);
