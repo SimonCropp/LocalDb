@@ -1,20 +1,9 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using EfLocalDb;
-using Microsoft.EntityFrameworkCore;
-using NUnit.Framework;
-using VerifyNUnit;
-using VerifyTests;
-
-[TestFixture]
+﻿[TestFixture]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public abstract class LocalDbTestBase<T>
-    where T : DbContext, new()
+    where T : DbContext
 {
-    static SqlInstance<T> sqlInstance;
+    static SqlInstance<T> sqlInstance = null!;
     T actData = null!;
 
     public static void Initialize(
@@ -29,7 +18,7 @@ public abstract class LocalDbTestBase<T>
                 builder.EnableRecording();
                 return constructInstance(builder);
             },
-            storage: Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName()} {AttributeReader.GetProjectName()}"),
+            storage: Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName()}_{AttributeReader.GetProjectName()}"),
             templateSize: templateSize,
             callback: callback);
 
@@ -91,6 +80,6 @@ public abstract class LocalDbTestBase<T>
     {
         var set = AssertData.Set<TEntity>();
         var entity = set.FindAsync(id);
-        return Verifier.Verify(entity, sourceFile: sourceFile);
+        return Verify(entity, sourceFile: sourceFile);
     }
 }

@@ -7,8 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <PackageReference Include="Verify.EntityFramework" />
     <PackageReference Include="Verify.NUnit" />
   </ItemGroup>

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <DefineConstants>$(DefineConstants);EF</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="Verify.NUnit" />
+    <PackageReference Include="DiffPlex" />
+    <PackageReference Include="Verify.DiffPlex" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
+    <Using Include="NUnit.Framework.Legacy.ClassicAssert" Static="True" />
+    <Using Include="NUnit.Framework.Assert" Static="True" />
+    <ProjectReference Include="..\EfLocalDb.NUnit\EfLocalDb.NUnit.csproj" />
+    <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
+  </ItemGroup>
+</Project>
