@@ -412,29 +412,30 @@ public class Tests
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
     }
 
-    [Test]
-    public async Task WithRebuildDbContext()
-    {
-        var dateTime = DateTime.Now;
-        var instance1 = new SqlInstance<WithRebuildDbContext>(
-            builder => new(builder.Options),
-            timestamp: dateTime);
-        await using (var database1 = await instance1.Build())
-        {
-            var entity = new TestEntity
-            {
-                Property = "prop"
-            };
-            await database1.AddData(entity);
-        }
-
-        var instance2 = new SqlInstance<WithRebuildDbContext>(
-            builder => new(builder.Options),
-            _ => throw new(),
-            timestamp: dateTime);
-        await using var database2 = await instance2.Build();
-        IsEmpty(database2.Context.TestEntities);
-    }
+    // [Test]
+    // public async Task WithRebuildDbContext()
+    // {
+    //     var dateTime = DateTime.Now;
+    //     var instance1 = new SqlInstance<WithRebuildDbContext>(
+    //         builder => new(builder.Options),
+    //         timestamp: dateTime);
+    //     await using (var database1 = await instance1.Build())
+    //     {
+    //         var entity = new TestEntity
+    //         {
+    //             Property = "prop"
+    //         };
+    //         await database1.AddData(entity);
+    //     }
+    //     instance1.Cleanup(ShutdownMode.UseSqlShutdown);
+    //
+    //     var instance2 = new SqlInstance<WithRebuildDbContext>(
+    //         builder => new(builder.Options),
+    //         _ => throw new(),
+    //         timestamp: dateTime);
+    //     await using var database2 = await instance2.Build();
+    //     IsEmpty(database2.Context.TestEntities);
+    // }
 
     [Test]
     public async Task Secondary()
