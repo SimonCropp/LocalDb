@@ -21,4 +21,20 @@ public class Tests :
         var result = await AssertData.TestEntities.SingleAsync();
         await Verify(result);
     }
+
+    [Test]
+    public Task AccessActAfterAssert()
+    {
+        // ReSharper disable once UnusedVariable
+        var assert = AssertData;
+        return Throws(() => ActData);
+    }
+
+    [Test]
+    public Task AccessArrangeAfterAssert()
+    {
+        // ReSharper disable once UnusedVariable
+        var assert = AssertData;
+        return Throws(() => ArrangeData);
+    }
 }

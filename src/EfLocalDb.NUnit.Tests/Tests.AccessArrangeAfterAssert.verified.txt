@@ -1,0 +1,7 @@
+﻿{
+  Type: Exception,
+  Message: Phase has already moved to Assert,
+  StackTrace:
+at LocalDbTestBase`1.get_ArrangeData()
+at Tests.<AccessArrangeAfterAssert>b__2_0()
+}

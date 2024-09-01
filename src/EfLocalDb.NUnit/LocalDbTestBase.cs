@@ -3,6 +3,7 @@
 public abstract class LocalDbTestBase<T>
     where T : DbContext
 {
+    Phase phase = Phase.Arrange;
     static SqlInstance<T> sqlInstance = null!;
     T actData = null!;
 
@@ -23,22 +24,52 @@ public abstract class LocalDbTestBase<T>
             callback: callback);
 
     public SqlDatabase<T> Database { get; private set; } = null!;
-    public T ArrangeData => Database.Context;
+
+    public T ArrangeData
+    {
+        get
+        {
+            if (phase != Phase.Arrange)
+            {
+                throw new($"Phase has already moved to {phase}");
+            }
+
+            return Database.Context;
+        }
+    }
 
     public T ActData
     {
         get
         {
+            if (phase == Phase.Act)
+            {
+                return actData;
+            }
+
+            if (phase == Phase.Assert)
+            {
+                throw new("Phase has already moved to Assert");
+            }
+
+            Recording.Start();
+            phase = Phase.Act;
             QueryFilter.Enable();
             return actData;
         }
-        private set => actData = value;
     }
 
     public T AssertData
     {
         get
         {
+            if (phase == Phase.Assert)
+            {
+                return Database.NoTrackingContext;
+            }
+
+            phase = Phase.Assert;
+
             QueryFilter.Disable();
             if (Recording.IsRecording())
             {
@@ -64,14 +95,14 @@ public abstract class LocalDbTestBase<T>
         Database = await sqlInstance.Build(type, null, member);
         Database.NoTrackingContext.DisableRecording();
         Database.Context.DisableRecording();
-        ActData = Database.NewDbContext();
+        actData = Database.NewDbContext();
     }
 
     [TearDown]
     public async ValueTask TearDown()
     {
         await Database.DisposeAsync();
-        await ActData.DisposeAsync();
+        await actData.DisposeAsync();
     }
 
     [Pure]
