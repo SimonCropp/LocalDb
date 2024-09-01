@@ -27,10 +27,11 @@ public class TheDbContext(DbConnection connection) :
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-    protected override void OnModelCreating(DbModelBuilder model) => model.Entity<TheEntity>();
+    protected override void OnModelCreating(DbModelBuilder model)
+        => model.Entity<TheEntity>();
 }
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L7' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/TheDbContext.cs#L1-L8' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfClassicLocalDb.Tests/Snippets/TheEntity.cs -->
