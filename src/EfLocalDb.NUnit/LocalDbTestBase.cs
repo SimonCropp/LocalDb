@@ -1,4 +1,6 @@
-﻿[TestFixture]
+﻿namespace EfLocalDbNunit;
+
+[TestFixture]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
 public abstract class LocalDbTestBase<T>
     where T : DbContext
