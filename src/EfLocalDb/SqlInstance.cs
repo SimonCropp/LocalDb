@@ -60,7 +60,7 @@ public partial class SqlInstance<TDbContext>
 
     /// <summary>
     ///     Instantiate a <see cref="SqlInstance{TDbContext}" />.
-    ///     Should usually be scoped as once instance per appdomain. So all tests use the same instance of
+    ///     Should usually be scoped as one instance per appdomain. So all tests use the same instance of
     ///     <see cref="SqlInstance{TDbContext}" />.
     /// </summary>
     /// <param name="constructInstance"></param>
