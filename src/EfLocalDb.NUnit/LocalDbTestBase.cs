@@ -93,6 +93,10 @@ public abstract class LocalDbTestBase<T>
         }
     }
 
+    protected LocalDbTestBase() =>
+        // Disable needs to be at the top of the AsyncLocal stack
+        QueryFilter.Disable();
+
     [SetUp]
     public async Task SetUp()
     {
