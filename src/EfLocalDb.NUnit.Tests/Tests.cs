@@ -1,6 +1,4 @@
-﻿#pragma warning disable CS0612 // Type or member is obsolete
-
-[TestFixture]
+﻿[TestFixture]
 public class Tests :
     LocalDbTestBase<TheDbContext>
 {
@@ -49,17 +47,12 @@ public class Tests :
     [Test]
     public async Task VerifyEntity()
     {
-        ArrangeData.TestEntities.Add(
-            new()
-            {
-                Property = "value"
-            });
+        var entity = new TheEntity
+        {
+            Property = "value"
+        };
+        ArrangeData.TestEntities.Add(entity);
         await ArrangeData.SaveChangesAsync();
-
-        var entity = await ActData.TestEntities.SingleAsync();
-        entity.Property = "value2";
-        await ActData.SaveChangesAsync();
-
         await VerifyEntity<TheEntity>(entity.Id);
     }
 
@@ -72,29 +65,31 @@ public class Tests :
                 Property = "value"
             });
         await ArrangeData.SaveChangesAsync();
-
-        var entity = await ActData.TestEntities.SingleAsync();
-        entity.Property = "value2";
-        await ActData.SaveChangesAsync();
-
         await VerifyEntities(AssertData.TestEntities);
     }
 
     [Test]
     public async Task VerifyEntities_Queryable()
     {
-        ArrangeData.TestEntities.Add(
-            new()
-            {
-                Property = "value"
-            });
+        var entity = new TheEntity
+        {
+            Property = "value"
+        };
+        ArrangeData.TestEntities.Add(entity);
         await ArrangeData.SaveChangesAsync();
-
-        var entity = await ActData.TestEntities.SingleAsync();
-        entity.Property = "value2";
-        await ActData.SaveChangesAsync();
-
         await VerifyEntities(AssertData.TestEntities.Where(_ => _.Id == entity.Id));
+    }
+
+    [Test]
+    public async Task VerifyEntity_Queryable()
+    {
+        var entity = new TheEntity
+        {
+            Property = "value"
+        };
+        ArrangeData.TestEntities.Add(entity);
+        await ArrangeData.SaveChangesAsync();
+        await VerifyEntity(AssertData.TestEntities.Where(_ => _.Id == entity.Id));
     }
 
     [Test]
@@ -111,6 +106,15 @@ public class Tests :
     {
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
+        return Throws(() => ArrangeData)
+            .IgnoreStackTrace();
+    }
+
+    [Test]
+    public Task AccessArrangeAfterAct()
+    {
+        // ReSharper disable once UnusedVariable
+        var act = ActData;
         return Throws(() => ArrangeData)
             .IgnoreStackTrace();
     }
