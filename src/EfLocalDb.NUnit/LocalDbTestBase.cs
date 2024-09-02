@@ -58,9 +58,14 @@ public abstract class LocalDbTestBase<T>
     {
         get
         {
-            if (phase != Phase.Arrange)
+            if (phase == Phase.Act)
             {
-                throw new($"Phase has already moved to {phase}.");
+                throw new("Phase has already moved to Act. Check for a ActData usage in the preceding code.");
+            }
+
+            if (phase == Phase.Assert)
+            {
+                throw new("Phase has already moved to Assert. Check for a AssertData usage in the preceding code.");
             }
 
             return Database.Context;
@@ -78,7 +83,7 @@ public abstract class LocalDbTestBase<T>
 
             if (phase == Phase.Assert)
             {
-                throw new("Phase has already moved to Assert");
+                throw new("Phase has already moved to Assert. Check for a AssertData usage in the preceding code.");
             }
 
             Recording.Resume();
@@ -122,7 +127,7 @@ public abstract class LocalDbTestBase<T>
     {
         if (sqlInstance == null)
         {
-            throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer].");
+            throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
         }
 
         QueryFilter.Disable();

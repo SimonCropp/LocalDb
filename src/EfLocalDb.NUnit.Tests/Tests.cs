@@ -109,4 +109,13 @@ public class Tests :
         return Throws(() => ArrangeData)
             .IgnoreStackTrace();
     }
+
+    [Test]
+    public Task AccessArrangeAfterAct()
+    {
+        // ReSharper disable once UnusedVariable
+        var act = ActData;
+        return Throws(() => ArrangeData)
+            .IgnoreStackTrace();
+    }
 }
