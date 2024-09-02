@@ -123,6 +123,25 @@ public abstract class LocalDbTestBase<T>
 
     [Pure]
     public SettingsTask VerifyEntity<TEntity>(Guid id, [CallerFilePath] string sourceFile = "")
+        where TEntity : class =>
+        InnerVerifyEntity<TEntity>(id, sourceFile);
+
+    [Pure]
+    public SettingsTask VerifyEntities<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "")
+        where TEntity : class =>
+        Verify(entities.ToList(), sourceFile: sourceFile);
+
+    [Pure]
+    public SettingsTask VerifyEntity<TEntity>(long id, [CallerFilePath] string sourceFile = "")
+        where TEntity : class =>
+        InnerVerifyEntity<TEntity>(id, sourceFile);
+
+    [Pure]
+    public SettingsTask VerifyEntity<TEntity>(int id, [CallerFilePath] string sourceFile = "")
+        where TEntity : class =>
+        InnerVerifyEntity<TEntity>(id, sourceFile);
+
+    SettingsTask InnerVerifyEntity<TEntity>(object id, string sourceFile)
         where TEntity : class
     {
         var set = AssertData.Set<TEntity>();

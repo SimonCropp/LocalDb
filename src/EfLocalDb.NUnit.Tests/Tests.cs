@@ -23,6 +23,57 @@ public class Tests :
     }
 
     [Test]
+    public async Task VerifyEntity()
+    {
+        ArrangeData.TestEntities.Add(
+            new()
+            {
+                Property = "value"
+            });
+        await ArrangeData.SaveChangesAsync();
+
+        var entity = await ActData.TestEntities.SingleAsync();
+        entity.Property = "value2";
+        await ActData.SaveChangesAsync();
+
+        await VerifyEntity<TheEntity>(entity.Id);
+    }
+
+    [Test]
+    public async Task VerifyEntities_DbSet()
+    {
+        ArrangeData.TestEntities.Add(
+            new()
+            {
+                Property = "value"
+            });
+        await ArrangeData.SaveChangesAsync();
+
+        var entity = await ActData.TestEntities.SingleAsync();
+        entity.Property = "value2";
+        await ActData.SaveChangesAsync();
+
+        await VerifyEntities(ArrangeData.TestEntities);
+    }
+
+    [Test]
+    public async Task VerifyEntities_Queryable()
+    {
+        ArrangeData.TestEntities.Add(
+            new()
+            {
+                Property = "value"
+            });
+        await ArrangeData.SaveChangesAsync();
+
+        var entity = await ActData.TestEntities.SingleAsync();
+        entity.Property = "value2";
+        await ActData.SaveChangesAsync();
+
+        await VerifyEntities(ArrangeData.TestEntities.Where(_ => _.Id == entity.Id));
+    }
+
+    [Test]
     public Task AccessActAfterAssert()
     {
         // ReSharper disable once UnusedVariable
