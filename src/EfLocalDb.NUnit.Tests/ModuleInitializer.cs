@@ -9,6 +9,6 @@ public static class ModuleInitializer
         VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.InitializePlugins();
         LocalDbLogging.EnableVerbose();
-        LocalDbTestBase<TheDbContext>.Initialize(_ => new(_.Options));
+        LocalDbTestBase<TheDbContext>.Initialize();
     }
 }

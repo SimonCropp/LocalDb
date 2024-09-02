@@ -8,16 +8,29 @@ public abstract class LocalDbTestBase<T>
     T actData = null!;
 
     public static void Initialize(
-        ConstructInstance<T> constructInstance,
+        ConstructInstance<T>? constructInstance = null,
         TemplateFromContext<T>? buildTemplate = null,
-        ushort templateSize = 3,
+        ushort templateSize = 10,
         Callback<T>? callback = null) =>
         sqlInstance = new(
             buildTemplate: buildTemplate,
             constructInstance: builder =>
             {
                 builder.EnableRecording();
-                return constructInstance(builder);
+                if (constructInstance != null)
+                {
+                    return constructInstance(builder);
+                }
+
+                var type = typeof(T);
+                try
+                {
+                    return (T)Activator.CreateInstance(type, builder.Options)!;
+                }
+                catch (Exception exception)
+                {
+                    throw new($"Could not construct instance of T ({type.Name}). Either provide a constructInstance delegate or ensure T has a constructor that accepts DbContextOptions.", exception);
+                }
             },
             storage: Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName()}_{AttributeReader.GetProjectName()}"),
             templateSize: templateSize,
@@ -80,12 +93,15 @@ public abstract class LocalDbTestBase<T>
         }
     }
 
-    public LocalDbTestBase() =>
-        QueryFilter.Disable();
-
     [SetUp]
     public async Task SetUp()
     {
+        if (sqlInstance == null)
+        {
+            throw new("Call LocalDbTestBase<T>.Initialize in a ModuleInitializer.");
+        }
+
+        QueryFilter.Disable();
         var test = TestContext.CurrentContext.Test;
         var arguments = string.Join(
             ' ',
