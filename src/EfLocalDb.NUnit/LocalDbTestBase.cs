@@ -151,9 +151,14 @@ public abstract class LocalDbTestBase<T>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
     [Pure]
+    public virtual SettingsTask VerifyEntity<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "")
+        where TEntity : class =>
+        Verify(entities.SingleAsync(), sourceFile: sourceFile);
+
+    [Pure]
     public virtual SettingsTask VerifyEntities<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
-        Verify(entities.ToList(), sourceFile: sourceFile);
+        Verify(entities.ToListAsync(), sourceFile: sourceFile);
 
     [Pure]
     public virtual SettingsTask VerifyEntity<TEntity>(long id, [CallerFilePath] string sourceFile = "")
