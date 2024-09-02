@@ -1,7 +1,4 @@
 ﻿{
   Type: Exception,
-  Message: Phase has already moved to Assert.,
-  StackTrace:
-at EfLocalDbNunit.LocalDbTestBase`1.get_ArrangeData()
-at Tests.<AccessArrangeAfterAssert>b__5_0()
+  Message: Phase has already moved to Assert.
 }

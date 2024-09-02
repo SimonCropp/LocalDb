@@ -23,6 +23,30 @@ public class Tests :
     }
 
     [Test]
+    public async Task ActInAsync()
+    {
+        ArrangeData.TestEntities.Add(
+            new()
+            {
+                Property = "value"
+            });
+        await ArrangeData.SaveChangesAsync();
+
+        await AsyncMethod();
+
+        var result = await AssertData.TestEntities.SingleAsync();
+        await Verify(result);
+
+        async Task AsyncMethod()
+        {
+            await Task.Delay(1);
+            var entity = await ActData.TestEntities.SingleAsync();
+            entity.Property = "value2";
+            await ActData.SaveChangesAsync();
+        }
+    }
+
+    [Test]
     public async Task VerifyEntity()
     {
         ArrangeData.TestEntities.Add(
@@ -78,7 +102,8 @@ public class Tests :
     {
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
-        return Throws(() => ActData);
+        return Throws(() => ActData)
+            .IgnoreStackTrace();
     }
 
     [Test]
@@ -86,6 +111,7 @@ public class Tests :
     {
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
-        return Throws(() => ArrangeData);
+        return Throws(() => ArrangeData)
+            .IgnoreStackTrace();
     }
 }

@@ -13,30 +13,44 @@ public abstract class LocalDbTestBase<T>
         ConstructInstance<T>? constructInstance = null,
         TemplateFromContext<T>? buildTemplate = null,
         ushort templateSize = 10,
-        Callback<T>? callback = null) =>
+        Callback<T>? callback = null)
+    {
+        ThrowIfInitialized();
         sqlInstance = new(
             buildTemplate: buildTemplate,
             constructInstance: builder =>
             {
                 builder.EnableRecording();
-                if (constructInstance != null)
-                {
-                    return constructInstance(builder);
-                }
-
-                var type = typeof(T);
-                try
-                {
-                    return (T)Activator.CreateInstance(type, builder.Options)!;
-                }
-                catch (Exception exception)
-                {
-                    throw new($"Could not construct instance of T ({type.Name}). Either provide a constructInstance delegate or ensure T has a constructor that accepts DbContextOptions.", exception);
-                }
+                return constructInstance == null ? BuildDbContext(builder) : constructInstance(builder);
             },
-            storage: Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName()}_{AttributeReader.GetProjectName()}"),
+            storage: GetStorage(),
             templateSize: templateSize,
             callback: callback);
+    }
+
+    static void ThrowIfInitialized()
+    {
+        if (sqlInstance != null)
+        {
+            throw new("Already initialized.");
+        }
+    }
+
+    static T BuildDbContext(DbContextOptionsBuilder<T> builder)
+    {
+        var type = typeof(T);
+        try
+        {
+            return (T)Activator.CreateInstance(type, builder.Options)!;
+        }
+        catch (Exception exception)
+        {
+            throw new($"Could not construct instance of T ({type.Name}). Either provide a constructInstance delegate or ensure T has a constructor that accepts DbContextOptions.", exception);
+        }
+    }
+
+    static Storage GetStorage() =>
+        Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName()}_{AttributeReader.GetProjectName()}");
 
     public SqlDatabase<T> Database { get; private set; } = null!;
 
@@ -67,7 +81,7 @@ public abstract class LocalDbTestBase<T>
                 throw new("Phase has already moved to Assert");
             }
 
-            Recording.Start();
+            Recording.Resume();
             phase = Phase.Act;
             QueryFilter.Enable();
             return actData;
@@ -95,9 +109,13 @@ public abstract class LocalDbTestBase<T>
         }
     }
 
-    protected LocalDbTestBase() =>
-        // Disable needs to be at the top of the AsyncLocal stack
+    protected LocalDbTestBase()
+    {
+        // Disable and Recording needs to be at the top of the AsyncLocal stack
         QueryFilter.Disable();
+        Recording.Start();
+        Recording.Pause();
+    }
 
     [SetUp]
     public virtual async Task SetUp()
