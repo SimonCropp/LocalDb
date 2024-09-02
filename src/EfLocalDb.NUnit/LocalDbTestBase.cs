@@ -40,7 +40,7 @@ public abstract class LocalDbTestBase<T>
 
     public SqlDatabase<T> Database { get; private set; } = null!;
 
-    public T ArrangeData
+    public virtual T ArrangeData
     {
         get
         {
@@ -53,7 +53,7 @@ public abstract class LocalDbTestBase<T>
         }
     }
 
-    public T ActData
+    public virtual T ActData
     {
         get
         {
@@ -74,7 +74,7 @@ public abstract class LocalDbTestBase<T>
         }
     }
 
-    public T AssertData
+    public virtual T AssertData
     {
         get
         {
@@ -100,7 +100,7 @@ public abstract class LocalDbTestBase<T>
         QueryFilter.Disable();
 
     [SetUp]
-    public async Task SetUp()
+    public virtual async Task SetUp()
     {
         if (sqlInstance == null)
         {
@@ -121,29 +121,29 @@ public abstract class LocalDbTestBase<T>
     }
 
     [TearDown]
-    public async ValueTask TearDown()
+    public virtual async ValueTask TearDown()
     {
         await Database.DisposeAsync();
         await actData.DisposeAsync();
     }
 
     [Pure]
-    public SettingsTask VerifyEntity<TEntity>(Guid id, [CallerFilePath] string sourceFile = "")
+    public virtual SettingsTask VerifyEntity<TEntity>(Guid id, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
     [Pure]
-    public SettingsTask VerifyEntities<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "")
+    public virtual SettingsTask VerifyEntities<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
         Verify(entities.ToList(), sourceFile: sourceFile);
 
     [Pure]
-    public SettingsTask VerifyEntity<TEntity>(long id, [CallerFilePath] string sourceFile = "")
+    public virtual SettingsTask VerifyEntity<TEntity>(long id, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
     [Pure]
-    public SettingsTask VerifyEntity<TEntity>(int id, [CallerFilePath] string sourceFile = "")
+    public virtual SettingsTask VerifyEntity<TEntity>(int id, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
