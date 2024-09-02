@@ -102,7 +102,7 @@ public abstract class LocalDbTestBase<T>
     {
         if (sqlInstance == null)
         {
-            throw new("Call LocalDbTestBase<T>.Initialize in a ModuleInitializer.");
+            throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer].");
         }
 
         QueryFilter.Disable();
