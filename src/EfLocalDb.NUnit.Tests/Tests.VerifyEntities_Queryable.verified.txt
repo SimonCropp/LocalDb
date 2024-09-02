@@ -1,0 +1,31 @@
+﻿{
+  target: [
+    {
+      Id: 1,
+      Property: value2
+    }
+  ],
+  ef: [
+    {
+      Type: ReaderExecutedAsync,
+      HasTransaction: false,
+      Text:
+SELECT TOP(2) [t].[Id], [t].[Property]
+FROM [TestEntities] AS [t]
+    },
+    {
+      Type: ReaderExecutedAsync,
+      HasTransaction: false,
+      Parameters: {
+        @p0 (String?): value2,
+        @p1 (Int32): 1
+      },
+      Text:
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [TestEntities] SET [Property] = @p0
+OUTPUT 1
+WHERE [Id] = @p1;
+    }
+  ]
+}

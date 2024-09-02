@@ -46,7 +46,7 @@ public abstract class LocalDbTestBase<T>
         {
             if (phase != Phase.Arrange)
             {
-                throw new($"Phase has already moved to {phase}");
+                throw new($"Phase has already moved to {phase}.");
             }
 
             return Database.Context;

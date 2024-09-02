@@ -2,6 +2,6 @@
   Type: Exception,
   Message: Phase has already moved to Assert,
   StackTrace:
-at LocalDbTestBase`1.get_ActData()
+at EfLocalDbNunit.LocalDbTestBase`1.get_ActData()
 at Tests.<AccessActAfterAssert>b__4_0()
 }

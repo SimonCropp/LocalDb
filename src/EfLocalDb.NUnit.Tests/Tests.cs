@@ -53,7 +53,7 @@ public class Tests :
         entity.Property = "value2";
         await ActData.SaveChangesAsync();
 
-        await VerifyEntities(ArrangeData.TestEntities);
+        await VerifyEntities(AssertData.TestEntities);
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class Tests :
         entity.Property = "value2";
         await ActData.SaveChangesAsync();
 
-        await VerifyEntities(ArrangeData.TestEntities.Where(_ => _.Id == entity.Id));
+        await VerifyEntities(AssertData.TestEntities.Where(_ => _.Id == entity.Id));
     }
 
     [Test]
