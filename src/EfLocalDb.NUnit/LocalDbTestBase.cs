@@ -8,6 +8,7 @@ public abstract class LocalDbTestBase<T>
     Phase phase = Phase.Arrange;
     static SqlInstance<T> sqlInstance = null!;
     T actData = null!;
+    T arrangeData = null!;
 
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
@@ -68,7 +69,7 @@ public abstract class LocalDbTestBase<T>
                 throw new("Phase has already moved to Assert. Check for a AssertData usage in the preceding code.");
             }
 
-            return Database.Context;
+            return arrangeData;
         }
     }
 
@@ -88,6 +89,7 @@ public abstract class LocalDbTestBase<T>
 
             Recording.Resume();
             phase = Phase.Act;
+            arrangeData.Dispose();
             QueryFilter.Enable();
             return actData;
         }
@@ -103,6 +105,8 @@ public abstract class LocalDbTestBase<T>
             }
 
             phase = Phase.Assert;
+            arrangeData.Dispose();
+            actData.Dispose();
 
             QueryFilter.Disable();
             if (Recording.IsRecording())
@@ -139,7 +143,8 @@ public abstract class LocalDbTestBase<T>
         var member = $"{test.MethodName}_{arguments}";
         Database = await sqlInstance.Build(type, null, member);
         Database.NoTrackingContext.DisableRecording();
-        Database.Context.DisableRecording();
+        arrangeData = Database.Context;
+        arrangeData.DisableRecording();
         actData = Database.NewDbContext();
     }
 
@@ -156,14 +161,39 @@ public abstract class LocalDbTestBase<T>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
     [Pure]
-    public virtual SettingsTask VerifyEntity<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "")
-        where TEntity : class =>
-        Verify(entities.SingleAsync(), sourceFile: sourceFile);
+    public virtual SettingsTask VerifyEntity<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "") =>
+        Verify(ResolveSingle(entities), sourceFile: sourceFile);
+
+    static async Task<TEntity> ResolveSingle<TEntity>(IQueryable<TEntity> entities)
+    {
+        try
+        {
+            return await entities.SingleAsync();
+        }
+        catch (ObjectDisposedException exception)
+        {
+            throw NewDisposedException(exception);
+        }
+    }
 
     [Pure]
-    public virtual SettingsTask VerifyEntities<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "")
-        where TEntity : class =>
-        Verify(entities.ToListAsync(), sourceFile: sourceFile);
+    public virtual SettingsTask VerifyEntities<TEntity>(IQueryable<TEntity> entities, [CallerFilePath] string sourceFile = "") =>
+        Verify(ResolveList(entities), sourceFile: sourceFile);
+
+    static async Task<List<TEntity>> ResolveList<TEntity>(IQueryable<TEntity> entities)
+    {
+        try
+        {
+            return await entities.ToListAsync();
+        }
+        catch (ObjectDisposedException exception)
+        {
+            throw NewDisposedException(exception);
+        }
+    }
+
+    static Exception NewDisposedException(ObjectDisposedException exception) =>
+        new("ObjectDisposedException while executing IQueryable. It is possible the IQueryable targets an ActData or ArrangeData that has already been cleaned up", exception);
 
     [Pure]
     public virtual SettingsTask VerifyEntity<TEntity>(long id, [CallerFilePath] string sourceFile = "")

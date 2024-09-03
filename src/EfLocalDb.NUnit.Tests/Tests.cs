@@ -93,12 +93,63 @@ public class Tests :
     }
 
     [Test]
+    public async Task ArrangeQueryableAfterAct()
+    {
+        var entity = new TheEntity
+        {
+            Property = "value"
+        };
+        ArrangeData.TestEntities.Add(entity);
+        await ArrangeData.SaveChangesAsync();
+        var queryable = ArrangeData.TestEntities.Where(_ => _.Id == entity.Id);
+        // ReSharper disable once UnusedVariable
+        var act = ActData;
+        await ThrowsTask(() => VerifyEntities(queryable))
+            .IgnoreStackTrace()
+            .DisableRequireUniquePrefix();
+    }
+
+    [Test]
     public Task AccessActAfterAssert()
     {
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         return Throws(() => ActData)
             .IgnoreStackTrace();
+    }
+
+    [Test]
+    public async Task ActQueryableAfterAssert()
+    {
+        var entity = new TheEntity
+        {
+            Property = "value"
+        };
+        ArrangeData.TestEntities.Add(entity);
+        await ArrangeData.SaveChangesAsync();
+        var queryable = ActData.TestEntities.Where(_ => _.Id == entity.Id);
+        // ReSharper disable once UnusedVariable
+        var assert = AssertData;
+        await ThrowsTask(() => VerifyEntities(queryable))
+            .IgnoreStackTrace()
+            .DisableRequireUniquePrefix();
+    }
+
+    [Test]
+    public async Task ArrangeQueryableAfterAssert()
+    {
+        var entity = new TheEntity
+        {
+            Property = "value"
+        };
+        ArrangeData.TestEntities.Add(entity);
+        await ArrangeData.SaveChangesAsync();
+        var queryable = ArrangeData.TestEntities.Where(_ => _.Id == entity.Id);
+        // ReSharper disable once UnusedVariable
+        var assert = AssertData;
+        await ThrowsTask(() => VerifyEntities(queryable))
+            .IgnoreStackTrace()
+            .DisableRequireUniquePrefix();
     }
 
     [Test]
