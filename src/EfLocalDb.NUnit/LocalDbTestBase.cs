@@ -120,8 +120,8 @@ public abstract class LocalDbTestBase<T>
 
     protected LocalDbTestBase()
     {
-        // Disable and Recording needs to be at the top of the AsyncLocal stack
-        QueryFilter.Disable();
+        // Enable and Recording needs to be at the top of the AsyncLocal stack
+        QueryFilter.Enable();
         Recording.Start();
         Recording.Pause();
     }
