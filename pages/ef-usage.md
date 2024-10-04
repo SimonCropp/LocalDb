@@ -330,5 +330,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
