@@ -293,8 +293,6 @@ When building a `DbContextOptionsBuilder` the default configuration is as follow
 <!-- snippet: EfLocalDb/DefaultOptionsBuilder.cs -->
 <a id='snippet-EfLocalDb/DefaultOptionsBuilder.cs'></a>
 ```cs
-using Microsoft.EntityFrameworkCore.Query;
-
 static class DefaultOptionsBuilder
 {
     static LogCommandInterceptor interceptor = new();
@@ -307,6 +305,8 @@ static class DefaultOptionsBuilder
         {
             builder.AddInterceptors(interceptor);
         }
+        builder.ReplaceService<IQueryProvider, QueryProvider>();
+        builder.ReplaceService<IAsyncQueryProvider, QueryProvider>();
         builder.ReplaceService<IQueryCompilationContextFactory, QueryContextFactory>();
         builder.ReplaceService<ICompiledQueryCacheKeyGenerator, KeyGenerator>();
 
