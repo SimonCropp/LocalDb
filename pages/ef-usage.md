@@ -293,8 +293,6 @@ When building a `DbContextOptionsBuilder` the default configuration is as follow
 <!-- snippet: EfLocalDb/DefaultOptionsBuilder.cs -->
 <a id='snippet-EfLocalDb/DefaultOptionsBuilder.cs'></a>
 ```cs
-using Microsoft.EntityFrameworkCore.Query;
-
 static class DefaultOptionsBuilder
 {
     static LogCommandInterceptor interceptor = new();
@@ -330,5 +328,5 @@ static class DefaultOptionsBuilder
     }
 }
 ```
-<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/DefaultOptionsBuilder.cs#L1-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb/DefaultOptionsBuilder.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
