@@ -18,7 +18,7 @@ public class SnippetTests
 
         await TestDbBuilder.AddData(database);
         var data = await TestDbBuilder.GetData(database);
-        Assert.Equals(1, data.Count);
+        AreEqual(1, data.Count);
 
         #endregion
 
