@@ -157,7 +157,7 @@ await using var database = await sqlInstance.Build();
 
 await TestDbBuilder.AddData(database);
 var data = await TestDbBuilder.GetData(database);
-Assert.Equals(1, data.Count);
+AreEqual(1, data.Count);
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L13-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -172,7 +172,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 ```cs
 await TestDbBuilder.AddData(database);
 var data = await TestDbBuilder.GetData(database);
-Assert.Equals(1, data.Count);
+AreEqual(1, data.Count);
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L17-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -202,7 +202,7 @@ public class SnippetTests
 
         await TestDbBuilder.AddData(database);
         var data = await TestDbBuilder.GetData(database);
-        Assert.Equals(1, data.Count);
+        AreEqual(1, data.Count);
 
 
     }
