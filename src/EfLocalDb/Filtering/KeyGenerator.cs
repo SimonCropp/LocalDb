@@ -1,9 +1,4 @@
 #pragma warning disable EF1001
-using EfLocalDb;
-using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
-using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
-
 class KeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection)
     : SqlServerCompiledQueryCacheKeyGenerator(dependencies, relationalDependencies, connection)
 {

@@ -5,3 +5,8 @@ global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.EntityFrameworkCore.Metadata;
 global using Microsoft.EntityFrameworkCore.Storage;
 global using System.ComponentModel;
+global using EfLocalDb;
+global using Microsoft.EntityFrameworkCore.Query;
+global using Microsoft.EntityFrameworkCore.Query.Internal;
+global using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+global using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
