@@ -1,9 +1,4 @@
 ﻿// ReSharper disable PartialTypeWithSinglePart
-#if EF
-using EfLocalDb;
-#else
-using LocalDb;
-#endif
 
 static partial class LocalDbApi
 {

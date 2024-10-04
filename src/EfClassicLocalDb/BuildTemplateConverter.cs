@@ -1,5 +1,3 @@
-using EfLocalDb;
-
 static class BuildTemplateConverter
 {
     public static TemplateFromConnection Convert<TDbContext>(
