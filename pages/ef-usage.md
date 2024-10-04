@@ -305,6 +305,8 @@ static class DefaultOptionsBuilder
         {
             builder.AddInterceptors(interceptor);
         }
+        builder.ReplaceService<IQueryProvider, QueryProvider>();
+        builder.ReplaceService<IAsyncQueryProvider, QueryProvider>();
         builder.ReplaceService<IQueryCompilationContextFactory, QueryContextFactory>();
         builder.ReplaceService<ICompiledQueryCacheKeyGenerator, KeyGenerator>();
 
