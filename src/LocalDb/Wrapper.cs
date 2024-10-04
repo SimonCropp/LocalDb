@@ -1,9 +1,4 @@
-﻿#if EF
-using EfLocalDb;
-#else
-using LocalDb;
-#endif
-using MethodTimer;
+﻿using MethodTimer;
 
 class Wrapper
 {
