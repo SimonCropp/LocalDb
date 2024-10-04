@@ -21,6 +21,16 @@ public class Tests :
     }
 
     [Test]
+    public Task ThrowForRedundantIgnoreQueryFilters() =>
+        ThrowsTask(
+                () =>
+                {
+                    var entities = AssertData.TestEntities;
+                    return entities.IgnoreQueryFilters().SingleAsync();
+                })
+            .IgnoreStackTrace();
+
+    [Test]
     public async Task ActInAsync()
     {
         ArrangeData.TestEntities.Add(
