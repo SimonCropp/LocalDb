@@ -151,8 +151,17 @@ public abstract class LocalDbTestBase<T>
     [TearDown]
     public virtual async ValueTask TearDown()
     {
-        await Database.DisposeAsync();
-        await actData.DisposeAsync();
+        // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (Database != null)
+        {
+            await Database.DisposeAsync();
+        }
+
+        if (actData != null)
+        {
+            await actData.DisposeAsync();
+        }
+        // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
     }
 
     [Pure]
