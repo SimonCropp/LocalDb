@@ -41,5 +41,6 @@
 
     <Content Include="buildTransitive\EfLocalDb.props" PackagePath="buildTransitive\EfLocalDb.props" />
     <Content Include="buildTransitive\EfLocalDb.props" PackagePath="build\EfLocalDb.props" />
+    <PackageReference Include="System.Runtime.Caching" />
   </ItemGroup>
 </Project>
