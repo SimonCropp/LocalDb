@@ -16,6 +16,7 @@ public abstract class LocalDbTestBase<T>
         ushort templateSize = 10,
         Callback<T>? callback = null)
     {
+        var callingAssembly = Assembly.GetCallingAssembly();
         ThrowIfInitialized();
         sqlInstance = new(
             buildTemplate: buildTemplate,
@@ -24,7 +25,7 @@ public abstract class LocalDbTestBase<T>
                 builder.EnableRecording();
                 return constructInstance == null ? BuildDbContext(builder) : constructInstance(builder);
             },
-            storage: GetStorage(),
+            storage: GetStorage(callingAssembly),
             templateSize: templateSize,
             callback: callback);
     }
@@ -50,8 +51,8 @@ public abstract class LocalDbTestBase<T>
         }
     }
 
-    static Storage GetStorage() =>
-        Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName()}_{AttributeReader.GetProjectName()}");
+    static Storage GetStorage(Assembly callingAssembly) =>
+        Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName(callingAssembly)}_{AttributeReader.GetProjectName(callingAssembly)}");
 
     public SqlDatabase<T> Database { get; private set; } = null!;
 
@@ -136,16 +137,27 @@ public abstract class LocalDbTestBase<T>
 
         QueryFilter.Disable();
         var test = TestContext.CurrentContext.Test;
-        var arguments = string.Join(
-            ' ',
-            test.Arguments.Select(VerifierSettings.GetNameForParameter));
         var type = test.ClassName!;
-        var member = $"{test.MethodName}_{arguments}";
+        var member = GetMemberName(test);
         Database = await sqlInstance.Build(type, null, member);
         Database.NoTrackingContext.DisableRecording();
         arrangeData = Database.Context;
         arrangeData.DisableRecording();
         actData = Database.NewDbContext();
+    }
+
+    static string GetMemberName(TestContext.TestAdapter test)
+    {
+        var methodName = test.MethodName!;
+        if (test.Arguments.Length == 0)
+        {
+            return methodName;
+        }
+
+        var arguments = string.Join(
+            ' ',
+            test.Arguments.Select(VerifierSettings.GetNameForParameter));
+        return $"{methodName}_{arguments}";
     }
 
     [TearDown]
