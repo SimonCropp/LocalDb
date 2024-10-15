@@ -21,6 +21,23 @@ public class Tests :
     }
 
     [Test]
+    public Task Name() =>
+        Verify(new
+        {
+            Database.Name,
+            Database.Connection.DataSource
+        });
+
+    [Test]
+    [TestCase("case")]
+    public Task NameWithParams(string caseName) =>
+        Verify(new
+        {
+            Database.Name,
+            Database.Connection.DataSource
+        });
+
+    [Test]
     public Task ThrowForRedundantIgnoreQueryFilters() =>
         ThrowsTask(
                 () =>
