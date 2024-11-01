@@ -2,7 +2,8 @@
 
 [TestFixture]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
-public abstract class LocalDbTestBase<T>
+public abstract class LocalDbTestBase<T> :
+    ILocalDbTestBase
     where T : DbContext
 {
     Phase phase = Phase.Arrange;
@@ -28,6 +29,37 @@ public abstract class LocalDbTestBase<T>
             storage: GetStorage(callingAssembly),
             templateSize: templateSize,
             callback: callback);
+    }
+
+    [SetUp]
+    public virtual Task SetUp()
+    {
+        if (sqlInstance == null)
+        {
+            throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
+        }
+
+        QueryFilter.Disable();
+        return Reset();
+    }
+
+    public async Task Reset()
+    {
+        phase = Phase.Arrange;
+        var test = TestContext.CurrentContext.Test;
+        var type = test.ClassName!;
+        var member = GetMemberName(test);
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if(Database != null)
+        {
+            await Database.Delete();
+            await Database.DisposeAsync();
+        }
+        Database = await sqlInstance.Build(type, null, member);
+        Database.NoTrackingContext.DisableRecording();
+        arrangeData = Database.Context;
+        arrangeData.DisableRecording();
+        actData = Database.NewDbContext();
     }
 
     static void ThrowIfInitialized()
@@ -119,31 +151,14 @@ public abstract class LocalDbTestBase<T>
         }
     }
 
+
     protected LocalDbTestBase()
     {
+        CombinationCallback.SetInstance(this);
         // Enable and Recording needs to be at the top of the AsyncLocal stack
         QueryFilter.Enable();
         Recording.Start();
         Recording.Pause();
-    }
-
-    [SetUp]
-    public virtual async Task SetUp()
-    {
-        if (sqlInstance == null)
-        {
-            throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
-        }
-
-        QueryFilter.Disable();
-        var test = TestContext.CurrentContext.Test;
-        var type = test.ClassName!;
-        var member = GetMemberName(test);
-        Database = await sqlInstance.Build(type, null, member);
-        Database.NoTrackingContext.DisableRecording();
-        arrangeData = Database.Context;
-        arrangeData.DisableRecording();
-        actData = Database.NewDbContext();
     }
 
     static string GetMemberName(TestContext.TestAdapter test)
