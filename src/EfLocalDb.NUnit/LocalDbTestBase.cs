@@ -161,7 +161,6 @@ public abstract class LocalDbTestBase<T> :
         Recording.Pause();
     }
 
-
     static string GetMemberName(TestContext.TestAdapter test)
     {
         var methodName = test.MethodName!;
