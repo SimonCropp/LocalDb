@@ -21,6 +21,30 @@ public class Tests :
     }
 
     [Test]
+    public Task Combinations()
+    {
+        string[] inputs = ["value1", "value2"];
+        return Combination()
+            .Verify(Run, inputs);
+
+        async Task<TheEntity> Run(string input)
+        {
+            ArrangeData.TestEntities.Add(
+                new()
+                {
+                    Property = "value"
+                });
+            await ArrangeData.SaveChangesAsync();
+
+            var entity = await ActData.TestEntities.SingleAsync();
+            entity.Property = input;
+            await ActData.SaveChangesAsync();
+
+            return await AssertData.TestEntities.SingleAsync();
+        }
+    }
+
+    [Test]
     public Task Name() =>
         Verify(new
         {
