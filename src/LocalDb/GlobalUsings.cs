@@ -2,3 +2,7 @@
 global using System.ComponentModel;
 global using LocalDb;
 
+#if !NETFRAMEWORK
+global using Microsoft.Extensions.DependencyInjection;
+#endif
+
