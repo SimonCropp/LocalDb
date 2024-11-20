@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0;net8.0;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net48</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests.</Description>
     <PackageTags>LocalDB, Testing</PackageTags>
   </PropertyGroup>
@@ -13,7 +13,7 @@
     <PackageReference Include="Polyfill" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Condition="$(TargetFramework) == 'net7.0' or $(TargetFramework) == 'net8.0'" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Condition="$(TargetFramework) != 'net48'" />
 
     <Content Include="buildTransitive\LocalDb.props" PackagePath="buildTransitive\LocalDb.props" />
     <Content Include="buildTransitive\LocalDb.props" PackagePath="build\LocalDb.props" />
