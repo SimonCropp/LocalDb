@@ -20,7 +20,7 @@
     <PackageVersion Include="Polyfill" Version="7.5.0" />
     <PackageVersion Include="ProjectDefaults" Version="1.0.144" />
     <PackageVersion Include="System.Data.SqlClient" Version="4.8.6" />
-    <PackageVersion Include="System.Drawing.Common" Version="8.0.10" />
+    <PackageVersion Include="System.Drawing.Common" Version="9.0.0" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageVersion Include="System.Memory" Version="4.6.0" />
     <PackageVersion Include="Verify.EntityFramework" Version="12.4.0" />
