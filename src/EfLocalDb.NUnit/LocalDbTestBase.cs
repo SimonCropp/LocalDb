@@ -151,7 +151,6 @@ public abstract class LocalDbTestBase<T> :
         }
     }
 
-
     protected LocalDbTestBase()
     {
         CombinationCallback.SetInstance(this);
@@ -163,16 +162,16 @@ public abstract class LocalDbTestBase<T> :
 
     static string GetMemberName(TestContext.TestAdapter test)
     {
-        var methodName = test.MethodName!;
+        var method = test.MethodName!;
         if (test.Arguments.Length == 0)
         {
-            return methodName;
+            return method;
         }
 
         var arguments = string.Join(
             ' ',
             test.Arguments.Select(VerifierSettings.GetNameForParameter));
-        return $"{methodName}_{arguments}";
+        return $"{method}_{arguments}";
     }
 
     [TearDown]
