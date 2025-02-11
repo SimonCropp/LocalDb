@@ -39,7 +39,6 @@ public abstract class LocalDbTestBase<T> :
             throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
         }
 
-        QueryFilter.Disable();
         return Reset();
     }
 
@@ -123,7 +122,6 @@ public abstract class LocalDbTestBase<T> :
             Recording.Resume();
             phase = Phase.Act;
             arrangeData.Dispose();
-            QueryFilter.Enable();
             return actData;
         }
     }

@@ -72,6 +72,13 @@ public class Tests :
             .IgnoreStackTrace();
 
     [Test]
+    public async Task IgnoreQueryFiltersAllowedOnArrangeAndAct()
+    {
+        await ArrangeData.TestEntities.IgnoreQueryFilters().ToListAsync();
+        await ActData.TestEntities.IgnoreQueryFilters().ToListAsync();
+    }
+
+    [Test]
     public async Task ActInAsync()
     {
         ArrangeData.TestEntities.Add(
