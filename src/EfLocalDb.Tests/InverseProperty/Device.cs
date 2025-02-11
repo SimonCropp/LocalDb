@@ -1,6 +1,3 @@
-
-using System.ComponentModel.DataAnnotations.Schema;
-
 public class Device
 {
     public int Id { get; set; }
@@ -8,5 +5,5 @@ public class Device
 
     [ForeignKey("DeviceId")]
     [InverseProperty("Devices")]
-    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+    public virtual ICollection<Employee> Employees { get; set; } = [];
 }
