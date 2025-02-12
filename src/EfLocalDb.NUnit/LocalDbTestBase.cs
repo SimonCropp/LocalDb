@@ -39,6 +39,7 @@ public abstract class LocalDbTestBase<T> :
             throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
         }
 
+        QueryFilter.Enable();
         return Reset();
     }
 
