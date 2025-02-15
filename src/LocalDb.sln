@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfLocalDb.NUnit", "EfLocalD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfLocalDb.NUnit.Tests", "EfLocalDb.NUnit.Tests\EfLocalDb.NUnit.Tests.csproj", "{153AF437-9951-4A20-8DB1-76CDE12AAC4F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadTest", "LoadTest\LoadTest.csproj", "{18FC8169-FDE5-43FE-81E7-A8E60DCC39B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{153AF437-9951-4A20-8DB1-76CDE12AAC4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{153AF437-9951-4A20-8DB1-76CDE12AAC4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{153AF437-9951-4A20-8DB1-76CDE12AAC4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18FC8169-FDE5-43FE-81E7-A8E60DCC39B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18FC8169-FDE5-43FE-81E7-A8E60DCC39B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18FC8169-FDE5-43FE-81E7-A8E60DCC39B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18FC8169-FDE5-43FE-81E7-A8E60DCC39B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
