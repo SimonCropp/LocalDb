@@ -128,7 +128,7 @@ public class Tests
     {
         var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
-            storage: Storage.FromSuffix<TestDbContext>($"theClassicSuffix{Environment.Version.Major}"));
+            storage: Storage.FromSuffix<TestDbContext>("ClassicSuffix"));
 
         var entity = new TestEntity
         {
@@ -147,7 +147,7 @@ public class Tests
             connection => new(connection),
             context => context.CreateOnExistingDb(),
             timestamp: dateTime,
-            storage: Storage.FromSuffix<TestDbContext>($"Defined_TimeStamp_Net{Environment.Version.Major}"));
+            storage: Storage.FromSuffix<TestDbContext>("Classic_Defined_TimeStamp"));
 
         using var database = await instance.Build();
         AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -158,7 +158,7 @@ public class Tests
     {
         var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
-            storage: Storage.FromSuffix<TestDbContext>($"Assembly_TimeStamp{Environment.Version.Major}"));
+            storage: Storage.FromSuffix<TestDbContext>("Classic_Assembly_TimeStamp"));
 
         using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -170,7 +170,7 @@ public class Tests
         var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
             context => context.CreateOnExistingDb(),
-            Storage.FromSuffix<TestDbContext>($"Delegate_TimeStamp{Environment.Version.Major}"));
+            Storage.FromSuffix<TestDbContext>("Classic_Delegate_TimeStamp"));
 
         using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -223,7 +223,7 @@ public class Tests
     static Tests() =>
         instance = new(
             connection => new(connection),
-            storage: Storage.FromSuffix<TestDbContext>($"Classic{Environment.Version.Major}"),
+            storage: Storage.FromSuffix<TestDbContext>("Classic"),
             callback: (_, _) =>
             {
                 callbackCalled = true;

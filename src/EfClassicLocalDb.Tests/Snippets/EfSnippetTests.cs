@@ -3,7 +3,10 @@ public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
 
-    static EfSnippetTests() => sqlInstance = new(connection => new(connection));
+    static EfSnippetTests() =>
+        sqlInstance = new(
+            connection => new(connection),
+            storage: Storage.FromSuffix<MyDbContext>("ClassicEfSnippetTests"));
 
     [Test]
     public async Task TheTest()
