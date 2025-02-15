@@ -83,11 +83,7 @@ class Wrapper
 
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
 
-#if NET5_0_OR_GREATER
         await using var masterConnection = await OpenMasterConnection();
-#else
-        using var masterConnection = await OpenMasterConnection();
-#endif
         await masterConnection.ExecuteCommandAsync(commandText);
 
         var connectionString = LocalDbSettings.connectionBuilder(instance, name);
@@ -110,11 +106,7 @@ class Wrapper
                 return;
             }
 
-#if NET5_0_OR_GREATER
             await using var connection = buildConnection(connectionString);
-#else
-            using var connection = buildConnection(connectionString);
-#endif
             await connection.OpenAsync();
             await callback(connection);
             callback = null;
@@ -202,17 +194,9 @@ class Wrapper
         bool rebuild,
         bool optimize)
     {
-#if NET5_0_OR_GREATER
         await using var takeOfflineConnection = await OpenMasterConnection();
-#else
-        using var takeOfflineConnection = await OpenMasterConnection();
-#endif
         var takeDbsOffline = takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
-#if NET5_0_OR_GREATER
         await using var masterConnection = await OpenMasterConnection();
-#else
-        using var masterConnection = await OpenMasterConnection();
-#endif
 
         LocalDbLogging.LogIfVerbose($"SqlServerVersion: {masterConnection.ServerVersion}");
 
@@ -244,11 +228,7 @@ class Wrapper
         FileExtensions.MarkFileAsWritable(DataFile);
         FileExtensions.MarkFileAsWritable(LogFile);
 
-#if NET5_0_OR_GREATER
         await using (var connection = buildConnection(TemplateConnectionString))
-#else
-        using (var connection = buildConnection(TemplateConnectionString))
-#endif
         {
             await connection.OpenAsync();
             await buildTemplate(connection);
@@ -283,11 +263,7 @@ class Wrapper
     public async Task DeleteDatabase(string dbName)
     {
         var commandText = SqlBuilder.BuildDeleteDbCommand(dbName);
-#if NET5_0_OR_GREATER
         await using var connection = await OpenMasterConnection();
-#else
-        using var connection = await OpenMasterConnection();
-#endif
         await connection.ExecuteCommandAsync(commandText);
         var dataFile = Path.Combine(Directory, $"{dbName}.mdf");
         var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");
