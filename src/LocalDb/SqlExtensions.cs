@@ -8,7 +8,11 @@
         {
             var stopwatch = Stopwatch.StartNew();
 
+#if(NET5_0_OR_GREATER)
             await using (var command = connection.CreateCommand())
+#else
+            using (var command = connection.CreateCommand())
+#endif
             {
                 command.CommandText = commandText;
                 await command.ExecuteNonQueryAsync();
