@@ -75,6 +75,14 @@ class Wrapper
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
 
         await startupTask;
+
+#if NET5_0_OR_GREATER
+        await using var takeOfflineConnection = await OpenMasterConnection();
+#else
+        using var takeOfflineConnection = await OpenMasterConnection();
+#endif
+        await takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
+
         File.Copy(DataFile, dataFile, true);
         File.Copy(LogFile, logFile, true);
 
@@ -203,12 +211,6 @@ class Wrapper
         bool optimize)
     {
 #if NET5_0_OR_GREATER
-        await using var takeOfflineConnection = await OpenMasterConnection();
-#else
-        using var takeOfflineConnection = await OpenMasterConnection();
-#endif
-        var takeDbsOffline = takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.TakeDbsOfflineCommand);
-#if NET5_0_OR_GREATER
         await using var masterConnection = await OpenMasterConnection();
 #else
         using var masterConnection = await OpenMasterConnection();
@@ -225,8 +227,6 @@ class Wrapper
         {
             await Rebuild(timestamp, buildTemplate, masterConnection);
         }
-
-        await takeDbsOffline;
     }
 
     async Task<DbConnection> OpenMasterConnection()

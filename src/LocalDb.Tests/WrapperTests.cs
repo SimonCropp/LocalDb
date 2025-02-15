@@ -175,7 +175,10 @@ end;
     [Test]
     public async Task WithRebuild()
     {
-        var instance2 = new Wrapper(_ => new SqlConnection(_), "WrapperTests", DirectoryFinder.Find("WrapperTests"));
+        var instance2 = new Wrapper(
+            _ => new SqlConnection(_),
+            "WrapperTests",
+            DirectoryFinder.Find("WrapperTests"));
 
         Recording.Start();
         instance2.Start(timestamp, _ => throw new());

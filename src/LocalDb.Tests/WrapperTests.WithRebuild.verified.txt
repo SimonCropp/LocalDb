@@ -1,18 +1,1 @@
-﻿{
-  sql: {
-    Text:
-declare @command nvarchar(max)
-set @command = ''
-
-select @command = @command
-+ '
-    alter database [' + [name] + '] set single_user with rollback immediate;
-    alter database [' + [name] + '] set multi_user;
-    alter database [' + [name] + '] set offline;
-'
-from master.sys.databases
-where [name] not in ('master', 'model', 'msdb', 'tempdb', 'template');
-execute sp_executesql @command,
-    HasTransaction: false
-  }
-}
+﻿null

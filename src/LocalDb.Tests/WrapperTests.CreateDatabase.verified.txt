@@ -3,6 +3,18 @@
     {
       sql: {
         Text:
+if db_id('CreateDatabase') is not null
+begin
+  alter database [CreateDatabase] set single_user with rollback immediate;
+  alter database [CreateDatabase] set multi_user;
+  alter database [CreateDatabase] set offline;
+end;,
+        HasTransaction: false
+      }
+    },
+    {
+      sql: {
+        Text:
 if db_id('CreateDatabase') is null
     begin
 create database [CreateDatabase] on

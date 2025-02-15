@@ -3,6 +3,18 @@
     {
       sql: {
         Text:
+if db_id('ToDelete') is not null
+begin
+  alter database [ToDelete] set single_user with rollback immediate;
+  alter database [ToDelete] set multi_user;
+  alter database [ToDelete] set offline;
+end;,
+        HasTransaction: false
+      }
+    },
+    {
+      sql: {
+        Text:
 if db_id('ToDelete') is null
     begin
 create database [ToDelete] on
