@@ -18,6 +18,5 @@
     <Content Include="buildTransitive\LocalDb.props" PackagePath="buildTransitive\LocalDb.props" />
     <Content Include="buildTransitive\LocalDb.props" PackagePath="build\LocalDb.props" />
     <PackageReference Include="System.Memory" />
-    <PackageReference Include="System.Runtime.Caching" />
   </ItemGroup>
 </Project>
