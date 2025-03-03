@@ -7,7 +7,7 @@
     <PackageVersion Include="ConfigureAwait.Fody" Version="3.3.2" />
     <PackageVersion Include="DiffPlex" Version="1.7.2" />
     <PackageVersion Include="EntityFramework" Version="6.5.1" />
-    <PackageVersion Include="Fody" Version="6.9.1" />
+    <PackageVersion Include="Fody" Version="6.9.2" />
     <PackageVersion Include="MarkdownSnippets.MsBuild" Version="27.0.2" />
     <PackageVersion Include="MethodTimer.Fody" Version="3.2.3" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.0.1" />
