@@ -13,10 +13,15 @@
     <PackageReference Include="Polyfill" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Condition="$(TargetFramework) != 'net48'" />
 
     <Content Include="buildTransitive\LocalDb.props" PackagePath="buildTransitive\LocalDb.props" />
     <Content Include="buildTransitive\LocalDb.props" PackagePath="build\LocalDb.props" />
     <PackageReference Include="System.Memory" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 </Project>

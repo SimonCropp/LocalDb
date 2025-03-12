@@ -9,8 +9,9 @@
         Type: ReaderExecutedAsync,
         HasTransaction: false,
         Text:
-SELECT TOP(2) [t].[Id], [t].[Property]
-FROM [TestEntities] AS [t]
+select top (2) t.Id,
+               t.Property
+from   TestEntities as t
       },
       {
         Type: ReaderExecutedAsync,
@@ -20,11 +21,14 @@ FROM [TestEntities] AS [t]
           @p1 (Int32): 1
         },
         Text:
-SET IMPLICIT_TRANSACTIONS OFF;
-SET NOCOUNT ON;
-UPDATE [TestEntities] SET [Property] = @p0
-OUTPUT 1
-WHERE [Id] = @p1;
+set implicit_transactions off;
+
+set nocount on;
+
+update TestEntities
+set    Property = @p0
+output 1
+where  Id = @p1
       }
     ]
   },
@@ -38,8 +42,9 @@ WHERE [Id] = @p1;
         Type: ReaderExecutedAsync,
         HasTransaction: false,
         Text:
-SELECT TOP(2) [t].[Id], [t].[Property]
-FROM [TestEntities] AS [t]
+select top (2) t.Id,
+               t.Property
+from   TestEntities as t
       },
       {
         Type: ReaderExecutedAsync,
@@ -49,11 +54,14 @@ FROM [TestEntities] AS [t]
           @p1 (Int32): 1
         },
         Text:
-SET IMPLICIT_TRANSACTIONS OFF;
-SET NOCOUNT ON;
-UPDATE [TestEntities] SET [Property] = @p0
-OUTPUT 1
-WHERE [Id] = @p1;
+set implicit_transactions off;
+
+set nocount on;
+
+update TestEntities
+set    Property = @p0
+output 1
+where  Id = @p1
       }
     ]
   }
