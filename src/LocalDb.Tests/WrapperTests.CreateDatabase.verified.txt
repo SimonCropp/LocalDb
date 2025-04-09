@@ -4,11 +4,15 @@
       sql: {
         Text:
 if db_id('CreateDatabase') is not null
-begin
-  alter database [CreateDatabase] set single_user with rollback immediate;
-  alter database [CreateDatabase] set multi_user;
-  alter database [CreateDatabase] set offline;
-end;,
+  begin
+    alter database CreateDatabase
+      set SINGLE_USER 
+      with rollback immediate;
+    alter database CreateDatabase
+      set MULTI_USER;
+    alter database CreateDatabase
+      set OFFLINE;
+  end,
         HasTransaction: false
       }
     },
@@ -16,20 +20,18 @@ end;,
       sql: {
         Text:
 if db_id('CreateDatabase') is null
-    begin
-create database [CreateDatabase] on
-(
-    name = [CreateDatabase],
-),
-(
-)
-for attach;
-    end;
+  begin
+    create database CreateDatabase
+      on 
+  end
 else
-    begin
-        alter database [CreateDatabase] set online;
-    end;
-alter database [CreateDatabase] set read_write;,
+  begin
+    alter database CreateDatabase
+      set ONLINE;
+  end
+
+alter database CreateDatabase
+  set READ_WRITE,
         HasTransaction: false
       }
     }

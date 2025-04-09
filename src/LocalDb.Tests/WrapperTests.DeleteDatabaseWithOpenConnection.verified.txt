@@ -4,11 +4,15 @@
       sql: {
         Text:
 if db_id('ToDelete') is not null
-begin
-  alter database [ToDelete] set single_user with rollback immediate;
-  alter database [ToDelete] set multi_user;
-  alter database [ToDelete] set offline;
-end;,
+  begin
+    alter database ToDelete
+      set SINGLE_USER 
+      with rollback immediate;
+    alter database ToDelete
+      set MULTI_USER;
+    alter database ToDelete
+      set OFFLINE;
+  end,
         HasTransaction: false
       }
     },
@@ -16,20 +20,18 @@ end;,
       sql: {
         Text:
 if db_id('ToDelete') is null
-    begin
-create database [ToDelete] on
-(
-    name = [ToDelete],
-),
-(
-)
-for attach;
-    end;
+  begin
+    create database ToDelete
+      on 
+  end
 else
-    begin
-        alter database [ToDelete] set online;
-    end;
-alter database [ToDelete] set read_write;,
+  begin
+    alter database ToDelete
+      set ONLINE;
+  end
+
+alter database ToDelete
+  set READ_WRITE,
         HasTransaction: false
       }
     }

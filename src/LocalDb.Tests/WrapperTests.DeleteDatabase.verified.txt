@@ -1,8 +1,11 @@
 ﻿{
   sql: {
     Text:
-alter database [ToDelete] set single_user with rollback immediate;
-drop database [ToDelete];,
+alter database ToDelete
+  set SINGLE_USER 
+  with rollback immediate;
+
+drop database ToDelete,
     HasTransaction: false
   }
 }
