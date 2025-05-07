@@ -201,8 +201,7 @@ public abstract class LocalDbTestBase<T> :
 
         var directory = sqlInstance.StorageDirectory;
         LocalDbLogging.Log($"Purging {directory}");
-        sqlInstance.Cleanup(ShutdownMode.KillProcess);
-        DirectoryCleaner.CleanInstance(directory);
+        sqlInstance.Cleanup(ShutdownMode.UseSqlShutdown);
     }
 
     [Pure]
