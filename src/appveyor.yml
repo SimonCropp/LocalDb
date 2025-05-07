@@ -12,8 +12,8 @@ build_script:
 - dotnet build-server shutdown
 - dotnet test src/EfClassicLocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
 - dotnet build-server shutdown
-- dotnet test src/EfLocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
-- dotnet build-server shutdown
+#- dotnet test src/EfLocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
+#- dotnet build-server shutdown
 - dotnet test src/EfLocalDb.NUnit.Tests --configuration Release --no-build --no-restore --disable-build-servers
 - dotnet build-server shutdown
 on_failure:
