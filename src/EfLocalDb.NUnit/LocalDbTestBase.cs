@@ -194,7 +194,6 @@ public abstract class LocalDbTestBase<T> :
     [OneTimeTearDown]
     public static void OneTimeTearDown()
     {
-        LocalDbLogging.Log($"OneTimeTearDown");
         if (!BuildServerDetector.Detected)
         {
             return;
@@ -204,7 +203,6 @@ public abstract class LocalDbTestBase<T> :
         LocalDbLogging.Log($"Purging {directory}");
         sqlInstance.Cleanup(ShutdownMode.KillProcess);
         DirectoryCleaner.CleanInstance(directory);
-        throw new($"OneTimeTearDown");
     }
 
     [Pure]
