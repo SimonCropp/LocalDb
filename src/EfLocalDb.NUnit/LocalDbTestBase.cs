@@ -1,4 +1,6 @@
-﻿namespace EfLocalDbNunit;
+﻿using DiffEngine;
+
+namespace EfLocalDbNunit;
 
 [TestFixture]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
@@ -187,6 +189,20 @@ public abstract class LocalDbTestBase<T> :
             await actData.DisposeAsync();
         }
         // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+    }
+
+    [OneTimeTearDown]
+    public static void OneTimeTearDown()
+    {
+        if (!BuildServerDetector.Detected)
+        {
+            return;
+        }
+
+        var directory = sqlInstance.StorageDirectory;
+        LocalDbLogging.Log($"Purging {directory}");
+        sqlInstance.Cleanup(ShutdownMode.KillProcess);
+        DirectoryCleaner.CleanInstance(directory);
     }
 
     [Pure]

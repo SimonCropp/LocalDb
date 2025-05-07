@@ -94,7 +94,8 @@ public partial class SqlInstance<TDbContext>
         this.sqlOptionsBuilder = sqlOptionsBuilder;
 
         var storageValue = storage.Value;
-        DirectoryCleaner.CleanInstance(storageValue.Directory);
+        StorageDirectory = storageValue.Directory;
+        DirectoryCleaner.CleanInstance(StorageDirectory);
 
         Task BuildTemplate(DbConnection connection)
         {
@@ -118,13 +119,15 @@ public partial class SqlInstance<TDbContext>
         Wrapper = new(
             _ => new SqlConnection(_),
             storageValue.Name,
-            storageValue.Directory,
+            StorageDirectory,
             templateSize,
             existingTemplate,
             wrapperCallback);
 
         Wrapper.Start(resultTimestamp, BuildTemplate);
     }
+
+    public string StorageDirectory { get; } = null!;
 
     static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
     {
