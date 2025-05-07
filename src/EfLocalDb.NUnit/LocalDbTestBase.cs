@@ -1,6 +1,4 @@
-﻿using DiffEngine;
-
-namespace EfLocalDbNunit;
+﻿namespace EfLocalDbNunit;
 
 [TestFixture]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
@@ -191,18 +189,18 @@ public abstract class LocalDbTestBase<T> :
         // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
     }
 
-    [OneTimeTearDown]
-    public static void OneTimeTearDown()
-    {
-        if (!BuildServerDetector.Detected)
-        {
-            return;
-        }
-
-        var directory = sqlInstance.StorageDirectory;
-        LocalDbLogging.Log($"Purging {directory}");
-        sqlInstance.Cleanup(ShutdownMode.UseSqlShutdown);
-    }
+    // [OneTimeTearDown]
+    // public static void OneTimeTearDown()
+    // {
+    //     if (!BuildServerDetector.Detected)
+    //     {
+    //         return;
+    //     }
+    //
+    //     var directory = sqlInstance.StorageDirectory;
+    //     LocalDbLogging.Log($"Purging {directory}");
+    //     sqlInstance.Cleanup(ShutdownMode.UseSqlShutdown);
+    // }
 
     [Pure]
     public virtual SettingsTask VerifyEntity<TEntity>(Guid id, [CallerFilePath] string sourceFile = "")
