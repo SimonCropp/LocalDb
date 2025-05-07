@@ -194,6 +194,8 @@ public abstract class LocalDbTestBase<T> :
     [OneTimeTearDown]
     public static void OneTimeTearDown()
     {
+        
+        LocalDbLogging.Log($"OneTimeTearDown");
         if (!BuildServerDetector.Detected)
         {
             return;
