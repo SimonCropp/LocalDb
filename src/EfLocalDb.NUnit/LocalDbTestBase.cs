@@ -177,30 +177,27 @@ public abstract class LocalDbTestBase<T> :
     public virtual async ValueTask TearDown()
     {
         // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (Database != null)
-        {
-            await Database.DisposeAsync();
-        }
 
         if (actData != null)
         {
             await actData.DisposeAsync();
         }
+
+        if (Database != null)
+        {
+            if (BuildServerDetector.Detected)
+            {
+                LocalDbLogging.Log($"Purging {Database.Name}");
+                await Database.Delete();
+            }
+            else
+            {
+                await Database.DisposeAsync();
+            }
+        }
+
         // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
     }
-
-    // [OneTimeTearDown]
-    // public static void OneTimeTearDown()
-    // {
-    //     if (!BuildServerDetector.Detected)
-    //     {
-    //         return;
-    //     }
-    //
-    //     var directory = sqlInstance.StorageDirectory;
-    //     LocalDbLogging.Log($"Purging {directory}");
-    //     sqlInstance.Cleanup(ShutdownMode.UseSqlShutdown);
-    // }
 
     [Pure]
     public virtual SettingsTask VerifyEntity<TEntity>(Guid id, [CallerFilePath] string sourceFile = "")
