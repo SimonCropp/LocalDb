@@ -1,6 +1,4 @@
-﻿using DiffEngine;
-
-namespace EfLocalDbNunit;
+﻿namespace EfLocalDbNunit;
 
 [TestFixture]
 [FixtureLifeCycle(LifeCycle.InstancePerTestCase)]
@@ -179,30 +177,26 @@ public abstract class LocalDbTestBase<T> :
     public virtual async ValueTask TearDown()
     {
         // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (Database != null)
-        {
-            await Database.DisposeAsync();
-        }
 
         if (actData != null)
         {
             await actData.DisposeAsync();
         }
-        // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-    }
 
-    [OneTimeTearDown]
-    public static void OneTimeTearDown()
-    {
-        if (!BuildServerDetector.Detected)
+        if (Database != null)
         {
-            return;
+            if (BuildServerDetector.Detected)
+            {
+                LocalDbLogging.Log($"Purging {Database.Name}");
+                await Database.Delete();
+            }
+            else
+            {
+                await Database.DisposeAsync();
+            }
         }
 
-        var directory = sqlInstance.StorageDirectory;
-        LocalDbLogging.Log($"Purging {directory}");
-        sqlInstance.Cleanup(ShutdownMode.KillProcess);
-        DirectoryCleaner.CleanInstance(directory);
+        // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
     }
 
     [Pure]
