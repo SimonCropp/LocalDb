@@ -18,7 +18,7 @@
     <PackageVersion Include="Microsoft.Sbom.Targets" Version="4.0.3" />
     <PackageVersion Include="NUnit" Version="4.3.2" />
     <PackageVersion Include="NUnit3TestAdapter" Version="5.0.0" />
-    <PackageVersion Include="Polyfill" Version="7.33.0" />
+    <PackageVersion Include="Polyfill" Version="8.0.0-beta.1" />
     <PackageVersion Include="ProjectDefaults" Version="1.0.154" />
     <PackageVersion Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageVersion Include="System.Drawing.Common" Version="9.0.5" />
