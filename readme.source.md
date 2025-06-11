@@ -13,6 +13,12 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 
 **SqlLocalDB is only supported on Windows**
 
+
+## Sponsors
+
+include: zzz
+
+
 toc
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
