@@ -23,6 +23,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 
 ## Sponsors
 
+
 ### Entity Framework Extensions<!-- include: zzz. path: /docs/zzz.include.md -->
 
 [Entity Framework Extensions](https://entityframework-extensions.net/) is a major sponsor and is proud to contribute to the development this project.
