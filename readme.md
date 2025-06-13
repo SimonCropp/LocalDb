@@ -13,7 +13,7 @@ To change this file edit the source file and then run MarkdownSnippets.
 [![NuGet Status](https://img.shields.io/nuget/v/EfClassicLocalDb.svg?label=nuget:EfClassicLocalDb)](https://www.nuget.org/packages/EfClassicLocalDb/)
 [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.NUnit.svg?label=nuget:EfLocalDb.NUnit)](https://www.nuget.org/packages/EfLocalDb.NUnit/)
 
-Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
+Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.<!-- singleLineInclude: intro. path: /docs/mdsource/intro.include.md -->
 
 **See [Milestones](../../milestones?state=closed) for release notes.**
 
@@ -23,11 +23,11 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 
 ## Sponsors
 
-### Entity Framework Extensions<!-- include: zzz. path: /docs/zzz.include.md -->
+### Entity Framework Extensions<!-- include: zzz. path: /docs/mdsource/zzz.include.md -->
 
-[Entity Framework Extensions](https://entityframework-extensions.net/) is a major sponsor and is proud to contribute to the development this project.
+[Entity Framework Extensions](https://entityframework-extensions.net/?utm_source=simoncropp&utm_medium=LocalDb) is a major sponsor and is proud to contribute to the development this project.
 
-[![Entity Framework Extensions](docs/zzz.png)](https://entityframework-extensions.net)<!-- endInclude -->
+[![Entity Framework Extensions](https://raw.githubusercontent.com/SimonCropp/LocalDb/refs/heads/main/docs/zzz.png)](https://entityframework-extensions.net/?utm_source=simoncropp&utm_medium=LocalDb)<!-- endInclude -->
 
 
 <!-- toc -->
