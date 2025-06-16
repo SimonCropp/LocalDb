@@ -6,7 +6,7 @@
 [![NuGet Status](https://img.shields.io/nuget/v/EfClassicLocalDb.svg?label=nuget:EfClassicLocalDb)](https://www.nuget.org/packages/EfClassicLocalDb/)
 [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.NUnit.svg?label=nuget:EfLocalDb.NUnit)](https://www.nuget.org/packages/EfLocalDb.NUnit/)
 
-Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.
+include: intro
 
 **See [Milestones](../../milestones?state=closed) for release notes.**
 
