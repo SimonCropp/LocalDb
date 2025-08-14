@@ -1,0 +1,11 @@
+﻿{
+  Id: Guid_1,
+  Name: the Company,
+  Employees: [
+    {
+      CompanyId: Guid_1,
+      Id: Guid_2,
+      Name: the employee
+    }
+  ]
+}
