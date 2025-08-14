@@ -6,5 +6,4 @@ global using DiffEngine;
 global using EfLocalDb;
 global using Microsoft.EntityFrameworkCore;
 global using NUnit.Framework;
-global using VerifyNUnit;
 global using VerifyTests;

@@ -1,4 +1,4 @@
 ﻿{
-  Id: 1,
-  Property: value
+  Id: Guid_1,
+  Name: value
 }
