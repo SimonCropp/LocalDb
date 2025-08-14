@@ -1,15 +1,13 @@
 ﻿#pragma warning disable EF1001
 
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Internal;
-// ReSharper disable ExplicitCallerInfoArgument
 
 namespace EfLocalDbNunit;
 
 public abstract partial class LocalDbTestBase<T>
 {
     [Pure]
-    public virtual SettingsTask VerifyEntity<TEntity>(Guid id, [CallerFilePath] string sourceFile = "")
+    public virtual QueryableSettingsTask<TEntity> VerifyEntity<TEntity>(Guid id, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
@@ -49,46 +47,28 @@ public abstract partial class LocalDbTestBase<T>
         new("ObjectDisposedException while executing IQueryable. It is possible the IQueryable targets an ActData or ArrangeData that has already been cleaned up", exception);
 
     [Pure]
-    public virtual SettingsTask VerifyEntity<TEntity>(long id, [CallerFilePath] string sourceFile = "")
+    public virtual QueryableSettingsTask<TEntity> VerifyEntity<TEntity>(long id, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
     [Pure]
-    public virtual SettingsTask VerifyEntity<TEntity>(int id, [CallerFilePath] string sourceFile = "")
+    public virtual QueryableSettingsTask<TEntity> VerifyEntity<TEntity>(int id, [CallerFilePath] string sourceFile = "")
         where TEntity : class =>
         InnerVerifyEntity<TEntity>(id, sourceFile);
 
-    SettingsTask InnerVerifyEntity<TEntity>(object id, string sourceFile)
+    QueryableSettingsTask<TEntity> InnerVerifyEntity<TEntity>(object id, string sourceFile)
         where TEntity : class
     {
         var set = AssertData.Set<TEntity>();
         var primaryKey = set.EntityType.FindPrimaryKey()!;
 
-
-        var values = new ValueBuffer([id]);
         var entityParameter = Expression.Parameter(typeof(TEntity));
-        var predicate = ExpressionExtensions.BuildPredicate(primaryKey.Properties, values, entityParameter);
+        var predicate = ExpressionExtensions.BuildPredicate(primaryKey.Properties, new([id]), entityParameter);
         var lambda = Expression.Lambda<Func<TEntity, bool>>(predicate, entityParameter);
-        var func = ()=> set.SingleAsync(lambda);
 
-        return Verify2<TEntity>(func, sourceFile: sourceFile);
+        return new(
+            set, sourceFile,
+            null,
+            lambda);
     }
-     static QueryableSettingsTask<TTarget> Verify2<TTarget>(
-        Func<Task<TTarget>> target,
-        VerifySettings? settings = null,
-        [CallerFilePath] string sourceFile = "") =>
-        Verify2<TTarget>(settings, sourceFile, _ => _.Verify(target()));
-
-     static QueryableSettingsTask<TTarget> Verify2<TTarget>(
-         VerifySettings? settings,
-         string sourceFile,
-         Func<InnerVerifier, Task<VerifyResult>> verify,
-         bool useUniqueDirectory = false) =>
-         new(
-             settings,
-             async verifySettings =>
-             {
-                 using var verifier = Verifier.BuildVerifier(sourceFile, verifySettings, useUniqueDirectory);
-                 return await verify(verifier);
-             });
 }

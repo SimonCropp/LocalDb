@@ -138,6 +138,25 @@ public class Tests :
     }
 
     [Test]
+    public async Task VerifyEntityWithInclude()
+    {
+        var company = new Company
+        {
+            Id = Guid.NewGuid(),
+            Name = "the Company"
+        };
+        var employee = new Employee
+        {
+            Id = Guid.NewGuid(),
+            CompanyId = company.Id,
+            Name = "the employee"
+        };
+        ArrangeData.AddRange(company, employee);
+        await ArrangeData.SaveChangesAsync();
+        await VerifyEntity<Company>(company.Id).Include(_ => _.Employees);
+    }
+
+    [Test]
     public async Task VerifyEntities_DbSet()
     {
         ArrangeData.Companies.Add(
