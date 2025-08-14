@@ -13,8 +13,8 @@ public class QueryableSettingsTask<TEntity>(IQueryable<TEntity> source, string s
     readonly VerifySettings? settings = settings;
 
     public IncludeQueryableSettingsTask<TEntity, TProperty> Include<TProperty>(
-        Expression<Func<TEntity, TProperty>> navigationPropertyPath) =>
-        new(source.Include(navigationPropertyPath),sourceFile, settings, expression);
+        Expression<Func<TEntity, TProperty>> property) =>
+        new(source.Include(property),sourceFile, settings, expression);
 }
 
 public class IncludeQueryableSettingsTask<TEntity, TProperty>(IIncludableQueryable<TEntity, TProperty> source, string sourceFile, VerifySettings? settings, Expression<Func<TEntity, bool>> expression)
@@ -28,10 +28,10 @@ public class IncludeQueryableSettingsTask<TEntity, TProperty>(IIncludableQueryab
     readonly VerifySettings? settings = settings;
 
     public IncludeQueryableSettingsTask<TEntity, TNewProperty> Include<TNewProperty>(
-        Expression<Func<TEntity, TNewProperty>> navigationPropertyPath) =>
-        new(source.Include(navigationPropertyPath), sourceFile, settings, expression);
+        Expression<Func<TEntity, TNewProperty>> property) =>
+        new(source.Include(property), sourceFile, settings, expression);
 
     public IncludeQueryableSettingsTask<TEntity, TNewProperty> ThenInclude<TNewProperty>(
-        Expression<Func<TProperty, TNewProperty>> navigationPropertyPath) =>
-        new(source.ThenInclude(navigationPropertyPath), sourceFile, settings, expression);
+        Expression<Func<TProperty, TNewProperty>> property) =>
+        new(source.ThenInclude(property), sourceFile, settings, expression);
 }
