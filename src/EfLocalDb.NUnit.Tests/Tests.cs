@@ -127,14 +127,14 @@ public class Tests :
     [Test]
     public async Task VerifyEntity()
     {
-        var entity = new Company
+        var company = new Company
         {
             Id = Guid.NewGuid(),
             Name = "value"
         };
-        ArrangeData.Companies.Add(entity);
+        ArrangeData.Companies.Add(company);
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntity<Company>(entity.Id);
+        await VerifyEntity<Company>(company.Id);
     }
 
     [Test]
@@ -153,40 +153,40 @@ public class Tests :
     [Test]
     public async Task VerifyEntities_Queryable()
     {
-        var entity = new Company
+        var company = new Company
         {
             Id = Guid.NewGuid(),
             Name = "value"
         };
-        ArrangeData.Companies.Add(entity);
+        ArrangeData.Companies.Add(company);
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntities(AssertData.Companies.Where(_ => _.Id == entity.Id));
+        await VerifyEntities(AssertData.Companies.Where(_ => _.Id == company.Id));
     }
 
     [Test]
     public async Task VerifyEntity_Queryable()
     {
-        var entity = new Company
+        var company = new Company
         {
             Id = Guid.NewGuid(),
             Name = "value"
         };
-        ArrangeData.Companies.Add(entity);
+        ArrangeData.Companies.Add(company);
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntity(AssertData.Companies.Where(_ => _.Id == entity.Id));
+        await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
     }
 
     [Test]
     public async Task ArrangeQueryableAfterAct()
     {
-        var entity = new Company
+        var company = new Company
         {
             Id = Guid.NewGuid(),
             Name = "value"
         };
-        ArrangeData.Companies.Add(entity);
+        ArrangeData.Companies.Add(company);
         await ArrangeData.SaveChangesAsync();
-        var queryable = ArrangeData.Companies.Where(_ => _.Id == entity.Id);
+        var queryable = ArrangeData.Companies.Where(_ => _.Id == company.Id);
         // ReSharper disable once UnusedVariable
         var act = ActData;
         await ThrowsTask(() => VerifyEntities(queryable))
@@ -206,14 +206,14 @@ public class Tests :
     [Test]
     public async Task ActQueryableAfterAssert()
     {
-        var entity = new Company
+        var company = new Company
         {
             Id = Guid.NewGuid(),
             Name = "value"
         };
-        ArrangeData.Companies.Add(entity);
+        ArrangeData.Companies.Add(company);
         await ArrangeData.SaveChangesAsync();
-        var queryable = ActData.Companies.Where(_ => _.Id == entity.Id);
+        var queryable = ActData.Companies.Where(_ => _.Id == company.Id);
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         await ThrowsTask(() => VerifyEntities(queryable))
@@ -224,14 +224,14 @@ public class Tests :
     [Test]
     public async Task ArrangeQueryableAfterAssert()
     {
-        var entity = new Company
+        var company = new Company
         {
             Id = Guid.NewGuid(),
             Name = "value"
         };
-        ArrangeData.Companies.Add(entity);
+        ArrangeData.Companies.Add(company);
         await ArrangeData.SaveChangesAsync();
-        var queryable = ArrangeData.Companies.Where(_ => _.Id == entity.Id);
+        var queryable = ArrangeData.Companies.Where(_ => _.Id == company.Id);
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         await ThrowsTask(() => VerifyEntities(queryable))
