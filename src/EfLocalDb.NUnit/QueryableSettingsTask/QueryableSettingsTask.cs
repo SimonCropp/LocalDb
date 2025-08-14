@@ -15,7 +15,6 @@ public class QueryableSettingsTask<TEntity> : SettingsTask
         this.settings = settings;
     }
 
-    public IncludeQueryableSettingsTask<TEntity, TProperty> Include<TProperty>(
-        Expression<Func<TEntity, TProperty>> property) =>
+    public QueryableSettingsTask<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> property) =>
         new(source.Include(property), settings, query);
 }
