@@ -67,8 +67,7 @@ public abstract partial class LocalDbTestBase<T>
         var expression = Expression.Lambda<Func<TEntity, bool>>(predicate, entityParameter);
 
         return new(
-            set, sourceFile,
-            null,
+            set, null,
             expression, async (verifySettings,source) =>
             {
                 using var verifier = BuildVerifier(sourceFile, verifySettings);
