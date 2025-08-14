@@ -5,18 +5,38 @@ public class Tests :
     [Test]
     public async Task Simple()
     {
-        ArrangeData.TestEntities.Add(
+        ArrangeData.Companies.Add(
             new()
             {
-                Property = "value"
+                Id = Guid.NewGuid(),
+                Name = "value"
             });
         await ArrangeData.SaveChangesAsync();
 
-        var entity = await ActData.TestEntities.SingleAsync();
-        entity.Property = "value2";
+        var entity = await ActData.Companies.SingleAsync();
+        entity.Name = "value2";
         await ActData.SaveChangesAsync();
 
-        var result = await AssertData.TestEntities.SingleAsync();
+        var result = await AssertData.Companies.SingleAsync();
+        await Verify(result);
+    }
+
+    [Test]
+    public async Task StaticInstance()
+    {
+        Instance.ArrangeData.Companies.Add(
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "value"
+            });
+        await Instance.ArrangeData.SaveChangesAsync();
+
+        var entity = await Instance.ActData.Companies.SingleAsync();
+        entity.Name = "value2";
+        await Instance.ActData.SaveChangesAsync();
+
+        var result = await Instance.AssertData.Companies.SingleAsync();
         await Verify(result);
     }
 
@@ -27,20 +47,21 @@ public class Tests :
         return Combination()
             .Verify(Run, inputs);
 
-        async Task<TheEntity> Run(string input)
+        async Task<Company> Run(string input)
         {
-            ArrangeData.TestEntities.Add(
+            ArrangeData.Companies.Add(
                 new()
                 {
-                    Property = "value"
+                    Id = Guid.NewGuid(),
+                    Name = "value"
                 });
             await ArrangeData.SaveChangesAsync();
 
-            var entity = await ActData.TestEntities.SingleAsync();
-            entity.Property = input;
+            var entity = await ActData.Companies.SingleAsync();
+            entity.Name = input;
             await ActData.SaveChangesAsync();
 
-            return await AssertData.TestEntities.SingleAsync();
+            return await AssertData.Companies.SingleAsync();
         }
     }
 
@@ -66,7 +87,7 @@ public class Tests :
         ThrowsTask(
                 () =>
                 {
-                    var entities = AssertData.TestEntities;
+                    var entities = AssertData.Companies;
                     return entities.IgnoreQueryFilters().SingleAsync();
                 })
             .IgnoreStackTrace();
@@ -74,30 +95,31 @@ public class Tests :
     [Test]
     public async Task IgnoreQueryFiltersAllowedOnArrangeAndAct()
     {
-        await ArrangeData.TestEntities.IgnoreQueryFilters().ToListAsync();
-        await ActData.TestEntities.IgnoreQueryFilters().ToListAsync();
+        await ArrangeData.Companies.IgnoreQueryFilters().ToListAsync();
+        await ActData.Companies.IgnoreQueryFilters().ToListAsync();
     }
 
     [Test]
     public async Task ActInAsync()
     {
-        ArrangeData.TestEntities.Add(
+        ArrangeData.Companies.Add(
             new()
             {
-                Property = "value"
+                Id = Guid.NewGuid(),
+                Name = "value"
             });
         await ArrangeData.SaveChangesAsync();
 
         await AsyncMethod();
 
-        var result = await AssertData.TestEntities.SingleAsync();
+        var result = await AssertData.Companies.SingleAsync();
         await Verify(result);
 
         async Task AsyncMethod()
         {
             await Task.Delay(1);
-            var entity = await ActData.TestEntities.SingleAsync();
-            entity.Property = "value2";
+            var entity = await ActData.Companies.SingleAsync();
+            entity.Name = "value2";
             await ActData.SaveChangesAsync();
         }
     }
@@ -105,61 +127,66 @@ public class Tests :
     [Test]
     public async Task VerifyEntity()
     {
-        var entity = new TheEntity
+        var entity = new Company
         {
-            Property = "value"
+            Id = Guid.NewGuid(),
+            Name = "value"
         };
-        ArrangeData.TestEntities.Add(entity);
+        ArrangeData.Companies.Add(entity);
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntity<TheEntity>(entity.Id);
+        await VerifyEntity<Company>(entity.Id);
     }
 
     [Test]
     public async Task VerifyEntities_DbSet()
     {
-        ArrangeData.TestEntities.Add(
+        ArrangeData.Companies.Add(
             new()
             {
-                Property = "value"
+                Id = Guid.NewGuid(),
+                Name = "value"
             });
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntities(AssertData.TestEntities);
+        await VerifyEntities(AssertData.Companies);
     }
 
     [Test]
     public async Task VerifyEntities_Queryable()
     {
-        var entity = new TheEntity
+        var entity = new Company
         {
-            Property = "value"
+            Id = Guid.NewGuid(),
+            Name = "value"
         };
-        ArrangeData.TestEntities.Add(entity);
+        ArrangeData.Companies.Add(entity);
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntities(AssertData.TestEntities.Where(_ => _.Id == entity.Id));
+        await VerifyEntities(AssertData.Companies.Where(_ => _.Id == entity.Id));
     }
 
     [Test]
     public async Task VerifyEntity_Queryable()
     {
-        var entity = new TheEntity
+        var entity = new Company
         {
-            Property = "value"
+            Id = Guid.NewGuid(),
+            Name = "value"
         };
-        ArrangeData.TestEntities.Add(entity);
+        ArrangeData.Companies.Add(entity);
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntity(AssertData.TestEntities.Where(_ => _.Id == entity.Id));
+        await VerifyEntity(AssertData.Companies.Where(_ => _.Id == entity.Id));
     }
 
     [Test]
     public async Task ArrangeQueryableAfterAct()
     {
-        var entity = new TheEntity
+        var entity = new Company
         {
-            Property = "value"
+            Id = Guid.NewGuid(),
+            Name = "value"
         };
-        ArrangeData.TestEntities.Add(entity);
+        ArrangeData.Companies.Add(entity);
         await ArrangeData.SaveChangesAsync();
-        var queryable = ArrangeData.TestEntities.Where(_ => _.Id == entity.Id);
+        var queryable = ArrangeData.Companies.Where(_ => _.Id == entity.Id);
         // ReSharper disable once UnusedVariable
         var act = ActData;
         await ThrowsTask(() => VerifyEntities(queryable))
@@ -179,13 +206,14 @@ public class Tests :
     [Test]
     public async Task ActQueryableAfterAssert()
     {
-        var entity = new TheEntity
+        var entity = new Company
         {
-            Property = "value"
+            Id = Guid.NewGuid(),
+            Name = "value"
         };
-        ArrangeData.TestEntities.Add(entity);
+        ArrangeData.Companies.Add(entity);
         await ArrangeData.SaveChangesAsync();
-        var queryable = ActData.TestEntities.Where(_ => _.Id == entity.Id);
+        var queryable = ActData.Companies.Where(_ => _.Id == entity.Id);
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         await ThrowsTask(() => VerifyEntities(queryable))
@@ -196,13 +224,14 @@ public class Tests :
     [Test]
     public async Task ArrangeQueryableAfterAssert()
     {
-        var entity = new TheEntity
+        var entity = new Company
         {
-            Property = "value"
+            Id = Guid.NewGuid(),
+            Name = "value"
         };
-        ArrangeData.TestEntities.Add(entity);
+        ArrangeData.Companies.Add(entity);
         await ArrangeData.SaveChangesAsync();
-        var queryable = ArrangeData.TestEntities.Where(_ => _.Id == entity.Id);
+        var queryable = ArrangeData.Companies.Where(_ => _.Id == entity.Id);
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         await ThrowsTask(() => VerifyEntities(queryable))

@@ -157,6 +157,23 @@ public abstract class LocalDbTestBase<T> :
         QueryFilter.Enable();
         Recording.Start();
         Recording.Pause();
+        instance.Value = this;
+    }
+
+    static AsyncLocal<LocalDbTestBase<T>?> instance = new();
+
+    public static LocalDbTestBase<T> Instance
+    {
+        get
+        {
+            var value = instance.Value;
+            if (value == null)
+            {
+                throw new("No current value");
+            }
+
+            return value;
+        }
     }
 
     static string GetMemberName(TestContext.TestAdapter test)
@@ -197,6 +214,7 @@ public abstract class LocalDbTestBase<T> :
         }
 
         // ReSharper restore ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        instance.Value = null;
     }
 
     [Pure]
