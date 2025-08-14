@@ -64,11 +64,15 @@ public abstract partial class LocalDbTestBase<T>
 
         var entityParameter = Expression.Parameter(typeof(TEntity));
         var predicate = ExpressionExtensions.BuildPredicate(primaryKey.Properties, new([id]), entityParameter);
-        var lambda = Expression.Lambda<Func<TEntity, bool>>(predicate, entityParameter);
+        var expression = Expression.Lambda<Func<TEntity, bool>>(predicate, entityParameter);
 
         return new(
             set, sourceFile,
             null,
-            lambda);
+            expression, async (verifySettings,source) =>
+            {
+                using var verifier = BuildVerifier(sourceFile, verifySettings);
+                return await verifier.Verify(source.SingleAsync(expression));
+            });
     }
 }
