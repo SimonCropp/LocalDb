@@ -1,4 +1,10 @@
-﻿namespace EfLocalDbNunit;
+﻿#pragma warning disable EF1001
+
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore.Internal;
+// ReSharper disable ExplicitCallerInfoArgument
+
+namespace EfLocalDbNunit;
 
 public abstract partial class LocalDbTestBase<T>
 {
@@ -56,7 +62,33 @@ public abstract partial class LocalDbTestBase<T>
         where TEntity : class
     {
         var set = AssertData.Set<TEntity>();
-        var entity = set.FindAsync(id);
-        return Verify(entity, sourceFile: sourceFile);
+        var primaryKey = set.EntityType.FindPrimaryKey()!;
+
+
+        var values = new ValueBuffer([id]);
+        var entityParameter = Expression.Parameter(typeof(TEntity));
+        var predicate = ExpressionExtensions.BuildPredicate(primaryKey.Properties, values, entityParameter);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(predicate, entityParameter);
+        var func = ()=> set.SingleAsync(lambda);
+
+        return Verify2<TEntity>(func, sourceFile: sourceFile);
     }
+     static QueryableSettingsTask<TTarget> Verify2<TTarget>(
+        Func<Task<TTarget>> target,
+        VerifySettings? settings = null,
+        [CallerFilePath] string sourceFile = "") =>
+        Verify2<TTarget>(settings, sourceFile, _ => _.Verify(target()));
+
+     static QueryableSettingsTask<TTarget> Verify2<TTarget>(
+         VerifySettings? settings,
+         string sourceFile,
+         Func<InnerVerifier, Task<VerifyResult>> verify,
+         bool useUniqueDirectory = false) =>
+         new(
+             settings,
+             async verifySettings =>
+             {
+                 using var verifier = Verifier.BuildVerifier(sourceFile, verifySettings, useUniqueDirectory);
+                 return await verify(verifier);
+             });
 }
