@@ -62,15 +62,16 @@ public abstract partial class LocalDbTestBase<T>
         var set = AssertData.Set<TEntity>();
         var primaryKey = set.EntityType.FindPrimaryKey()!;
 
-        var entityParameter = Expression.Parameter(typeof(TEntity));
-        var predicate = ExpressionExtensions.BuildPredicate(primaryKey.Properties, new([id]), entityParameter);
-        var expression = Expression.Lambda<Func<TEntity, bool>>(predicate, entityParameter);
+        var parameter = Expression.Parameter(typeof(TEntity));
+        var predicate = ExpressionExtensions.BuildPredicate(primaryKey.Properties, new([id]), parameter);
+        var expression = Expression.Lambda<Func<TEntity, bool>>(predicate, parameter);
 
         return new(
-            set, null,
-            expression, async (verifySettings,source) =>
+            set,
+            null,
+            async (settings, source) =>
             {
-                using var verifier = BuildVerifier(sourceFile, verifySettings);
+                using var verifier = BuildVerifier(sourceFile, settings);
                 return await verifier.Verify(source.SingleAsync(expression));
             });
     }
