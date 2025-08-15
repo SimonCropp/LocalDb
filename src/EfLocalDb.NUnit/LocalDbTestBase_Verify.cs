@@ -72,7 +72,7 @@ public abstract partial class LocalDbTestBase<T>
             async (settings, source) =>
             {
                 using var verifier = BuildVerifier(sourceFile, settings);
-                return await verifier.Verify(source.SingleAsync(expression));
+                return await verifier.Verify(source.SingleOrDefaultAsync(expression));
             });
     }
 }
