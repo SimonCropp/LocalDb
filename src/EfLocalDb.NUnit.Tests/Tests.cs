@@ -138,6 +138,10 @@ public class Tests :
     }
 
     [Test]
+    public async Task VerifyEntityNull() =>
+        await VerifyEntity<Company>(Guid.NewGuid());
+
+    [Test]
     public async Task VerifyEntityWithInclude()
     {
         var company = new Company
