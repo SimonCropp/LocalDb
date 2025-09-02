@@ -60,6 +60,7 @@ public abstract partial class LocalDbTestBase<T>
         where TEntity : class
     {
         var set = AssertData.Set<TEntity>();
+
         var primaryKey = set.EntityType.FindPrimaryKey()!;
 
         var parameter = Expression.Parameter(typeof(TEntity));
@@ -67,7 +68,7 @@ public abstract partial class LocalDbTestBase<T>
         var expression = Expression.Lambda<Func<TEntity, bool>>(predicate, parameter);
 
         return new(
-            set,
+            set.AsSplitQuery(),
             null,
             async (settings, source) =>
             {
