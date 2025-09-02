@@ -15,5 +15,12 @@
 
         var employee = builder.Entity<Employee>();
         employee.HasKey(_ => _.Id);
+        employee
+            .HasMany(_ => _.Vehicles)
+            .WithOne(_ => _.Employee)
+            .IsRequired();
+
+        var vehicle = builder.Entity<Vehicle>();
+        vehicle.HasKey(_ => _.Id);
     }
 }

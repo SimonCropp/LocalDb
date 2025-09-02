@@ -153,11 +153,39 @@ public class Tests :
         {
             Id = Guid.NewGuid(),
             CompanyId = company.Id,
-            Name = "the employee"
+            Name = "the Employee"
         };
         ArrangeData.AddRange(company, employee);
         await ArrangeData.SaveChangesAsync();
-        await VerifyEntity<Company>(company.Id).Include(_ => _.Employees);
+        await VerifyEntity<Company>(company.Id)
+            .Include(_ => _.Employees);
+    }
+
+    [Test]
+    public async Task VerifyEntityWithThenInclude()
+    {
+        var company = new Company
+        {
+            Id = Guid.NewGuid(),
+            Name = "the Company"
+        };
+        var employee = new Employee
+        {
+            Id = Guid.NewGuid(),
+            CompanyId = company.Id,
+            Name = "the Employee"
+        };
+        var vehicle = new Vehicle
+        {
+            Id = Guid.NewGuid(),
+            EmployeeId = employee.Id,
+            Model = "the Vehicle"
+        };
+        ArrangeData.AddRange(company, employee, vehicle);
+        await ArrangeData.SaveChangesAsync();
+        await VerifyEntity<Company>(company.Id)
+            .Include(_ => _.Employees)
+            .ThenInclude(_ => _.Vehicles);
     }
 
     [Test]

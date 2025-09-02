@@ -1,5 +1,8 @@
 namespace EfLocalDbNunit;
 
+/// <summary>
+///  Wraps <see cref="IQueryable{TEntity}"/>
+/// </summary>
 public class QueryableSettingsTask<TEntity> : SettingsTask
     where TEntity : class
 {
@@ -15,6 +18,6 @@ public class QueryableSettingsTask<TEntity> : SettingsTask
         this.settings = settings;
     }
 
-    public QueryableSettingsTask<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> property) =>
+    public IncludableQueryableSettingsTask<TEntity, TProperty> Include<TProperty>(Expression<Func<TEntity, TProperty>> property) =>
         new(source.Include(property), settings, query);
 }
