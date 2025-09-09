@@ -11,8 +11,8 @@
     <PackageVersion Include="MarkdownSnippets.MsBuild" Version="28.0.0-beta.2" />
     <PackageVersion Include="MethodTimer.Fody" Version="3.2.3" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="6.1.1" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.8" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageVersion Include="Microsoft.Sbom.Targets" Version="4.1.2" />
@@ -21,7 +21,7 @@
     <PackageVersion Include="Polyfill" Version="8.8.1" />
     <PackageVersion Include="ProjectDefaults" Version="1.0.157" />
     <PackageVersion Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageVersion Include="System.Drawing.Common" Version="9.0.8" />
+    <PackageVersion Include="System.Drawing.Common" Version="9.0.9" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageVersion Include="System.Memory" Version="4.6.3" />
     <PackageVersion Include="Verify.EntityFramework" Version="13.1.2" />
