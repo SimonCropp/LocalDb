@@ -1,4 +1,4 @@
-﻿namespace EfLocalDb;
+namespace EfLocalDb;
 
 public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
@@ -88,7 +88,7 @@ public partial class SqlInstance<TDbContext>
 
         storage ??= DefaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-        Model = BuildModel(constructInstance);
+        Model = BuildModel(constructInstance, sqlOptionsBuilder);
         InitEntityMapping();
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
@@ -144,10 +144,10 @@ public partial class SqlInstance<TDbContext>
         return Timestamp.LastModified(buildTemplate);
     }
 
-    static IModel BuildModel(ConstructInstance<TDbContext> constructInstance)
+    static IModel BuildModel(ConstructInstance<TDbContext> constructInstance, Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
-        builder.UseSqlServer("Fake");
+        builder.UseSqlServer("Fake", sqlOptionsBuilder);
         return constructInstance(builder).Model;
     }
 
