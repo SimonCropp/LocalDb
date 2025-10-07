@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="../readme.source.md" />
+    <File Path=".editorconfig" />
+    <File Path="appveyor.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="mdsnippets.json" />
+  </Folder>
+  <Project Path="EfClassicLocalDb.Tests/EfClassicLocalDb.Tests.csproj" />
+  <Project Path="EfClassicLocalDb/EfClassicLocalDb.csproj" />
+  <Project Path="EfLocalDb.NUnit.Tests/EfLocalDb.NUnit.Tests.csproj" />
+  <Project Path="EfLocalDb.NUnit/EfLocalDb.NUnit.csproj" />
+  <Project Path="EfLocalDb.Tests/EfLocalDb.Tests.csproj" />
+  <Project Path="EfLocalDb/EfLocalDb.csproj" />
+  <Project Path="Helpers/Helpers.csproj" />
+  <Project Path="LoadTest/LoadTest.csproj" />
+  <Project Path="LocalDb.Tests/LocalDb.Tests.csproj" />
+  <Project Path="LocalDb/LocalDb.csproj" />
+</Solution>
