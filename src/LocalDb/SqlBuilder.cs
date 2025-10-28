@@ -15,7 +15,7 @@
                              """;
 
         return $"""
-                if db_id('{name}') is null
+                if db_id(N'{name}') is null
                     begin
                 {createCommand}
                     end;
@@ -29,10 +29,10 @@
 
     public static string DetachTemplateCommand =
         """
-        if db_id('template') is not null
+        if db_id(N'template') is not null
         begin
             alter database [template] set single_user with rollback immediate;
-            execute sp_detach_db 'template', 'true';
+            execute sp_detach_db N'template', 'true';
         end;
         """;
 
@@ -51,9 +51,9 @@
 
     public static string GetCreateTemplateCommand(string dataFile, string logFile) =>
         $"""
-         if db_id('template') is not null
+         if db_id(N'template') is not null
          begin
-           execute sp_detach_db 'template', 'true';
+           execute sp_detach_db N'template', 'true';
          end;
          create database template on
          (
@@ -78,7 +78,7 @@
 
     public static string GetTakeDbsOfflineCommand(string name) =>
         $"""
-         if db_id('{name}') is not null
+         if db_id(N'{name}') is not null
          begin
            alter database [{name}] set single_user with rollback immediate;
            alter database [{name}] set multi_user;

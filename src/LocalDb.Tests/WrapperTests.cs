@@ -162,6 +162,46 @@ end;
     }
 
     [Test]
+    public async Task UnicodeDatabaseNameSupport()
+    {
+        // Test Japanese database name
+        // Creates DB, then recreates WITHOUT deleting to verify db_id(N'{name}') recognizes Unicode DB
+        var japaneseName = "テスト用データベース";
+        await instance.CreateDatabaseFromTemplate(japaneseName);
+        await instance.CreateDatabaseFromTemplate(japaneseName); // Recreate without deleting - tests OFFLINE logic
+        var japaneseState = await instance.ReadDatabaseState(japaneseName);
+        True(japaneseState.DataFileExists);
+        True(japaneseState.LogFileExists);
+        await instance.DeleteDatabase(japaneseName);
+
+        // Test Chinese database name
+        var chineseName = "测试数据库";
+        await instance.CreateDatabaseFromTemplate(chineseName);
+        await instance.CreateDatabaseFromTemplate(chineseName); // Recreate without deleting
+        var chineseState = await instance.ReadDatabaseState(chineseName);
+        True(chineseState.DataFileExists);
+        True(chineseState.LogFileExists);
+        await instance.DeleteDatabase(chineseName);
+
+        // Test Korean database name
+        var koreanName = "테스트데이터베이스";
+        await instance.CreateDatabaseFromTemplate(koreanName);
+        await instance.CreateDatabaseFromTemplate(koreanName); // Recreate without deleting
+        var koreanState = await instance.ReadDatabaseState(koreanName);
+        True(koreanState.DataFileExists);
+        True(koreanState.LogFileExists);
+        await instance.DeleteDatabase(koreanName);
+
+        // Test delete and recreate (different code path)
+        await instance.CreateDatabaseFromTemplate(japaneseName);
+        await instance.DeleteDatabase(japaneseName);
+        await instance.CreateDatabaseFromTemplate(japaneseName); // Create after delete
+        var recreatedState = await instance.ReadDatabaseState(japaneseName);
+        True(recreatedState.DataFileExists);
+        await instance.DeleteDatabase(japaneseName);
+    }
+
+    [Test]
     public async Task DefinedTimestamp()
     {
         var name = "DefinedTimestamp";
