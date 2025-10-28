@@ -3,7 +3,7 @@
     {
       sql: {
         Text:
-if db_id('ToDelete') is not null
+if db_id(N'ToDelete') is not null
   begin
     alter database ToDelete
       set SINGLE_USER 
@@ -19,7 +19,7 @@ if db_id('ToDelete') is not null
     {
       sql: {
         Text:
-if db_id('ToDelete') is null
+if db_id(N'ToDelete') is null
   begin
     create database ToDelete
       on 

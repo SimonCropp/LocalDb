@@ -3,7 +3,7 @@
     {
       sql: {
         Text:
-if db_id('CreateDatabase') is not null
+if db_id(N'CreateDatabase') is not null
   begin
     alter database CreateDatabase
       set SINGLE_USER 
@@ -19,7 +19,7 @@ if db_id('CreateDatabase') is not null
     {
       sql: {
         Text:
-if db_id('CreateDatabase') is null
+if db_id(N'CreateDatabase') is null
   begin
     create database CreateDatabase
       on 
