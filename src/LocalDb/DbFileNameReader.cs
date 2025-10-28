@@ -23,7 +23,7 @@
             f.type_desc
             from sys.master_files f
             inner join sys.databases d on d.database_id = f.database_id
-            where d.name = '{dbName}' and f.type_desc = '{type}'
+            where d.name = N'{dbName}' and f.type_desc = N'{type}'
             """;
 #if(NET5_0_OR_GREATER)
         await using var reader = await command.ExecuteReaderAsync();

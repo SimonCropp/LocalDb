@@ -8,7 +8,7 @@
         command.CommandText = $"""
             select name, filename
             from master.sys.sysaltfiles
-            where name like '{name}%'
+            where name like N'{name}%'
             """;
         var reader = command.ExecuteReader();
         while (reader.Read())
