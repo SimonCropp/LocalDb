@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
     <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB, Testing</PackageTags>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
