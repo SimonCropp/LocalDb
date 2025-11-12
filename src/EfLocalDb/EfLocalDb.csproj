@@ -30,7 +30,6 @@
     <Compile Include="..\LocalDb\State.cs" />
 
     <PackageReference Include="MethodTimer.Fody" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Win32.Registry" />
     <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="All" />
     <PackageReference Include="Fody" PrivateAssets="all" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
