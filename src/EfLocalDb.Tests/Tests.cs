@@ -1,4 +1,5 @@
-﻿#pragma warning disable CS0612 // Type or member is obsolete
+#pragma warning disable CS0612 // Type or member is obsolete
+using NetTopologySuite.Geometries;
 
 [TestFixture]
 public class Tests
@@ -29,8 +30,8 @@ public class Tests
 
         await using var database = await instance.Build();
         await using var asyncScope = database.CreateAsyncScope();
-        await using var providerAsyncScope = ((IServiceProvider) database).CreateAsyncScope();
-        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory) database).CreateAsyncScope();
+        await using var providerAsyncScope = ((IServiceProvider)database).CreateAsyncScope();
+        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory)database).CreateAsyncScope();
         using var scope = database.CreateScope();
         var list = new List<object?>();
         Add(list, database);
@@ -596,5 +597,24 @@ public class Tests
         NotNull(await context.FindAsync<TestEntity>(entity.Id));
         QueryFilter.Enable();
         Null(await context.FindAsync<TestEntity>(entity.Id));
+    }
+
+    [Test]
+    public void EntityWithGeometry()
+    {
+        SqlInstance<GeometryDbContext> sqlInstance = new (builder => new(builder.Options),
+                sqlOptionsBuilder: sb => sb.UseNetTopologySuite());
+        NotNull(sqlInstance); 
+    }
+
+    public class GeometryDbContext(DbContextOptions options) : DbContext(options)
+    {
+        public DbSet<GeometryEntity> GeometryEntities { get; set; } = null!;
+    }
+
+    public class GeometryEntity
+    {
+        public int Id { get; set; }
+        public Geometry? Location { get; set; }
     }
 }
