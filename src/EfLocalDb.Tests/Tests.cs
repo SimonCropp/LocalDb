@@ -602,9 +602,10 @@ public class Tests
     [Test]
     public void EntityWithGeometry()
     {
-        SqlInstance<GeometryDbContext> sqlInstance = new (builder => new(builder.Options),
-                sqlOptionsBuilder: sb => sb.UseNetTopologySuite());
-        NotNull(sqlInstance); 
+        var instance = new SqlInstance<GeometryDbContext>(
+            _ => new(_.Options),
+            sqlOptionsBuilder: _ => _.UseNetTopologySuite());
+        NotNull(instance);
     }
 
     public class GeometryDbContext(DbContextOptions options) : DbContext(options)
@@ -614,7 +615,7 @@ public class Tests
 
     public class GeometryEntity
     {
-        public int Id { get; set; }
-        public Geometry? Location { get; set; }
+        public int Id { get; init; }
+        public Geometry? Location { get; init; }
     }
 }
