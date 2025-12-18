@@ -1,4 +1,4 @@
-* text
+* text=auto eol=lf
 *.ldf binary
 *.mdf binary
 *.snk binary
