@@ -65,7 +65,7 @@ class Wrapper
             throw new("The database name 'template' is reserved.");
         }
 
-        if (name.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
+        if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
         {
             throw new ArgumentException($"Invalid database name. Name must be valid to use as a file name. Value: {name}", nameof(name));
         }

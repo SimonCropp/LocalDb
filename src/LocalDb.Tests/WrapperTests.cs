@@ -11,6 +11,24 @@ public class WrapperTests
     }
 
     [Test]
+    public void InvalidDatabaseName_InvalidCharAtStart()
+    {
+        // Test that invalid characters at position 0 are caught (bug fix test)
+        var exception = ThrowsAsync<ArgumentException>(
+            async () => await instance.CreateDatabaseFromTemplate("<InvalidName"));
+        NotNull(exception);
+    }
+
+    [Test]
+    public void InvalidDatabaseName_InvalidCharInMiddle()
+    {
+        // Test that invalid characters in the middle are also caught
+        var exception = ThrowsAsync<ArgumentException>(
+            async () => await instance.CreateDatabaseFromTemplate("Invalid<Name"));
+        NotNull(exception);
+    }
+
+    [Test]
     [Explicit]
     public async Task RecreateWithOpenConnectionAfterStartup()
     {
