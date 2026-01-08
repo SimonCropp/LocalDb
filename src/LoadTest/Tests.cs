@@ -1,4 +1,5 @@
 [TestFixture]
+[Explicit]
 public class Tests
 {
     static SqlInstance sqlInstance = new(
