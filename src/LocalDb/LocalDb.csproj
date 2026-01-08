@@ -3,6 +3,7 @@
     <TargetFrameworks>net8.0;net9.0;net10.0;net48</TargetFrameworks>
     <Description>Provides a wrapper around the LocalDB to simplify running tests.</Description>
     <PackageTags>LocalDB, Testing</PackageTags>
+    <PolyEnsure>true</PolyEnsure>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="All" />

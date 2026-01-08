@@ -18,9 +18,9 @@ public partial class SqlInstance<TDbContext>
         [CallerMemberName] string memberName = "")
     {
         Guard.AgainstBadOS();
-        Guard.AgainstNullWhiteSpace(testFile);
-        Guard.AgainstNullWhiteSpace(memberName);
-        Guard.AgainstWhiteSpace(databaseSuffix);
+        Ensure.NotNullOrWhiteSpace(testFile);
+        Ensure.NotNullOrWhiteSpace(memberName);
+        Ensure.NotWhiteSpace(databaseSuffix);
 
         var testClass = Path.GetFileNameWithoutExtension(testFile);
 
@@ -69,7 +69,7 @@ public partial class SqlInstance<TDbContext>
         IEnumerable<object>? data)
     {
         Guard.AgainstBadOS();
-        Guard.AgainstNullWhiteSpace(dbName);
+        Ensure.NotNullOrWhiteSpace(dbName);
         var connection = await BuildDatabase(dbName);
         var database = new SqlDatabase<TDbContext>(
             this,

@@ -5,6 +5,7 @@
     <PackageTags>EntityFramework, LocalDB, Testing</PackageTags>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
     <NoWarn>$(NoWarn);CS0618</NoWarn>
+    <PolyEnsure>true</PolyEnsure>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\EfLocalDb\Storage.cs" Link="Storage.cs" />

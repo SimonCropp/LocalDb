@@ -4,6 +4,7 @@
     <Description>Provides a wrapper around the LocalDB to simplify running tests that require Entity Framework.</Description>
     <PackageTags>EntityFrameworkCore, EntityFramework, LocalDB, Testing</PackageTags>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
+    <PolyEnsure>true</PolyEnsure>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\LocalDb\DatabaseState.cs" />
@@ -32,6 +33,7 @@
     <PackageReference Include="MethodTimer.Fody" PrivateAssets="All" />
     <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="All" />
     <PackageReference Include="Fody" PrivateAssets="all" />
+    <PackageReference Include="Polyfill" PrivateAssets="all" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />

@@ -11,8 +11,8 @@ public struct ExistingTemplate
 
     public ExistingTemplate(string dataPath, string logPath)
     {
-        Guard.AgainstNullWhiteSpace(dataPath);
-        Guard.AgainstNullWhiteSpace(logPath);
+        Ensure.NotNullOrWhiteSpace(dataPath);
+        Ensure.NotNullOrWhiteSpace(logPath);
         DataPath = dataPath;
         LogPath = logPath;
     }

@@ -26,33 +26,4 @@ static class Guard
             throw new ArgumentOutOfRangeException(name, size, "3MB is the min allowed value");
         }
     }
-
-    public static void AgainstNullWhiteSpace(string? value, [CallerArgumentExpression("value")] string? name = null)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(name);
-        }
-    }
-
-    public static void AgainstWhiteSpace(string? value, [CallerArgumentExpression("value")] string? name = null)
-    {
-        if (value is null)
-        {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentNullException(name);
-        }
-    }
-
-    public static void AgainstNegative(int value, [CallerArgumentExpression("value")] string? name = null)
-    {
-        if (value < 0)
-        {
-            throw new ArgumentNullException(name);
-        }
-    }
 }
