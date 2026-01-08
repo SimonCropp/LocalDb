@@ -148,7 +148,8 @@ public partial class SqlInstance<TDbContext>
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer("Fake", sqlOptionsBuilder);
-        return constructInstance(builder).Model;
+        using var context = constructInstance(builder);
+        return context.Model;
     }
 
     Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);

@@ -515,6 +515,43 @@ public class Tests
         True(callbackCalled);
     }
 
+    [Test]
+    public void BuildModel_ShouldDisposeContext()
+    {
+        // This test verifies that BuildModel disposes the DbContext it creates
+        // Bug: BuildModel creates a DbContext to get the Model but never disposes it
+        var disposedCount = 0;
+
+        var testInstance = new SqlInstance<DisposableTrackingDbContext>(
+            builder => new(builder.Options)
+            {
+                OnDisposing = () => disposedCount++
+            },
+            storage: Storage.FromSuffix<DisposableTrackingDbContext>("BuildModelDisposalTest"));
+
+        // BuildModel is called in the constructor, which creates a DbContext to extract the Model
+        // That context should be disposed, so disposedCount should be 1
+        AreEqual(1, disposedCount, "BuildModel should dispose the DbContext it creates");
+    }
+
+    public class DisposableTrackingDbContext(DbContextOptions options) : DbContext(options)
+    {
+        public Action? OnDisposing { get; set; }
+        public DbSet<TestEntity> TestEntities { get; set; } = null!;
+
+        public override void Dispose()
+        {
+            OnDisposing?.Invoke();
+            base.Dispose();
+        }
+
+        public override ValueTask DisposeAsync()
+        {
+            OnDisposing?.Invoke();
+            return base.DisposeAsync();
+        }
+    }
+
     static Tests() =>
         instance = new(
             builder => new(builder.Options),
