@@ -4,7 +4,7 @@ public class Tests
     [Test]
     public async Task Simple()
     {
-        var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
+        using var instance = new SqlInstance("Name", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         var connection = database.Connection;
@@ -18,7 +18,7 @@ public class Tests
         static void Add(List<object?> objects, IServiceProvider provider) =>
             objects.Add(provider.GetService<SqlConnection>());
 
-        var instance = new SqlInstance("ServiceScope", TestDbBuilder.CreateTable);
+        using var instance = new SqlInstance("ServiceScope", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         await using var asyncScope = database.CreateAsyncScope();
@@ -52,7 +52,7 @@ public class Tests
     public async Task Callback()
     {
         var callbackCalled = false;
-        var instance = new SqlInstance(
+        using var instance = new SqlInstance(
             "Tests_Callback",
             TestDbBuilder.CreateTable,
             callback: _ =>
@@ -83,7 +83,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance("Defined_TimeStamp", TestDbBuilder.CreateTable, timestamp: dateTime);
+        using var instance = new SqlInstance("Defined_TimeStamp", TestDbBuilder.CreateTable, timestamp: dateTime);
 
         await using var database = await instance.Build();
         AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
@@ -92,7 +92,7 @@ public class Tests
     [Test]
     public async Task Delegate_TimeStamp()
     {
-        var instance = new SqlInstance("Delegate_TimeStamp", TestDbBuilder.CreateTable);
+        using var instance = new SqlInstance("Delegate_TimeStamp", TestDbBuilder.CreateTable);
 
         await using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
@@ -102,7 +102,7 @@ public class Tests
     public async Task Multiple()
     {
         var stopwatch = Stopwatch.StartNew();
-        var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
+        using var instance = new SqlInstance("Multiple", TestDbBuilder.CreateTable);
 
         await using (await instance.Build(databaseSuffix: "one"))
         {
