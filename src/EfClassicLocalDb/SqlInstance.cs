@@ -2,7 +2,8 @@
 
 namespace EfLocalDb;
 
-public class SqlInstance<TDbContext>
+public class SqlInstance<TDbContext> :
+    IDisposable
     where TDbContext : DbContext
 {
     internal Wrapper Wrapper { get; } = null!;
@@ -181,4 +182,7 @@ public class SqlInstance<TDbContext>
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;
+
+    public void Dispose() =>
+        Wrapper.Dispose();
 }
