@@ -4,7 +4,7 @@ public class InversePropertyTests
     [Test]
     public async Task Run()
     {
-        var sqlInstance = new SqlInstance<InversePropertyDbContext>(
+        using var sqlInstance = new SqlInstance<InversePropertyDbContext>(
             buildTemplate: CreateDb,
             constructInstance: builder => new(builder.Options));
 

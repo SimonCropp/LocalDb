@@ -126,7 +126,7 @@ public class Tests
     [Test]
     public async Task SuffixedContext()
     {
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>("ClassicSuffix"));
 
@@ -143,7 +143,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
             context => context.CreateOnExistingDb(),
             timestamp: dateTime,
@@ -156,7 +156,7 @@ public class Tests
     [Test]
     public async Task Assembly_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>("Classic_Assembly_TimeStamp"));
 
@@ -167,7 +167,7 @@ public class Tests
     [Test]
     public async Task Delegate_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
             context => context.CreateOnExistingDb(),
             Storage.FromSuffix<TestDbContext>("Classic_Delegate_TimeStamp"));

@@ -1,6 +1,7 @@
 ﻿namespace LocalDb;
 
-public class SqlInstance
+public class SqlInstance :
+    IDisposable
 {
     internal readonly Wrapper Wrapper = null!;
 
@@ -152,4 +153,7 @@ public class SqlInstance
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;
+
+    public void Dispose() =>
+        Wrapper.Dispose();
 }
