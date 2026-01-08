@@ -19,7 +19,7 @@ public partial class SqlDatabase<TDbContext>
         using var context = NewDbContext();
         foreach (var entity in entities)
         {
-            Context.Set(entity.GetType()).Add(entity);
+            context.Set(entity.GetType()).Add(entity);
         }
 
         await context.SaveChangesAsync();
