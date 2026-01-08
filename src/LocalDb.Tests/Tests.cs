@@ -118,4 +118,13 @@ public class Tests
 
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
     }
+
+    [Test]
+    public void DirectoryParameter_ShouldBeUsed()
+    {
+        var customDirectory = Path.Combine(Path.GetTempPath(), "CustomLocalDbDirectory");
+        var instance = new SqlInstance("DirectoryTest", TestDbBuilder.CreateTable, directory: customDirectory);
+        var actualDirectory = instance.Wrapper.Directory;
+        AreEqual(customDirectory, actualDirectory, "The directory parameter should be used, not overwritten");
+    }
 }

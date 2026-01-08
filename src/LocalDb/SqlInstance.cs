@@ -21,9 +21,16 @@ public class SqlInstance
             return;
         }
 
-        Ensure.NotWhiteSpace(directory);
         Ensure.NotNullOrWhiteSpace(name);
-        directory = DirectoryFinder.Find(name);
+        if (directory == null)
+        {
+            directory = DirectoryFinder.Find(name);
+        }
+        else
+        {
+            Ensure.NotWhiteSpace(directory);
+        }
+
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
