@@ -1,6 +1,7 @@
 namespace EfLocalDb;
 
-public partial class SqlInstance<TDbContext>
+public partial class SqlInstance<TDbContext> :
+    IDisposable
     where TDbContext : DbContext
 {
     internal Wrapper Wrapper { get; } = null!;
@@ -155,4 +156,7 @@ public partial class SqlInstance<TDbContext>
     Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;
+
+    public void Dispose() =>
+        Wrapper.Dispose();
 }

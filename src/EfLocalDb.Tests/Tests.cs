@@ -337,7 +337,7 @@ public class Tests
     [Test]
     public async Task SuffixedContext()
     {
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
             storage: Storage.FromSuffix<TestDbContext>("theSuffix"));
 
@@ -353,7 +353,7 @@ public class Tests
     public async Task SqlOptionsBuilder()
     {
         var optionsBuilderCalled = false;
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
             sqlOptionsBuilder: _ =>
             {
@@ -374,7 +374,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
             async context =>
             {
@@ -390,7 +390,7 @@ public class Tests
     [Test]
     public async Task Assembly_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
             storage: Storage.FromSuffix<TestDbContext>("Assembly_TimeStamp"));
 
@@ -401,7 +401,7 @@ public class Tests
     [Test]
     public async Task Delegate_TimeStamp()
     {
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
             async context =>
             {
@@ -564,7 +564,7 @@ public class Tests
     [Test]
     public async Task BuildTemplate()
     {
-        var instance = new SqlInstance<TestDbContext>(
+        using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
             async context =>
             {
@@ -639,7 +639,7 @@ public class Tests
     [Test]
     public void EntityWithGeometry()
     {
-        var instance = new SqlInstance<GeometryDbContext>(
+        using var instance = new SqlInstance<GeometryDbContext>(
             _ => new(_.Options),
             sqlOptionsBuilder: _ => _.UseNetTopologySuite());
         NotNull(instance);

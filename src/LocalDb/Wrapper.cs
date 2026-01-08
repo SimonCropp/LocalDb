@@ -1,6 +1,6 @@
 ﻿using MethodTimer;
 
-class Wrapper
+class Wrapper : IDisposable
 {
     public readonly string Directory;
     ushort size;
@@ -264,6 +264,7 @@ class Wrapper
     {
         LocalDbApi.StopAndDelete(instance, mode);
         System.IO.Directory.Delete(Directory, true);
+        Dispose();
     }
 
     [Time]
@@ -271,6 +272,7 @@ class Wrapper
     {
         LocalDbApi.StopAndDelete(instance, mode, timeout);
         System.IO.Directory.Delete(Directory, true);
+        Dispose();
     }
 
     void DeleteTemplateFiles()
@@ -294,4 +296,6 @@ class Wrapper
         File.Delete(dataFile);
         File.Delete(logFile);
     }
+
+    public void Dispose() => semaphoreSlim.Dispose();
 }
