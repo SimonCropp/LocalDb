@@ -124,6 +124,34 @@ public class Tests
     }
 
     [Test]
+    public async Task AddDataUntracked_VerifiesEntitiesNotTrackedInMainContext()
+    {
+        // This test verifies that AddDataUntracked actually uses an untracked context
+        // Bug: AddDataUntracked incorrectly adds entities to Context instead of context (local variable)
+        var entity = new TestEntity
+        {
+            Id = 100,
+            Property = "untracked"
+        };
+        using var database = await instance.Build();
+
+        // Before adding, ChangeTracker should be empty
+        AreEqual(0, database.Context.ChangeTracker.Entries().Count());
+
+        // Add data using untracked context
+        await database.AddDataUntracked(entity);
+
+        // The entity should NOT be tracked in the main context
+        // (The bug causes it to be tracked because it adds to Context instead of context)
+        AreEqual(0, database.Context.ChangeTracker.Entries().Count());
+
+        // But the entity should exist in the database
+        var retrieved = await database.Context.TestEntities.FindAsync(entity.Id);
+        NotNull(retrieved);
+        AreEqual("untracked", retrieved.Property);
+    }
+
+    [Test]
     public async Task SuffixedContext()
     {
         var instance = new SqlInstance<TestDbContext>(
