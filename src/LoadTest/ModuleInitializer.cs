@@ -1,6 +1,3 @@
-[assembly: NonParallelizable]
-[assembly: LevelOfParallelism(1)]
-
 public static class ModuleInitializer
 {
     [ModuleInitializer]
