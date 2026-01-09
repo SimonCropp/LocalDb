@@ -8,6 +8,7 @@
     <File Path="global.json" />
     <File Path="mdsnippets.json" />
   </Folder>
+  <Project Path="Benchmark/Benchmark.csproj" />
   <Project Path="EfClassicLocalDb.Tests/EfClassicLocalDb.Tests.csproj" />
   <Project Path="EfClassicLocalDb/EfClassicLocalDb.csproj" />
   <Project Path="EfLocalDb.NUnit.Tests/EfLocalDb.NUnit.Tests.csproj" />

@@ -1,0 +1,87 @@
+using BenchmarkDotNet.Attributes;
+
+[MemoryDiagnoser]
+public class LocalDbBenchmarks
+{
+    static SqlInstance sqlInstance = null!;
+    int databaseCounter;
+
+    [GlobalSetup]
+#pragma warning disable CA1822
+    public void Setup()
+#pragma warning restore CA1822
+    {
+        LocalDbLogging.EnableVerbose();
+        LocalDbSettings.ConnectionBuilder((instance, database) =>
+            $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true;Connection Timeout=300");
+
+        sqlInstance = new(
+            name: "Benchmark",
+            buildTemplate: CreateTable);
+    }
+
+    [GlobalCleanup]
+#pragma warning disable CA1822
+    public void Cleanup() =>
+#pragma warning restore CA1822
+        sqlInstance.Dispose();
+
+    [Benchmark]
+    public async Task BuildDatabase()
+    {
+        var dbName = $"BenchDb{Interlocked.Increment(ref databaseCounter)}";
+        await using var database = await sqlInstance.Build(dbName);
+    }
+
+    [Benchmark]
+    public async Task BuildAndInsert()
+    {
+        var dbName = $"InsertDb{Interlocked.Increment(ref databaseCounter)}";
+        await using var database = await sqlInstance.Build(dbName);
+        await AddData(database);
+    }
+
+    [Benchmark]
+    public async Task BuildInsertAndQuery()
+    {
+        var dbName = $"QueryDb{Interlocked.Increment(ref databaseCounter)}";
+        await using var database = await sqlInstance.Build(dbName);
+        await AddData(database);
+        await GetData(database);
+    }
+
+    static async Task CreateTable(DbConnection connection)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = "create table MyTable (Value int);";
+        await command.ExecuteNonQueryAsync();
+    }
+
+    static int intData;
+
+    static async Task AddData(DbConnection connection)
+    {
+        await using var command = connection.CreateCommand();
+        var addData = Interlocked.Increment(ref intData);
+        command.CommandText =
+            $"""
+             insert into MyTable (Value)
+             values ({addData});
+             """;
+        await command.ExecuteNonQueryAsync();
+    }
+
+    static async Task<List<int>> GetData(DbConnection connection)
+    {
+        var values = new List<int>();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "select Value from MyTable";
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            values.Add(reader.GetInt32(0));
+        }
+
+        return values;
+    }
+}
