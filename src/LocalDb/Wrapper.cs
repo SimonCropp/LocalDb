@@ -83,8 +83,8 @@ class Wrapper : IDisposable
 #endif
         await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
 
-        File.Copy(DataFile, dataFile, true);
-        File.Copy(LogFile, logFile, true);
+        await FileExtensions.CopyFileAsync(DataFile, dataFile);
+        await FileExtensions.CopyFileAsync(LogFile, logFile);
 
         FileExtensions.MarkFileAsWritable(dataFile);
         FileExtensions.MarkFileAsWritable(logFile);
@@ -271,8 +271,15 @@ class Wrapper : IDisposable
 
     void DeleteTemplateFiles()
     {
-        File.Delete(DataFile);
-        File.Delete(LogFile);
+        if (File.Exists(DataFile))
+        {
+            File.Delete(DataFile);
+        }
+
+        if (File.Exists(LogFile))
+        {
+            File.Delete(LogFile);
+        }
     }
 
     [Time("dbName: '{dbName}'")]
