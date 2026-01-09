@@ -10,8 +10,8 @@ class Wrapper : IDisposable
     Func<string, DbConnection> buildConnection;
     string instance;
     public readonly string DataFile;
-    string LogFile;
-    string TemplateConnectionString;
+    string logFile;
+    string templateConnectionString;
     public readonly string ServerName;
     Task startupTask = null!;
     bool templateProvided;
@@ -32,7 +32,7 @@ class Wrapper : IDisposable
         this.buildConnection = buildConnection;
         this.instance = instance;
         MasterConnectionString = LocalDbSettings.connectionBuilder(instance, "master");
-        TemplateConnectionString = LocalDbSettings.connectionBuilder(instance, "template");
+        templateConnectionString = LocalDbSettings.connectionBuilder(instance, "template");
         Directory = directory;
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
@@ -42,13 +42,13 @@ class Wrapper : IDisposable
         {
             templateProvided = false;
             DataFile = Path.Combine(directory, "template.mdf");
-            LogFile = Path.Combine(directory, "template_log.ldf");
+            logFile = Path.Combine(directory, "template_log.ldf");
         }
         else
         {
             templateProvided = true;
             DataFile = existingTemplate.Value.DataPath;
-            LogFile = existingTemplate.Value.LogPath;
+            logFile = existingTemplate.Value.LogPath;
         }
 
         var directoryInfo = System.IO.Directory.CreateDirectory(directory);
@@ -83,9 +83,8 @@ class Wrapper : IDisposable
 #endif
         await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
 
-        await Task.WhenAll(
-            FileExtensions.CopyFileAsync(DataFile, dataFile),
-            FileExtensions.CopyFileAsync(LogFile, logFile));
+        await FileExtensions.CopyFileAsync(DataFile, dataFile);
+        await FileExtensions.CopyFileAsync(this.logFile, logFile);
 
         FileExtensions.MarkFileAsWritable(dataFile);
         FileExtensions.MarkFileAsWritable(logFile);
@@ -234,13 +233,13 @@ class Wrapper : IDisposable
     async Task Rebuild(DateTime timestamp, Func<DbConnection, Task> buildTemplate, DbConnection masterConnection)
     {
         DeleteTemplateFiles();
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile));
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, logFile));
 
         FileExtensions.MarkFileAsWritable(DataFile);
-        FileExtensions.MarkFileAsWritable(LogFile);
+        FileExtensions.MarkFileAsWritable(logFile);
 
 #if NET5_0_OR_GREATER
-        await using (var connection = buildConnection(TemplateConnectionString))
+        await using (var connection = buildConnection(templateConnectionString))
 #else
         using (var connection = buildConnection(TemplateConnectionString))
 #endif
@@ -277,9 +276,9 @@ class Wrapper : IDisposable
             File.Delete(DataFile);
         }
 
-        if (File.Exists(LogFile))
+        if (File.Exists(logFile))
         {
-            File.Delete(LogFile);
+            File.Delete(logFile);
         }
     }
 
