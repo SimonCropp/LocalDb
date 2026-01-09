@@ -154,7 +154,7 @@ public partial class SqlInstance<TDbContext> :
         return context.Model;
     }
 
-    Task<string> BuildDatabase(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
+    Task<string> CreateDatabaseFromTemplate(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;
 
