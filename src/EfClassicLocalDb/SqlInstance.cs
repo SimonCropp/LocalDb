@@ -8,7 +8,7 @@ public class SqlInstance<TDbContext> :
 {
     internal Wrapper Wrapper { get; } = null!;
     ConstructInstance<TDbContext> constructInstance = null!;
-    static Storage DefaultStorage;
+    static Storage defaultStorage;
 
     static SqlInstance()
     {
@@ -18,7 +18,8 @@ public class SqlInstance<TDbContext> :
         {
             name = $"{type.DeclaringType!.Name}_{name}";
         }
-        DefaultStorage = new(name, DirectoryFinder.Find(name));
+
+        defaultStorage = new(name, DirectoryFinder.Find(name));
     }
 
     public string ServerName => Wrapper.ServerName;
@@ -56,7 +57,7 @@ public class SqlInstance<TDbContext> :
             return;
         }
 
-        storage ??= DefaultStorage;
+        storage ??= defaultStorage;
 
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         this.constructInstance = constructInstance;
