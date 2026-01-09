@@ -10,6 +10,7 @@ public class Tests
         var connection = database.Connection;
         var data = await TestDbBuilder.AddData(connection);
         Contains(data, await TestDbBuilder.GetData(connection));
+        instance.Wrapper.DeleteInstance();
     }
 
     [Test]
