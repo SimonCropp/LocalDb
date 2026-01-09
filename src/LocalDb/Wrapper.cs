@@ -77,11 +77,11 @@ class Wrapper : IDisposable
         await startupTask;
 
 #if NET5_0_OR_GREATER
-        await using var takeOfflineConnection = await OpenMasterConnection();
+        await using var masterConnection = await OpenMasterConnection();
 #else
-        using var takeOfflineConnection = await OpenMasterConnection();
+        using var masterConnection = await OpenMasterConnection();
 #endif
-        await takeOfflineConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
 
         File.Copy(DataFile, dataFile, true);
         File.Copy(LogFile, logFile, true);
@@ -90,12 +90,6 @@ class Wrapper : IDisposable
         FileExtensions.MarkFileAsWritable(logFile);
 
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
-
-#if NET5_0_OR_GREATER
-        await using var masterConnection = await OpenMasterConnection();
-#else
-        using var masterConnection = await OpenMasterConnection();
-#endif
         await masterConnection.ExecuteCommandAsync(commandText);
 
         var connectionString = LocalDbSettings.connectionBuilder(instance, name);
