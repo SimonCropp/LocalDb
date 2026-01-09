@@ -6,7 +6,7 @@ public partial class SqlInstance<TDbContext> :
 {
     internal Wrapper Wrapper { get; } = null!;
     ConstructInstance<TDbContext> constructInstance = null!;
-    static Storage DefaultStorage;
+    static Storage defaultStorage;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
 
     static SqlInstance()
@@ -17,7 +17,8 @@ public partial class SqlInstance<TDbContext> :
         {
             name = $"{type.DeclaringType!.Name}_{name}";
         }
-        DefaultStorage = new(name, DirectoryFinder.Find(name));
+
+        defaultStorage = new(name, DirectoryFinder.Find(name));
     }
 
     public IModel Model { get; } = null!;
@@ -87,7 +88,7 @@ public partial class SqlInstance<TDbContext> :
             return;
         }
 
-        storage ??= DefaultStorage;
+        storage ??= defaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         Model = BuildModel(constructInstance, sqlOptionsBuilder);
         InitEntityMapping();
