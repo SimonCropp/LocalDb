@@ -52,6 +52,7 @@ public class Tests
     public async Task Callback()
     {
         var callbackCalled = false;
+
         using var instance = new SqlInstance(
             "Tests_Callback",
             TestDbBuilder.CreateTable,
@@ -61,7 +62,15 @@ public class Tests
                 return Task.CompletedTask;
             });
 
-        await using var database = await instance.Build();
+        try
+        {
+            await using var database = await instance.Build();
+        }
+        finally
+        {
+            instance.Wrapper.DeleteInstance();
+        }
+
         True(callbackCalled);
     }
 
