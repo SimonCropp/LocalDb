@@ -93,39 +93,7 @@ class Wrapper : IDisposable
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
         await masterConnection.ExecuteCommandAsync(commandText);
 
-        var connectionString = LocalDbSettings.connectionBuilder(instance, name);
-        await RunCallback(connectionString);
-        return connectionString;
-    }
-
-    async Task RunCallback(string connectionString)
-    {
-        if (callback is null)
-        {
-            return;
-        }
-
-        try
-        {
-            await semaphoreSlim.WaitAsync();
-            if (callback is null)
-            {
-                return;
-            }
-
-#if NET5_0_OR_GREATER
-            await using var connection = buildConnection(connectionString);
-#else
-            using var connection = buildConnection(connectionString);
-#endif
-            await connection.OpenAsync();
-            await callback(connection);
-            callback = null;
-        }
-        finally
-        {
-            semaphoreSlim.Release();
-        }
+        return LocalDbSettings.connectionBuilder(instance, name);
     }
 
     public void Start(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
@@ -247,6 +215,10 @@ class Wrapper : IDisposable
         {
             await connection.OpenAsync();
             await buildTemplate(connection);
+            if (callback != null)
+            {
+                await callback(connection);
+            }
         }
 
         await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
