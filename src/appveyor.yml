@@ -9,9 +9,13 @@ build_script:
       ./dotnet-install.ps1 -JSonFile src/global.json -Architecture x64 -InstallDir 'C:\Program Files\dotnet'
 - dotnet build src --configuration Release
 - dotnet test src/LocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
-#- dotnet test src/EfClassicLocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
-#- dotnet test src/EfLocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
-#- dotnet test src/EfLocalDb.NUnit.Tests --configuration Release --no-build --no-restore --disable-build-servers
+- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
+- dotnet test src/EfClassicLocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
+- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
+- dotnet test src/EfLocalDb.Tests --configuration Release --no-build --no-restore --disable-build-servers
+- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
+- dotnet test src/EfLocalDb.NUnit.Tests --configuration Release --no-build --no-restore --disable-build-servers
+- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
 on_failure:
   - ps: Get-ChildItem *.received.* -recurse | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 test: off
