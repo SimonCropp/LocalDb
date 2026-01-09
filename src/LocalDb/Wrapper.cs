@@ -10,8 +10,8 @@ class Wrapper : IDisposable
     Func<string, DbConnection> buildConnection;
     string instance;
     public readonly string DataFile;
-    string LogFile;
-    string TemplateConnectionString;
+    public readonly string LogFile;
+    public readonly string TemplateConnectionString;
     public readonly string ServerName;
     Task startupTask = null!;
     bool templateProvided;
