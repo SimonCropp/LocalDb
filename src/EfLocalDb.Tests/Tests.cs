@@ -522,7 +522,7 @@ public class Tests
         // Bug: BuildModel creates a DbContext to get the Model but never disposes it
         var disposedCount = 0;
 
-        var testInstance = new SqlInstance<DisposableTrackingDbContext>(
+        using var testInstance = new SqlInstance<DisposableTrackingDbContext>(
             builder => new(builder.Options)
             {
                 OnDisposing = () => disposedCount++
