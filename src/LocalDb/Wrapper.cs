@@ -83,8 +83,9 @@ class Wrapper : IDisposable
 #endif
         await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
 
-        await FileExtensions.CopyFileAsync(DataFile, dataFile);
-        await FileExtensions.CopyFileAsync(LogFile, logFile);
+        await Task.WhenAll(
+            FileExtensions.CopyFileAsync(DataFile, dataFile),
+            FileExtensions.CopyFileAsync(LogFile, logFile));
 
         FileExtensions.MarkFileAsWritable(dataFile);
         FileExtensions.MarkFileAsWritable(logFile);
