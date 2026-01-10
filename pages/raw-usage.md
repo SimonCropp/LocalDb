@@ -96,9 +96,8 @@ public class Tests
         var data = await TestDbBuilder.GetData(database);
         AreEqual(1, data.Count);
     }
-}
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L3-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/StaticConstructor.cs#L3-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -159,7 +158,7 @@ await TestDbBuilder.AddData(database);
 var data = await TestDbBuilder.GetData(database);
 AreEqual(1, data.Count);
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L13-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L14-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -174,7 +173,7 @@ await TestDbBuilder.AddData(database);
 var data = await TestDbBuilder.GetData(database);
 AreEqual(1, data.Count);
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L17-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L18-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-BuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -182,8 +181,8 @@ AreEqual(1, data.Count);
 
 The above are combined in a full test:
 
-<!-- snippet: SnippetTests.cs -->
-<a id='snippet-SnippetTests.cs'></a>
+<!-- snippet: SnippetTests -->
+<a id='snippet-SnippetTests'></a>
 ```cs
 [TestFixture]
 public class SnippetTests
@@ -192,21 +191,17 @@ public class SnippetTests
         name: "Snippets",
         buildTemplate: TestDbBuilder.CreateTable);
 
-
     [Test]
     public async Task TheTest()
     {
 
         await using var database = await sqlInstance.Build();
 
-
         await TestDbBuilder.AddData(database);
         var data = await TestDbBuilder.GetData(database);
         AreEqual(1, data.Count);
 
-
     }
-
 
     [Test]
     public async Task TheTestWithDbName()
@@ -214,12 +209,10 @@ public class SnippetTests
 
         await using var database = await sqlInstance.Build("TheTestWithDbName");
 
-
         await TestDbBuilder.AddData(database);
         var data = await TestDbBuilder.GetData(database);
         AreEqual(1, data.Count);
     }
-}
 ```
-<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

@@ -1,18 +1,19 @@
-﻿public class EfSnippetTests
+﻿#region EfSnippetTests
+public class EfSnippetTests
 {
     public class MyDbContext(DbContextOptions options) :
         DbContext(options)
     {
         public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-        protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
+        protected override void OnModelCreating(ModelBuilder model) =>
+            model.Entity<TheEntity>();
     }
 
     static SqlInstance<MyDbContext> sqlInstance;
 
     static EfSnippetTests() =>
-        sqlInstance = new(
-            builder => new(builder.Options));
+        sqlInstance = new(builder => new(builder.Options));
 
     #region EfTest
 
@@ -64,5 +65,14 @@
         await database.AddData(entity);
 
         AreEqual(1, database.Context.TestEntities.Count());
+    }
+
+    #endregion
+
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        sqlInstance.Cleanup();
+        sqlInstance.Dispose();
     }
 }

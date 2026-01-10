@@ -68,7 +68,7 @@ snippet: EfClassicBuildContext
 
 The above are combined in a full test:
 
-snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs
+snippet: EfClassicSnippetTests
 
 
 ## Using a pre-constructed template

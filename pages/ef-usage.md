@@ -69,8 +69,7 @@ public class Tests
     static SqlInstance<TheDbContext> sqlInstance;
 
     static Tests() =>
-        sqlInstance = new(
-            builder => new(builder.Options));
+        sqlInstance = new(builder => new(builder.Options));
 
     [Test]
     public async Task Test()
@@ -82,9 +81,8 @@ public class Tests
         await using var database = await sqlInstance.Build([entity]);
         AreEqual(1, database.Context.TestEntities.Count());
     }
-}
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L11-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/StaticConstructor.cs#L11-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -178,9 +176,8 @@ public class BuildTemplate
 
         AreEqual(1, database.Context.TestEntities.Count());
     }
-}
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L11-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/BuildTemplate.cs#L11-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildTemplate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -196,7 +193,7 @@ Usage inside a test consists of two parts:
 ```cs
 await using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L22-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L23-L27' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -210,7 +207,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 await using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L28-L33' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L29-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -218,8 +215,8 @@ await using (var data = database.NewDbContext())
 
 The above are combined in a full test:
 
-<!-- snippet: EfLocalDb.Tests/Snippets/EfSnippetTests.cs -->
-<a id='snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
+<!-- snippet: EfSnippetTests -->
+<a id='snippet-EfSnippetTests'></a>
 ```cs
 public class EfSnippetTests
 {
@@ -228,15 +225,14 @@ public class EfSnippetTests
     {
         public DbSet<TheEntity> TestEntities { get; set; } = null!;
 
-        protected override void OnModelCreating(ModelBuilder model) => model.Entity<TheEntity>();
+        protected override void OnModelCreating(ModelBuilder model) =>
+            model.Entity<TheEntity>();
     }
 
     static SqlInstance<MyDbContext> sqlInstance;
 
     static EfSnippetTests() =>
-        sqlInstance = new(
-            builder => new(builder.Options));
-
+        sqlInstance = new(builder => new(builder.Options));
 
     [Test]
     public async Task TheTest()
@@ -244,11 +240,8 @@ public class EfSnippetTests
 
         await using var database = await sqlInstance.Build();
 
-
-
         await using (var data = database.NewDbContext())
         {
-
 
             var entity = new TheEntity
             {
@@ -271,7 +264,6 @@ public class EfSnippetTests
 
         await using var database = await sqlInstance.Build("TheTestWithDbName");
 
-
         var entity = new TheEntity
         {
             Property = "prop"
@@ -280,9 +272,8 @@ public class EfSnippetTests
 
         AreEqual(1, database.Context.TestEntities.Count());
     }
-}
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L60' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L70' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfSnippetTests' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
