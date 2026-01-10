@@ -76,7 +76,6 @@ public class SqlInstance<TDbContext> :
         }
 
         Wrapper = new(
-            _ => new SqlConnection(_),
             storageValue.Name,
             storageValue.Directory,
             templateSize,

@@ -7,7 +7,6 @@ class Wrapper : IDisposable
     Func<SqlConnection, Task>? callback;
     SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
-    Func<string, SqlConnection> buildConnection;
     string instance;
     public readonly string DataFile;
     public readonly string LogFile;
@@ -17,7 +16,6 @@ class Wrapper : IDisposable
     bool templateProvided;
 
     public Wrapper(
-        Func<string, SqlConnection> buildConnection,
         string instance,
         string directory,
         ushort size = 3,
@@ -29,7 +27,6 @@ class Wrapper : IDisposable
         Guard.AgainstInvalidFileName(instance);
 
         LocalDbLogging.WrapperCreated = true;
-        this.buildConnection = buildConnection;
         this.instance = instance;
         MasterConnectionString = LocalDbSettings.connectionBuilder(instance, "master");
         TemplateConnectionString = LocalDbSettings.connectionBuilder(instance, "template");
@@ -193,7 +190,7 @@ class Wrapper : IDisposable
 
     async Task<SqlConnection> OpenMasterConnection()
     {
-        var connection = buildConnection(MasterConnectionString);
+        var connection = new SqlConnection(MasterConnectionString);
         await connection.OpenAsync();
         return connection;
     }
@@ -207,9 +204,9 @@ class Wrapper : IDisposable
         FileExtensions.MarkFileAsWritable(LogFile);
 
 #if NET5_0_OR_GREATER
-        await using (var connection = buildConnection(TemplateConnectionString))
+        await using (var connection = new SqlConnection(TemplateConnectionString))
 #else
-        using (var connection = buildConnection(TemplateConnectionString))
+        using (var connection = new SqlConnection(TemplateConnectionString))
 #endif
         {
             await connection.OpenAsync();
