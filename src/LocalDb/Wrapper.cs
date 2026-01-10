@@ -78,7 +78,11 @@ class Wrapper : IDisposable
 
         await startupTask;
 
-        var masterConnection = await OpenMasterConnection();
+#if NET5_0_OR_GREATER
+        await using var masterConnection = await OpenMasterConnection();
+#else
+        using var masterConnection = await OpenMasterConnection();
+#endif
         await masterConnection.ExecuteCommandAsync(takeDbsOfflineCommand);
 
         await FileExtensions.CopyFileAsync(DataFile, dataFile);
@@ -89,9 +93,11 @@ class Wrapper : IDisposable
 
         await masterConnection.ExecuteCommandAsync(createOrMakeOnlineCommand);
 
-        masterConnection.ChangeDatabase(name);
+        var connectionString = LocalDbSettings.connectionBuilder(instance, name);
+        var connection = buildConnection(connectionString);
+        await connection.OpenAsync();
 
-        return (LocalDbSettings.connectionBuilder(instance, name), masterConnection);
+        return (connectionString, connection);
     }
 
     public void Start(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
