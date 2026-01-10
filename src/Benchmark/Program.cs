@@ -1,3 +1,7 @@
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
 
-BenchmarkRunner.Run<LocalDbBenchmarks>();
+var config = DefaultConfig.Instance
+    .AddDiagnoser(new SqlServerDiagnoser());
+
+BenchmarkRunner.Run<LocalDbBenchmarks>(config);

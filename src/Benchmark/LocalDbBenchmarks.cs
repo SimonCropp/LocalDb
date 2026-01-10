@@ -15,6 +15,9 @@ public class LocalDbBenchmarks
         LocalDbSettings.ConnectionBuilder((instance, database) =>
             $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true;Connection Timeout=300");
 
+        // Force clean start to ensure Optimize: true
+        LocalDbApi.StopAndDelete("Benchmark");
+
         sqlInstance = new(
             name: "Benchmark",
             buildTemplate: CreateTable);
