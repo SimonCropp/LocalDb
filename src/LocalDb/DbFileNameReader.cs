@@ -1,6 +1,6 @@
 ﻿static class DbFileNameReader
 {
-    public static async Task<(string? data, string? log)> ReadFileInfo(this DbConnection connection, string dbName)
+    public static async Task<(string? data, string? log)> ReadFileInfo(this SqlConnection connection, string dbName)
     {
         var datafileName = await connection.ReadFileName(dbName, "ROWS");
         var logFileName = await connection.ReadFileName(dbName, "LOG");
@@ -9,7 +9,7 @@
         return (datafileName, logFileName);
     }
 
-    static async Task<string?> ReadFileName(this DbConnection connection, string dbName, string type)
+    static async Task<string?> ReadFileName(this SqlConnection connection, string dbName, string type)
     {
 #if(NET5_0_OR_GREATER)
         await using var command = connection.CreateCommand();

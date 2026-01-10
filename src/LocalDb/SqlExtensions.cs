@@ -1,6 +1,6 @@
 ﻿static class SqlExtensions
 {
-    public static async Task ExecuteCommandAsync(this DbConnection connection, string commandText)
+    public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
     {
         commandText = commandText.Trim();
 
@@ -36,7 +36,7 @@
         }
     }
 
-    static Exception BuildException(DbConnection connection, string commandText, Exception exception)
+    static Exception BuildException(SqlConnection connection, string commandText, Exception exception)
     {
         var builder = new StringBuilder($"""
             Failed to execute SQL command.

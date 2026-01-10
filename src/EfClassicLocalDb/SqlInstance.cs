@@ -65,7 +65,7 @@ public class SqlInstance<TDbContext> :
         var storageValue = storage.Value;
         DirectoryCleaner.CleanInstance(storageValue.Directory);
 
-        Func<DbConnection, Task>? wrapperCallback = null;
+        Func<SqlConnection, Task>? wrapperCallback = null;
         if (callback is not null)
         {
             wrapperCallback = async connection =>

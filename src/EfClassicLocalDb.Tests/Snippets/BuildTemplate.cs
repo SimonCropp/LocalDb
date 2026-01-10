@@ -1,6 +1,6 @@
 ﻿public class EfClassicBuildTemplate
 {
-    public class TheDbContext(DbConnection connection) :
+    public class TheDbContext(SqlConnection connection) :
         DbContext(connection, false)
     {
         public DbSet<TheEntity> TestEntities { get; set; } = null!;
