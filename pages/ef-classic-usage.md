@@ -68,8 +68,7 @@ public class Tests
     static SqlInstance<TheDbContext> sqlInstance;
 
     static Tests() =>
-        sqlInstance = new(
-            connection => new(connection));
+        sqlInstance = new(connection => new(connection));
 
     [Test]
     public async Task Test()
@@ -81,9 +80,8 @@ public class Tests
         using var database = await sqlInstance.Build([entity]);
         AreEqual(1, database.Context.TestEntities.Count());
     }
-}
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L10-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicStaticConstructor' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/StaticConstructor.cs#L11-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicStaticConstructor' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -182,7 +180,7 @@ Usage inside a test consists of two parts:
 ```cs
 using var database = await sqlInstance.Build();
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L14-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L15-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database-name-resolution)
@@ -196,7 +194,7 @@ See: [Database Name Resolution](/pages/directory-and-name-resolution.md#database
 using (var data = database.NewDbContext())
 {
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L20-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L21-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicBuildContext' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -204,8 +202,8 @@ using (var data = database.NewDbContext())
 
 The above are combined in a full test:
 
-<!-- snippet: EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs -->
-<a id='snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs'></a>
+<!-- snippet: EfClassicSnippetTests -->
+<a id='snippet-EfClassicSnippetTests'></a>
 ```cs
 [TestFixture]
 public class EfSnippetTests
@@ -223,11 +221,8 @@ public class EfSnippetTests
 
         using var database = await sqlInstance.Build();
 
-
-
         using (var data = database.NewDbContext())
         {
-
 
             var entity = new TheEntity
             {
@@ -255,9 +250,8 @@ public class EfSnippetTests
 
         AreEqual(1, database.Context.TestEntities.Count());
     }
-}
 ```
-<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L49' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfClassicLocalDb.Tests/Snippets/EfSnippetTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfClassicSnippetTests' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

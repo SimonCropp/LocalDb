@@ -1,4 +1,5 @@
-﻿[TestFixture]
+﻿#region EfClassicSnippetTests
+[TestFixture]
 public class EfSnippetTests
 {
     static SqlInstance<MyDbContext> sqlInstance;
@@ -49,5 +50,12 @@ public class EfSnippetTests
         await database.AddData(entity);
 
         AreEqual(1, database.Context.TestEntities.Count());
+    }
+    #endregion
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        sqlInstance.Cleanup();
+        sqlInstance.Dispose();
     }
 }

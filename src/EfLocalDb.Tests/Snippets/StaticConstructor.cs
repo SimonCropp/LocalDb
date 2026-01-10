@@ -16,8 +16,7 @@
         static SqlInstance<TheDbContext> sqlInstance;
 
         static Tests() =>
-            sqlInstance = new(
-                builder => new(builder.Options));
+            sqlInstance = new(builder => new(builder.Options));
 
         [Test]
         public async Task Test()
@@ -29,7 +28,14 @@
             await using var database = await sqlInstance.Build([entity]);
             AreEqual(1, database.Context.TestEntities.Count());
         }
-    }
 
-    #endregion
+        #endregion
+
+        [OneTimeTearDown]
+        public void Cleanup()
+        {
+            sqlInstance.Cleanup();
+            sqlInstance.Dispose();
+        }
+    }
 }

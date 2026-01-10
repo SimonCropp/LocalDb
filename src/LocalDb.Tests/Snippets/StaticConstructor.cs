@@ -17,6 +17,13 @@ public class Tests
         var data = await TestDbBuilder.GetData(database);
         AreEqual(1, data.Count);
     }
-}
 
-#endregion
+    #endregion
+
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        sqlInstance.Cleanup();
+        sqlInstance.Dispose();
+    }
+}
