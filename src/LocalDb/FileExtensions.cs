@@ -1,18 +1,5 @@
 ﻿static class FileExtensions
 {
-    public static async Task CopyFileAsync(string sourceFile, string destFile)
-    {
-        const int bufferSize = 81920; // 80KB buffer optimized for large files
-#if NET5_0_OR_GREATER
-        await using var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, useAsync: true);
-        await using var destStream = new FileStream(destFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true);
-#else
-        using var sourceStream = new FileStream(sourceFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, useAsync: true);
-        using var destStream = new FileStream(destFile, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, useAsync: true);
-#endif
-        await sourceStream.CopyToAsync(destStream, bufferSize);
-    }
-
     public static async Task WriteFileAsync(string destFile, byte[] bytes)
     {
 #if NET6_0_OR_GREATER
@@ -29,7 +16,7 @@
             FileMode.Create,
             FileAccess.Write,
             FileShare.None,
-            bufferSize: 4096,
+            bufferSize: 81920,
             FileOptions.Asynchronous | FileOptions.SequentialScan);
         await destStream.WriteAsync(bytes);
 #else
@@ -38,7 +25,7 @@
             FileMode.Create,
             FileAccess.Write,
             FileShare.None,
-            bufferSize: 4096,
+            bufferSize: 81920,
             FileOptions.Asynchronous | FileOptions.SequentialScan);
         await destStream.WriteAsync(bytes, 0, bytes.Length);
 #endif
