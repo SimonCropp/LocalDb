@@ -146,15 +146,15 @@ end;
         using var wrapper = new Wrapper(_ => new SqlConnection(_), instanceName, DirectoryFinder.Find(instanceName));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
-        await wrapper.CreateDatabaseFromTemplate("Simple");
+        (await wrapper.CreateDatabaseFromTemplate("Simple")).Connection.Dispose();
 
-        Thread.Sleep(3000);
+        LocalDbApi.StopInstance(instanceName);
         DirectoryFinder.Delete(instanceName);
 
         using var newWrapper = new Wrapper(_ => new SqlConnection(_), instanceName, DirectoryFinder.Find(instanceName));
         newWrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await newWrapper.AwaitStart();
-        await newWrapper.CreateDatabaseFromTemplate("Simple");
+        (await newWrapper.CreateDatabaseFromTemplate("Simple")).Connection.Dispose();
 
         await Verify(newWrapper.ReadDatabaseState("Simple"));
     }
