@@ -30,6 +30,26 @@ public partial class SqlDatabase<TDbContext> :
         Connection = new(connectionString);
     }
 
+    internal SqlDatabase(
+        SqlInstance<TDbContext> instance,
+        string connectionString,
+        string name,
+        SqlConnection connection,
+        ConstructInstance<TDbContext> constructInstance,
+        Func<Task> delete,
+        IEnumerable<object>? data,
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
+    {
+        Name = name;
+        this.instance = instance;
+        this.constructInstance = constructInstance;
+        this.delete = delete;
+        this.data = data;
+        this.sqlOptionsBuilder = sqlOptionsBuilder;
+        ConnectionString = connectionString;
+        Connection = connection;
+    }
+
     public string Name { get; }
     public SqlConnection Connection { get; }
     public string ConnectionString { get; }
@@ -47,17 +67,17 @@ public partial class SqlDatabase<TDbContext> :
 
     public static implicit operator DbConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
-    public async Task Start()
+    public Task Start()
     {
-        await Connection.OpenAsync();
-
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
 
         if (data is not null)
         {
-            await AddData(data);
+            return AddData(data);
         }
+
+        return Task.CompletedTask;
     }
 
     public TDbContext Context { get; private set; } = null!;

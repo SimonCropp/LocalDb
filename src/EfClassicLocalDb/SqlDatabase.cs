@@ -23,6 +23,22 @@ public partial class SqlDatabase<TDbContext> :
         Connection = new(connectionString);
     }
 
+    internal SqlDatabase(
+        string connectionString,
+        string name,
+        SqlConnection connection,
+        ConstructInstance<TDbContext> constructInstance,
+        Func<Task> delete,
+        IEnumerable<object>? data)
+    {
+        Name = name;
+        this.constructInstance = constructInstance;
+        this.delete = delete;
+        this.data = data;
+        ConnectionString = connectionString;
+        Connection = connection;
+    }
+
     public string Name { get; }
     public SqlConnection Connection { get; }
     public string ConnectionString { get; }
@@ -38,15 +54,15 @@ public partial class SqlDatabase<TDbContext> :
 
     public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
-    public async Task Start()
+    public Task Start()
     {
-        await Connection.OpenAsync();
-
         Context = NewDbContext();
         if (data is not null)
         {
-            await AddData(data);
+            return AddData(data);
         }
+
+        return Task.CompletedTask;
     }
 
     public TDbContext Context { get; private set; } = null!;

@@ -70,11 +70,12 @@ public partial class SqlInstance<TDbContext>
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
-        var connection = await CreateDatabaseFromTemplate(dbName);
+        var (connectionString, connection) = await CreateDatabaseFromTemplate(dbName);
         var database = new SqlDatabase<TDbContext>(
             this,
-            connection,
+            connectionString,
             dbName,
+            (SqlConnection)connection,
             constructInstance,
             () => Wrapper.DeleteDatabase(dbName),
             data,

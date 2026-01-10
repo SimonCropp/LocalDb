@@ -102,7 +102,7 @@ public class SqlInstance :
         Wrapper.DeleteInstance(mode, timeout);
     }
 
-    Task<string> CreateDatabaseFromTemplate(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
+    Task<(string ConnectionString, DbConnection Connection)> CreateDatabaseFromTemplate(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     #region ConventionBuildSignature
 
@@ -153,10 +153,8 @@ public class SqlInstance :
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
-        var connection = await CreateDatabaseFromTemplate(dbName);
-        var database = new SqlDatabase(connection, dbName, () => Wrapper.DeleteDatabase(dbName));
-        await database.Start();
-        return database;
+        var (connectionString, connection) = await CreateDatabaseFromTemplate(dbName);
+        return new(connectionString, dbName, (SqlConnection)connection, () => Wrapper.DeleteDatabase(dbName));
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;

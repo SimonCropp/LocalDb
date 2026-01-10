@@ -118,7 +118,7 @@ public class SqlInstance<TDbContext> :
         Wrapper.DeleteInstance(mode, timeout);
     }
 
-    Task<string> CreateDatabaseFromTemplate(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
+    Task<(string ConnectionString, DbConnection Connection)> CreateDatabaseFromTemplate(string dbName) => Wrapper.CreateDatabaseFromTemplate(dbName);
 
     /// <summary>
     ///     Build DB with a name based on the calling Method.
@@ -165,10 +165,11 @@ public class SqlInstance<TDbContext> :
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
-        var connection = await CreateDatabaseFromTemplate(dbName);
+        var (connectionString, connection) = await CreateDatabaseFromTemplate(dbName);
         var database = new SqlDatabase<TDbContext>(
-            connection,
+            connectionString,
             dbName,
+            (SqlConnection)connection,
             constructInstance,
             () => Wrapper.DeleteDatabase(dbName),
             data);

@@ -58,7 +58,7 @@ class Wrapper : IDisposable
     }
 
     [Time("Name: '{name}'")]
-    public async Task<string> CreateDatabaseFromTemplate(string name)
+    public async Task<(string ConnectionString, DbConnection Connection)> CreateDatabaseFromTemplate(string name)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -73,15 +73,13 @@ class Wrapper : IDisposable
         // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
+        var takeDbsOfflineCommand = SqlBuilder.GetTakeDbsOfflineCommand(name);
+        var createOrMakeOnlineCommand = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
 
         await startupTask;
 
-#if NET5_0_OR_GREATER
-        await using var masterConnection = await OpenMasterConnection();
-#else
-        using var masterConnection = await OpenMasterConnection();
-#endif
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
+        var masterConnection = await OpenMasterConnection();
+        await masterConnection.ExecuteCommandAsync(takeDbsOfflineCommand);
 
         await FileExtensions.CopyFileAsync(DataFile, dataFile);
         await FileExtensions.CopyFileAsync(LogFile, logFile);
@@ -89,10 +87,11 @@ class Wrapper : IDisposable
         FileExtensions.MarkFileAsWritable(dataFile);
         FileExtensions.MarkFileAsWritable(logFile);
 
-        var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
-        await masterConnection.ExecuteCommandAsync(commandText);
+        await masterConnection.ExecuteCommandAsync(createOrMakeOnlineCommand);
 
-        return LocalDbSettings.connectionBuilder(instance, name);
+        masterConnection.ChangeDatabase(name);
+
+        return (LocalDbSettings.connectionBuilder(instance, name), masterConnection);
     }
 
     public void Start(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
