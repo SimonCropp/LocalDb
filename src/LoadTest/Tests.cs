@@ -1,3 +1,5 @@
+using Microsoft.Data.SqlClient;
+
 [TestFixture]
 [Explicit]
 public class Tests
@@ -23,7 +25,7 @@ public class Tests
         }
     }
 
-    static async Task CreateTable(DbConnection connection)
+    static async Task CreateTable(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "create table MyTable (Value int);";
@@ -32,7 +34,7 @@ public class Tests
 
     static int intData;
 
-    static async Task AddData(DbConnection connection)
+    static async Task AddData(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         var addData = intData;
@@ -45,7 +47,7 @@ public class Tests
         await command.ExecuteNonQueryAsync();
     }
 
-    static async Task<List<int>> GetData(DbConnection connection)
+    static async Task<List<int>> GetData(SqlConnection connection)
     {
         var values = new List<int>();
         await using var command = connection.CreateCommand();

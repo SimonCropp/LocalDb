@@ -23,8 +23,6 @@ public partial class SqlDatabase :
 
     public static implicit operator SqlConnection(SqlDatabase instance) => instance.Connection;
 
-    public static implicit operator DbConnection(SqlDatabase instance) => instance.Connection;
-
     public async Task<SqlConnection> OpenNewConnection()
     {
         var connection = new SqlConnection(ConnectionString);

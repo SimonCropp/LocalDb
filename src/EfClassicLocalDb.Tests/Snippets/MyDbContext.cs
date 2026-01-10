@@ -1,4 +1,4 @@
-﻿public class MyDbContext(DbConnection connection) :
+﻿public class MyDbContext(SqlConnection connection) :
     DbContext(connection, false)
 {
     public DbSet<TheEntity> TestEntities { get; set; } = null!;

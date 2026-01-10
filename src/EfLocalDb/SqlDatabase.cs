@@ -45,8 +45,6 @@ public partial class SqlDatabase<TDbContext> :
 
     public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
-    public static implicit operator DbConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
-
     public async Task Start()
     {
         await Connection.OpenAsync();

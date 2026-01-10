@@ -99,14 +99,14 @@ public partial class SqlInstance<TDbContext> :
         StorageDirectory = storageValue.Directory;
         DirectoryCleaner.CleanInstance(StorageDirectory);
 
-        Task BuildTemplate(DbConnection connection)
+        Task BuildTemplate(SqlConnection connection)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(connection, sqlOptionsBuilder);
             return buildTemplate(connection, builder);
         }
 
-        Func<DbConnection, Task>? wrapperCallback = null;
+        Func<SqlConnection, Task>? wrapperCallback = null;
         if (callback is not null)
         {
             wrapperCallback = async connection =>

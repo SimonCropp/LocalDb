@@ -1,6 +1,4 @@
-﻿using System.Data.SqlClient;
-
-[TestFixture]
+﻿[TestFixture]
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;

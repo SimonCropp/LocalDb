@@ -1,4 +1,5 @@
 using BenchmarkDotNet.Attributes;
+using Microsoft.Data.SqlClient;
 
 [MemoryDiagnoser]
 public class LocalDbBenchmarks
@@ -53,7 +54,7 @@ public class LocalDbBenchmarks
         await GetData(database);
     }
 
-    static async Task CreateTable(DbConnection connection)
+    static async Task CreateTable(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "create table MyTable (Value int);";
@@ -62,7 +63,7 @@ public class LocalDbBenchmarks
 
     static int intData;
 
-    static async Task AddData(DbConnection connection)
+    static async Task AddData(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         var addData = Interlocked.Increment(ref intData);
@@ -74,7 +75,7 @@ public class LocalDbBenchmarks
         await command.ExecuteNonQueryAsync();
     }
 
-    static async Task<List<int>> GetData(DbConnection connection)
+    static async Task<List<int>> GetData(SqlConnection connection)
     {
         var values = new List<int>();
         await using var command = connection.CreateCommand();
