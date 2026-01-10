@@ -14,8 +14,7 @@ public class WrapperTests
     public void InvalidDatabaseName_InvalidCharAtStart()
     {
         // Test that invalid characters at position 0 are caught (bug fix test)
-        var exception = ThrowsAsync<ArgumentException>(
-            async () => await instance.CreateDatabaseFromTemplate("<InvalidName"));
+        var exception = ThrowsAsync<ArgumentException>(async () => await instance.CreateDatabaseFromTemplate("<InvalidName"));
         NotNull(exception);
     }
 
@@ -23,8 +22,7 @@ public class WrapperTests
     public void InvalidDatabaseName_InvalidCharInMiddle()
     {
         // Test that invalid characters in the middle are also caught
-        var exception = ThrowsAsync<ArgumentException>(
-            async () => await instance.CreateDatabaseFromTemplate("Invalid<Name"));
+        var exception = ThrowsAsync<ArgumentException>(async () => await instance.CreateDatabaseFromTemplate("Invalid<Name"));
         NotNull(exception);
     }
 
@@ -106,11 +104,14 @@ end;
         var name = "WrapperTests_Callback";
 
         var callbackCalled = false;
-        using var wrapper = new Wrapper(name, DirectoryFinder.Find(name), callback: _ =>
-        {
-            callbackCalled = true;
-            return Task.CompletedTask;
-        });
+        using var wrapper = new Wrapper(
+            name,
+            DirectoryFinder.Find(name),
+            callback: _ =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
         True(callbackCalled);
