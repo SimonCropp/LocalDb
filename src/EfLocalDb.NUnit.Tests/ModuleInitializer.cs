@@ -8,7 +8,7 @@ public static class ModuleInitializer
         VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.InitializePlugins();
         LocalDbLogging.EnableVerbose();
-        LocalDbSettings.ConnectionBuilder((instance, database) => $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true;Connection Timeout=300");
+        LocalDbSettings.ConnectionBuilder(_ => _.ConnectTimeout = 300);
         LocalDbTestBase<TheDbContext>.Initialize();
     }
 }
