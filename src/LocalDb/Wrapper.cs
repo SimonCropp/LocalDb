@@ -226,7 +226,7 @@ class Wrapper : IDisposable
     public void DeleteInstance(ShutdownMode mode = ShutdownMode.KillProcess)
     {
         LocalDbApi.StopAndDelete(instance, mode);
-        System.IO.Directory.Delete(Directory, true);
+        DeleteDirectory();
         Dispose();
     }
 
@@ -234,8 +234,16 @@ class Wrapper : IDisposable
     public void DeleteInstance(ShutdownMode mode, TimeSpan timeout)
     {
         LocalDbApi.StopAndDelete(instance, mode, timeout);
-        System.IO.Directory.Delete(Directory, true);
+        DeleteDirectory();
         Dispose();
+    }
+
+    void DeleteDirectory()
+    {
+        if (System.IO.Directory.Exists(Directory))
+        {
+            System.IO.Directory.Delete(Directory, true);
+        }
     }
 
     void DeleteTemplateFiles()
