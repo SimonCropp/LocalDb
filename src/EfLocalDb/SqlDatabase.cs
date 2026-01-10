@@ -96,7 +96,7 @@ public partial class SqlDatabase<TDbContext> :
     public TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
-        builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
+        builder.UseSqlServer(ConnectionString, sqlOptionsBuilder);
         builder.ApplyQueryTracking(tracking);
         return constructInstance(builder);
     }
