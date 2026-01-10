@@ -15,8 +15,7 @@ public class LocalDbBenchmarks
 #pragma warning restore CA1822
     {
         LocalDbLogging.EnableVerbose();
-        LocalDbSettings.ConnectionBuilder((instance, database) =>
-            $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true;Connection Timeout=300");
+        LocalDbSettings.ConnectionBuilder(_ => _.ConnectTimeout = 300);
 
         // Force clean start to ensure Optimize: true
         LocalDbApi.StopAndDelete("Benchmark");

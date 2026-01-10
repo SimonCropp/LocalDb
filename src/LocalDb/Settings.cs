@@ -4,12 +4,22 @@ namespace EfLocalDb;
 namespace LocalDb;
 #endif
 
-public delegate string BuildConnection(string instance, string database);
-
 public static class LocalDbSettings
 {
-    internal static BuildConnection connectionBuilder = (instance, database) =>
-        $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true";
+    internal static Action<SqlConnectionStringBuilder>? connectionBuilder;
 
-    public static void ConnectionBuilder(BuildConnection builder) => connectionBuilder = builder;
+    public static void ConnectionBuilder(Action<SqlConnectionStringBuilder> builder) =>
+        connectionBuilder = builder;
+
+    internal static string BuildConnectionString(string instance, string database, bool pool)
+    {
+        var builder = new SqlConnectionStringBuilder
+        {
+            DataSource = $"(LocalDb)\\{instance}",
+            InitialCatalog = database,
+            Pooling = pool
+        };
+        connectionBuilder?.Invoke(builder);
+        return builder.ConnectionString;
+    }
 }

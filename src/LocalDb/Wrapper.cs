@@ -30,8 +30,8 @@ class Wrapper : IDisposable
 
         LocalDbLogging.WrapperCreated = true;
         this.instance = instance;
-        MasterConnectionString = LocalDbSettings.connectionBuilder(instance, "master");
-        TemplateConnectionString = LocalDbSettings.connectionBuilder(instance, "template");
+        MasterConnectionString = LocalDbSettings.BuildConnectionString(instance, "master", true);
+        TemplateConnectionString = LocalDbSettings.BuildConnectionString(instance, "template", false);
         Directory = directory;
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
@@ -91,7 +91,7 @@ class Wrapper : IDisposable
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
         await masterConnection.ExecuteCommandAsync(commandText);
 
-        return LocalDbSettings.connectionBuilder(instance, name);
+        return LocalDbSettings.BuildConnectionString(instance, name, false);
     }
 
     public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
