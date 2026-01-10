@@ -1,6 +1,6 @@
 ﻿public static class TestDbBuilder
 {
-    public static async Task CreateTable(DbConnection connection)
+    public static async Task CreateTable(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "create table MyTable (Value int);";
@@ -9,7 +9,7 @@
 
     static int intData;
 
-    public static async Task<int> AddData(DbConnection connection)
+    public static async Task<int> AddData(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
         var addData = intData;
@@ -22,7 +22,7 @@
         return addData;
     }
 
-    public static async Task<List<int>> GetData(DbConnection connection)
+    public static async Task<List<int>> GetData(SqlConnection connection)
     {
         var values = new List<int>();
         await using var command = connection.CreateCommand();

@@ -1,4 +1,4 @@
-﻿public class WithRebuildDbContext(DbConnection connection) :
+﻿public class WithRebuildDbContext(SqlConnection connection) :
     DbContext(connection, false)
 {
     public DbSet<TestEntity> TestEntities { get; set; } = null!;

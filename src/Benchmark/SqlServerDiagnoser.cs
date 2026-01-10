@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Analysers;
-using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Exporters;

@@ -1,3 +1,3 @@
 namespace EfLocalDb;
 
-public delegate Task TemplateFromConnection(DbConnection connection);
+public delegate Task TemplateFromConnection(SqlConnection connection);

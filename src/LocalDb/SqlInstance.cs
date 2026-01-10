@@ -9,13 +9,13 @@ public class SqlInstance :
 
     public SqlInstance(
         string name,
-        Func<DbConnection, Task> buildTemplate,
+        Func<SqlConnection, Task> buildTemplate,
         string? directory = null,
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<DbConnection, Task>? callback = null,
-        Func<string, DbConnection>? buildConnection = null)
+        Func<SqlConnection, Task>? callback = null,
+        Func<string, SqlConnection>? buildConnection = null)
     {
         if (!Guard.IsWindows)
         {
@@ -35,38 +35,10 @@ public class SqlInstance :
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-        buildConnection ??= _ => new SqlConnection(_);
+        buildConnection ??= _ => new(_);
 
         Wrapper = new(buildConnection, name, directory, templateSize, exitingTemplate, callback);
         Wrapper.Start(resultTimestamp, buildTemplate);
-    }
-
-    public SqlInstance(
-        string name,
-        Func<SqlConnection, Task> buildTemplate,
-        string? directory = null,
-        DateTime? timestamp = null,
-        ushort templateSize = 3,
-        ExistingTemplate? exitingTemplate = null,
-        Func<SqlConnection, Task>? callback = null) :
-        this(
-            name,
-            connection => buildTemplate((SqlConnection) connection),
-            directory,
-            timestamp,
-            templateSize,
-            exitingTemplate,
-            connection =>
-            {
-                if (callback == null)
-                {
-                    return Task.CompletedTask;
-                }
-
-                return callback.Invoke((SqlConnection) connection);
-            },
-            _ => new SqlConnection(_))
-    {
     }
 
     static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate, Assembly callingAssembly)

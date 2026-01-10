@@ -4,10 +4,10 @@ class Wrapper : IDisposable
 {
     public readonly string Directory;
     ushort size;
-    Func<DbConnection, Task>? callback;
+    Func<SqlConnection, Task>? callback;
     SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
-    Func<string, DbConnection> buildConnection;
+    Func<string, SqlConnection> buildConnection;
     string instance;
     public readonly string DataFile;
     public readonly string LogFile;
@@ -17,12 +17,12 @@ class Wrapper : IDisposable
     bool templateProvided;
 
     public Wrapper(
-        Func<string, DbConnection> buildConnection,
+        Func<string, SqlConnection> buildConnection,
         string instance,
         string directory,
         ushort size = 3,
         ExistingTemplate? existingTemplate = null,
-        Func<DbConnection, Task>? callback = null)
+        Func<SqlConnection, Task>? callback = null)
     {
         Guard.AgainstBadOS();
         Guard.AgainstDatabaseSize(size);
@@ -95,7 +95,7 @@ class Wrapper : IDisposable
         return LocalDbSettings.connectionBuilder(instance, name);
     }
 
-    public void Start(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
+    public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
 #if RELEASE
         try
@@ -117,7 +117,7 @@ class Wrapper : IDisposable
 
     public Task AwaitStart() => startupTask;
 
-    void InnerStart(DateTime timestamp, Func<DbConnection, Task> buildTemplate)
+    void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
         void CleanStart()
         {
@@ -168,7 +168,7 @@ class Wrapper : IDisposable
     [Time("Timestamp: '{timestamp}', Rebuild: '{rebuild}', Optimize: '{optimize}'")]
     async Task CreateAndDetachTemplate(
         DateTime timestamp,
-        Func<DbConnection, Task> buildTemplate,
+        Func<SqlConnection, Task> buildTemplate,
         bool rebuild,
         bool optimize)
     {
@@ -191,14 +191,14 @@ class Wrapper : IDisposable
         }
     }
 
-    async Task<DbConnection> OpenMasterConnection()
+    async Task<SqlConnection> OpenMasterConnection()
     {
         var connection = buildConnection(MasterConnectionString);
         await connection.OpenAsync();
         return connection;
     }
 
-    async Task Rebuild(DateTime timestamp, Func<DbConnection, Task> buildTemplate, DbConnection masterConnection)
+    async Task Rebuild(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, SqlConnection masterConnection)
     {
         DeleteTemplateFiles();
         await masterConnection.ExecuteCommandAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile));
