@@ -61,7 +61,7 @@ end;
         }
 
         await Verify(wrapper.ReadDatabaseState("Simple"));
-        LocalDbApi.StopInstance(name);
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -83,7 +83,7 @@ end;
         }
 
         await Verify(wrapper.ReadDatabaseState("Simple"));
-        LocalDbApi.StopInstance(name);
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -97,7 +97,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
         await Verify(wrapper.ReadDatabaseState("Simple"));
-        LocalDbApi.StopInstance(name);
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -114,7 +114,7 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
         True(callbackCalled);
-        LocalDbApi.StopAndDelete(name);
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -131,7 +131,7 @@ end;
         await wrapper.CreateDatabaseFromTemplate("Simple");
         await Verify(wrapper.ReadDatabaseState("Simple"));
         wrapper.Dispose();
-        LocalDbApi.StopInstance(name);
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -169,7 +169,7 @@ end;
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
         await Verify(wrapper.ReadDatabaseState("Simple"));
-        LocalDbApi.StopInstance(name);
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -230,6 +230,7 @@ end;
         wrapper.Start(dateTime, _ => Task.CompletedTask);
         await wrapper.AwaitStart();
         AreEqual(dateTime, File.GetCreationTime(wrapper.DataFile));
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -244,6 +245,7 @@ end;
         wrapper.Start(timestamp, _ => throw new());
         await wrapper.AwaitStart();
         await Verify();
+        wrapper.DeleteInstance();
     }
 
     [Test]
@@ -292,4 +294,8 @@ end;
         instance.Start(timestamp, TestDbBuilder.CreateTable);
         instance.AwaitStart().GetAwaiter().GetResult();
     }
+
+    [OneTimeTearDown]
+    public void Cleanup() =>
+        instance.DeleteInstance();
 }
