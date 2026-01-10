@@ -14,8 +14,7 @@ public class SqlInstance :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<SqlConnection, Task>? callback = null,
-        Func<string, SqlConnection>? buildConnection = null)
+        Func<SqlConnection, Task>? callback = null)
     {
         if (!Guard.IsWindows)
         {
@@ -35,9 +34,8 @@ public class SqlInstance :
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
-        buildConnection ??= _ => new(_);
 
-        Wrapper = new(buildConnection, name, directory, templateSize, exitingTemplate, callback);
+        Wrapper = new(name, directory, templateSize, exitingTemplate, callback);
         Wrapper.Start(resultTimestamp, buildTemplate);
     }
 
