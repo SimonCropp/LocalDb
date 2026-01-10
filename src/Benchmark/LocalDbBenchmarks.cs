@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Data.SqlClient;
 
 [MemoryDiagnoser]
+[SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class LocalDbBenchmarks
 {
     static SqlInstance sqlInstance = null!;
@@ -25,10 +27,11 @@ public class LocalDbBenchmarks
     }
 
     [GlobalCleanup]
-#pragma warning disable CA1822
-    public void Cleanup() =>
-#pragma warning restore CA1822
+    public void Cleanup()
+    {
+        sqlInstance.Cleanup();
         sqlInstance.Dispose();
+    }
 
     [Benchmark]
     public async Task BuildDatabase()

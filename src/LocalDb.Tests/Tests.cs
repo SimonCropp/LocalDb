@@ -10,7 +10,7 @@ public class Tests
         var connection = database.Connection;
         var data = await TestDbBuilder.AddData(connection);
         Contains(data, await TestDbBuilder.GetData(connection));
-        instance.Wrapper.DeleteInstance();
+        instance.Cleanup();
     }
 
     [Test]
@@ -23,8 +23,8 @@ public class Tests
 
         await using var database = await instance.Build();
         await using var asyncScope = database.CreateAsyncScope();
-        await using var providerAsyncScope = ((IServiceProvider)database).CreateAsyncScope();
-        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory)database).CreateAsyncScope();
+        await using var providerAsyncScope = ((IServiceProvider) database).CreateAsyncScope();
+        await using var scopeFactoryAsyncScope = ((IServiceScopeFactory) database).CreateAsyncScope();
         using var scope = database.CreateScope();
         var list = new List<object?>();
         Add(list, database);
@@ -43,10 +43,13 @@ public class Tests
                 {
                     continue;
                 }
+
                 var nested = list[innerIndex];
                 AreNotEqual(item, nested);
             }
         }
+
+        instance.Cleanup();
     }
 
     [Test]
@@ -69,7 +72,7 @@ public class Tests
         }
         finally
         {
-            instance.Wrapper.DeleteInstance();
+            instance.Cleanup();
         }
 
         True(callbackCalled);
@@ -97,6 +100,7 @@ public class Tests
 
         await using var database = await instance.Build();
         AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 
     [Test]
@@ -106,6 +110,7 @@ public class Tests
 
         await using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 
     [Test]
@@ -127,6 +132,7 @@ public class Tests
         }
 
         Trace.WriteLine(stopwatch.ElapsedMilliseconds);
+        instance.Cleanup();
     }
 
     [Test]
@@ -136,5 +142,6 @@ public class Tests
         var instance = new SqlInstance("DirectoryTest", TestDbBuilder.CreateTable, directory: customDirectory);
         var actualDirectory = instance.Wrapper.Directory;
         AreEqual(customDirectory, actualDirectory, "The directory parameter should be used, not overwritten");
+        instance.Cleanup();
     }
 }

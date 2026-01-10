@@ -1,4 +1,5 @@
-﻿[TestFixture]
+﻿#region SnippetTests
+[TestFixture]
 public class SnippetTests
 {
     static SqlInstance sqlInstance = new(
@@ -39,5 +40,14 @@ public class SnippetTests
         await TestDbBuilder.AddData(database);
         var data = await TestDbBuilder.GetData(database);
         AreEqual(1, data.Count);
+    }
+
+    #endregion
+
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        sqlInstance.Cleanup();
+        sqlInstance.Dispose();
     }
 }

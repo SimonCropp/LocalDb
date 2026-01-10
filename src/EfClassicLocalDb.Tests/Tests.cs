@@ -255,4 +255,11 @@ public class Tests
                 callbackCalled = true;
                 return Task.CompletedTask;
             });
+
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        instance.Cleanup();
+        instance.Dispose();
+    }
 }

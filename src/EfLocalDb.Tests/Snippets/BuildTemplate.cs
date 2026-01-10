@@ -35,7 +35,14 @@
 
             AreEqual(1, database.Context.TestEntities.Count());
         }
-    }
 
-    #endregion
+        #endregion
+
+        [OneTimeTearDown]
+        public void Cleanup()
+        {
+            sqlInstance.Cleanup();
+            sqlInstance.Dispose();
+        }
+    }
 }

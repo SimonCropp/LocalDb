@@ -4,13 +4,14 @@ public class InversePropertyTests
     [Test]
     public async Task Run()
     {
-        using var sqlInstance = new SqlInstance<InversePropertyDbContext>(
+        using var instance = new SqlInstance<InversePropertyDbContext>(
             buildTemplate: CreateDb,
             constructInstance: builder => new(builder.Options));
 
-        var database = await sqlInstance.Build("InverseProperty");
+        var database = await instance.Build("InverseProperty");
         var items = await database.Context.Employees.ToListAsync();
         IsNotEmpty(items);
+        instance.Cleanup();
     }
 
     static async Task CreateDb(InversePropertyDbContext context)
