@@ -9,7 +9,11 @@ public delegate string BuildConnection(string instance, string database);
 public static class LocalDbSettings
 {
     internal static BuildConnection connectionBuilder = (instance, database) =>
-        $"Data Source=(LocalDb)\\{instance};Database={database};Pooling=true";
+    {
+        // Pool master/template connections (reused frequently), but not per-test databases (unique, used once)
+        var pooling = database is "master" or "template";
+        return $"Data Source=(LocalDb)\\{instance};Database={database};Pooling={pooling}";
+    };
 
     public static void ConnectionBuilder(BuildConnection builder) => connectionBuilder = builder;
 }
