@@ -1,6 +1,9 @@
 ﻿static class SqlExtensions
 {
-    public static async Task ExecuteCommandAsync(this DbConnection connection, string commandText)
+    public static Task ExecuteCommandAsync(this DbConnection connection, string commandText) =>
+        ExecuteCommandAsync(connection, commandText, commandTimeout: null);
+
+    public static async Task ExecuteCommandAsync(this DbConnection connection, string commandText, int? commandTimeout)
     {
         commandText = commandText.Trim();
 
@@ -15,6 +18,11 @@
 #endif
             {
                 command.CommandText = commandText;
+                if (commandTimeout.HasValue)
+                {
+                    command.CommandTimeout = commandTimeout.Value;
+                }
+
                 await command.ExecuteNonQueryAsync();
             }
 

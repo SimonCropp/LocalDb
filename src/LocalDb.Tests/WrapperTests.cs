@@ -141,14 +141,13 @@ end;
     {
         var instanceName = "NoFileAndWithInstanceAndNamedDb";
         LocalDbApi.StopAndDelete(instanceName);
-        LocalDbApi.CreateInstance(instanceName);
         DirectoryFinder.Delete(instanceName);
         using var wrapper = new Wrapper(_ => new SqlConnection(_), instanceName, DirectoryFinder.Find(instanceName));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         (await wrapper.CreateDatabaseFromTemplate("Simple")).Connection.Dispose();
 
-        LocalDbApi.StopInstance(instanceName);
+        LocalDbApi.StopAndDelete(instanceName);
         DirectoryFinder.Delete(instanceName);
 
         using var newWrapper = new Wrapper(_ => new SqlConnection(_), instanceName, DirectoryFinder.Find(instanceName));
@@ -157,6 +156,7 @@ end;
         (await newWrapper.CreateDatabaseFromTemplate("Simple")).Connection.Dispose();
 
         await Verify(newWrapper.ReadDatabaseState("Simple"));
+        LocalDbApi.StopInstance(instanceName);
     }
 
     [Test]
