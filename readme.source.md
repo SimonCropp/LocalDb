@@ -1,6 +1,6 @@
 # <img src="/src/icon.png" height="30px"> LocalDb
 
-[![Build status](https://ci.appveyor.com/api/projects/status/0shdndxc7xd14d41/branch/main?svg=true)](https://ci.appveyor.com/project/SimonCropp/LocalDb)
+[![Build status](https://img.shields.io/appveyor/build/SimonCropp/LocalDb)](https://ci.appveyor.com/project/SimonCropp/LocalDb)
 [![NuGet Status](https://img.shields.io/nuget/v/LocalDb.svg?label=nuget:LocalDb)](https://www.nuget.org/packages/LocalDb/)
 [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.svg?label=nuget:EfLocalDb)](https://www.nuget.org/packages/EfLocalDb/)
 [![NuGet Status](https://img.shields.io/nuget/v/EfClassicLocalDb.svg?label=nuget:EfClassicLocalDb)](https://www.nuget.org/packages/EfClassicLocalDb/)
