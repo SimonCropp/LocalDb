@@ -1,20 +1,29 @@
-using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
-static class NativeMethods
+using System.Diagnostics.CodeAnalysis;
+
+[SuppressMessage("Style", "IDE1006:Naming Styles")]
+static class FileCopy
 {
+    extension(File)
+    {
+        public static Task CopyAsync(string source, string destination) =>
+            CopyFileAsync(source, destination);
+    }
+
     [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    internal static extern int CopyFile2(
+    static extern int CopyFile2(
         string pwszExistingFileName,
         string pwszNewFileName,
         ref COPYFILE2_EXTENDED_PARAMETERS pExtendedParameters);
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    internal delegate COPYFILE2_MESSAGE_ACTION CopyProgressRoutine(
+    delegate COPYFILE2_MESSAGE_ACTION CopyProgressRoutine(
         ref COPYFILE2_MESSAGE pMessage,
         IntPtr pvCallbackContext);
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct COPYFILE2_EXTENDED_PARAMETERS
+    struct COPYFILE2_EXTENDED_PARAMETERS
     {
         public uint dwSize;
         public uint dwCopyFlags;
@@ -24,7 +33,7 @@ static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct COPYFILE2_MESSAGE
+    struct COPYFILE2_MESSAGE
     {
         public COPYFILE2_MESSAGE_TYPE Type;
         public uint dwPadding;
@@ -32,7 +41,7 @@ static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    internal struct COPYFILE2_MESSAGE_INFO
+    struct COPYFILE2_MESSAGE_INFO
     {
         [FieldOffset(0)]
         public ChunkStarted ChunkStarted;
@@ -49,7 +58,7 @@ static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct ChunkStarted
+    struct ChunkStarted
     {
         public uint dwStreamNumber;
         public uint dwReserved;
@@ -62,7 +71,7 @@ static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct ChunkFinished
+    struct ChunkFinished
     {
         public uint dwStreamNumber;
         public uint dwFlags;
@@ -77,7 +86,7 @@ static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct StreamStarted
+    struct StreamStarted
     {
         public uint dwStreamNumber;
         public uint dwReserved;
@@ -88,7 +97,7 @@ static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct StreamFinished
+    struct StreamFinished
     {
         public uint dwStreamNumber;
         public uint dwReserved;
@@ -101,13 +110,13 @@ static class NativeMethods
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct PollContinue
+    struct PollContinue
     {
         public uint dwReserved;
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    internal struct Error
+    struct Error
     {
         public COPYFILE2_COPY_PHASE CopyPhase;
         public uint dwStreamNumber;
@@ -120,7 +129,7 @@ static class NativeMethods
         public ulong uliTotalBytesTransferred;
     }
 
-    internal enum COPYFILE2_MESSAGE_TYPE
+    enum COPYFILE2_MESSAGE_TYPE
     {
         COPYFILE2_CALLBACK_NONE = 0,
         COPYFILE2_CALLBACK_CHUNK_STARTED = 1,
@@ -131,7 +140,7 @@ static class NativeMethods
         COPYFILE2_CALLBACK_ERROR = 6,
     }
 
-    internal enum COPYFILE2_MESSAGE_ACTION
+    enum COPYFILE2_MESSAGE_ACTION
     {
         COPYFILE2_PROGRESS_CONTINUE = 0,
         COPYFILE2_PROGRESS_CANCEL = 1,
@@ -140,7 +149,7 @@ static class NativeMethods
         COPYFILE2_PROGRESS_PAUSE = 4,
     }
 
-    internal enum COPYFILE2_COPY_PHASE
+    enum COPYFILE2_COPY_PHASE
     {
         COPYFILE2_PHASE_NONE = 0,
         COPYFILE2_PHASE_PREPARE_SOURCE = 1,
@@ -151,17 +160,16 @@ static class NativeMethods
         COPYFILE2_PHASE_NAMEGRAFT_COPY = 6,
     }
 
-    internal const uint COPY_FILE_FAIL_IF_EXISTS = 0x00000001;
-    internal const uint COPY_FILE_NO_BUFFERING = 0x00001000;
+    const uint COPY_FILE_FAIL_IF_EXISTS = 0x00000001;
+    const uint COPY_FILE_NO_BUFFERING = 0x00001000;
 
-    internal const int S_OK = 0;
+    const int S_OK = 0;
 
-    internal static Task CopyFileAsync(string source, string destination, bool failIfExists = false, bool noBuffering = true)
+    static Task CopyFileAsync(string source, string destination, bool failIfExists = false, bool noBuffering = true)
     {
         var tcs = new TaskCompletionSource<bool>();
-        CopyProgressRoutine? callback = null;
 
-        callback = (ref COPYFILE2_MESSAGE message, IntPtr context) =>
+        var callback = (ref COPYFILE2_MESSAGE message, IntPtr context) =>
         {
             if (message.Type == COPYFILE2_MESSAGE_TYPE.COPYFILE2_CALLBACK_ERROR)
             {

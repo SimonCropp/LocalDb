@@ -86,8 +86,8 @@ class Wrapper : IDisposable
 
             // Copy data and log files in parallel for better performance
             await Task.WhenAll(
-                NativeMethods.CopyFileAsync(DataFile, dataFile, failIfExists: false, noBuffering: true),
-                NativeMethods.CopyFileAsync(LogFile, logFile, failIfExists: false, noBuffering: true));
+                File.CopyAsync(DataFile, dataFile),
+                File.CopyAsync(LogFile, logFile));
 
             FileExtensions.MarkFileAsWritable(dataFile);
             FileExtensions.MarkFileAsWritable(logFile);

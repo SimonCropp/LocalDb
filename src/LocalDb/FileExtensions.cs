@@ -1,36 +1,5 @@
 static class FileExtensions
 {
-    public static async Task WriteFileAsync(string destFile, byte[] bytes)
-    {
-#if NET6_0_OR_GREATER
-        using var handle = File.OpenHandle(
-            destFile,
-            FileMode.Create,
-            FileAccess.Write,
-            FileShare.None,
-            FileOptions.Asynchronous);
-        await RandomAccess.WriteAsync(handle, bytes, 0);
-#elif NET5_0_OR_GREATER
-        await using var destStream = new FileStream(
-            destFile,
-            FileMode.Create,
-            FileAccess.Write,
-            FileShare.None,
-            bufferSize: 81920,
-            FileOptions.Asynchronous | FileOptions.SequentialScan);
-        await destStream.WriteAsync(bytes);
-#else
-        using var destStream = new FileStream(
-            destFile,
-            FileMode.Create,
-            FileAccess.Write,
-            FileShare.None,
-            bufferSize: 81920,
-            FileOptions.Asynchronous | FileOptions.SequentialScan);
-        await destStream.WriteAsync(bytes, 0, bytes.Length);
-#endif
-    }
-
     public static void MarkFileAsWritable(string file) =>
         File.SetAttributes(file, File.GetAttributes(file) & ~FileAttributes.ReadOnly);
 
