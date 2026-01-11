@@ -142,12 +142,14 @@ end;
         LocalDbApi.StopAndDelete(instanceName);
         LocalDbApi.CreateInstance(instanceName);
         DirectoryFinder.Delete(instanceName);
-        using var wrapper = new Wrapper(instanceName, DirectoryFinder.Find(instanceName));
+        var wrapper = new Wrapper(instanceName, DirectoryFinder.Find(instanceName));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
 
         Thread.Sleep(3000);
+        wrapper.Dispose();
+        LocalDbApi.StopAndDelete(instanceName);
         DirectoryFinder.Delete(instanceName);
 
         using var newWrapper = new Wrapper(instanceName, DirectoryFinder.Find(instanceName));
