@@ -1,4 +1,4 @@
-﻿static class SqlBuilder
+static class SqlBuilder
 {
     public static string GetCreateOrMakeOnlineCommand(string name, string dataFile, string logFile)
     {
@@ -79,10 +79,6 @@
     public static string GetTakeDbsOfflineCommand(string name) =>
         $"""
          if db_id(N'{name}') is not null
-         begin
-           alter database [{name}] set single_user with rollback immediate;
-           alter database [{name}] set multi_user;
-           alter database [{name}] set offline;
-         end;
+           alter database [{name}] set offline with rollback immediate;
          """;
 }
