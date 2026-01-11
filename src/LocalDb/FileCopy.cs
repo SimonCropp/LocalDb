@@ -167,14 +167,14 @@ static class FileCopy
 
     static Task CopyFileAsync(string source, string destination, bool failIfExists = false, bool noBuffering = true)
     {
-        var tcs = new TaskCompletionSource<bool>();
+        var completionSource = new TaskCompletionSource<bool>();
 
         var callback = (ref COPYFILE2_MESSAGE message, IntPtr context) =>
         {
             if (message.Type == COPYFILE2_MESSAGE_TYPE.COPYFILE2_CALLBACK_ERROR)
             {
                 var errorInfo = message.Info.Error;
-                tcs.TrySetException(new IOException($"Failed to copy file from '{source}' to '{destination}'. Phase: {errorInfo.CopyPhase}, HRESULT: 0x{errorInfo.hrFailure:X8}"));
+                completionSource.TrySetException(new IOException($"Failed to copy file from '{source}' to '{destination}'. Phase: {errorInfo.CopyPhase}, HRESULT: 0x{errorInfo.hrFailure:X8}"));
                 return COPYFILE2_MESSAGE_ACTION.COPYFILE2_PROGRESS_CANCEL;
             }
 
@@ -210,23 +210,23 @@ static class FileCopy
 
                 var result = CopyFile2(source, destination, ref parameters);
 
-                if (result != S_OK)
+                if (result == S_OK)
                 {
-                    tcs.TrySetException(new IOException($"Failed to copy file from '{source}' to '{destination}'. HRESULT: 0x{result:X8}", Marshal.GetExceptionForHR(result)));
+                    completionSource.TrySetResult(true);
                 }
                 else
                 {
-                    tcs.TrySetResult(true);
+                    completionSource.TrySetException(new IOException($"Failed to copy file from '{source}' to '{destination}'. HRESULT: 0x{result:X8}", Marshal.GetExceptionForHR(result)));
                 }
 
                 GC.KeepAlive(callback);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                tcs.TrySetException(ex);
+                completionSource.TrySetException(exception);
             }
         });
 
-        return tcs.Task;
+        return completionSource.Task;
     }
 }
