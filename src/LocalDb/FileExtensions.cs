@@ -1,4 +1,4 @@
-﻿static class FileExtensions
+static class FileExtensions
 {
     public static async Task WriteFileAsync(string destFile, byte[] bytes)
     {
@@ -31,11 +31,8 @@
 #endif
     }
 
-    public static void MarkFileAsWritable(string file)
-    {
-        var info = new FileInfo(file);
-        info.Attributes &= ~FileAttributes.ReadOnly;
-    }
+    public static void MarkFileAsWritable(string file) =>
+        File.SetAttributes(file, File.GetAttributes(file) & ~FileAttributes.ReadOnly);
 
     public static void FlushDirectory(string directory)
     {
