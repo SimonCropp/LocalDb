@@ -73,25 +73,28 @@ class Wrapper : IDisposable
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
 
+        var createOrMakeOnlineCommand = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
+        var connectionString = LocalDbSettings.BuildConnectionString(instance, name, false);
+
         await startupTask;
 
 #if NET5_0_OR_GREATER
-        await using var masterConnection = await OpenMasterConnection();
+        await using (var masterConnection = await OpenMasterConnection())
 #else
-        using var masterConnection = await OpenMasterConnection();
+        using (var masterConnection = await OpenMasterConnection())
 #endif
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
+        {
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
 
-        await FileExtensions.WriteFileAsync(dataFile, dataFileBytes!);
-        await FileExtensions.WriteFileAsync(logFile, logFileBytes!);
+            await FileExtensions.WriteFileAsync(dataFile, dataFileBytes!);
+            await FileExtensions.WriteFileAsync(logFile, logFileBytes!);
 
-        FileExtensions.MarkFileAsWritable(dataFile);
-        FileExtensions.MarkFileAsWritable(logFile);
+            FileExtensions.MarkFileAsWritable(dataFile);
+            FileExtensions.MarkFileAsWritable(logFile);
 
-        var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
-        await masterConnection.ExecuteCommandAsync(commandText);
+            await masterConnection.ExecuteCommandAsync(createOrMakeOnlineCommand);
+        }
 
-        var connectionString = LocalDbSettings.BuildConnectionString(instance, name, false);
         var resultConnection = new SqlConnection(connectionString);
         await resultConnection.OpenAsync();
         return resultConnection;
