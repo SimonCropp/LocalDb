@@ -14,8 +14,6 @@ class Wrapper : IDisposable
     public readonly string ServerName;
     Task startupTask = null!;
     bool templateProvided;
-    byte[]? dataFileBytes;
-    byte[]? logFileBytes;
 
     public Wrapper(
         string instance,
@@ -86,8 +84,8 @@ class Wrapper : IDisposable
         {
             await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
 
-            await FileExtensions.WriteFileAsync(dataFile, dataFileBytes!);
-            await FileExtensions.WriteFileAsync(logFile, logFileBytes!);
+            await NativeMethods.CopyFileAsync(DataFile, dataFile, failIfExists: false, noBuffering: true);
+            await NativeMethods.CopyFileAsync(LogFile, logFile, failIfExists: false, noBuffering: true);
 
             FileExtensions.MarkFileAsWritable(dataFile);
             FileExtensions.MarkFileAsWritable(logFile);
@@ -194,9 +192,6 @@ class Wrapper : IDisposable
         {
             await Rebuild(timestamp, buildTemplate, masterConnection);
         }
-
-        dataFileBytes = await File.ReadAllBytesAsync(DataFile);
-        logFileBytes = await File.ReadAllBytesAsync(LogFile);
     }
 
     async Task<SqlConnection> OpenMasterConnection()
