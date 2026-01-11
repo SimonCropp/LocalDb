@@ -184,7 +184,7 @@ class Wrapper : IDisposable
 
         if (optimizeModelDb)
         {
-            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizeModelDBCommand(size));
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizeModelDbCommand(size));
         }
 
         if (rebuildTemplate && !templateProvided)
