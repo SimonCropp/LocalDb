@@ -77,10 +77,10 @@ public class LocalDbBenchmarks
         await command.ExecuteNonQueryAsync();
 
         // Populate template with ~20MB of data
-        // Each row: ~500 bytes text + ~500 bytes binary = ~1KB per row
-        // 20MB / 1KB = ~20,000 rows
+        // Each row: ~2KB actual storage (with SQL overhead)
+        // Target ~20MB with ~9,000 rows
         const int batchSize = 1000;
-        const int totalRows = 20000;
+        const int totalRows = 9000;
         var random = new Random(42); // Fixed seed for reproducibility
 
         for (var batch = 0; batch < totalRows / batchSize; batch++)
