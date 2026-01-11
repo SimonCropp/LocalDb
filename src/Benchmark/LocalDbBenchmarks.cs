@@ -3,8 +3,9 @@ using BenchmarkDotNet.Attributes;
 using Microsoft.Data.SqlClient;
 
 [MemoryDiagnoser]
-[WarmupCount(3)]
+[WarmupCount(10)]
 [IterationCount(50)]
+[GcServer(true)]
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class LocalDbBenchmarks
 {
