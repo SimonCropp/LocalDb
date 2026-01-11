@@ -4,15 +4,9 @@
       sql: {
         Text:
 if db_id(N'CreateDatabase') is not null
-  begin
-    alter database CreateDatabase
-      set SINGLE_USER 
-      with rollback immediate;
-    alter database CreateDatabase
-      set MULTI_USER;
-    alter database CreateDatabase
-      set OFFLINE;
-  end,
+  alter database CreateDatabase
+    set OFFLINE 
+    with rollback immediate,
         HasTransaction: false
       }
     },

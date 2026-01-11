@@ -87,7 +87,7 @@ public class LocalDbBenchmarks
         for (var batch = 0; batch < totalRows / batchSize; batch++)
         {
             var insertCommand = connection.CreateCommand();
-            var sql = new System.Text.StringBuilder();
+            var sql = new StringBuilder();
             sql.AppendLine("insert into MyTable (Value, Name, Description, Data) values");
 
             for (var i = 0; i < batchSize; i++)
