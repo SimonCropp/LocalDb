@@ -167,7 +167,7 @@ class Wrapper : IDisposable
         }
     }
 
-    [Time("Timestamp: '{timestamp}', Rebuild: '{rebuild}', OptimizeModelDb: '{optimizeModelDb}'")]
+    [Time("Timestamp: '{timestamp}', RebuildTemplate: '{rebuildTemplate}', OptimizeModelDb: '{optimizeModelDb}'")]
     async Task CreateAndDetachTemplate(
         DateTime timestamp,
         Func<SqlConnection, Task> buildTemplate,
