@@ -57,7 +57,7 @@ class Wrapper : IDisposable
     }
 
     [Time("Name: '{name}'")]
-    public async Task<string> CreateDatabaseFromTemplate(string name)
+    public async Task<SqlConnection> CreateDatabaseFromTemplate(string name)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -91,7 +91,10 @@ class Wrapper : IDisposable
         var commandText = SqlBuilder.GetCreateOrMakeOnlineCommand(name, dataFile, logFile);
         await masterConnection.ExecuteCommandAsync(commandText);
 
-        return LocalDbSettings.BuildConnectionString(instance, name, false);
+        var connectionString = LocalDbSettings.BuildConnectionString(instance, name, false);
+        var resultConnection = new SqlConnection(connectionString);
+        await resultConnection.OpenAsync();
+        return resultConnection;
     }
 
     public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)

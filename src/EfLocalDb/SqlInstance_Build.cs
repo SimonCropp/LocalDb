@@ -70,7 +70,7 @@ public partial class SqlInstance<TDbContext>
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
-        var connection = await CreateDatabaseFromTemplate(dbName);
+        var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
         var database = new SqlDatabase<TDbContext>(
             this,
             connection,

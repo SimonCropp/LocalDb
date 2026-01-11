@@ -8,12 +8,12 @@ public partial class SqlDatabase :
 {
     Func<Task> delete;
 
-    internal SqlDatabase(string connectionString, string name, Func<Task> delete)
+    internal SqlDatabase(SqlConnection connection, string name, Func<Task> delete)
     {
         this.delete = delete;
-        ConnectionString = connectionString;
+        ConnectionString = connection.ConnectionString;
         Name = name;
-        Connection = new(connectionString);
+        Connection = connection;
     }
 
     public string ConnectionString { get; }
@@ -29,8 +29,6 @@ public partial class SqlDatabase :
         await connection.OpenAsync();
         return connection;
     }
-
-    public Task Start() => Connection.OpenAsync();
 
     public void Dispose() =>
         Connection.Dispose();

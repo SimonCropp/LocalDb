@@ -33,34 +33,21 @@ public class SqlServerDiagnoser : IDiagnoser
         switch (signal)
         {
             case HostSignal.BeforeActualRun:
-                try
-                {
                     (ioReadBytesBefore, ioWriteBytesBefore) = GetFileIoStats(connectionString);
-                }
-                catch
-                {
-                    // SQL Server not ready yet
-                }
                 break;
 
             case HostSignal.AfterActualRun:
-                try
-                {
                     var (ioReadBytesAfter, ioWriteBytesAfter) = GetFileIoStats(connectionString);
-                    var memoryMB = GetSqlServerMemory(connectionString);
+                    var memoryMb = GetSqlServerMemory(connectionString);
 
-                    metrics.Add(new SqlServerMetrics
+                    metrics.Add(
+                        new()
                     {
                         BenchmarkName = parameters.BenchmarkCase.Descriptor.WorkloadMethod.Name,
                         IoReadMB = (ioReadBytesAfter - ioReadBytesBefore) / (1024.0 * 1024.0),
                         IoWriteMB = (ioWriteBytesAfter - ioWriteBytesBefore) / (1024.0 * 1024.0),
-                        MemoryMB = memoryMB
+                        MemoryMB = memoryMb
                     });
-                }
-                catch
-                {
-                    // Ignore errors
-                }
                 break;
         }
     }

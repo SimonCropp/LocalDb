@@ -13,7 +13,7 @@ public partial class SqlDatabase<TDbContext> :
 
     internal SqlDatabase(
         SqlInstance<TDbContext> instance,
-        string connectionString,
+        SqlConnection connection,
         string name,
         ConstructInstance<TDbContext> constructInstance,
         Func<Task> delete,
@@ -26,8 +26,8 @@ public partial class SqlDatabase<TDbContext> :
         this.delete = delete;
         this.data = data;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
-        ConnectionString = connectionString;
-        Connection = new(connectionString);
+        ConnectionString = connection.ConnectionString;
+        Connection = connection;
     }
 
     public string Name { get; }
@@ -45,17 +45,17 @@ public partial class SqlDatabase<TDbContext> :
 
     public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
-    public async Task Start()
+    public Task Start()
     {
-        await Connection.OpenAsync();
-
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
 
         if (data is not null)
         {
-            await AddData(data);
+            return AddData(data);
         }
+
+        return Task.CompletedTask;
     }
 
     public TDbContext Context { get; private set; } = null!;

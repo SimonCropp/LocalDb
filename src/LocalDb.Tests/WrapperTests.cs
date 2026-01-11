@@ -47,15 +47,15 @@ end;
 
         using var wrapper = new Wrapper(name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
-        var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
-        await using (var connection = new SqlConnection(connectionString))
+        await using (await wrapper.CreateDatabaseFromTemplate("Simple"))
         {
-            await connection.OpenAsync();
             await wrapper.CreateDatabaseFromTemplate("Simple");
 
             using var innerWrapper = new Wrapper(name, DirectoryFinder.Find("RecreateWithOpenConnection"));
             innerWrapper.Start(timestamp, TestDbBuilder.CreateTable);
-            await innerWrapper.CreateDatabaseFromTemplate("Simple");
+            await using (await innerWrapper.CreateDatabaseFromTemplate("Simple"))
+            {
+            }
         }
 
         await Verify(wrapper.ReadDatabaseState("Simple"));
@@ -71,13 +71,13 @@ end;
 
         using var wrapper = new Wrapper(name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
-        var connectionString = await wrapper.CreateDatabaseFromTemplate("Simple");
-        await using (var connection = new SqlConnection(connectionString))
+        await using (await wrapper.CreateDatabaseFromTemplate("Simple"))
         {
-            await connection.OpenAsync();
             using var innerWrapper = new Wrapper(name, DirectoryFinder.Find(name));
             innerWrapper.Start(timestamp, TestDbBuilder.CreateTable);
-            await innerWrapper.CreateDatabaseFromTemplate("Simple");
+            await using (await innerWrapper.CreateDatabaseFromTemplate("Simple"))
+            {
+            }
         }
 
         await Verify(wrapper.ReadDatabaseState("Simple"));
@@ -266,9 +266,7 @@ end;
     public async Task DeleteDatabaseWithOpenConnection()
     {
         var name = "ToDelete";
-        var connectionString = await instance.CreateDatabaseFromTemplate(name);
-        await using var connection = new SqlConnection(connectionString);
-        await connection.OpenAsync();
+        await using var connection = await instance.CreateDatabaseFromTemplate(name);
         await instance.DeleteDatabase(name);
         var deletedState = await instance.ReadDatabaseState(name);
 
