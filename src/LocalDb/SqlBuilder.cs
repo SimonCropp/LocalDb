@@ -36,7 +36,7 @@
         end;
         """;
 
-    public static string GetOptimizationCommand(ushort size) =>
+    public static string GetOptimizeModelDBCommand(ushort size) =>
         $"""
          execute sp_configure 'show advanced options', 1;
          reconfigure;

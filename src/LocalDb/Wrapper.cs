@@ -129,8 +129,8 @@ class Wrapper : IDisposable
             startupTask = CreateAndDetachTemplate(
                 timestamp,
                 buildTemplate,
-                rebuild: true,
-                optimize: true);
+                rebuildTemplate: true,
+                optimizeModelDb: true);
         }
 
         var info = LocalDbApi.GetInstance(instance);
@@ -167,12 +167,12 @@ class Wrapper : IDisposable
         }
     }
 
-    [Time("Timestamp: '{timestamp}', Rebuild: '{rebuild}', Optimize: '{optimize}'")]
+    [Time("Timestamp: '{timestamp}', Rebuild: '{rebuild}', OptimizeModelDb: '{optimizeModelDb}'")]
     async Task CreateAndDetachTemplate(
         DateTime timestamp,
         Func<SqlConnection, Task> buildTemplate,
-        bool rebuild,
-        bool optimize)
+        bool rebuildTemplate,
+        bool optimizeModelDb)
     {
 #if NET5_0_OR_GREATER
         await using var masterConnection = await OpenMasterConnection();
@@ -182,12 +182,12 @@ class Wrapper : IDisposable
 
         LocalDbLogging.LogIfVerbose($"SqlServerVersion: {masterConnection.ServerVersion}");
 
-        if (optimize)
+        if (optimizeModelDb)
         {
-            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizationCommand(size));
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizeModelDBCommand(size));
         }
 
-        if (rebuild && !templateProvided)
+        if (rebuildTemplate && !templateProvided)
         {
             await Rebuild(timestamp, buildTemplate, masterConnection);
         }
