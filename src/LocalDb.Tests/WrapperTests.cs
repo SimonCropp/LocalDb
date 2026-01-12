@@ -119,6 +119,34 @@ end;
     }
 
     [Test]
+    public async Task CallbackReceivesOpenConnection()
+    {
+        var name = "WrapperTests_CallbackReceivesOpenConnection";
+
+        ConnectionState? connectionState = null;
+        var queryResult = -1;
+
+        using var wrapper = new Wrapper(
+            name,
+            DirectoryFinder.Find(name),
+            callback: async connection =>
+            {
+                connectionState = connection.State;
+
+                // Verify we can actually execute a query on the open connection
+                await using var command = connection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM MyTable";
+                queryResult = (int)(await command.ExecuteScalarAsync())!;
+            });
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.CreateDatabaseFromTemplate("Simple");
+
+        AreEqual(ConnectionState.Open, connectionState);
+        AreEqual(0, queryResult); // Table exists and is empty
+        wrapper.DeleteInstance();
+    }
+
+    [Test]
     public async Task WithFileAndNoInstance()
     {
         var name = "WithFileAndNoInstance";
