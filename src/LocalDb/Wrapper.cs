@@ -194,6 +194,19 @@ class Wrapper : IDisposable
         {
             await Rebuild(timestamp, buildTemplate, masterConnection);
         }
+        else
+        {
+            if (callback != null)
+            {
+#if NET5_0_OR_GREATER
+                await using var connection = new SqlConnection(TemplateConnectionString);
+#else
+                using var connection = new SqlConnection(TemplateConnectionString);
+#endif
+
+                await callback(connection);
+            }
+        }
     }
 
     async Task<SqlConnection> OpenMasterConnection()

@@ -5,10 +5,7 @@ using NetTopologySuite.Geometries;
 public class Tests
 {
     static SqlInstance<TestDbContext> instance;
-
-    static Tests() =>
-        instance = new(
-            builder => new(builder.Options));
+    static bool callbackCalled;
 
     [Test]
     public async Task SeedData()
@@ -19,6 +16,7 @@ public class Tests
         };
         await using var database = await instance.Build([entity]);
         NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -69,6 +67,7 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddData(entity);
         NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -90,6 +89,7 @@ public class Tests
         await database.AddData(entity);
         await database.RemoveData(entity);
         Null(await database.Context.FindAsync<TestEntity>(entity.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -102,6 +102,7 @@ public class Tests
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
         NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -115,6 +116,7 @@ public class Tests
         await database.AddDataUntracked(entity);
         await database.RemoveDataUntracked(entity);
         Null(await database.Context.FindAsync<TestEntity>(entity.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -227,6 +229,7 @@ public class Tests
         await database.AddData(entity1, entity2);
         NotNull(await database.Context.FindAsync<TestEntity>(entity1.Id));
         NotNull(await database.Context.FindAsync<TestEntity>(entity2.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -255,6 +258,7 @@ public class Tests
         NotNull(await database.Context.FindAsync<TestEntity>(entity1.Id));
         NotNull(await database.Context.FindAsync<TestEntity>(entity2.Id));
         NotNull(await database.Context.FindAsync<TestEntity>(entity3.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -290,6 +294,7 @@ public class Tests
         Null(await database.Context.FindAsync<TestEntity>(entity1.Id));
         Null(await database.Context.FindAsync<TestEntity>(entity2.Id));
         Null(await database.Context.FindAsync<TestEntity>(entity3.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -307,6 +312,7 @@ public class Tests
         await database.AddDataUntracked(entity1, entity2);
         NotNull(await database.Context.FindAsync<TestEntity>(entity1.Id));
         NotNull(await database.Context.FindAsync<TestEntity>(entity2.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -325,6 +331,7 @@ public class Tests
         await database.RemoveDataUntracked(entity1, entity2);
         Null(await database.Context.FindAsync<TestEntity>(entity1.Id));
         Null(await database.Context.FindAsync<TestEntity>(entity2.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -450,6 +457,7 @@ public class Tests
             NotNull(await data.TestEntities.FindAsync(entity.Id));
         }
 
+        True(callbackCalled);
     }
 
     [Test]
@@ -470,6 +478,8 @@ public class Tests
         {
             NotNull(await data.TestEntities.FindAsync(entity.Id));
         }
+
+        True(callbackCalled);
     }
 
     [Test]
@@ -478,6 +488,7 @@ public class Tests
         await using var database = await instance.Build();
         await using var data = database.NewDbContext();
         AreNotEqual(database.Context, data);
+        True(callbackCalled);
     }
 
     [Test]
@@ -489,6 +500,7 @@ public class Tests
         };
         await using var database = await instance.Build([entity]);
         NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -500,6 +512,7 @@ public class Tests
         };
         await using var context = await instance.BuildContext([entity]);
         NotNull(await context.TestEntities.FindAsync(entity.Id));
+        True(callbackCalled);
     }
 
     [Test]
@@ -538,6 +551,16 @@ public class Tests
             return base.DisposeAsync();
         }
     }
+
+    static Tests() =>
+        instance = new(
+            builder => new(builder.Options),
+            callback: (_, _) =>
+            {
+                callbackCalled = true;
+                return Task.CompletedTask;
+            });
+
     [Test]
     public async Task BuildTemplate()
     {
