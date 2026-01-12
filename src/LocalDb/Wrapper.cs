@@ -198,13 +198,21 @@ class Wrapper : IDisposable
         {
             if (callback != null)
             {
+                // Attach the template database temporarily to run the callback
+                await masterConnection.ExecuteCommandAsync(SqlBuilder.GetAttachTemplateCommand(DataFile, LogFile));
+
 #if NET5_0_OR_GREATER
-                await using var connection = new SqlConnection(TemplateConnectionString);
+                await using (var connection = new SqlConnection(TemplateConnectionString))
 #else
-                using var connection = new SqlConnection(TemplateConnectionString);
+                using (var connection = new SqlConnection(TemplateConnectionString))
 #endif
-                await connection.OpenAsync();
-                await callback(connection);
+                {
+                    await connection.OpenAsync();
+                    await callback(connection);
+                }
+
+                // Detach the template database after callback completes
+                await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
             }
         }
     }

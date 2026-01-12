@@ -27,6 +27,22 @@ static class SqlBuilder
                 """;
     }
 
+    public static string GetAttachTemplateCommand(string dataFile, string logFile) =>
+        $"""
+         if db_id(N'template') is null
+         begin
+             create database [template] on
+             (
+                 name = template,
+                 filename = '{dataFile}'
+             ),
+             (
+                 filename = '{logFile}'
+             )
+             for attach;
+         end;
+         """;
+
     public static string DetachTemplateCommand =
         """
         if db_id(N'template') is not null
