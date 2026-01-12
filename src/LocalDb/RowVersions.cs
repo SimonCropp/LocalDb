@@ -40,7 +40,7 @@ public static class RowVersions
             DECLARE @sql nvarchar(max);
 
             SELECT @sql = STRING_AGG(
-                'SELECT Id, RowVersion FROM ' + QUOTENAME(t.TABLE_SCHEMA) + '.' + QUOTENAME(t.TABLE_NAME),
+                CAST('SELECT Id, RowVersion FROM ' + QUOTENAME(t.TABLE_SCHEMA) + '.' + QUOTENAME(t.TABLE_NAME) AS NVARCHAR(MAX)),
                 ' UNION ALL '
             )
             FROM INFORMATION_SCHEMA.TABLES t
