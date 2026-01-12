@@ -1,9 +1,7 @@
 // ReSharper disable InconsistentNaming
 
-using System.Diagnostics.CodeAnalysis;
-
 [SuppressMessage("Style", "IDE1006:Naming Styles")]
-static class FileCopy
+static partial class FileCopy
 {
     extension(File)
     {
@@ -11,11 +9,23 @@ static class FileCopy
             CopyFileAsync(source, destination);
     }
 
-    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+#if NETFRAMEWORK
+
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true)]
     static extern int CopyFile2(
         string pwszExistingFileName,
         string pwszNewFileName,
         ref COPYFILE2_EXTENDED_PARAMETERS pExtendedParameters);
+
+#else
+
+    [LibraryImport("kernel32.dll", SetLastError = true, StringMarshalling = StringMarshalling.Utf16)]
+    private static partial int CopyFile2(
+        string pwszExistingFileName,
+        string pwszNewFileName,
+        ref COPYFILE2_EXTENDED_PARAMETERS pExtendedParameters);
+
+#endif
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     delegate COPYFILE2_MESSAGE_ACTION CopyProgressRoutine(
@@ -45,14 +55,19 @@ static class FileCopy
     {
         [FieldOffset(0)]
         public ChunkStarted ChunkStarted;
+
         [FieldOffset(0)]
         public ChunkFinished ChunkFinished;
+
         [FieldOffset(0)]
         public StreamStarted StreamStarted;
+
         [FieldOffset(0)]
         public StreamFinished StreamFinished;
+
         [FieldOffset(0)]
         public PollContinue PollContinue;
+
         [FieldOffset(0)]
         public Error Error;
     }
@@ -169,7 +184,7 @@ static class FileCopy
     {
         var completionSource = new TaskCompletionSource<bool>();
 
-        var callback = (ref COPYFILE2_MESSAGE message, IntPtr context) =>
+        CopyProgressRoutine callback = (ref message, _) =>
         {
             if (message.Type == COPYFILE2_MESSAGE_TYPE.COPYFILE2_CALLBACK_ERROR)
             {
