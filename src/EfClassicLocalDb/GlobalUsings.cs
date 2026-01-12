@@ -2,6 +2,7 @@
 global using System.ComponentModel;
 global using System.Data.SqlClient;
 global using EfLocalDb;
+global using System.Diagnostics.CodeAnalysis;
 #if !NETFRAMEWORK
 global using Microsoft.Extensions.DependencyInjection;
 #endif

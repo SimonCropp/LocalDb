@@ -122,7 +122,7 @@ public class LocalDbBenchmarks
             result[i] = chars[random.Next(chars.Length)];
         }
 
-        return new string(result);
+        return new(result);
     }
 
     static int intData;
