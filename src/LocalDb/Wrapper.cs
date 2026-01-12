@@ -246,7 +246,7 @@ class Wrapper : IDisposable
             }
         }
 
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachAndShrinkTemplateCommand);
 
         File.SetCreationTime(DataFile, timestamp);
     }
