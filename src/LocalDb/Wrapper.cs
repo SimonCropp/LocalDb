@@ -203,7 +203,7 @@ class Wrapper : IDisposable
 #else
                 using var connection = new SqlConnection(TemplateConnectionString);
 #endif
-
+                await connection.OpenAsync();
                 await callback(connection);
             }
         }
