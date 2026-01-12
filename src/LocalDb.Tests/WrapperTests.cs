@@ -147,6 +147,150 @@ end;
     }
 
     [Test]
+    public async Task CallbackInvokedWhenTemplateExists()
+    {
+        var name = "WrapperTests_CallbackInvokedWhenTemplateExists";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        var callCount = 0;
+
+        using var wrapper = new Wrapper(
+            name,
+            DirectoryFinder.Find(name),
+            callback: async connection =>
+            {
+                callCount++;
+                // Verify connection works
+                await using var command = connection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM MyTable";
+                await command.ExecuteScalarAsync();
+            });
+
+        // First start - template is created and callback should be invoked
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+        AreEqual(1, callCount);
+
+        // Create a database to ensure template exists
+        await using (await wrapper.CreateDatabaseFromTemplate("Test1"))
+        {
+        }
+
+        wrapper.DeleteInstance();
+    }
+
+    [Test]
+    public async Task CallbackInvokedOnRebuild()
+    {
+        var name = "WrapperTests_CallbackInvokedOnRebuild";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        var rebuildCallCount = 0;
+        var nonRebuildCallCount = 0;
+
+        using var wrapper = new Wrapper(
+            name,
+            DirectoryFinder.Find(name),
+            callback: async connection =>
+            {
+                rebuildCallCount++;
+                await using var command = connection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM MyTable";
+                await command.ExecuteScalarAsync();
+            });
+
+        // First start - template is created (rebuild scenario)
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+        AreEqual(1, rebuildCallCount);
+
+        wrapper.DeleteInstance();
+        wrapper.Dispose();
+
+        // Second wrapper with existing template files (non-rebuild scenario)
+        using var wrapper2 = new Wrapper(
+            name,
+            DirectoryFinder.Find(name),
+            callback: async connection =>
+            {
+                nonRebuildCallCount++;
+                await using var command = connection.CreateCommand();
+                command.CommandText = "SELECT COUNT(*) FROM MyTable";
+                await command.ExecuteScalarAsync();
+            });
+
+        wrapper2.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper2.AwaitStart();
+        AreEqual(1, nonRebuildCallCount);
+
+        wrapper2.DeleteInstance();
+    }
+
+    [Test]
+    public async Task CallbackCanModifyTemplateDatabase()
+    {
+        var name = "WrapperTests_CallbackCanModifyTemplate";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        using var wrapper = new Wrapper(
+            name,
+            DirectoryFinder.Find(name),
+            callback: async connection =>
+            {
+                // Insert test data into template
+                await using var command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO MyTable (Value) VALUES (42), (100)";
+                await command.ExecuteNonQueryAsync();
+            });
+
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+
+        // Create database from template and verify callback modifications are present
+        await using var database = await wrapper.CreateDatabaseFromTemplate("Test");
+        await using var queryCommand = database.CreateCommand();
+        queryCommand.CommandText = "SELECT COUNT(*) FROM MyTable";
+        var count = (int)(await queryCommand.ExecuteScalarAsync())!;
+        AreEqual(2, count);
+
+        wrapper.DeleteInstance();
+    }
+
+    [Test]
+    public async Task TemplateDetachedAfterCallback()
+    {
+        var name = "WrapperTests_TemplateDetachedAfterCallback";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        using var wrapper = new Wrapper(
+            name,
+            DirectoryFinder.Find(name),
+            callback: async connection =>
+            {
+                await using var command = connection.CreateCommand();
+                command.CommandText = "SELECT 1";
+                await command.ExecuteScalarAsync();
+            });
+
+        wrapper.Start(timestamp, TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+
+        // Verify template database is not attached after startup
+        await using var masterConnection = new SqlConnection(wrapper.MasterConnectionString);
+        await masterConnection.OpenAsync();
+        await using var checkCommand = masterConnection.CreateCommand();
+        checkCommand.CommandText = "SELECT COUNT(*) FROM sys.databases WHERE name = 'template'";
+        var templateExists = (int)(await checkCommand.ExecuteScalarAsync())!;
+        AreEqual(0, templateExists);
+
+        wrapper.DeleteInstance();
+    }
+
+    [Test]
     public async Task WithFileAndNoInstance()
     {
         var name = "WithFileAndNoInstance";
