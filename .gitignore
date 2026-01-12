@@ -10,4 +10,4 @@ nugets/
 nul
 /src/Benchmark/BenchmarkDotNet.Artifacts
 /BenchmarkDotNet.Artifacts
-/.claude
+*claude*
