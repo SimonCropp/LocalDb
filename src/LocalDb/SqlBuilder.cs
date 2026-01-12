@@ -45,14 +45,19 @@ static class SqlBuilder
 
     public static string DetachTemplateCommand =
         """
-        if db_id(N'template') is not null
-        begin
-            use [template];
-            dbcc shrinkfile(template_log, 1);
-            use master;
-            alter database [template] set single_user with rollback immediate;
-            execute sp_detach_db N'template', 'true';
-        end;
+        use master;
+        alter database [template] set single_user with rollback immediate;
+        execute sp_detach_db N'template', 'true';
+        """;
+
+    public static string DetachAndShrinkTemplateCommand =
+        """
+        use [template];
+        dbcc shrinkfile(template);
+        dbcc shrinkfile(template_log, 1);
+        use master;
+        alter database [template] set single_user with rollback immediate;
+        execute sp_detach_db N'template', 'true';
         """;
 
     public static string GetOptimizeModelDbCommand(ushort size) =>
