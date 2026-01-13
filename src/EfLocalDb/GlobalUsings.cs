@@ -11,4 +11,3 @@ global using Microsoft.EntityFrameworkCore.Query.Internal;
 global using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 global using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
 global using Microsoft.Extensions.DependencyInjection;
-global using System.Diagnostics.CodeAnalysis;
