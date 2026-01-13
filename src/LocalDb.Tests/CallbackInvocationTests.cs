@@ -16,10 +16,10 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: connection =>
             {
                 callbackCount++;
-                await VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -52,10 +52,10 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: connection =>
             {
                 callbackCount++;
-                await VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -89,10 +89,10 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: connection =>
             {
                 callbackCount++;
-                await VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -130,10 +130,10 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: connection =>
             {
                 callbackCount++;
-                await VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection);
             });
 
         // Start with same timestamp - should not rebuild
@@ -172,10 +172,10 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: connection =>
             {
                 callbackCount++;
-                await VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection);
             });
 
         // Start with different timestamp - should rebuild
@@ -209,10 +209,10 @@ public class CallbackInvocationTests
         using (var wrapper1 = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: connection =>
             {
                 firstCallbackCount++;
-                await VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection);
             }))
         {
             wrapper1.Start(timestamp, TestDbBuilder.CreateTable);
@@ -232,10 +232,10 @@ public class CallbackInvocationTests
         using (var wrapper2 = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: connection =>
             {
                 secondCallbackCount++;
-                await VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection);
             }))
         {
             wrapper2.Start(timestamp, TestDbBuilder.CreateTable);
