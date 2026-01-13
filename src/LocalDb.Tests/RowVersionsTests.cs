@@ -182,6 +182,40 @@ public class RowVersionsTests
         instance.Cleanup();
     }
 
+    [Test]
+    public async Task ManyTables_ExceedsStringAggLimit()
+    {
+        // Create enough tables to exceed the 8000 byte STRING_AGG limit
+        // Each table generates ~60-70 chars in the query, so 150 tables should exceed 8000 bytes
+        const int tableCount = 150;
+        using var instance = new SqlInstance("GetRowVersions_ManyTables", connection => CreateManyTables(connection, tableCount));
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        // Insert one row in each table
+        var expectedIds = new List<Guid>();
+        for (var i = 0; i < tableCount; i++)
+        {
+            var id = Guid.NewGuid();
+            expectedIds.Add(id);
+            await InsertIntoTableN(connection, i, id);
+        }
+
+        // This should not throw "STRING_AGG aggregation result exceeded the limit of 8000 bytes"
+        var result = await RowVersions.Read(connection);
+
+        // Verify all rows were retrieved
+        AreEqual(tableCount, result.Count);
+        foreach (var id in expectedIds)
+        {
+            True(result.ContainsKey(id), $"Result should contain ID {id}");
+            IsTrue(result[id] > 0, $"RowVersion for {id} should be greater than 0");
+        }
+
+        instance.Cleanup();
+    }
+
     static async Task CreateTableWithRowVersion(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
@@ -302,6 +336,35 @@ public class RowVersionsTests
         command.CommandText = "UPDATE MyTable SET Value = @Value WHERE Id = @Id";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", newValue);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    static async Task CreateManyTables(SqlConnection connection, int count)
+    {
+        await using var command = connection.CreateCommand();
+        var sqlBuilder = new StringBuilder();
+
+        for (var i = 0; i < count; i++)
+        {
+            sqlBuilder.AppendLine($"""
+                CREATE TABLE Table{i} (
+                    Id UNIQUEIDENTIFIER PRIMARY KEY,
+                    Value NVARCHAR(100),
+                    RowVersion ROWVERSION NOT NULL
+                );
+                """);
+        }
+
+        command.CommandText = sqlBuilder.ToString();
+        await command.ExecuteNonQueryAsync();
+    }
+
+    static async Task InsertIntoTableN(SqlConnection connection, int tableNumber, Guid id)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = $"INSERT INTO Table{tableNumber} (Id, Value) VALUES (@Id, @Value)";
+        command.Parameters.AddWithValue("@Id", id);
+        command.Parameters.AddWithValue("@Value", $"Value{tableNumber}");
         await command.ExecuteNonQueryAsync();
     }
 }
