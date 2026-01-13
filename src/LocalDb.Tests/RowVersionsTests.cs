@@ -126,6 +126,27 @@ public class RowVersionsTests
     }
 
     [Test]
+    public async Task IgnoresTablesWithWrongIdType()
+    {
+        using var instance = new SqlInstance("GetRowVersions_IgnoresTablesWithWrongIdType", CreateTablesWithDifferentIdTypes);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var validId = Guid.NewGuid();
+        await InsertRow(connection, validId, "ValidTable");
+        await InsertIntoTableWithIntId(connection, 123, "WrongIdType");
+
+        var result = await RowVersions.Read(connection);
+
+        // Should only include the table with UNIQUEIDENTIFIER Id
+        AreEqual(1, result.Count);
+        True(result.ContainsKey(validId));
+
+        instance.Cleanup();
+    }
+
+    [Test]
     public async Task IgnoresTablesWithoutRowVersion()
     {
         using var instance = new SqlInstance("GetRowVersions_IgnoresTablesWithoutRowVersion", CreateTablesWithAndWithoutRowVersion);
@@ -267,6 +288,25 @@ public class RowVersionsTests
         await command.ExecuteNonQueryAsync();
     }
 
+    static async Task CreateTablesWithDifferentIdTypes(SqlConnection connection)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            CREATE TABLE MyTable (
+                Id UNIQUEIDENTIFIER PRIMARY KEY,
+                Value NVARCHAR(100),
+                RowVersion ROWVERSION NOT NULL
+            );
+
+            CREATE TABLE TableWithIntId (
+                Id INT PRIMARY KEY,
+                Value NVARCHAR(100),
+                RowVersion ROWVERSION NOT NULL
+            );
+            """;
+        await command.ExecuteNonQueryAsync();
+    }
+
     static async Task CreateTablesWithAndWithoutRowVersion(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
@@ -317,6 +357,15 @@ public class RowVersionsTests
         await using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO TableWithoutId (SomeId, Value) VALUES (@SomeId, @Value)";
         command.Parameters.AddWithValue("@SomeId", 1);
+        command.Parameters.AddWithValue("@Value", value);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    static async Task InsertIntoTableWithIntId(SqlConnection connection, int id, string value)
+    {
+        await using var command = connection.CreateCommand();
+        command.CommandText = "INSERT INTO TableWithIntId (Id, Value) VALUES (@Id, @Value)";
+        command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", value);
         await command.ExecuteNonQueryAsync();
     }
