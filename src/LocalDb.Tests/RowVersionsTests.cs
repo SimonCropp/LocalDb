@@ -237,6 +237,48 @@ public class RowVersionsTests
         instance.Cleanup();
     }
 
+    [Test]
+    public async Task RowVersionByteOrderIsCorrect()
+    {
+        using var instance = new SqlInstance("GetRowVersions_ByteOrder", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        // Read using RowVersions.Read
+        var rowVersions = await RowVersions.Read(connection);
+        True(rowVersions.ContainsKey(id), "RowVersions should contain the inserted ID");
+        var rowVersionFromHelper = rowVersions[id];
+
+        // Read directly from SQL to get the raw ROWVERSION value
+        // SQL Server's ROWVERSION is stored as a monotonically increasing bigint
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT RowVersion FROM MyTable WHERE Id = @Id";
+        command.Parameters.AddWithValue("@Id", id);
+
+        var rawBytes = (byte[])(await command.ExecuteScalarAsync())!;
+
+        // Convert the same way RowVersions.Read does (with byte reversal for little-endian)
+        if (BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(rawBytes);
+        }
+        var expectedRowVersion = BitConverter.ToUInt64(rawBytes, 0);
+
+        // Verify they match
+        AreEqual(expectedRowVersion, rowVersionFromHelper,
+            "RowVersion from RowVersions.Read should match the direct SQL query value");
+
+        // Also verify the value is reasonable (should be a small positive number)
+        IsTrue(rowVersionFromHelper > 0, "RowVersion should be greater than 0");
+        IsTrue(rowVersionFromHelper < 1_000_000, "RowVersion should be a reasonable value (not byte-swapped garbage)");
+
+        instance.Cleanup();
+    }
+
     static async Task CreateTableWithRowVersion(SqlConnection connection)
     {
         await using var command = connection.CreateCommand();
