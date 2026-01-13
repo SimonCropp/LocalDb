@@ -261,12 +261,8 @@ public class RowVersionsTests
 
         var rawBytes = (byte[])(await command.ExecuteScalarAsync())!;
 
-        // Convert the same way RowVersions.Read does (with byte reversal for little-endian)
-        if (BitConverter.IsLittleEndian)
-        {
-            Array.Reverse(rawBytes);
-        }
-        var expectedRowVersion = BitConverter.ToUInt64(rawBytes, 0);
+        // Convert the same way RowVersions.Read does (reading as big-endian)
+        var expectedRowVersion = System.Buffers.Binary.BinaryPrimitives.ReadUInt64BigEndian(rawBytes);
 
         // Verify they match
         AreEqual(expectedRowVersion, rowVersionFromHelper,
