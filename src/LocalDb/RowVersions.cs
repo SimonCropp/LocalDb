@@ -1,3 +1,5 @@
+using System.Buffers.Binary;
+
 #if EF
 namespace EfLocalDb;
 #else
@@ -64,12 +66,8 @@ public static class RowVersions
         while (await reader.ReadAsync())
         {
             var bytes = (byte[])reader[1];
-            // SQL Server returns ROWVERSION in big-endian format, but BitConverter expects little-endian on Windows
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            result[reader.GetGuid(0)] = BitConverter.ToUInt64(bytes, 0);
+            // SQL Server returns ROWVERSION in big-endian format
+            result[reader.GetGuid(0)] = BinaryPrimitives.ReadUInt64BigEndian(bytes);
         }
 
         return result;
