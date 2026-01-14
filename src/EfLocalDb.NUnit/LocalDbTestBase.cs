@@ -45,6 +45,7 @@ public abstract partial class LocalDbTestBase<T> :
 
     public async Task Reset()
     {
+        var cancel = TestContext.CurrentContext.CancellationToken;
         phase = Phase.Arrange;
         var test = TestContext.CurrentContext.Test;
         var type = test.ClassName!;
@@ -52,10 +53,10 @@ public abstract partial class LocalDbTestBase<T> :
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if(Database != null)
         {
-            await Database.Delete();
+            await Database.Delete(cancel);
             await Database.DisposeAsync();
         }
-        Database = await sqlInstance.Build(type, null, member);
+        Database = await sqlInstance.Build(type, null, member, cancel);
         Database.NoTrackingContext.DisableRecording();
         arrangeData = Database.Context;
         arrangeData.DisableRecording();
@@ -193,6 +194,7 @@ public abstract partial class LocalDbTestBase<T> :
     [TearDown]
     public virtual async ValueTask TearDown()
     {
+        var cancel = TestContext.CurrentContext.CancellationToken;
         // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
         if (actData != null)
@@ -205,7 +207,7 @@ public abstract partial class LocalDbTestBase<T> :
             if (BuildServerDetector.Detected)
             {
                 LocalDbLogging.Log($"Purging {Database.Name}");
-                await Database.Delete();
+                await Database.Delete(cancel);
             }
             else
             {
