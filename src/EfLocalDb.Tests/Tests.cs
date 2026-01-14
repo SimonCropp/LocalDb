@@ -376,9 +376,9 @@ public class Tests
         var dateTime = DateTime.Now;
         using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
-            async context =>
+            async (context, cancel) =>
             {
-                await context.Database.EnsureCreatedAsync();
+                await context.Database.EnsureCreatedAsync(cancel);
             },
             timestamp: dateTime,
             storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
@@ -403,9 +403,9 @@ public class Tests
     {
         using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
-            async context =>
+            async (context, cancel) =>
             {
-                await context.Database.EnsureCreatedAsync();
+                await context.Database.EnsureCreatedAsync(cancel);
             },
             Storage.FromSuffix<TestDbContext>("Delegate_TimeStamp"));
 
@@ -555,7 +555,7 @@ public class Tests
     static Tests() =>
         instance = new(
             builder => new(builder.Options),
-            callback: (_, _) =>
+            callback: (_, _, cancel) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;
@@ -566,9 +566,9 @@ public class Tests
     {
         using var instance = new SqlInstance<TestDbContext>(
             builder => new(builder.Options),
-            async context =>
+            async (context, cancel) =>
             {
-                await context.Database.EnsureCreatedAsync();
+                await context.Database.EnsureCreatedAsync(cancel);
             },
             storage: Storage.FromSuffix<TestDbContext>("BuildTemplate"));
 

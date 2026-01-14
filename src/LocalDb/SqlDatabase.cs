@@ -6,9 +6,9 @@ public partial class SqlDatabase :
 #endif
     IDisposable
 {
-    Func<Task> delete;
+    Func<Cancel, Task> delete;
 
-    internal SqlDatabase(SqlConnection connection, string name, Func<Task> delete)
+    internal SqlDatabase(SqlConnection connection, string name, Func<Cancel, Task> delete)
     {
         this.delete = delete;
         ConnectionString = connection.ConnectionString;
@@ -23,10 +23,10 @@ public partial class SqlDatabase :
 
     public static implicit operator SqlConnection(SqlDatabase instance) => instance.Connection;
 
-    public async Task<SqlConnection> OpenNewConnection()
+    public async Task<SqlConnection> OpenNewConnection(Cancel cancel = default)
     {
         var connection = new SqlConnection(ConnectionString);
-        await connection.OpenAsync();
+        await connection.OpenAsync(cancel);
         return connection;
     }
 
@@ -39,13 +39,13 @@ public partial class SqlDatabase :
 #endif
 
     // ReSharper disable once ReplaceAsyncWithTaskReturn
-    public async Task Delete()
+    public async Task Delete(Cancel cancel = default)
     {
 #if(NET48)
         Dispose();
 #else
         await DisposeAsync();
 #endif
-        await delete();
+        await delete(cancel);
     }
 }

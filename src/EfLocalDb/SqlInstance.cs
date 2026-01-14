@@ -99,22 +99,22 @@ public partial class SqlInstance<TDbContext> :
         StorageDirectory = storageValue.Directory;
         DirectoryCleaner.CleanInstance(StorageDirectory);
 
-        Task BuildTemplate(SqlConnection connection)
+        Task BuildTemplate(SqlConnection connection, Cancel cancel)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
             builder.UseSqlServer(connection, sqlOptionsBuilder);
-            return buildTemplate(connection, builder);
+            return buildTemplate(connection, builder, cancel);
         }
 
-        Func<SqlConnection, Task>? wrapperCallback = null;
+        Func<SqlConnection, Cancel, Task>? wrapperCallback = null;
         if (callback is not null)
         {
-            wrapperCallback = async connection =>
+            wrapperCallback = async (connection, cancel) =>
             {
                 var builder = DefaultOptionsBuilder.Build<TDbContext>();
                 builder.UseSqlServer(connection, sqlOptionsBuilder);
                 await using var context = constructInstance(builder);
-                await callback(connection, context);
+                await callback(connection, context, cancel);
             };
         }
 

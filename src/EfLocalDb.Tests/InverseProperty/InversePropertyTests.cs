@@ -8,15 +8,15 @@ public class InversePropertyTests
             buildTemplate: CreateDb,
             constructInstance: builder => new(builder.Options));
 
-        var database = await instance.Build("InverseProperty");
+        var database = await instance.Build(dbName: "InverseProperty");
         var items = await database.Context.Employees.ToListAsync();
         IsNotEmpty(items);
         instance.Cleanup();
     }
 
-    static async Task CreateDb(InversePropertyDbContext context)
+    static async Task CreateDb(InversePropertyDbContext context, Cancel cancel = default)
     {
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.EnsureCreatedAsync(cancel);
 
         var employee1 = new Employee
         {
@@ -26,6 +26,6 @@ public class InversePropertyTests
         };
         context.AddRange(employee1);
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancel);
     }
 }

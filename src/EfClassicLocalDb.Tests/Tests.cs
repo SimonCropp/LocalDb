@@ -171,7 +171,7 @@ public class Tests
         var dateTime = DateTime.Now;
         using var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
-            context => context.CreateOnExistingDb(),
+            (context, cancel) => context.CreateOnExistingDb(),
             timestamp: dateTime,
             storage: Storage.FromSuffix<TestDbContext>("Classic_Defined_TimeStamp"));
 
@@ -195,7 +195,7 @@ public class Tests
     {
         using var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
-            context => context.CreateOnExistingDb(),
+            (context, cancel) => context.CreateOnExistingDb(),
             Storage.FromSuffix<TestDbContext>("Classic_Delegate_TimeStamp"));
 
         using var database = await instance.Build();
@@ -250,7 +250,7 @@ public class Tests
         instance = new(
             connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>("Classic"),
-            callback: (_, _) =>
+            callback: (_, _, cancel) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;

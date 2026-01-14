@@ -1,6 +1,6 @@
 ﻿static class SqlExtensions
 {
-    public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
+    public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText, Cancel cancel = default)
     {
         commandText = commandText.Trim();
 
@@ -15,7 +15,7 @@
 #endif
             {
                 command.CommandText = commandText;
-                await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync(cancel);
             }
 
             if (LocalDbLogging.SqlLoggingEnabled)

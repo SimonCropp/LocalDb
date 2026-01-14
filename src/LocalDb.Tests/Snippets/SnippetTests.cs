@@ -33,7 +33,7 @@ public class SnippetTests
     {
         #region WithDbName
 
-        await using var database = await sqlInstance.Build("TheTestWithDbName");
+        await using var database = await sqlInstance.Build(dbName: "TheTestWithDbName");
 
         #endregion
 

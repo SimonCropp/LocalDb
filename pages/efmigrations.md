@@ -13,13 +13,13 @@ To change this file edit the source file and then run MarkdownSnippets.
 <a id='snippet-Migrations'></a>
 ```cs
 var sqlInstance = new SqlInstance<MyDbContext>(
-    buildTemplate: async (connection, options) =>
+    buildTemplate: async (connection, options, cancel) =>
     {
 
         options.ReplaceService<IMigrationsSqlGenerator, MigrationsGenerator>();
 
         await using var data = new MyDbContext(options.Options);
-        await data.Database.MigrateAsync();
+        await data.Database.MigrateAsync(cancel);
 
     },
     constructInstance: builder => new(builder.Options));
@@ -51,7 +51,7 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 <a id='snippet-Migrate'></a>
 ```cs
 await using var data = new MyDbContext(options.Options);
-await data.Database.MigrateAsync();
+await data.Database.MigrateAsync(cancel);
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/Migrations.cs#L18-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-Migrate' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

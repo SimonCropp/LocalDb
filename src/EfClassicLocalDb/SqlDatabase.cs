@@ -5,14 +5,14 @@ public partial class SqlDatabase<TDbContext> :
     where TDbContext : DbContext
 {
     ConstructInstance<TDbContext> constructInstance;
-    Func<Task> delete;
+    Func<Cancel, Task> delete;
     IEnumerable<object>? data;
 
     internal SqlDatabase(
         SqlConnection connection,
         string name,
         ConstructInstance<TDbContext> constructInstance,
-        Func<Task> delete,
+        Func<Cancel, Task> delete,
         IEnumerable<object>? data)
     {
         Name = name;
@@ -27,10 +27,10 @@ public partial class SqlDatabase<TDbContext> :
     public SqlConnection Connection { get; }
     public string ConnectionString { get; }
 
-    public async Task<SqlConnection> OpenNewConnection()
+    public async Task<SqlConnection> OpenNewConnection(Cancel cancel = default)
     {
         var connection = new SqlConnection(ConnectionString);
-        await connection.OpenAsync();
+        await connection.OpenAsync(cancel);
         return connection;
     }
 
@@ -38,12 +38,12 @@ public partial class SqlDatabase<TDbContext> :
 
     public static implicit operator SqlConnection(SqlDatabase<TDbContext> instance) => instance.Connection;
 
-    public Task Start()
+    public Task Start(Cancel cancel = default)
     {
         Context = NewDbContext();
         if (data is not null)
         {
-            return AddData(data);
+            return AddData(data, cancel);
         }
 
         return Task.CompletedTask;
@@ -71,9 +71,9 @@ public partial class SqlDatabase<TDbContext> :
         Connection.Dispose();
     }
 
-    public Task Delete()
+    public Task Delete(Cancel cancel = default)
     {
         Dispose();
-        return delete();
+        return delete(cancel);
     }
 }

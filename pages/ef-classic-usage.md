@@ -144,7 +144,7 @@ public class BuildTemplate
     static BuildTemplate() =>
         sqlInstance = new(
             constructInstance: connection => new(connection),
-            buildTemplate: async context =>
+            buildTemplate: async (context, cancel) =>
             {
                 await context.CreateOnExistingDb();
                 var entity = new TheEntity
@@ -152,7 +152,7 @@ public class BuildTemplate
                     Property = "prop"
                 };
                 context.TestEntities.Add(entity);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancel);
             });
 
     [Test]
@@ -241,7 +241,7 @@ public class EfSnippetTests
     [Test]
     public async Task TheTestWithDbName()
     {
-        using var database = await sqlInstance.Build("TheTestWithDbName");
+        using var database = await sqlInstance.Build(dbName: "TheTestWithDbName");
         var entity = new TheEntity
         {
             Property = "prop"

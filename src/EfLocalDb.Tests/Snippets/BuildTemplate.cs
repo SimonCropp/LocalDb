@@ -17,15 +17,15 @@
         static BuildTemplate() =>
             sqlInstance = new(
                 constructInstance: builder => new(builder.Options),
-                buildTemplate: async context =>
+                buildTemplate: async (context, cancel) =>
                 {
-                    await context.Database.EnsureCreatedAsync();
+                    await context.Database.EnsureCreatedAsync(cancel);
                     var entity = new TheEntity
                     {
                         Property = "prop"
                     };
                     context.Add(entity);
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(cancel);
                 });
 
         [Test]

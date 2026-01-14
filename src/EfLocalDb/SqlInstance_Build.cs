@@ -15,7 +15,8 @@ public partial class SqlInstance<TDbContext>
         IEnumerable<object>? data,
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(testFile);
@@ -25,17 +26,18 @@ public partial class SqlInstance<TDbContext>
         var testClass = Path.GetFileNameWithoutExtension(testFile);
 
         var dbName = DbNamer.DeriveDbName(databaseSuffix, memberName, testClass);
-        return Build(dbName, data);
+        return Build(dbName, data, cancel);
     }
 
     public async Task<TDbContext> BuildContext(
         IEnumerable<object>? data,
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        await using var build = await Build(data, testFile, databaseSuffix, memberName);
+        await using var build = await Build(data, testFile, databaseSuffix, memberName, cancel);
         return build.NewConnectionOwnedDbContext();
     }
 
@@ -48,61 +50,65 @@ public partial class SqlInstance<TDbContext>
     public Task<SqlDatabase<TDbContext>> Build(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        return Build(null, testFile, databaseSuffix, memberName);
+        return Build(null, testFile, databaseSuffix, memberName, cancel);
     }
 
     public async Task<TDbContext> BuildContext(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        await using var build = await Build(testFile, databaseSuffix, memberName);
+        await using var build = await Build(testFile, databaseSuffix, memberName, cancel);
         return build.NewConnectionOwnedDbContext();
     }
 
     public async Task<SqlDatabase<TDbContext>> Build(
         string dbName,
-        IEnumerable<object>? data)
+        IEnumerable<object>? data,
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
-        var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
+        var connection = await Wrapper.CreateDatabaseFromTemplate(dbName, cancel);
         var database = new SqlDatabase<TDbContext>(
             this,
             connection,
             dbName,
             constructInstance,
-            () => Wrapper.DeleteDatabase(dbName),
+            cancel => Wrapper.DeleteDatabase(dbName, cancel),
             data,
             sqlOptionsBuilder);
-        await database.Start();
+        await database.Start(cancel);
 
         return database;
     }
 
     public async Task<TDbContext> BuildContext(
         string dbName,
-        IEnumerable<object>? data)
+        IEnumerable<object>? data,
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        await using var build = await Build(dbName, data);
+        await using var build = await Build(dbName, data, cancel);
         return build.NewConnectionOwnedDbContext();
     }
 
-    public Task<SqlDatabase<TDbContext>> Build(string dbName)
+    public Task<SqlDatabase<TDbContext>> Build(string dbName, Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        return Build(dbName, (IEnumerable<object>?) null);
+        return Build(dbName, (IEnumerable<object>?) null, cancel);
     }
 
-    public async Task<TDbContext> BuildContext(string dbName)
+    public async Task<TDbContext> BuildContext(string dbName, Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        await using var build = await Build(dbName, (IEnumerable<object>?) null);
+        await using var build = await Build(dbName, (IEnumerable<object>?) null, cancel);
         return build.NewConnectionOwnedDbContext();
     }
 }

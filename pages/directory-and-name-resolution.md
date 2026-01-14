@@ -111,9 +111,10 @@ The convention signature is as follows:
 public Task<SqlDatabase> Build(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        Cancel cancel = default)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L75-L97' title='Snippet source file'>snippet source</a> | <a href='#snippet-ConventionBuildSignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L75-L98' title='Snippet source file'>snippet source</a> | <a href='#snippet-ConventionBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -148,9 +149,9 @@ If full control over the database name is required, there is an overload that ta
 /// <summary>
 ///     Build database with an explicit name.
 /// </summary>
-public async Task<SqlDatabase> Build(string dbName)
+public async Task<SqlDatabase> Build(string dbName, Cancel cancel = default)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L112-L119' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitBuildSignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L113-L120' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:
@@ -161,7 +162,7 @@ Which can be used as follows:
 <!-- snippet: WithDbName -->
 <a id='snippet-WithDbName'></a>
 ```cs
-await using var database = await sqlInstance.Build("TheTestWithDbName");
+await using var database = await sqlInstance.Build(dbName: "TheTestWithDbName");
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L34-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-WithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -172,7 +173,7 @@ await using var database = await sqlInstance.Build("TheTestWithDbName");
 <!-- snippet: EfWithDbName -->
 <a id='snippet-EfWithDbName'></a>
 ```cs
-await using var database = await sqlInstance.Build("TheTestWithDbName");
+await using var database = await sqlInstance.Build(dbName: "TheTestWithDbName");
 ```
 <sup><a href='/src/EfLocalDb.Tests/Snippets/EfSnippetTests.cs#L55-L59' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfWithDbName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->

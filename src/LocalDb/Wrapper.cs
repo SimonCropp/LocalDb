@@ -4,7 +4,7 @@ class Wrapper : IDisposable
 {
     public readonly string Directory;
     ushort size;
-    Func<SqlConnection, Task>? callback;
+    Func<SqlConnection, Cancel, Task>? callback;
     SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
     string instance;
@@ -20,7 +20,7 @@ class Wrapper : IDisposable
         string directory,
         ushort size = 3,
         ExistingTemplate? existingTemplate = null,
-        Func<SqlConnection, Task>? callback = null)
+        Func<SqlConnection, Cancel, Task>? callback = null)
     {
         Guard.AgainstBadOS();
         Guard.AgainstDatabaseSize(size);
@@ -55,7 +55,7 @@ class Wrapper : IDisposable
     }
 
     [Time("Name: '{name}'")]
-    public async Task<SqlConnection> CreateDatabaseFromTemplate(string name)
+    public async Task<SqlConnection> CreateDatabaseFromTemplate(string name, Cancel cancel = default)
     {
         if (string.Equals(name, "template", StringComparison.OrdinalIgnoreCase))
         {
@@ -77,30 +77,30 @@ class Wrapper : IDisposable
         await startupTask;
 
 #if NET5_0_OR_GREATER
-        await using (var masterConnection = await OpenMasterConnection())
+        await using (var masterConnection = await OpenMasterConnection(cancel))
 #else
-        using (var masterConnection = await OpenMasterConnection())
+        using (var masterConnection = await OpenMasterConnection(cancel))
 #endif
         {
-            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name), cancel);
 
             // Copy data and log files in parallel for better performance
             await Task.WhenAll(
-                File.CopyAsync(DataFile, dataFile),
-                File.CopyAsync(LogFile, logFile));
+                File.CopyAsync(DataFile, dataFile, cancel),
+                File.CopyAsync(LogFile, logFile, cancel));
 
             FileExtensions.MarkFileAsWritable(dataFile);
             FileExtensions.MarkFileAsWritable(logFile);
 
-            await masterConnection.ExecuteCommandAsync(createOrMakeOnlineCommand);
+            await masterConnection.ExecuteCommandAsync(createOrMakeOnlineCommand, cancel);
         }
 
         var resultConnection = new SqlConnection(connectionString);
-        await resultConnection.OpenAsync();
+        await resultConnection.OpenAsync(cancel);
         return resultConnection;
     }
 
-    public void Start(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
+    public void Start(DateTime timestamp, Func<SqlConnection, Cancel, Task> buildTemplate)
     {
 #if RELEASE
         try
@@ -122,7 +122,7 @@ class Wrapper : IDisposable
 
     public Task AwaitStart() => startupTask;
 
-    void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
+    void InnerStart(DateTime timestamp, Func<SqlConnection, Cancel, Task> buildTemplate)
     {
         void CleanStart()
         {
@@ -173,33 +173,34 @@ class Wrapper : IDisposable
     [Time("Timestamp: '{timestamp}', RebuildTemplate: '{rebuildTemplate}', OptimizeModelDb: '{optimizeModelDb}'")]
     async Task CreateAndDetachTemplate(
         DateTime timestamp,
-        Func<SqlConnection, Task> buildTemplate,
+        Func<SqlConnection, Cancel, Task> buildTemplate,
         bool rebuildTemplate,
-        bool optimizeModelDb)
+        bool optimizeModelDb,
+        Cancel cancel = default)
     {
 #if NET5_0_OR_GREATER
-        await using var masterConnection = await OpenMasterConnection();
+        await using var masterConnection = await OpenMasterConnection(cancel);
 #else
-        using var masterConnection = await OpenMasterConnection();
+        using var masterConnection = await OpenMasterConnection(cancel);
 #endif
 
         LocalDbLogging.LogIfVerbose($"SqlServerVersion: {masterConnection.ServerVersion}");
 
         if (optimizeModelDb)
         {
-            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizeModelDbCommand(size));
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizeModelDbCommand(size), cancel);
         }
 
         if (rebuildTemplate && !templateProvided)
         {
-            await Rebuild(timestamp, buildTemplate, masterConnection);
+            await Rebuild(timestamp, buildTemplate, masterConnection, cancel);
         }
         else
         {
             if (callback != null)
             {
                 // Attach the template database temporarily to run the callback
-                await masterConnection.ExecuteCommandAsync(SqlBuilder.GetAttachTemplateCommand(DataFile, LogFile));
+                await masterConnection.ExecuteCommandAsync(SqlBuilder.GetAttachTemplateCommand(DataFile, LogFile), cancel);
 
 #if NET5_0_OR_GREATER
                 await using (var connection = new SqlConnection(TemplateConnectionString))
@@ -207,27 +208,27 @@ class Wrapper : IDisposable
                 using (var connection = new SqlConnection(TemplateConnectionString))
 #endif
                 {
-                    await connection.OpenAsync();
-                    await callback(connection);
+                    await connection.OpenAsync(cancel);
+                    await callback(connection, cancel);
                 }
 
                 // Detach the template database after callback completes
-                await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
+                await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand, cancel);
             }
         }
     }
 
-    async Task<SqlConnection> OpenMasterConnection()
+    async Task<SqlConnection> OpenMasterConnection(Cancel cancel = default)
     {
         var connection = new SqlConnection(MasterConnectionString);
-        await connection.OpenAsync();
+        await connection.OpenAsync(cancel);
         return connection;
     }
 
-    async Task Rebuild(DateTime timestamp, Func<SqlConnection, Task> buildTemplate, SqlConnection masterConnection)
+    async Task Rebuild(DateTime timestamp, Func<SqlConnection, Cancel, Task> buildTemplate, SqlConnection masterConnection, Cancel cancel = default)
     {
         DeleteTemplateFiles();
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile));
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.GetCreateTemplateCommand(DataFile, LogFile), cancel);
 
         FileExtensions.MarkFileAsWritable(DataFile);
         FileExtensions.MarkFileAsWritable(LogFile);
@@ -238,15 +239,15 @@ class Wrapper : IDisposable
         using (var connection = new SqlConnection(TemplateConnectionString))
 #endif
         {
-            await connection.OpenAsync();
-            await buildTemplate(connection);
+            await connection.OpenAsync(cancel);
+            await buildTemplate(connection, cancel);
             if (callback != null)
             {
-                await callback(connection);
+                await callback(connection, cancel);
             }
         }
 
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachAndShrinkTemplateCommand);
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachAndShrinkTemplateCommand, cancel);
 
         File.SetCreationTime(DataFile, timestamp);
     }
@@ -289,15 +290,15 @@ class Wrapper : IDisposable
     }
 
     [Time("dbName: '{dbName}'")]
-    public async Task DeleteDatabase(string dbName)
+    public async Task DeleteDatabase(string dbName, Cancel cancel = default)
     {
         var commandText = SqlBuilder.BuildDeleteDbCommand(dbName);
 #if NET5_0_OR_GREATER
-        await using var connection = await OpenMasterConnection();
+        await using var connection = await OpenMasterConnection(cancel);
 #else
-        using var connection = await OpenMasterConnection();
+        using var connection = await OpenMasterConnection(cancel);
 #endif
-        await connection.ExecuteCommandAsync(commandText);
+        await connection.ExecuteCommandAsync(commandText, cancel);
         var dataFile = Path.Combine(Directory, $"{dbName}.mdf");
         var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");
         File.Delete(dataFile);

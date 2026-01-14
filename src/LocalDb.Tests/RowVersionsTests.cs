@@ -4,7 +4,7 @@ public class RowVersionsTests
     [Test]
     public async Task NoTables()
     {
-        using var instance = new SqlInstance("GetRowVersions_NoTables", _ => Task.CompletedTask);
+        using var instance = new SqlInstance("GetRowVersions_NoTables", (_, cancel) => Task.CompletedTask);
 
         await using var database = await instance.Build();
         var result = await RowVersions.Read(database.Connection);
@@ -209,7 +209,7 @@ public class RowVersionsTests
         // Create enough tables to exceed the 8000 byte STRING_AGG limit
         // Each table generates ~60-70 chars in the query, so 150 tables should exceed 8000 bytes
         const int tableCount = 150;
-        using var instance = new SqlInstance("GetRowVersions_ManyTables", connection => CreateManyTables(connection, tableCount));
+        using var instance = new SqlInstance("GetRowVersions_ManyTables", (connection, cancel) => CreateManyTables(connection, tableCount, cancel));
 
         await using var database = await instance.Build();
         var connection = database.Connection;
@@ -275,7 +275,7 @@ public class RowVersionsTests
         instance.Cleanup();
     }
 
-    static async Task CreateTableWithRowVersion(SqlConnection connection)
+    static async Task CreateTableWithRowVersion(SqlConnection connection, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = """
@@ -285,10 +285,10 @@ public class RowVersionsTests
                 RowVersion ROWVERSION NOT NULL
             );
             """;
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task CreateMultipleTables(SqlConnection connection)
+    static async Task CreateMultipleTables(SqlConnection connection, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = """
@@ -304,10 +304,10 @@ public class RowVersionsTests
                 RowVersion ROWVERSION NOT NULL
             );
             """;
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task CreateTablesWithAndWithoutId(SqlConnection connection)
+    static async Task CreateTablesWithAndWithoutId(SqlConnection connection, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = """
@@ -323,10 +323,10 @@ public class RowVersionsTests
                 RowVersion ROWVERSION NOT NULL
             );
             """;
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task CreateTablesWithDifferentIdTypes(SqlConnection connection)
+    static async Task CreateTablesWithDifferentIdTypes(SqlConnection connection, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = """
@@ -342,10 +342,10 @@ public class RowVersionsTests
                 RowVersion ROWVERSION NOT NULL
             );
             """;
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task CreateTablesWithAndWithoutRowVersion(SqlConnection connection)
+    static async Task CreateTablesWithAndWithoutRowVersion(SqlConnection connection, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = """
@@ -360,73 +360,73 @@ public class RowVersionsTests
                 Value NVARCHAR(100)
             );
             """;
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task InsertRow(SqlConnection connection, Guid id, string value)
+    static async Task InsertRow(SqlConnection connection, Guid id, string value, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO MyTable (Id, Value) VALUES (@Id, @Value)";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", value);
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task InsertIntoTable1(SqlConnection connection, Guid id, string value)
+    static async Task InsertIntoTable1(SqlConnection connection, Guid id, string value, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Table1 (Id, Value) VALUES (@Id, @Value)";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", value);
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task InsertIntoTable2(SqlConnection connection, Guid id, int number)
+    static async Task InsertIntoTable2(SqlConnection connection, Guid id, int number, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO Table2 (Id, Number) VALUES (@Id, @Number)";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Number", number);
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task InsertIntoTableWithoutId(SqlConnection connection, string value)
+    static async Task InsertIntoTableWithoutId(SqlConnection connection, string value, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO TableWithoutId (SomeId, Value) VALUES (@SomeId, @Value)";
         command.Parameters.AddWithValue("@SomeId", 1);
         command.Parameters.AddWithValue("@Value", value);
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task InsertIntoTableWithIntId(SqlConnection connection, int id, string value)
+    static async Task InsertIntoTableWithIntId(SqlConnection connection, int id, string value, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO TableWithIntId (Id, Value) VALUES (@Id, @Value)";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", value);
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task InsertIntoTableWithoutRowVersion(SqlConnection connection, Guid id, string value)
+    static async Task InsertIntoTableWithoutRowVersion(SqlConnection connection, Guid id, string value, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "INSERT INTO TableWithoutRowVersion (Id, Value) VALUES (@Id, @Value)";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", value);
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task UpdateRow(SqlConnection connection, Guid id, string newValue)
+    static async Task UpdateRow(SqlConnection connection, Guid id, string newValue, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "UPDATE MyTable SET Value = @Value WHERE Id = @Id";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", newValue);
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task CreateManyTables(SqlConnection connection, int count)
+    static async Task CreateManyTables(SqlConnection connection, int count, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         var sqlBuilder = new StringBuilder();
@@ -443,15 +443,15 @@ public class RowVersionsTests
         }
 
         command.CommandText = sqlBuilder.ToString();
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
-    static async Task InsertIntoTableN(SqlConnection connection, int tableNumber, Guid id)
+    static async Task InsertIntoTableN(SqlConnection connection, int tableNumber, Guid id, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = $"INSERT INTO Table{tableNumber} (Id, Value) VALUES (@Id, @Value)";
         command.Parameters.AddWithValue("@Id", id);
         command.Parameters.AddWithValue("@Value", $"Value{tableNumber}");
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 }

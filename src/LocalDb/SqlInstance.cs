@@ -9,12 +9,12 @@ public class SqlInstance :
 
     public SqlInstance(
         string name,
-        Func<SqlConnection, Task> buildTemplate,
+        Func<SqlConnection, Cancel, Task> buildTemplate,
         string? directory = null,
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<SqlConnection, Task>? callback = null)
+        Func<SqlConnection, Cancel, Task>? callback = null)
     {
         if (!Guard.IsWindows)
         {
@@ -92,7 +92,8 @@ public class SqlInstance :
     public Task<SqlDatabase> Build(
             [CallerFilePath] string testFile = "",
             string? databaseSuffix = null,
-            [CallerMemberName] string memberName = "")
+            [CallerMemberName] string memberName = "",
+            Cancel cancel = default)
 
         #endregion
 
@@ -106,7 +107,7 @@ public class SqlInstance :
 
         var name = DbNamer.DeriveDbName(databaseSuffix, memberName, testClass);
 
-        return Build(name);
+        return Build(name, cancel);
     }
 
     #region ExplicitBuildSignature
@@ -114,15 +115,15 @@ public class SqlInstance :
     /// <summary>
     ///     Build database with an explicit name.
     /// </summary>
-    public async Task<SqlDatabase> Build(string dbName)
+    public async Task<SqlDatabase> Build(string dbName, Cancel cancel = default)
 
         #endregion
 
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
-        var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
-        return new(connection, dbName, () => Wrapper.DeleteDatabase(dbName));
+        var connection = await Wrapper.CreateDatabaseFromTemplate(dbName, cancel);
+        return new(connection, dbName, cancel => Wrapper.DeleteDatabase(dbName, cancel));
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;

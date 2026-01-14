@@ -18,7 +18,7 @@
         static BuildTemplate() =>
             sqlInstance = new(
                 constructInstance: connection => new(connection),
-                buildTemplate: async context =>
+                buildTemplate: async (context, cancel) =>
                 {
                     await context.CreateOnExistingDb();
                     var entity = new TheEntity
@@ -26,7 +26,7 @@
                         Property = "prop"
                     };
                     context.TestEntities.Add(entity);
-                    await context.SaveChangesAsync();
+                    await context.SaveChangesAsync(cancel);
                 });
 
         [Test]

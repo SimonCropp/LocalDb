@@ -39,14 +39,14 @@ public class LocalDbBenchmarks
     public async Task BuildDatabase()
     {
         var dbName = $"BenchDb{Interlocked.Increment(ref databaseCounter)}";
-        await using var database = await sqlInstance.Build(dbName);
+        await using var database = await sqlInstance.Build(dbName: dbName);
     }
 
     [Benchmark]
     public async Task BuildAndInsert()
     {
         var dbName = $"InsertDb{Interlocked.Increment(ref databaseCounter)}";
-        await using var database = await sqlInstance.Build(dbName);
+        await using var database = await sqlInstance.Build(dbName: dbName);
         await AddData(database);
     }
 
@@ -54,12 +54,12 @@ public class LocalDbBenchmarks
     public async Task BuildInsertAndQuery()
     {
         var dbName = $"QueryDb{Interlocked.Increment(ref databaseCounter)}";
-        await using var database = await sqlInstance.Build(dbName);
+        await using var database = await sqlInstance.Build(dbName: dbName);
         await AddData(database);
         await GetData(database);
     }
 
-    static async Task CreateTable(SqlConnection connection)
+    static async Task CreateTable(SqlConnection connection, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
 
@@ -75,7 +75,7 @@ public class LocalDbBenchmarks
                 CreatedAt datetime2 default getdate()
             );
             """;
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
 
         // Populate template with ~20MB of data
         // Each row: ~2KB actual storage (with SQL overhead)
@@ -108,7 +108,7 @@ public class LocalDbBenchmarks
             }
 
             insertCommand.CommandText = sql.ToString();
-            await insertCommand.ExecuteNonQueryAsync();
+            await insertCommand.ExecuteNonQueryAsync(cancel);
             await insertCommand.DisposeAsync();
         }
     }

@@ -42,7 +42,7 @@ public class EfSnippetTests
     [Test]
     public async Task TheTestWithDbName()
     {
-        using var database = await sqlInstance.Build("TheTestWithDbName");
+        using var database = await sqlInstance.Build(dbName: "TheTestWithDbName");
         var entity = new TheEntity
         {
             Property = "prop"

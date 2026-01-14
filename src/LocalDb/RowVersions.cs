@@ -36,7 +36,7 @@ public static class RowVersions
     /// }
     /// </code>
     /// </example>
-    public static async Task<Dictionary<Guid, ulong>> Read(SqlConnection connection)
+    public static async Task<Dictionary<Guid, ulong>> Read(SqlConnection connection, Cancel cancel = default)
     {
         var sql = """
             DECLARE @sql nvarchar(max);
@@ -57,13 +57,13 @@ public static class RowVersions
 
 #if NET5_0_OR_GREATER
         await using var command = new SqlCommand(sql, connection);
-        await using var reader = await command.ExecuteReaderAsync();
+        await using var reader = await command.ExecuteReaderAsync(cancel);
 #else
         using var command = new SqlCommand(sql, connection);
-        using var reader = await command.ExecuteReaderAsync();
+        using var reader = await command.ExecuteReaderAsync(cancel);
 #endif
 
-        while (await reader.ReadAsync())
+        while (await reader.ReadAsync(cancel))
         {
             var bytes = (byte[])reader[1];
             // SQL Server returns ROWVERSION in big-endian format

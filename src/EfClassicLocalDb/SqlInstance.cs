@@ -65,13 +65,13 @@ public class SqlInstance<TDbContext> :
         var storageValue = storage.Value;
         DirectoryCleaner.CleanInstance(storageValue.Directory);
 
-        Func<SqlConnection, Task>? wrapperCallback = null;
+        Func<SqlConnection, Cancel, Task>? wrapperCallback = null;
         if (callback is not null)
         {
-            wrapperCallback = async connection =>
+            wrapperCallback = async (connection, cancel) =>
             {
                 using var context = constructInstance(connection);
-                await callback(connection, context);
+                await callback(connection, context, cancel);
             };
         }
 
@@ -81,7 +81,7 @@ public class SqlInstance<TDbContext> :
             templateSize,
             existingTemplate,
             wrapperCallback);
-        Wrapper.Start(resultTimestamp, connection => buildTemplate(connection));
+        Wrapper.Start(resultTimestamp, (connection, cancel) => buildTemplate(connection, cancel));
     }
 
     static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
@@ -128,7 +128,8 @@ public class SqlInstance<TDbContext> :
         IEnumerable<object>? data,
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(testFile);
@@ -138,7 +139,7 @@ public class SqlInstance<TDbContext> :
         var testClass = Path.GetFileNameWithoutExtension(testFile);
 
         var dbName = DbNamer.DeriveDbName(databaseSuffix, memberName, testClass);
-        return Build(dbName, data);
+        return Build(dbName, data, cancel);
     }
 
     /// <summary>
@@ -150,33 +151,35 @@ public class SqlInstance<TDbContext> :
     public Task<SqlDatabase<TDbContext>> Build(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
+        [CallerMemberName] string memberName = "",
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        return Build(null, testFile, databaseSuffix, memberName);
+        return Build(null, testFile, databaseSuffix, memberName, cancel);
     }
 
     public async Task<SqlDatabase<TDbContext>> Build(
         string dbName,
-        IEnumerable<object>? data)
+        IEnumerable<object>? data,
+        Cancel cancel = default)
     {
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
-        var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
+        var connection = await Wrapper.CreateDatabaseFromTemplate(dbName, cancel);
         var database = new SqlDatabase<TDbContext>(
             connection,
             dbName,
             constructInstance,
-            () => Wrapper.DeleteDatabase(dbName),
+            cancel => Wrapper.DeleteDatabase(dbName, cancel),
             data);
-        await database.Start();
+        await database.Start(cancel);
         return database;
     }
 
-    public Task<SqlDatabase<TDbContext>> Build(string dbName)
+    public Task<SqlDatabase<TDbContext>> Build(string dbName, Cancel cancel = default)
     {
         Guard.AgainstBadOS();
-        return Build(dbName, (IEnumerable<object>?) null);
+        return Build(dbName, (IEnumerable<object>?) null, cancel);
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;

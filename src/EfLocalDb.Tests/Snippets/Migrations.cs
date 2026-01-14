@@ -7,7 +7,7 @@ public class Migrations
         #region Migrations
 
         var sqlInstance = new SqlInstance<MyDbContext>(
-            buildTemplate: async (connection, options) =>
+            buildTemplate: async (connection, options, cancel) =>
             {
                 #region IMigrationsSqlGenerator
 
@@ -18,7 +18,7 @@ public class Migrations
                 #region Migrate
 
                 await using var data = new MyDbContext(options.Options);
-                await data.Database.MigrateAsync();
+                await data.Database.MigrateAsync(cancel);
 
                 #endregion
             },

@@ -107,7 +107,7 @@ end;
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: _ =>
+            callback: (_, cancel) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;
@@ -129,7 +129,7 @@ end;
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: async (connection, cancel) =>
             {
                 connectionState = connection.State;
 
@@ -158,7 +158,7 @@ end;
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: async (connection, cancel) =>
             {
                 callCount++;
                 // Verify connection works
@@ -193,7 +193,7 @@ end;
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: async (connection, cancel) =>
             {
                 rebuildCallCount++;
                 await using var command = connection.CreateCommand();
@@ -213,7 +213,7 @@ end;
         using var wrapper2 = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: async (connection, cancel) =>
             {
                 nonRebuildCallCount++;
                 await using var command = connection.CreateCommand();
@@ -238,7 +238,7 @@ end;
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: async (connection, cancel) =>
             {
                 // Insert test data into template
                 await using var command = connection.CreateCommand();
@@ -269,7 +269,7 @@ end;
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: async connection =>
+            callback: async (connection, cancel) =>
             {
                 await using var command = connection.CreateCommand();
                 command.CommandText = "SELECT 1";
@@ -402,7 +402,7 @@ end;
         var name = "DefinedTimestamp";
         using var wrapper = new Wrapper(name, DirectoryFinder.Find(name));
         var dateTime = DateTime.Now;
-        wrapper.Start(dateTime, _ => Task.CompletedTask);
+        wrapper.Start(dateTime, (_, cancel) => Task.CompletedTask);
         await wrapper.AwaitStart();
         AreEqual(dateTime, File.GetCreationTime(wrapper.DataFile));
         wrapper.DeleteInstance();
@@ -416,7 +416,7 @@ end;
             DirectoryFinder.Find("WrapperTests"));
 
         Recording.Start();
-        wrapper.Start(timestamp, _ => throw new());
+        wrapper.Start(timestamp, (_, cancel) => throw new());
         await wrapper.AwaitStart();
         await Verify();
         wrapper.DeleteInstance();

@@ -11,7 +11,7 @@ public class Tests
     [TestCaseSource(nameof(DatabaseNames))]
     public async Task Test(string name)
     {
-        await using var database = await sqlInstance.Build(name);
+        await using var database = await sqlInstance.Build(dbName: name);
         await AddData(database);
         var data = await GetData(database);
         AreEqual(1, data.Count);
@@ -25,11 +25,11 @@ public class Tests
         }
     }
 
-    static async Task CreateTable(SqlConnection connection)
+    static async Task CreateTable(SqlConnection connection, Cancel cancel = default)
     {
         await using var command = connection.CreateCommand();
         command.CommandText = "create table MyTable (Value int);";
-        await command.ExecuteNonQueryAsync();
+        await command.ExecuteNonQueryAsync(cancel);
     }
 
     static int intData;

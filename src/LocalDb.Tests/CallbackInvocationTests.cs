@@ -16,7 +16,7 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: (connection, cancel) =>
             {
                 callbackCount++;
                 return VerifyConnectionWorks(connection);
@@ -52,7 +52,7 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: (connection, cancel) =>
             {
                 callbackCount++;
                 return VerifyConnectionWorks(connection);
@@ -89,7 +89,7 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: (connection, cancel) =>
             {
                 callbackCount++;
                 return VerifyConnectionWorks(connection);
@@ -130,7 +130,7 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: (connection, cancel) =>
             {
                 callbackCount++;
                 return VerifyConnectionWorks(connection);
@@ -172,7 +172,7 @@ public class CallbackInvocationTests
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: (connection, cancel) =>
             {
                 callbackCount++;
                 return VerifyConnectionWorks(connection);
@@ -209,7 +209,7 @@ public class CallbackInvocationTests
         using (var wrapper1 = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: (connection, cancel) =>
             {
                 firstCallbackCount++;
                 return VerifyConnectionWorks(connection);
@@ -232,7 +232,7 @@ public class CallbackInvocationTests
         using (var wrapper2 = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: connection =>
+            callback: (connection, cancel) =>
             {
                 secondCallbackCount++;
                 return VerifyConnectionWorks(connection);
