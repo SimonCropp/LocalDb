@@ -19,7 +19,7 @@ public class CallbackInvocationTests
             callback: (connection, cancel) =>
             {
                 callbackCount++;
-                return VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection, cancel);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -55,7 +55,7 @@ public class CallbackInvocationTests
             callback: (connection, cancel) =>
             {
                 callbackCount++;
-                return VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection, cancel);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -92,7 +92,7 @@ public class CallbackInvocationTests
             callback: (connection, cancel) =>
             {
                 callbackCount++;
-                return VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection, cancel);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -133,7 +133,7 @@ public class CallbackInvocationTests
             callback: (connection, cancel) =>
             {
                 callbackCount++;
-                return VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection, cancel);
             });
 
         // Start with same timestamp - should not rebuild
@@ -175,7 +175,7 @@ public class CallbackInvocationTests
             callback: (connection, cancel) =>
             {
                 callbackCount++;
-                return VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection, cancel);
             });
 
         // Start with different timestamp - should rebuild
@@ -212,7 +212,7 @@ public class CallbackInvocationTests
             callback: (connection, cancel) =>
             {
                 firstCallbackCount++;
-                return VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection, cancel);
             }))
         {
             wrapper1.Start(timestamp, TestDbBuilder.CreateTable);
@@ -235,7 +235,7 @@ public class CallbackInvocationTests
             callback: (connection, cancel) =>
             {
                 secondCallbackCount++;
-                return VerifyConnectionWorks(connection);
+                return VerifyConnectionWorks(connection, cancel);
             }))
         {
             wrapper2.Start(timestamp, TestDbBuilder.CreateTable);
@@ -276,11 +276,11 @@ public class CallbackInvocationTests
         wrapper.DeleteInstance();
     }
 
-    static async Task VerifyConnectionWorks(SqlConnection connection)
+    static async Task VerifyConnectionWorks(SqlConnection connection, Cancel cancel)
     {
         AreEqual(ConnectionState.Open, connection.State);
         await using var command = connection.CreateCommand();
         command.CommandText = "SELECT COUNT(*) FROM MyTable";
-        await command.ExecuteScalarAsync();
+        await command.ExecuteScalarAsync(cancel);
     }
 }

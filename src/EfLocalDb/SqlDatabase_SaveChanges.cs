@@ -5,10 +5,10 @@ public partial class SqlDatabase<TDbContext>
     /// <summary>
     ///     Calls <see cref="DbContext.SaveChanges()" /> on <see cref="Context" />.
     /// </summary>
-    public Task<int> SaveChangesAsync()
+    public Task<int> SaveChangesAsync(Cancel cancel = default)
     {
         ThrowForNoChanges();
-        return Context.SaveChangesAsync();
+        return Context.SaveChangesAsync(cancel);
     }
 
     void ThrowForNoChanges()
@@ -26,15 +26,6 @@ public partial class SqlDatabase<TDbContext>
     {
         ThrowForNoChanges();
         return Context.SaveChanges(acceptAllChangesOnSuccess);
-    }
-
-    /// <summary>
-    ///     Calls <see cref="DbContext.SaveChangesAsync(CancellationToken)" /> on <see cref="Context" />.
-    /// </summary>
-    public Task<int> SaveChangesAsync(Cancel cancel = default)
-    {
-        ThrowForNoChanges();
-        return Context.SaveChangesAsync(cancel);
     }
 
     /// <summary>

@@ -108,13 +108,14 @@ The convention signature is as follows:
 ///     Used to make the db name unique per method.
 ///     Will default to the caller method name is used.
 /// </param>
+/// <param name="cancel">The cancellation instruction.</param>
 public Task<SqlDatabase> Build(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "",
         Cancel cancel = default)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L75-L98' title='Snippet source file'>snippet source</a> | <a href='#snippet-ConventionBuildSignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L75-L99' title='Snippet source file'>snippet source</a> | <a href='#snippet-ConventionBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -151,7 +152,7 @@ If full control over the database name is required, there is an overload that ta
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName, Cancel cancel = default)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L113-L120' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitBuildSignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L114-L121' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:

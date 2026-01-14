@@ -250,7 +250,7 @@ public class Tests
         instance = new(
             connection => new(connection),
             storage: Storage.FromSuffix<TestDbContext>("Classic"),
-            callback: (_, _, cancel) =>
+            callback: (_, _, _) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;

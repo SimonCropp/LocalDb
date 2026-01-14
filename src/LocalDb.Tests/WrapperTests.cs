@@ -107,7 +107,7 @@ end;
         using var wrapper = new Wrapper(
             name,
             DirectoryFinder.Find(name),
-            callback: (_, cancel) =>
+            callback: (_, _) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;
@@ -136,7 +136,7 @@ end;
                 // Verify we can actually execute a query on the open connection
                 await using var command = connection.CreateCommand();
                 command.CommandText = "SELECT COUNT(*) FROM MyTable";
-                queryResult = (int)(await command.ExecuteScalarAsync())!;
+                queryResult = (int)(await command.ExecuteScalarAsync(cancel))!;
             });
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
@@ -164,7 +164,7 @@ end;
                 // Verify connection works
                 await using var command = connection.CreateCommand();
                 command.CommandText = "SELECT COUNT(*) FROM MyTable";
-                await command.ExecuteScalarAsync();
+                await command.ExecuteScalarAsync(cancel);
             });
 
         // First start - template is created and callback should be invoked
@@ -198,7 +198,7 @@ end;
                 rebuildCallCount++;
                 await using var command = connection.CreateCommand();
                 command.CommandText = "SELECT COUNT(*) FROM MyTable";
-                await command.ExecuteScalarAsync();
+                await command.ExecuteScalarAsync(cancel);
             });
 
         // First start - template is created (rebuild scenario)
@@ -218,7 +218,7 @@ end;
                 nonRebuildCallCount++;
                 await using var command = connection.CreateCommand();
                 command.CommandText = "SELECT COUNT(*) FROM MyTable";
-                await command.ExecuteScalarAsync();
+                await command.ExecuteScalarAsync(cancel);
             });
 
         wrapper2.Start(timestamp, TestDbBuilder.CreateTable);
@@ -243,7 +243,7 @@ end;
                 // Insert test data into template
                 await using var command = connection.CreateCommand();
                 command.CommandText = "INSERT INTO MyTable (Value) VALUES (42), (100)";
-                await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync(cancel);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -273,7 +273,7 @@ end;
             {
                 await using var command = connection.CreateCommand();
                 command.CommandText = "SELECT 1";
-                await command.ExecuteScalarAsync();
+                await command.ExecuteScalarAsync(cancel);
             });
 
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
@@ -402,7 +402,7 @@ end;
         var name = "DefinedTimestamp";
         using var wrapper = new Wrapper(name, DirectoryFinder.Find(name));
         var dateTime = DateTime.Now;
-        wrapper.Start(dateTime, (_, cancel) => Task.CompletedTask);
+        wrapper.Start(dateTime, (_, _) => Task.CompletedTask);
         await wrapper.AwaitStart();
         AreEqual(dateTime, File.GetCreationTime(wrapper.DataFile));
         wrapper.DeleteInstance();
@@ -416,7 +416,7 @@ end;
             DirectoryFinder.Find("WrapperTests"));
 
         Recording.Start();
-        wrapper.Start(timestamp, (_, cancel) => throw new());
+        wrapper.Start(timestamp, (_, _) => throw new());
         await wrapper.AwaitStart();
         await Verify();
         wrapper.DeleteInstance();

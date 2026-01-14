@@ -89,6 +89,7 @@ public class SqlInstance :
     ///     Used to make the db name unique per method.
     ///     Will default to the caller method name is used.
     /// </param>
+    /// <param name="cancel">The cancellation instruction.</param>
     public Task<SqlDatabase> Build(
             [CallerFilePath] string testFile = "",
             string? databaseSuffix = null,

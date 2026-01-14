@@ -4,7 +4,7 @@ public class RowVersionsTests
     [Test]
     public async Task NoTables()
     {
-        using var instance = new SqlInstance("GetRowVersions_NoTables", (_, cancel) => Task.CompletedTask);
+        using var instance = new SqlInstance("GetRowVersions_NoTables", (_, _) => Task.CompletedTask);
 
         await using var database = await instance.Build();
         var result = await RowVersions.Read(database.Connection);

@@ -60,7 +60,7 @@ public class Tests
         using var instance = new SqlInstance(
             "Tests_Callback",
             TestDbBuilder.CreateTable,
-            callback: (_, cancel) =>
+            callback: (_, _) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;

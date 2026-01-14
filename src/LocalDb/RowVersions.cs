@@ -10,6 +10,7 @@ public static class RowVersions
     /// Retrieves the current row version (timestamp) for all rows in tables that have both an Id (UNIQUEIDENTIFIER) column and a RowVersion (ROWVERSION) column.
     /// </summary>
     /// <param name="connection">An open SQL Server connection.</param>
+    /// <param name="cancel">The cancellation instruction.</param>
     /// <returns>
     /// A dictionary mapping entity IDs (GUID) to their row versions (ulong).
     /// The row version is a monotonically increasing value that changes every time the row is modified.

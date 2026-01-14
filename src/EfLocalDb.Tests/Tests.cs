@@ -555,7 +555,7 @@ public class Tests
     static Tests() =>
         instance = new(
             builder => new(builder.Options),
-            callback: (_, _, cancel) =>
+            callback: (_, _, _) =>
             {
                 callbackCalled = true;
                 return Task.CompletedTask;
