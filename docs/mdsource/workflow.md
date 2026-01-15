@@ -53,8 +53,8 @@ flowchart TD
     checkExists{Instance<br>Exists?}
     checkRunning{Instance<br>Running?}
     deleteInstance[Delete Instance]
-    checkDataFile{Data File Exists?}
-    stopAndDelete[Stop & Delete Instance]
+    checkDataFile{Data File<br>Exists?}
+    stopAndDelete[Stop & Delete<br>Instance]
     cleanDir[Clean Directory]
     checkTimestamp{Timestamp<br>Match?}
     checkCallback{Callback<br>Exists?}
@@ -62,7 +62,6 @@ flowchart TD
 
     subgraph openMasterForNewBox[Open Master Connection]
         optimizeModel[Optimize Model DB]
-        rebuildTemplate
         deleteFiles[Delete Template Files]
         createTemplateDb[Create Template DB]
         subgraph openTemplateForNewBox[Open Template Connection]
@@ -100,13 +99,12 @@ flowchart TD
 
     checkDataFile -->|Yes| checkTimestamp
 
-    checkTimestamp -->|No| rebuildTemplate
+    checkTimestamp -->|No| runBuildTemplate
 
     checkTimestamp -->|Yes| checkCallback
     cleanDir --> createInstance
     createInstance --> optimizeModel
-    optimizeModel --> rebuildTemplate
-    rebuildTemplate --> deleteFiles
+    optimizeModel --> deleteFiles
     deleteFiles --> createTemplateDb
     createTemplateDb --> runBuildTemplate
     runBuildTemplate --> checkCallbackAfterBuild
@@ -131,11 +129,30 @@ This happens once per `SqlInstance.Build`, usually once per test method.
 
 ```mermaid
 flowchart TD
-    entry[CreateDatabaseFromTemplate]
-    entry --> openMaster[Open Master Connection]
-    openMaster --> takeOffline[Take DB Offline if exists]
-    takeOffline --> copyFiles[Copy Data & Log Files]
-    copyFiles --> createOrOnline[Create or Make Online]
-    createOrOnline --> openNewConn[Open New Connection]
-    openNewConn --> returnConn[Return Connection]
+    entry[Start]
+
+    subgraph openMaster[Open Master Connection]
+        checkDbExists{DB Exists?}
+        takeOffline[Take DB Offline]
+        copyFilesExisting[Copy Data & Log Files]
+        setOnline[Set DB Online]
+        copyFilesNew[Copy Data & Log Files]
+        attachDb[Attach DB]
+    end
+    openNewConn[Open New Connection]
+    returnConn[Return Connection]
+
+    entry
+    entry --> checkDbExists
+
+    checkDbExists -->|Yes| takeOffline
+    takeOffline --> copyFilesExisting
+    copyFilesExisting --> setOnline
+    setOnline --> openNewConn
+
+    checkDbExists -->|No| copyFilesNew
+    copyFilesNew --> attachDb
+    attachDb --> openNewConn
+
+    openNewConn --> returnConn
 ```
