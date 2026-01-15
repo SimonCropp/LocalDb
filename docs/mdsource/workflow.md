@@ -37,32 +37,41 @@ Key relationships:
  * Physical Machine → One Windows machine can have one LocalDB engine installed
  * LocalDB Engine → Can host multiple isolated instances (each is like a mini SQL Server)
  * Instance → Each contains multiple databases (always includes system DBs like master)
- * Storage → Each instance stores its .mdf and .ldf files in a subfolder under %LOCALAPPDATA%
+ * Storage → Each instance stores its .mdf and .ldf files in a subfolder under `%LOCALAPPDATA%\Microsoft\Microsoft SQL Server Local DB\Instances\`
 
 
-## Instance Startup Flow
+## How this project works
+
+### Instance Startup Flow
+
+This flow happens once per `SqlInstance`, usually once before any tests run.
 
 ```mermaid
 flowchart TD
 
     start[Start]
-    deleteFiles[Delete Template Files]
-    flushDir[Flush Directory]
-    createInstance[Create Instance]
     checkExists{Instance<br>Exists?}
     checkRunning{Instance<br>Running?}
     deleteInstance[Delete Instance]
-    optimizeModel[Optimize Model DB]
+    checkDataFile{Data File Exists?}
+    stopAndDelete[Stop & Delete Instance]
+    cleanDir[Clean Directory]
     checkTimestamp{Timestamp<br>Match?}
     checkCallback{Callback<br>Exists?}
-    stopAndDelete[Stop & Delete Instance]
-    checkDataFile{Data File Exists?}
-    openTemplateConn[Open Template Connection]
-    createTemplateDb[Create Template DB]
-    runBuildTemplate[Run buildTemplate]
-    checkCallbackAfterBuild{Callback<br>Exists?}
-    runCallbackAfterBuild[Run Callback]
-    detachShrink[Shrink & Detach Template]
+    createInstance[Create Instance]
+
+    subgraph openMasterForNewBox[Open Master Connection]
+        optimizeModel[Optimize Model DB]
+        rebuildTemplate
+        deleteFiles[Delete Template Files]
+        createTemplateDb[Create Template DB]
+        subgraph openTemplateForNewBox[Open Template Connection]
+            runBuildTemplate[Run buildTemplate]
+            checkCallbackAfterBuild{Callback<br>Exists?}
+            runCallbackAfterBuild[Run Callback]
+        end
+        detachShrink[Shrink & Detach Template]
+    end
     setTimestamp[Set Creation Timestamp]
 
     subgraph openMasterForExistingBox[Open Master Connection]
@@ -78,29 +87,28 @@ flowchart TD
 
     start --> checkExists
 
-    checkExists -->|No| flushDir
+    checkExists -->|No| cleanDir
     checkExists -->|Yes| checkRunning
 
     checkRunning -->|No| deleteInstance
-    deleteInstance --> flushDir
+    deleteInstance --> cleanDir
 
     checkRunning -->|Yes| checkDataFile
 
     checkDataFile -->|No| stopAndDelete
-    stopAndDelete --> flushDir
+    stopAndDelete --> cleanDir
 
     checkDataFile -->|Yes| checkTimestamp
 
     checkTimestamp -->|No| rebuildTemplate
 
     checkTimestamp -->|Yes| checkCallback
-    flushDir --> createInstance
+    cleanDir --> createInstance
     createInstance --> optimizeModel
     optimizeModel --> rebuildTemplate
     rebuildTemplate --> deleteFiles
     deleteFiles --> createTemplateDb
-    createTemplateDb --> openTemplateConn
-    openTemplateConn --> runBuildTemplate
+    createTemplateDb --> runBuildTemplate
     runBuildTemplate --> checkCallbackAfterBuild
     checkCallbackAfterBuild -->|Yes| runCallbackAfterBuild
     checkCallbackAfterBuild -->|No| detachShrink
@@ -116,17 +124,15 @@ flowchart TD
     setTimestamp --> done
 ```
 
-## CreateAndDetachTemplate Flow
+
+### Create DB From Template Flow
+
+This happens once per `SqlInstance.Build`, usually once per test method.
 
 ```mermaid
 flowchart TD
-```
-
-## Create DB From Template Flow
-
-```mermaid
-flowchart TD
-    entry[CreateDatabaseFromTemplate] --> checkReservedName{Name = 'template'?}
+    entry[CreateDatabaseFromTemplate]
+    entry --> checkReservedName{Name = 'template'?}
     checkReservedName -->|Yes| throwReserved[Throw Exception]
     checkReservedName -->|No| checkValidName{Valid Filename?}
     checkValidName -->|No| throwInvalid[Throw ArgumentException]
@@ -140,21 +146,4 @@ flowchart TD
     copyLog --> createOrOnline
     createOrOnline --> openNewConn[Open New Connection]
     openNewConn --> returnConn[Return Connection]
-```
-
-## Constructor Initialization
-
-```mermaid
-flowchart TD
-    entry[Constructor] --> validateOS[Validate OS]
-    validateOS --> validateSize[Validate DB Size]
-    validateSize --> validateName[Validate Instance Name]
-    validateName --> buildConnStrings[Build Connection Strings]
-    buildConnStrings --> checkTemplate{Existing Template?}
-    checkTemplate -->|No| setDefaultPaths[Set Default Template Paths]
-    checkTemplate -->|Yes| useProvidedPaths[Use Provided Template Paths]
-    setDefaultPaths --> createDir[Create Directory]
-    useProvidedPaths --> createDir
-    createDir --> resetAccess[Reset Directory Access]
-    resetAccess --> setServerName[Set Server Name]
 ```

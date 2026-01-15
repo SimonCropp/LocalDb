@@ -3,7 +3,7 @@ static class FileExtensions
     public static void MarkFileAsWritable(string file) =>
         File.SetAttributes(file, File.GetAttributes(file) & ~FileAttributes.ReadOnly);
 
-    public static void FlushDirectory(string directory)
+    public static void CleanDirectory(string directory)
     {
         foreach (var file in Directory.EnumerateFiles(directory))
         {
