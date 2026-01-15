@@ -49,7 +49,7 @@ flowchart TD
     checkRebuild -->|No| checkCallback
 
     rebuildTemplate --> deleteFiles[Delete Template Files]
-    deleteFiles --> createTemplateDb[Create Template Database]
+    deleteFiles --> createTemplateDb[Create Template DB]
     createTemplateDb --> openTemplateConn[Open Template Connection]
     openTemplateConn --> runBuildTemplate[Run buildTemplate Callback]
     runBuildTemplate --> checkCallbackAfterBuild{Callback Exists?}
@@ -58,17 +58,17 @@ flowchart TD
     runCallbackAfterBuild --> detachShrink
     detachShrink --> setTimestamp[Set Creation Timestamp]
 
-    checkCallback -->|Yes| attachTemplate[Attach Template Database]
+    checkCallback -->|Yes| attachTemplate[Attach Template DB]
     attachTemplate --> openForCallback[Open Template Connection]
     openForCallback --> runCallback[Run Callback]
-    runCallback --> detachTemplate[Detach Template Database]
+    runCallback --> detachTemplate[Detach Template DB]
 
     checkCallback -->|No| done[Done]
     detachTemplate --> done
     setTimestamp --> done
 ```
 
-## Create Database From Template Flow
+## Create DB From Template Flow
 
 ```mermaid
 flowchart TD
