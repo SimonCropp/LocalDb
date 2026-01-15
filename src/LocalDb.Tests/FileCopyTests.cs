@@ -104,7 +104,7 @@ public class FileCopyTests
         var sourceFile = Path.Combine(tempDirectory, "nonexistent.txt");
         var destinationFile = Path.Combine(tempDirectory, "destination.txt");
 
-        var exception = ThrowsAsync<IOException>(() =>
+        var exception = ThrowsAsync<FileNotFoundException>(() =>
             File.CopyAsync(sourceFile, destinationFile));
 
         IsNotNull(exception);
