@@ -6,8 +6,7 @@ This document describes how `Wrapper.cs` manages LocalDB instances.
 
 ```mermaid
 flowchart TD
-    start[Start] --> innerStart[InnerStart]
-    innerStart --> checkExists{Instance Exists?}
+    start[Start] --> checkExists{Instance Exists?}
 
     checkExists -->|No| cleanStart[CleanStart]
     checkExists -->|Yes| checkRunning{Instance Running?}
@@ -89,27 +88,6 @@ flowchart TD
     markWritable --> createOrOnline[Create or Make Online]
     createOrOnline --> openNewConn[Open New Connection]
     openNewConn --> returnConn[Return Connection]
-```
-
-## Delete Database Flow
-
-```mermaid
-flowchart TD
-    entry[DeleteDatabase] --> buildCommand[Build Delete Command]
-    buildCommand --> openMaster[Open Master Connection]
-    openMaster --> executeDelete[Execute Delete Command]
-    executeDelete --> deleteDataFile[Delete Data File]
-    deleteDataFile --> deleteLogFile[Delete Log File]
-```
-
-## Delete Instance Flow
-
-```mermaid
-flowchart TD
-    entry[DeleteInstance] --> stopInstance[Stop LocalDB Instance]
-    stopInstance --> deleteInstance[Delete LocalDB Instance]
-    deleteInstance --> deleteDir[Delete Directory]
-    deleteDir --> disposeSemaphore[Dispose Semaphore]
 ```
 
 ## Constructor Initialization
