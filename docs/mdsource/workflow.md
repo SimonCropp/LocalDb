@@ -132,18 +132,10 @@ This happens once per `SqlInstance.Build`, usually once per test method.
 ```mermaid
 flowchart TD
     entry[CreateDatabaseFromTemplate]
-    entry --> checkReservedName{Name = 'template'?}
-    checkReservedName -->|Yes| throwReserved[Throw Exception]
-    checkReservedName -->|No| checkValidName{Valid Filename?}
-    checkValidName -->|No| throwInvalid[Throw ArgumentException]
-    checkValidName -->|Yes| buildPaths[Build File Paths]
-    buildPaths --> awaitStartup[Await Startup Task]
-    awaitStartup --> openMaster[Open Master Connection]
+    entry --> openMaster[Open Master Connection]
     openMaster --> takeOffline[Take DB Offline if exists]
-    takeOffline --> copyData[Copy Data File]
-    takeOffline --> copyLog[Copy Log File]
-    copyData --> createOrOnline[Create or Make Online]
-    copyLog --> createOrOnline
+    takeOffline --> copyFiles[Copy Data & Log Files]
+    copyFiles --> createOrOnline[Create or Make Online]
     createOrOnline --> openNewConn[Open New Connection]
     openNewConn --> returnConn[Return Connection]
 ```
