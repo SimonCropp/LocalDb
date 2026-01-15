@@ -44,24 +44,24 @@ Key relationships:
 
 ```mermaid
 flowchart TD
-    start[Start] --> checkExists{Instance Exists?}
+    start[Start] --> checkExists{Instance<br>Exists?}
 
     checkExists -->|No| flushDir[Flush Directory]
-    checkExists -->|Yes| checkRunning{Instance Running?}
+    checkExists -->|Yes| checkRunning{Instance<br>Running?}
 
     checkRunning -->|No| deleteInstance[Delete Instance]
     deleteInstance --> flushDir
 
     checkRunning -->|Yes| checkDataFile{Data File Exists?}
 
-    checkDataFile -->|No| stopAndDelete[Stop and Delete Instance]
+    checkDataFile -->|No| stopAndDelete[Stop & Delete Instance]
     stopAndDelete --> flushDir
 
-    checkDataFile -->|Yes| checkTimestamp{Timestamp Match?}
-
-    checkTimestamp -->|Yes| checkCallback
+    checkDataFile -->|Yes| checkTimestamp{Timestamp<br>Match?}
 
     checkTimestamp -->|No| rebuildTemplate
+
+    checkTimestamp -->|Yes| checkCallback
     flushDir --> createInstance[Create Instance]
     createInstance --> optimizeModel[Optimize Model DB]
     optimizeModel --> rebuildTemplate
@@ -69,9 +69,9 @@ flowchart TD
     deleteFiles --> createTemplateDb[Create Template DB]
     createTemplateDb --> openTemplateConn[Open Template Connection]
     openTemplateConn --> runBuildTemplate[Run buildTemplate]
-    runBuildTemplate --> checkCallbackAfterBuild{Callback Exists?}
+    runBuildTemplate --> checkCallbackAfterBuild{Callback<br>Exists?}
     checkCallbackAfterBuild -->|Yes| runCallbackAfterBuild[Run Callback]
-    checkCallbackAfterBuild -->|No| detachShrink[Detach and Shrink Template]
+    checkCallbackAfterBuild -->|No| detachShrink[Shrink & Detach Template]
     runCallbackAfterBuild --> detachShrink
     detachShrink --> setTimestamp[Set Creation Timestamp]
 
