@@ -22,8 +22,7 @@ flowchart TD
 
     checkDataFile -->|Yes| checkTimestamp{Timestamp Match?}
 
-    checkTimestamp -->|Yes| skipRebuild[Skip Rebuild]
-    skipRebuild --> createNoRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: false<br/>optimizeModelDb: false]
+    checkTimestamp -->|Yes| createNoRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: false<br/>optimizeModelDb: false]
 
     checkTimestamp -->|No| createRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: true<br/>optimizeModelDb: false]
 
