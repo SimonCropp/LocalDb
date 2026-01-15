@@ -99,7 +99,7 @@ flowchart TD
 
     checkDataFile -->|Yes| checkTimestamp
 
-    checkTimestamp -->|No| runBuildTemplate
+    checkTimestamp -->|No| deleteFiles
 
     checkTimestamp -->|Yes| checkCallback
     cleanDir --> createInstance
