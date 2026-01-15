@@ -44,43 +44,69 @@ Key relationships:
 
 ```mermaid
 flowchart TD
-    start[Start] --> checkExists{Instance<br>Exists?}
 
-    checkExists -->|No| flushDir[Flush Directory]
-    checkExists -->|Yes| checkRunning{Instance<br>Running?}
+    start[Start]
+    deleteFiles[Delete Template Files]
+    flushDir[Flush Directory]
+    createInstance[Create Instance]
+    checkExists{Instance<br>Exists?}
+    checkRunning{Instance<br>Running?}
+    deleteInstance[Delete Instance]
+    optimizeModel[Optimize Model DB]
+    checkTimestamp{Timestamp<br>Match?}
+    checkCallback{Callback<br>Exists?}
+    stopAndDelete[Stop & Delete Instance]
+    checkDataFile{Data File Exists?}
+    openTemplateConn[Open Template Connection]
+    createTemplateDb[Create Template DB]
+    runBuildTemplate[Run buildTemplate]
+    checkCallbackAfterBuild{Callback<br>Exists?}
+    runCallbackAfterBuild[Run Callback]
+    detachShrink[Shrink & Detach Template]
+    setTimestamp[Set Creation Timestamp]
+    attachTemplate[Attach Template DB]
+    openForCallback[Open Template Connection]
+    runCallback[Run Callback]
+    detachTemplate[Detach Template DB]
+    done[Done]
 
-    checkRunning -->|No| deleteInstance[Delete Instance]
+    start --> checkExists
+
+    checkExists -->|No| flushDir
+    checkExists -->|Yes| checkRunning
+
+    checkRunning -->|No| deleteInstance
     deleteInstance --> flushDir
 
-    checkRunning -->|Yes| checkDataFile{Data File Exists?}
+    checkRunning -->|Yes| checkDataFile
 
-    checkDataFile -->|No| stopAndDelete[Stop & Delete Instance]
+    checkDataFile -->|No| stopAndDelete
     stopAndDelete --> flushDir
 
-    checkDataFile -->|Yes| checkTimestamp{Timestamp<br>Match?}
+    checkDataFile -->|Yes| checkTimestamp
 
     checkTimestamp -->|No| rebuildTemplate
 
     checkTimestamp -->|Yes| checkCallback
-    flushDir --> createInstance[Create Instance]
-    createInstance --> optimizeModel[Optimize Model DB]
+    flushDir --> createInstance
+    createInstance --> optimizeModel
     optimizeModel --> rebuildTemplate
-    rebuildTemplate --> deleteFiles[Delete Template Files]
-    deleteFiles --> createTemplateDb[Create Template DB]
-    createTemplateDb --> openTemplateConn[Open Template Connection]
-    openTemplateConn --> runBuildTemplate[Run buildTemplate]
-    runBuildTemplate --> checkCallbackAfterBuild{Callback<br>Exists?}
-    checkCallbackAfterBuild -->|Yes| runCallbackAfterBuild[Run Callback]
-    checkCallbackAfterBuild -->|No| detachShrink[Shrink & Detach Template]
+    rebuildTemplate --> deleteFiles
+    deleteFiles --> createTemplateDb
+    createTemplateDb --> openTemplateConn
+    openTemplateConn --> runBuildTemplate
+    runBuildTemplate --> checkCallbackAfterBuild
+    checkCallbackAfterBuild -->|Yes| runCallbackAfterBuild
+    checkCallbackAfterBuild -->|No| detachShrink
     runCallbackAfterBuild --> detachShrink
-    detachShrink --> setTimestamp[Set Creation Timestamp]
+    detachShrink --> setTimestamp
 
-    checkCallback -->|Yes| attachTemplate[Attach Template DB]
-    attachTemplate --> openForCallback[Open Template Connection]
-    openForCallback --> runCallback[Run Callback]
-    runCallback --> detachTemplate[Detach Template DB]
+    checkCallback -->|Yes| attachTemplate
+    attachTemplate --> openForCallback
+    openForCallback --> runCallback
+    runCallback --> detachTemplate
 
-    checkCallback -->|No| done[Done]
+    checkCallback -->|No| done
     detachTemplate --> done
     setTimestamp --> done
 ```
