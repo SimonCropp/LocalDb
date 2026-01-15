@@ -84,7 +84,7 @@ flowchart TD
     rebuildTemplate --> deleteFiles[Delete Template Files]
     deleteFiles --> createTemplateDb[Create Template DB]
     createTemplateDb --> openTemplateConn[Open Template Connection]
-    openTemplateConn --> runBuildTemplate[Run buildTemplate Callback]
+    openTemplateConn --> runBuildTemplate[Run buildTemplate]
     runBuildTemplate --> checkCallbackAfterBuild{Callback Exists?}
     checkCallbackAfterBuild -->|Yes| runCallbackAfterBuild[Run Callback]
     checkCallbackAfterBuild -->|No| detachShrink[Detach and Shrink Template]
