@@ -78,11 +78,8 @@ flowchart TD
     executeOptimize --> checkRebuild{Rebuild Template?}
     checkOptimize -->|No| checkRebuild
 
-    checkRebuild -->|Yes| checkProvided{Template Provided?}
-    checkProvided -->|No| rebuildTemplate[Rebuild Template]
-    checkProvided -->|Yes| checkCallback{Callback Exists?}
-
-    checkRebuild -->|No| checkCallback
+    checkRebuild -->|Yes| rebuildTemplate[Rebuild Template]
+    checkRebuild -->|No| checkCallback{Callback Exists?}
 
     rebuildTemplate --> deleteFiles[Delete Template Files]
     deleteFiles --> createTemplateDb[Create Template DB]
