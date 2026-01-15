@@ -50,8 +50,7 @@ flowchart TD
 
     rebuildTemplate --> deleteFiles[Delete Template Files]
     deleteFiles --> createTemplateDb[Create Template Database]
-    createTemplateDb --> markWritable[Mark Files Writable]
-    markWritable --> openTemplateConn[Open Template Connection]
+    createTemplateDb --> openTemplateConn[Open Template Connection]
     openTemplateConn --> runBuildTemplate[Run buildTemplate Callback]
     runBuildTemplate --> checkCallbackAfterBuild{Callback Exists?}
     checkCallbackAfterBuild -->|Yes| runCallbackAfterBuild[Run Callback]
@@ -83,9 +82,8 @@ flowchart TD
     openMaster --> takeOffline[Take DB Offline if exists]
     takeOffline --> copyData[Copy Data File]
     takeOffline --> copyLog[Copy Log File]
-    copyData --> markWritable[Mark Files Writable]
-    copyLog --> markWritable
-    markWritable --> createOrOnline[Create or Make Online]
+    copyData --> createOrOnline[Create or Make Online]
+    copyLog --> createOrOnline
     createOrOnline --> openNewConn[Open New Connection]
     openNewConn --> returnConn[Return Connection]
 ```
