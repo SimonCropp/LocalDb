@@ -59,28 +59,12 @@ flowchart TD
 
     checkDataFile -->|Yes| checkTimestamp{Timestamp Match?}
 
-    checkTimestamp -->|Yes| createNoRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: false<br/>optimize Model DB: false]
+    checkTimestamp -->|Yes| checkCallback
 
-    checkTimestamp -->|No| createRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: true<br/>optimize Model DB: false]
+    checkTimestamp -->|No| rebuildTemplate
     flushDir --> createInstance[Create Instance]
-    createInstance --> startInstance[Start Instance]
-    startInstance --> createFull[CreateAndDetachTemplate<br/>rebuildTemplate: true<br/>optimize Model DB: true]
-```
-
-## CreateAndDetachTemplate Flow
-
-```mermaid
-flowchart TD
-    entry[CreateAndDetachTemplate] --> openMaster[Open Master Connection]
-    openMaster --> checkOptimize{Optimize Model DB?}
-
-    checkOptimize -->|Yes| executeOptimize[Execute Optimize Model DB Command]
-    executeOptimize --> checkRebuild{Rebuild Template?}
-    checkOptimize -->|No| checkRebuild
-
-    checkRebuild -->|Yes| rebuildTemplate[Rebuild Template]
-    checkRebuild -->|No| checkCallback{Callback Exists?}
-
+    createInstance --> optimizeModel[Optimize Model DB]
+    optimizeModel --> rebuildTemplate
     rebuildTemplate --> deleteFiles[Delete Template Files]
     deleteFiles --> createTemplateDb[Create Template DB]
     createTemplateDb --> openTemplateConn[Open Template Connection]
@@ -99,6 +83,12 @@ flowchart TD
     checkCallback -->|No| done[Done]
     detachTemplate --> done
     setTimestamp --> done
+```
+
+## CreateAndDetachTemplate Flow
+
+```mermaid
+flowchart TD
 ```
 
 ## Create DB From Template Flow
