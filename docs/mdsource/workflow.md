@@ -64,10 +64,16 @@ flowchart TD
     runCallbackAfterBuild[Run Callback]
     detachShrink[Shrink & Detach Template]
     setTimestamp[Set Creation Timestamp]
-    attachTemplate[Attach Template DB]
-    openForCallback[Open Template Connection]
-    runCallback[Run Callback]
-    detachTemplate[Detach Template DB]
+
+    subgraph openMasterForExistingBox[Open Master Connection]
+        attachTemplate[Attach Template DB]
+        subgraph openTemplateForExistingBox[Open Template Connection]
+            runCallback[Run Callback]
+        end
+        detachTemplate[Detach Template DB]
+    end
+
+
     done[Done]
 
     start --> checkExists
@@ -102,8 +108,7 @@ flowchart TD
     detachShrink --> setTimestamp
 
     checkCallback -->|Yes| attachTemplate
-    attachTemplate --> openForCallback
-    openForCallback --> runCallback
+    attachTemplate --> runCallback
     runCallback --> detachTemplate
 
     checkCallback -->|No| done
