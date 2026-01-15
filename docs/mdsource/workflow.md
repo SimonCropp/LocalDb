@@ -46,27 +46,25 @@ Key relationships:
 flowchart TD
     start[Start] --> checkExists{Instance Exists?}
 
-    checkExists -->|No| cleanStart[CleanStart]
+    checkExists -->|No| flushDir[Flush Directory]
     checkExists -->|Yes| checkRunning{Instance Running?}
 
     checkRunning -->|No| deleteInstance[Delete Instance]
-    deleteInstance --> cleanStart
+    deleteInstance --> flushDir
 
     checkRunning -->|Yes| checkDataFile{Data File Exists?}
 
     checkDataFile -->|No| stopAndDelete[Stop and Delete Instance]
-    stopAndDelete --> cleanStart
+    stopAndDelete --> flushDir
 
     checkDataFile -->|Yes| checkTimestamp{Timestamp Match?}
 
-    checkTimestamp -->|Yes| createNoRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: false<br/>optimizeModelDb: false]
+    checkTimestamp -->|Yes| createNoRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: false<br/>optimize Model DB: false]
 
-    checkTimestamp -->|No| createRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: true<br/>optimizeModelDb: false]
-
-    cleanStart --> flushDir[Flush Directory]
+    checkTimestamp -->|No| createRebuild[CreateAndDetachTemplate<br/>rebuildTemplate: true<br/>optimize Model DB: false]
     flushDir --> createInstance[Create Instance]
     createInstance --> startInstance[Start Instance]
-    startInstance --> createFull[CreateAndDetachTemplate<br/>rebuildTemplate: true<br/>optimizeModelDb: true]
+    startInstance --> createFull[CreateAndDetachTemplate<br/>rebuildTemplate: true<br/>optimize Model DB: true]
 ```
 
 ## CreateAndDetachTemplate Flow
@@ -74,9 +72,9 @@ flowchart TD
 ```mermaid
 flowchart TD
     entry[CreateAndDetachTemplate] --> openMaster[Open Master Connection]
-    openMaster --> checkOptimize{Optimize ModelDb?}
+    openMaster --> checkOptimize{Optimize Model DB?}
 
-    checkOptimize -->|Yes| executeOptimize[Execute Optimize ModelDb Command]
+    checkOptimize -->|Yes| executeOptimize[Execute Optimize Model DB Command]
     executeOptimize --> checkRebuild{Rebuild Template?}
     checkOptimize -->|No| checkRebuild
 
