@@ -154,7 +154,7 @@ Key relationships:
 
 ### Inputs
 
-### Instance Startup Flow
+### SqlInstance Startup Flow
 
 This flow happens once per `SqlInstance`, usually once before any tests run.
 
@@ -235,7 +235,7 @@ flowchart TD
 ```
 
 
-### Create DB From Template Flow
+### Create SqlDatabase Flow
 
 This happens once per `SqlInstance.Build`, usually once per test method.
 
