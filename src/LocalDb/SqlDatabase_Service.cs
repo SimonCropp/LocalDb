@@ -9,7 +9,7 @@ public partial class SqlDatabase :
     /// <summary>
     /// Gets a service of the specified type.
     /// Supports <see cref="SqlConnection"/> (returns <see cref="Connection"/>)
-    /// and <see cref="IServiceScopeFactory"/> (returns this instance, .NET 7+ only).
+    /// and IServiceScopeFactory (returns this instance, .NET 7+ only).
     /// </summary>
     /// <param name="type">The type of service to get.</param>
     /// <returns>The service instance, or null if not supported.</returns>
