@@ -21,7 +21,9 @@ public class SqlInstance :
     /// </param>
     /// <param name="buildTemplate">
     /// A delegate that receives a <see cref="SqlConnection"/> and builds the template database schema.
-    /// This is called once when the template is first created. The template is then cloned for each test.
+    /// The template is then cloned for each test.
+    /// Called zero or once based on the current state of the underlying LocalDB:
+    /// not called if a valid template already exists, called once if the template needs to be created or rebuilt.
     /// Example: <c>async connection => { await using var cmd = connection.CreateCommand(); ... }</c>
     /// </param>
     /// <param name="directory">
@@ -46,6 +48,7 @@ public class SqlInstance :
     /// A delegate executed after the template database has been created or mounted. Optional.
     /// Receives a <see cref="SqlConnection"/> to the template database.
     /// Useful for seeding reference data or performing post-creation setup.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> lifetime.
     /// </param>
     public SqlInstance(
         string name,

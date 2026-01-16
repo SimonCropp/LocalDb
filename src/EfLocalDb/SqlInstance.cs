@@ -42,7 +42,9 @@ public partial class SqlInstance<TDbContext> :
     /// </param>
     /// <param name="buildTemplate">
     /// A delegate that receives a <typeparamref name="TDbContext"/> and builds the template database schema. Optional.
-    /// This is called once when the template is first created. The DbContext is already configured with the connection.
+    /// The DbContext is already configured with the connection.
+    /// Called zero or once based on the current state of the underlying LocalDB:
+    /// not called if a valid template already exists, called once if the template needs to be created or rebuilt.
     /// If null, only EnsureCreated() or migrations (depending on your setup) will be applied.
     /// Example: <c>async context => { await context.Database.EnsureCreatedAsync(); await context.SeedDataAsync(); }</c>
     /// </param>
@@ -69,6 +71,7 @@ public partial class SqlInstance<TDbContext> :
     /// A delegate executed after the template database has been created or mounted. Optional.
     /// Receives a <see cref="SqlConnection"/> and a <typeparamref name="TDbContext"/> instance.
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> lifetime.
     /// </param>
     /// <param name="sqlOptionsBuilder">
     /// An action to configure <see cref="SqlServerDbContextOptionsBuilder"/> for advanced SQL Server options. Optional.
@@ -108,7 +111,9 @@ public partial class SqlInstance<TDbContext> :
     /// </param>
     /// <param name="buildTemplate">
     /// A delegate that receives a <see cref="SqlConnection"/> and <see cref="DbContextOptionsBuilder{TDbContext}"/> to build the template schema.
-    /// This is called once when the template is first created. The template is then cloned for each test.
+    /// The template is then cloned for each test.
+    /// Called zero or once based on the current state of the underlying LocalDB:
+    /// not called if a valid template already exists, called once if the template needs to be created or rebuilt.
     /// Provides direct SQL access plus the ability to configure DbContext options for schema creation.
     /// Example: <c>async (connection, builder) => { await using var context = new MyDbContext(builder.Options); await context.Database.MigrateAsync(); }</c>
     /// </param>
@@ -135,6 +140,7 @@ public partial class SqlInstance<TDbContext> :
     /// A delegate executed after the template database has been created or mounted. Optional.
     /// Receives a <see cref="SqlConnection"/> and a <typeparamref name="TDbContext"/> instance.
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> lifetime.
     /// </param>
     /// <param name="sqlOptionsBuilder">
     /// An action to configure <see cref="SqlServerDbContextOptionsBuilder"/> for advanced SQL Server options. Optional.

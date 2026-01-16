@@ -2,7 +2,9 @@ namespace EfLocalDb;
 
 /// <summary>
 /// A delegate that builds the template database schema using a <typeparamref name="TDbContext"/> instance.
-/// Called once when the template is first created. The template is then cloned for each test database.
+/// The template is then cloned for each test database.
+/// Called zero or once based on the current state of the underlying LocalDB:
+/// not called if a valid template already exists, called once if the template needs to be created or rebuilt.
 /// </summary>
 /// <typeparam name="TDbContext">The Entity Framework Core DbContext type.</typeparam>
 /// <param name="context">
