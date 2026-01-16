@@ -71,7 +71,7 @@ public partial class SqlInstance<TDbContext> :
     /// A delegate executed after the template database has been created or mounted. Optional.
     /// Receives a <see cref="SqlConnection"/> and a <typeparamref name="TDbContext"/> instance.
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
-    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> lifetime.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
     /// <param name="sqlOptionsBuilder">
     /// An action to configure <see cref="SqlServerDbContextOptionsBuilder"/> for advanced SQL Server options. Optional.
@@ -140,7 +140,7 @@ public partial class SqlInstance<TDbContext> :
     /// A delegate executed after the template database has been created or mounted. Optional.
     /// Receives a <see cref="SqlConnection"/> and a <typeparamref name="TDbContext"/> instance.
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
-    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> lifetime.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
     /// <param name="sqlOptionsBuilder">
     /// An action to configure <see cref="SqlServerDbContextOptionsBuilder"/> for advanced SQL Server options. Optional.

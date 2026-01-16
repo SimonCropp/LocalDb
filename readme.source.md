@@ -154,6 +154,33 @@ Key relationships:
 
 ### Inputs
 
+#### buildTemplate
+
+A delegate that builds the template database schema. Called zero or once based on the current state of the underlying LocalDB:
+
+ * **Not called** if a valid template already exists (timestamp matches)
+ * **Called once** if the template needs to be created or rebuilt
+
+The delegate receives a connected DbContext (EF) or SqlConnection (raw) to create schema and seed initial data.
+
+
+#### timestamp
+
+A timestamp used to determine if the template database needs to be rebuilt:
+
+ * If the timestamp is **newer** than the existing template, the template is recreated
+ * Defaults to the last modified time of `buildTemplate` delegate's assembly, or the `TDbContext` assembly if `buildTemplate` is null
+
+
+#### callback
+
+A delegate executed after the template database has been created or mounted:
+
+ * **Guaranteed to be called exactly once** per `SqlInstance` at startup
+ * Receives a SqlConnection and DbContext (EF) for seeding reference data or post-creation setup
+ * Called regardless of whether `buildTemplate` ran (useful for setup that must always occur)
+
+
 ### SqlInstance Startup Flow
 
 This flow happens once per `SqlInstance`, usually once before any tests run.

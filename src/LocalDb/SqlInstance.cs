@@ -48,7 +48,7 @@ public class SqlInstance :
     /// A delegate executed after the template database has been created or mounted. Optional.
     /// Receives a <see cref="SqlConnection"/> to the template database.
     /// Useful for seeding reference data or performing post-creation setup.
-    /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> lifetime.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> at startup.
     /// </param>
     public SqlInstance(
         string name,

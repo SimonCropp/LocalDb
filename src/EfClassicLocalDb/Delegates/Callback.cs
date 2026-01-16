@@ -3,7 +3,7 @@ namespace EfLocalDb;
 /// <summary>
 /// A delegate that is executed after the template database has been created or mounted.
 /// Use this for post-creation setup such as seeding reference data or configuring database settings.
-/// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> lifetime.
+/// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
 /// </summary>
 /// <typeparam name="TDbContext">The Entity Framework 6 (Classic) DbContext type.</typeparam>
 /// <param name="connection">
