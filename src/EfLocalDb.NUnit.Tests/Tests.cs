@@ -2,6 +2,8 @@
 public class Tests :
     LocalDbTestBase<TheDbContext>
 {
+    #region NUnitSimple
+
     [Test]
     public async Task Simple()
     {
@@ -21,6 +23,10 @@ public class Tests :
         await Verify(result);
     }
 
+    #endregion
+
+    #region NUnitStaticInstance
+
     [Test]
     public async Task StaticInstance()
     {
@@ -39,6 +45,10 @@ public class Tests :
         var result = await Instance.AssertData.Companies.SingleAsync();
         await Verify(result);
     }
+
+    #endregion
+
+    #region NUnitCombinations
 
     [Test]
     public Task Combinations()
@@ -64,6 +74,8 @@ public class Tests :
             return await AssertData.Companies.SingleAsync();
         }
     }
+
+    #endregion
 
     [Test]
     public Task Name() =>

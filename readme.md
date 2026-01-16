@@ -56,6 +56,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * [Raw Connection Usage](/pages/raw-usage.md)
   * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)
   * [EntityFramework Core Usage](/pages/ef-usage.md)
+  * [EntityFramework Core NUnit Usage](/pages/ef-nunit-usage.md)
   * [EntityFramework Core Migrations](/pages/efmigrations.md)
   * [Directory and name resolution](/pages/directory-and-name-resolution.md)
   * [Sql Management Studio](/pages/sql-management-studio.md)
