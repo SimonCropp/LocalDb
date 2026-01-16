@@ -1,5 +1,9 @@
 ﻿namespace LocalDb;
 
+/// <summary>
+/// Manages the lifecycle of a SQL Server LocalDB instance for testing purposes.
+/// Provides template-based database creation for efficient test isolation.
+/// </summary>
 public class SqlInstance :
     IDisposable
 {
@@ -7,6 +11,42 @@ public class SqlInstance :
 
     public string ServerName => Wrapper.ServerName;
 
+    /// <summary>
+    /// Instantiate a new <see cref="SqlInstance"/>.
+    /// Should usually be scoped as one instance per AppDomain, so all tests use the same instance.
+    /// </summary>
+    /// <param name="name">
+    /// The name of the SQL LocalDB instance. Used to identify the instance and derive
+    /// storage paths if <paramref name="directory"/> is not specified.
+    /// </param>
+    /// <param name="buildTemplate">
+    /// A delegate that receives a <see cref="SqlConnection"/> and builds the template database schema.
+    /// This is called once when the template is first created. The template is then cloned for each test.
+    /// Example: <c>async connection => { await using var cmd = connection.CreateCommand(); ... }</c>
+    /// </param>
+    /// <param name="directory">
+    /// The directory where the .mdf and .ldf database files will be stored. Optional.
+    /// If not specified, a directory is derived based on <paramref name="name"/>.
+    /// </param>
+    /// <param name="timestamp">
+    /// A timestamp used to determine if the template database needs to be rebuilt. Optional.
+    /// If the timestamp is newer than the existing template, the template is recreated.
+    /// Defaults to the last modified time of the assembly containing <paramref name="buildTemplate"/>.
+    /// </param>
+    /// <param name="templateSize">
+    /// The initial size in MB for the template database. Optional. Defaults to 3 MB.
+    /// Larger values may improve performance for databases with substantial initial data.
+    /// </param>
+    /// <param name="exitingTemplate">
+    /// Existing .mdf and .ldf files to use as the template instead of building one. Optional.
+    /// When provided, <paramref name="buildTemplate"/> is not called and these files are used directly.
+    /// Useful for scenarios where the template is pre-built or shared across test runs.
+    /// </param>
+    /// <param name="callback">
+    /// A delegate executed after the template database has been created or mounted. Optional.
+    /// Receives a <see cref="SqlConnection"/> to the template database.
+    /// Useful for seeding reference data or performing post-creation setup.
+    /// </param>
     public SqlInstance(
         string name,
         Func<SqlConnection, Task> buildTemplate,
