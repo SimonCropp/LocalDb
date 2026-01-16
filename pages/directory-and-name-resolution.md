@@ -19,7 +19,7 @@ if (scopeSuffix is null)
 
 return $"{typeof(TDbContext).Name}_{scopeSuffix}";
 ```
-<sup><a href='/src/EfLocalDb/Storage.cs#L28-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-GetInstanceName' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb/Storage.cs#L84-L93' title='Snippet source file'>snippet source</a> | <a href='#snippet-GetInstanceName' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 That InstanceName is then used to derive the data directory. In order:
@@ -113,7 +113,7 @@ public Task<SqlDatabase> Build(
         string? databaseSuffix = null,
         [CallerMemberName] string memberName = "")
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L75-L97' title='Snippet source file'>snippet source</a> | <a href='#snippet-ConventionBuildSignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L118-L140' title='Snippet source file'>snippet source</a> | <a href='#snippet-ConventionBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 With these parameters the database name is the derived as follows:
@@ -150,7 +150,7 @@ If full control over the database name is required, there is an overload that ta
 /// </summary>
 public async Task<SqlDatabase> Build(string dbName)
 ```
-<sup><a href='/src/LocalDb/SqlInstance.cs#L112-L119' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitBuildSignature' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb/SqlInstance.cs#L155-L162' title='Snippet source file'>snippet source</a> | <a href='#snippet-ExplicitBuildSignature' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Which can be used as follows:

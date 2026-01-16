@@ -126,7 +126,7 @@ class Wrapper : IDisposable
     {
         void CleanStart()
         {
-            FileExtensions.FlushDirectory(Directory);
+            FileExtensions.CleanDirectory(Directory);
             LocalDbApi.CreateInstance(instance);
             LocalDbApi.StartInstance(instance);
             startupTask = CreateAndDetachTemplate(

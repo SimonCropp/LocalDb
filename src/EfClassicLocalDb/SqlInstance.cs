@@ -2,6 +2,11 @@
 
 namespace EfLocalDb;
 
+/// <summary>
+/// Manages the lifecycle of a SQL Server LocalDB instance for Entity Framework 6 (Classic) testing.
+/// Provides template-based database creation for efficient test isolation with DbContext integration.
+/// </summary>
+/// <typeparam name="TDbContext">The Entity Framework DbContext type used for database operations.</typeparam>
 public class SqlInstance<TDbContext> :
     IDisposable
     where TDbContext : DbContext
@@ -24,6 +29,48 @@ public class SqlInstance<TDbContext> :
 
     public string ServerName => Wrapper.ServerName;
 
+    /// <summary>
+    /// Instantiate a <see cref="SqlInstance{TDbContext}"/> using a context-based template builder.
+    /// Should usually be scoped as one instance per AppDomain, so all tests use the same instance.
+    /// </summary>
+    /// <param name="constructInstance">
+    /// A delegate that constructs a <typeparamref name="TDbContext"/> from a <see cref="SqlConnection"/>.
+    /// This is called whenever a new DbContext is needed for database operations.
+    /// Example: <c>connection => new MyDbContext(connection, contextOwnsConnection: false)</c>
+    /// </param>
+    /// <param name="buildTemplate">
+    /// A delegate that receives a <typeparamref name="TDbContext"/> and builds the template database schema. Optional.
+    /// The DbContext is already configured with the connection.
+    /// Called zero or once based on the current state of the underlying LocalDB:
+    /// not called if a valid template already exists, called once if the template needs to be created or rebuilt.
+    /// If null, only EnsureCreated() or migrations (depending on your setup) will be applied.
+    /// Example: <c>async context => { context.Database.CreateIfNotExists(); await context.SeedDataAsync(); }</c>
+    /// </param>
+    /// <param name="storage">
+    /// Disk storage convention specifying the instance name and directory for .mdf and .ldf files. Optional.
+    /// If not specified, defaults to a storage based on <typeparamref name="TDbContext"/> name.
+    /// Use <see cref="Storage.FromSuffix{TDbContext}"/> to create a suffixed instance for parallel test runs.
+    /// </param>
+    /// <param name="timestamp">
+    /// A timestamp used to determine if the template database needs to be rebuilt. Optional.
+    /// If the timestamp is newer than the existing template, the template is recreated.
+    /// Defaults to the last modified time of <paramref name="buildTemplate"/> or <typeparamref name="TDbContext"/> assembly.
+    /// </param>
+    /// <param name="templateSize">
+    /// The initial size in MB for the template database. Optional. Defaults to 3 MB.
+    /// Larger values may improve performance for databases with substantial initial data.
+    /// </param>
+    /// <param name="existingTemplate">
+    /// Existing .mdf and .ldf files to use as the template instead of building one. Optional.
+    /// When provided, <paramref name="buildTemplate"/> is not called and these files are used directly.
+    /// Useful for scenarios where the template is pre-built or shared across test runs.
+    /// </param>
+    /// <param name="callback">
+    /// A delegate executed after the template database has been created or mounted. Optional.
+    /// Receives a <see cref="SqlConnection"/> and a <typeparamref name="TDbContext"/> instance.
+    /// Useful for seeding reference data or performing post-creation setup that requires the context.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -43,6 +90,49 @@ public class SqlInstance<TDbContext> :
     {
     }
 
+    /// <summary>
+    /// Instantiate a <see cref="SqlInstance{TDbContext}"/> using a connection-based template builder.
+    /// Should usually be scoped as one instance per AppDomain, so all tests use the same instance.
+    /// This overload provides direct access to the <see cref="SqlConnection"/> for advanced schema setup.
+    /// </summary>
+    /// <param name="constructInstance">
+    /// A delegate that constructs a <typeparamref name="TDbContext"/> from a <see cref="SqlConnection"/>.
+    /// This is called whenever a new DbContext is needed for database operations.
+    /// Example: <c>connection => new MyDbContext(connection, contextOwnsConnection: false)</c>
+    /// </param>
+    /// <param name="buildTemplate">
+    /// A delegate that receives a <see cref="SqlConnection"/> and builds the template database schema.
+    /// The template is then cloned for each test.
+    /// Called zero or once based on the current state of the underlying LocalDB:
+    /// not called if a valid template already exists, called once if the template needs to be created or rebuilt.
+    /// Useful when you need direct SQL access for schema creation, such as running migration scripts.
+    /// Example: <c>async connection => { await using var cmd = connection.CreateCommand(); cmd.CommandText = "CREATE TABLE..."; await cmd.ExecuteNonQueryAsync(); }</c>
+    /// </param>
+    /// <param name="storage">
+    /// Disk storage convention specifying the instance name and directory for .mdf and .ldf files. Optional.
+    /// If not specified, defaults to a storage based on <typeparamref name="TDbContext"/> name.
+    /// Use <see cref="Storage.FromSuffix{TDbContext}"/> to create a suffixed instance for parallel test runs.
+    /// </param>
+    /// <param name="timestamp">
+    /// A timestamp used to determine if the template database needs to be rebuilt. Optional.
+    /// If the timestamp is newer than the existing template, the template is recreated.
+    /// Defaults to the last modified time of <paramref name="buildTemplate"/> or <typeparamref name="TDbContext"/> assembly.
+    /// </param>
+    /// <param name="templateSize">
+    /// The initial size in MB for the template database. Optional. Defaults to 3 MB.
+    /// Larger values may improve performance for databases with substantial initial data.
+    /// </param>
+    /// <param name="existingTemplate">
+    /// Existing .mdf and .ldf files to use as the template instead of building one. Optional.
+    /// When provided, <paramref name="buildTemplate"/> is not called and these files are used directly.
+    /// Useful for scenarios where the template is pre-built or shared across test runs.
+    /// </param>
+    /// <param name="callback">
+    /// A delegate executed after the template database has been created or mounted. Optional.
+    /// Receives a <see cref="SqlConnection"/> and a <typeparamref name="TDbContext"/> instance.
+    /// Useful for seeding reference data or performing post-creation setup that requires the context.
+    /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection buildTemplate,
