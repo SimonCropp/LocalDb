@@ -3,4 +3,11 @@ using BenchmarkDotNet.Configs;
 var config = DefaultConfig.Instance
     .AddDiagnoser(new SqlServerDiagnoser());
 
-BenchmarkRunner.Run<LocalDbBenchmarks>(config);
+BenchmarkSwitcher.FromTypes(
+[
+    typeof(LocalDbBenchmarks),
+    typeof(ColdStartBenchmarks),
+    typeof(StoppedInstanceBenchmarks),
+    typeof(WarmStartBenchmarks),
+    typeof(TemplateRebuildBenchmarks)
+]).Run(args, config);
