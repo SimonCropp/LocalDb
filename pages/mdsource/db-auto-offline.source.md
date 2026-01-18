@@ -5,9 +5,19 @@ The `dbAutoOffline` parameter controls whether databases are automatically taken
 The default it to leave databases online after they go out scope. The reason for this behavior is to facilitate interrogating the database contents after a test has executed. 
 
 
-## Usage
+## SqlInstance Usage
 
 snippet: DbAutoOfflineUsage
+
+
+## EF Core Usage
+
+snippet: DbAutoOfflineUsageEfCore
+
+
+## EF Classic Usage
+
+snippet: DbAutoOfflineUsageEfClassic
 
 
 ## Behavior
@@ -25,8 +35,6 @@ When `dbAutoOffline: true`:
 **Benefits:**
 
  * Lower memory usage during large test suites
- * Faster disposal compared to deleting (no file deletion overhead)
- * Files preserved for potential inspection
 
 **Drawbacks:**
 
@@ -51,12 +59,3 @@ Consider leaving the default (`dbAutoOffline: false`) when:
  * Memory usage is not a concern
  * Databases need to remain accessible after tests
 
-
-## EF Core Usage
-
-snippet: DbAutoOfflineUsageEfCore
-
-
-## EF Classic Usage
-
-snippet: DbAutoOfflineUsageEfClassic
