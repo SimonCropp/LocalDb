@@ -71,6 +71,11 @@ public class SqlInstance<TDbContext> :
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
+    /// <param name="shutdownTimeout">
+    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 30 seconds).
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -78,7 +83,8 @@ public class SqlInstance<TDbContext> :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
-        Callback<TDbContext>? callback = null) :
+        Callback<TDbContext>? callback = null,
+        ushort? shutdownTimeout = null) :
         this(
             constructInstance,
             BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -86,7 +92,8 @@ public class SqlInstance<TDbContext> :
             GetTimestamp(timestamp, buildTemplate),
             templateSize,
             existingTemplate,
-            callback)
+            callback,
+            shutdownTimeout)
     {
     }
 
@@ -133,6 +140,11 @@ public class SqlInstance<TDbContext> :
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
+    /// <param name="shutdownTimeout">
+    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 30 seconds).
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection buildTemplate,
@@ -140,7 +152,8 @@ public class SqlInstance<TDbContext> :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
-        Callback<TDbContext>? callback = null)
+        Callback<TDbContext>? callback = null,
+        ushort? shutdownTimeout = null)
     {
         if (!Guard.IsWindows)
         {
@@ -170,7 +183,8 @@ public class SqlInstance<TDbContext> :
             storageValue.Directory,
             templateSize,
             existingTemplate,
-            wrapperCallback);
+            wrapperCallback,
+            shutdownTimeout);
         Wrapper.Start(resultTimestamp, connection => buildTemplate(connection));
     }
 
