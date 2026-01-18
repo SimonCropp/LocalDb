@@ -73,9 +73,9 @@ public class SqlInstance<TDbContext> :
     /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
     /// <param name="dbAutoOffline">
-    /// When true, databases are automatically taken offline when disposed instead of just closing the connection.
-    /// This reduces LocalDB memory usage while preserving .mdf/.ldf files for potential inspection.
-    /// Default is false.
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
     /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
@@ -85,7 +85,7 @@ public class SqlInstance<TDbContext> :
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
-        bool dbAutoOffline = false) :
+        bool? dbAutoOffline = null) :
         this(
             constructInstance,
             BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -142,9 +142,9 @@ public class SqlInstance<TDbContext> :
     /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
     /// <param name="dbAutoOffline">
-    /// When true, databases are automatically taken offline when disposed instead of just closing the connection.
-    /// This reduces LocalDB memory usage while preserving .mdf/.ldf files for potential inspection.
-    /// Default is false.
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
     /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
@@ -154,7 +154,7 @@ public class SqlInstance<TDbContext> :
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
-        bool dbAutoOffline = false)
+        bool? dbAutoOffline = null)
     {
         if (!Guard.IsWindows)
         {
@@ -165,7 +165,7 @@ public class SqlInstance<TDbContext> :
 
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         this.constructInstance = constructInstance;
-        this.dbAutoOffline = dbAutoOffline;
+        this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
 
         var storageValue = storage.Value;
         DirectoryCleaner.CleanInstance(storageValue.Directory);

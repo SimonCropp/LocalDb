@@ -31,6 +31,7 @@
     <Compile Include="..\LocalDb\SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\State.cs" />
+    <Compile Include="..\LocalDb\CiDetection.cs" />
 
     <PackageReference Include="MethodTimer.Fody" PrivateAssets="All" />
     <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="All" />

@@ -2,7 +2,12 @@
 
 The `dbAutoOffline` parameter controls whether databases are automatically taken offline when disposed.
 
-The default it to leave databases online after they go out scope. The reason for this behavior is to facilitate interrogating the database contents after a test has executed. 
+By default (`dbAutoOffline: null`), auto-offline is enabled when the `CI` environment variable is detected, and disabled otherwise. This means:
+
+ * In CI environments: databases are taken offline automatically to reduce memory usage
+ * In local development: databases remain online for inspection via SSMS
+
+To override this behavior, explicitly set `dbAutoOffline: true` or `dbAutoOffline: false`.
 
 
 ## SqlInstance Usage
@@ -47,29 +52,15 @@ ALTER DATABASE [dbName] SET ONLINE;
 
 ## When to Use
 
-Consider using `dbAutoOffline: true` when:
+The default behavior (CI auto-detection) is recommended for most scenarios. Override only when needed:
 
- * Running CI/CD pipelines where memory is constrained
- * Large test suites create many databases
- * Inspection of failed test databases is not frequently needed
+Use `dbAutoOffline: true` when:
 
-Consider leaving the default (`dbAutoOffline: false`) when:
+ * Running locally but want to simulate CI behavior
+ * Memory is constrained even in local development
 
- * Test databases are regularly connected to via SSMS for debugging
- * Memory usage is not a concern
- * Databases need to remain accessible after tests
+Use `dbAutoOffline: false` when:
 
-
-## CI Detection
-
-To automatically enable `dbAutoOffline` in CI environments while keeping databases online during local development:
-
-```cs
-var isCI = Environment.GetEnvironmentVariable("CI") is not null;
-
-var instance = new SqlInstance(
-    "MyTests",
-    BuildTemplate,
-    dbAutoOffline: isCI);
-```
+ * Running in CI but need databases to remain online for debugging
+ * Post-test database inspection is required in all environments
 

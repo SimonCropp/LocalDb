@@ -52,9 +52,9 @@ public class SqlInstance :
     /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> at startup.
     /// </param>
     /// <param name="dbAutoOffline">
-    /// When true, databases are automatically taken offline when disposed instead of just closing the connection.
-    /// This reduces LocalDB memory usage while preserving .mdf/.ldf files for potential inspection.
-    /// Default is false.
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
     /// </param>
     public SqlInstance(
         string name,
@@ -64,7 +64,7 @@ public class SqlInstance :
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
         Func<SqlConnection, Task>? callback = null,
-        bool dbAutoOffline = false)
+        bool? dbAutoOffline = null)
     {
         if (!Guard.IsWindows)
         {
@@ -81,7 +81,7 @@ public class SqlInstance :
             Ensure.NotWhiteSpace(directory);
         }
 
-        this.dbAutoOffline = dbAutoOffline;
+        this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
