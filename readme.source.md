@@ -297,7 +297,6 @@ flowchart TD
 ```
 
 
-
 ## Performance
 
 Benchmarks measuring SqlInstance startup performance under different LocalDB states.
@@ -341,12 +340,7 @@ All times in milliseconds.
  * **Rebuild is 63x faster than Cold**: When only the template needs rebuilding (code changed), startup is ~100ms vs ~6.4s.
  * **Marginal cost per database converges to ~35ms**: Regardless of startup scenario, each additional database adds approximately 35ms once the instance is running.
  * **At scale, database creation dominates**: With 100 databases, all scenarios converge to similar total times (~3.4-3.6s for Warm/Rebuild, ~9.6-10s for Cold/Stopped) because database creation time dominates.
-
-
-### Recommendations
-
- * **Keep LocalDB running** during development/test sessions to benefit from warm starts
- * **Use a test runner that doesn't restart between runs** to maintain warm state
+ * **Tests re-run within 5 minutes** will benefit from warm starts (LocalDB auto-shuts down after idle timeout)
  * **Minimize databases per test** when possible, as each database adds ~35ms overhead
 
 
