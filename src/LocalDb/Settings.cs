@@ -26,7 +26,7 @@ public static class LocalDbSettings
     /// <summary>
     /// The number of seconds LocalDB waits before shutting down after the last connection closes.
     /// Can be configured via the <c>LocalDBShutdownTimeout</c> environment variable.
-    /// Defaults to 30 seconds.
+    /// Defaults to 5 minutes.
     /// </summary>
     public static ushort ShutdownTimeout { get; set; } = ResolveShutdownTimeout();
 
@@ -35,7 +35,7 @@ public static class LocalDbSettings
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
         if (envValue is null)
         {
-            return 30;
+            return 500;
         }
 
         if (ushort.TryParse(envValue, out var timeout))

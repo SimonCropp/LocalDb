@@ -12,7 +12,7 @@ The `ShutdownTimeout` setting controls how long (in seconds) LocalDB waits befor
 
 ## Default Behavior
 
-By default, LocalDB shuts down 30 seconds after the last connection closes. This is a balance between:
+By default, LocalDB shuts down 5 minutes after the last connection closes. This is a balance between:
 
  * Keeping the instance running for quick successive test runs
  * Freeing up system resources when tests are complete

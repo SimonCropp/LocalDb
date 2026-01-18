@@ -82,7 +82,7 @@ public partial class SqlInstance<TDbContext> :
     /// <param name="shutdownTimeout">
     /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
     /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
-    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 30 seconds).
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
     /// </param>
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.
@@ -98,7 +98,7 @@ public partial class SqlInstance<TDbContext> :
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
-        ushort? shutdownTimeout = null) :
+        ushort? shutdownTimeout = null,
         bool? dbAutoOffline = null) :
         this(
             constructInstance,
@@ -165,7 +165,7 @@ public partial class SqlInstance<TDbContext> :
     /// <param name="shutdownTimeout">
     /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
     /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
-    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 30 seconds).
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
     /// </param>
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.
