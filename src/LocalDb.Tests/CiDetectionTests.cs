@@ -23,10 +23,14 @@ public class CiDetectionTests
     }
 
     [Test]
-    public void IsCI_ReflectsEnvironmentVariable()
+    public void IsCI_ReflectsEnvironmentVariables()
     {
-        var ciEnvVar = Environment.GetEnvironmentVariable("CI");
-        var expected = ciEnvVar is not null;
+        var expected =
+            Environment.GetEnvironmentVariable("CI") is "true" or "1" ||
+            Environment.GetEnvironmentVariable("TF_BUILD") == "True" ||
+            Environment.GetEnvironmentVariable("TEAMCITY_VERSION") is not null ||
+            Environment.GetEnvironmentVariable("JENKINS_URL") is not null ||
+            Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
         Assert.That(CiDetection.IsCI, Is.EqualTo(expected));
     }
 }

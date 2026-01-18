@@ -2,12 +2,23 @@
 
 The `dbAutoOffline` parameter controls whether databases are automatically taken offline when disposed.
 
-By default (`dbAutoOffline: null`), auto-offline is enabled when the `CI` environment variable is detected, and disabled otherwise. This means:
+By default (`dbAutoOffline: null`), auto-offline is enabled when a CI environment is detected, and disabled otherwise. This means:
 
  * In CI environments: databases are taken offline automatically to reduce memory usage
  * In local development: databases remain online for inspection via SSMS
 
 To override this behavior, explicitly set `dbAutoOffline: true` or `dbAutoOffline: false`.
+
+
+## Detected CI Systems
+
+The following CI systems are automatically detected:
+
+ * **AppVeyor, Travis CI, CircleCI, GitLab CI** - `CI` = `true` or `1`
+ * **Azure DevOps** - `TF_BUILD` = `True`
+ * **GitHub Actions** - `GITHUB_ACTIONS` = `true`
+ * **TeamCity** - `TEAMCITY_VERSION` is set
+ * **Jenkins** - `JENKINS_URL` is set
 
 
 ## SqlInstance Usage
