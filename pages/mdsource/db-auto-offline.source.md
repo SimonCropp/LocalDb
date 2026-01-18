@@ -59,3 +59,17 @@ Consider leaving the default (`dbAutoOffline: false`) when:
  * Memory usage is not a concern
  * Databases need to remain accessible after tests
 
+
+## CI Detection
+
+To automatically enable `dbAutoOffline` in CI environments while keeping databases online during local development:
+
+```cs
+var isCI = Environment.GetEnvironmentVariable("CI") is not null;
+
+var instance = new SqlInstance(
+    "MyTests",
+    BuildTemplate,
+    dbAutoOffline: isCI);
+```
+
