@@ -1,6 +1,7 @@
 #pragma warning disable EF1001
-class QueryContextFactory(QueryCompilationContextDependencies dependencies, RelationalQueryCompilationContextDependencies relationalDependencies, ISqlServerConnection connection)
-    : SqlServerQueryCompilationContextFactory(dependencies, relationalDependencies, connection)
+// ReSharper disable once ClassNeverInstantiated.Global
+class QueryContextFactory(QueryCompilationContextDependencies dependencies, RelationalQueryCompilationContextDependencies relationalDependencies, ISqlServerConnection connection) :
+    SqlServerQueryCompilationContextFactory(dependencies, relationalDependencies, connection)
 {
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<IgnoreQueryFilters>k__BackingField")]
     private static extern ref bool IgnoreQueryFilters(QueryCompilationContext context);
