@@ -56,9 +56,9 @@ public class DbAutoOfflineTests
     }
 
     [Test]
-    public async Task DbAutoOffline_Default_DoesNotTakeOffline()
+    public async Task DbAutoOffline_ExplicitFalse_DoesNotTakeOffline()
     {
-        using var instance = new SqlInstance("DbAutoOffline_Default", TestDbBuilder.CreateTable);
+        using var instance = new SqlInstance("DbAutoOffline_ExplicitFalse", TestDbBuilder.CreateTable, dbAutoOffline: false);
 
         string dbName;
         {
@@ -67,7 +67,7 @@ public class DbAutoOfflineTests
             await TestDbBuilder.AddData(database.Connection);
         }
 
-        // After disposal, check that the database is still online (default behavior)
+        // After disposal, check that the database is still online
         var masterConnectionString = instance.MasterConnectionString;
         await using var connection = new SqlConnection(masterConnectionString);
         await connection.OpenAsync();
