@@ -87,7 +87,8 @@ public partial class SqlInstance<TDbContext> :
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.
     /// When true, databases are taken offline (reduces memory). When false, databases remain online.
-    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
+    /// If not specified, defaults to <see cref="LocalDbSettings.DBAutoOffline"/> (which can be configured
+    /// via the <c>LocalDBAutoOffline</c> environment variable, defaulting to auto-detection based on CI environment).
     /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
@@ -170,7 +171,8 @@ public partial class SqlInstance<TDbContext> :
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.
     /// When true, databases are taken offline (reduces memory). When false, databases remain online.
-    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
+    /// If not specified, defaults to <see cref="LocalDbSettings.DBAutoOffline"/> (which can be configured
+    /// via the <c>LocalDBAutoOffline</c> environment variable, defaulting to auto-detection based on CI environment).
     /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,

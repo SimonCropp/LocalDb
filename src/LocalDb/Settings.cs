@@ -30,6 +30,13 @@ public static class LocalDbSettings
     /// </summary>
     public static ushort ShutdownTimeout { get; set; } = ResolveShutdownTimeout();
 
+    /// <summary>
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// Can be configured via the <c>LocalDBAutoOffline</c> environment variable ("true" or "false").
+    /// When null (default), automatically enables offline mode if a CI environment is detected.
+    /// </summary>
+    public static bool? DBAutoOffline { get; set; } = ResolveDBAutoOffline();
+
     static ushort ResolveShutdownTimeout()
     {
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
@@ -44,5 +51,16 @@ public static class LocalDbSettings
         }
 
         throw new ArgumentException($"Failed to parse LocalDBShutdownTimeout environment variable: {envValue}");
+    }
+
+    static bool? ResolveDBAutoOffline()
+    {
+        var envValue = Environment.GetEnvironmentVariable("LocalDBAutoOffline");
+        return envValue switch
+        {
+            "true" => true,
+            "false" => false,
+            _ => null
+        };
     }
 }

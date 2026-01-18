@@ -36,4 +36,50 @@ public class LocalDbSettingsTests
             LocalDbSettings.ShutdownTimeout = original;
         }
     }
+
+    [Test]
+    public void DBAutoOffline_DefaultsToNullWhenEnvVarNotSet()
+    {
+        // If LocalDBAutoOffline env var is not set, default is null
+        var envValue = Environment.GetEnvironmentVariable("LocalDBAutoOffline");
+        if (envValue is null)
+        {
+            That(LocalDbSettings.DBAutoOffline, Is.Null);
+        }
+    }
+
+    [Test]
+    public void DBAutoOffline_ReflectsEnvironmentVariable()
+    {
+        var envValue = Environment.GetEnvironmentVariable("LocalDBAutoOffline");
+        if (envValue == "true")
+        {
+            That(LocalDbSettings.DBAutoOffline, Is.True);
+        }
+        else if (envValue == "false")
+        {
+            That(LocalDbSettings.DBAutoOffline, Is.False);
+        }
+    }
+
+    [Test]
+    public void DBAutoOffline_CanBeSetProgrammatically()
+    {
+        var original = LocalDbSettings.DBAutoOffline;
+        try
+        {
+            LocalDbSettings.DBAutoOffline = true;
+            That(LocalDbSettings.DBAutoOffline, Is.True);
+
+            LocalDbSettings.DBAutoOffline = false;
+            That(LocalDbSettings.DBAutoOffline, Is.False);
+
+            LocalDbSettings.DBAutoOffline = null;
+            That(LocalDbSettings.DBAutoOffline, Is.Null);
+        }
+        finally
+        {
+            LocalDbSettings.DBAutoOffline = original;
+        }
+    }
 }
