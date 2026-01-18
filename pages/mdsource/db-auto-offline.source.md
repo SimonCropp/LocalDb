@@ -2,6 +2,8 @@
 
 The `dbAutoOffline` parameter controls whether databases are automatically taken offline when disposed.
 
+The default it to leave databases online after they go out scope. The reason for this behavior is to facilitate interrogating the database contents after a test has executed. 
+
 
 ## Usage
 
@@ -14,7 +16,7 @@ When `dbAutoOffline: true`:
 
  * Database is taken offline when the `SqlDatabase` is disposed (not deleted)
  * `.mdf` and `.ldf` files remain in place on disk
- * Reduces LocalDB memory usage for long test runs
+ * Reduces LocalDB memory usage for large test suites
  * Database can be brought back online manually if needed
 
 
