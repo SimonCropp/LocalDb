@@ -8,6 +8,7 @@ public class SqlInstance :
     IDisposable
 {
     internal readonly Wrapper Wrapper = null!;
+    bool dbAutoOffline;
 
     public string ServerName => Wrapper.ServerName;
 
@@ -50,6 +51,11 @@ public class SqlInstance :
     /// Useful for seeding reference data or performing post-creation setup.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> at startup.
     /// </param>
+    /// <param name="dbAutoOffline">
+    /// When true, databases are automatically taken offline when disposed instead of just closing the connection.
+    /// This reduces LocalDB memory usage while preserving .mdf/.ldf files for potential inspection.
+    /// Default is false.
+    /// </param>
     public SqlInstance(
         string name,
         Func<SqlConnection, Task> buildTemplate,
@@ -57,7 +63,8 @@ public class SqlInstance :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<SqlConnection, Task>? callback = null)
+        Func<SqlConnection, Task>? callback = null,
+        bool dbAutoOffline = false)
     {
         if (!Guard.IsWindows)
         {
@@ -74,6 +81,7 @@ public class SqlInstance :
             Ensure.NotWhiteSpace(directory);
         }
 
+        this.dbAutoOffline = dbAutoOffline;
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
@@ -165,7 +173,8 @@ public class SqlInstance :
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
         var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
-        return new(connection, dbName, () => Wrapper.DeleteDatabase(dbName));
+        Func<Task>? takeOffline = dbAutoOffline ? () => Wrapper.TakeOffline(dbName) : null;
+        return new(connection, dbName, () => Wrapper.DeleteDatabase(dbName), takeOffline);
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;
