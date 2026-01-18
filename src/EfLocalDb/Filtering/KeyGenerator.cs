@@ -1,4 +1,5 @@
 #pragma warning disable EF1001
+// ReSharper disable once ClassNeverInstantiated.Global
 class KeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection)
     : SqlServerCompiledQueryCacheKeyGenerator(dependencies, relationalDependencies, connection)
 {

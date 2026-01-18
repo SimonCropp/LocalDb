@@ -1,4 +1,5 @@
 ﻿#pragma warning disable EF1001
+// ReSharper disable once ClassNeverInstantiated.Global
 class QueryProvider(IQueryCompiler compiler) :
     EntityQueryProvider(compiler)
 {
