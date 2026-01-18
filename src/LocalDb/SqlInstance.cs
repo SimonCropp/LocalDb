@@ -8,6 +8,7 @@ public class SqlInstance :
     IDisposable
 {
     internal readonly Wrapper Wrapper = null!;
+    bool dbAutoOffline;
 
     public string ServerName => Wrapper.ServerName;
 
@@ -50,6 +51,11 @@ public class SqlInstance :
     /// Useful for seeding reference data or performing post-creation setup.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> at startup.
     /// </param>
+    /// <param name="dbAutoOffline">
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
+    /// </param>
     public SqlInstance(
         string name,
         Func<SqlConnection, Task> buildTemplate,
@@ -57,7 +63,8 @@ public class SqlInstance :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<SqlConnection, Task>? callback = null)
+        Func<SqlConnection, Task>? callback = null,
+        bool? dbAutoOffline = null)
     {
         if (!Guard.IsWindows)
         {
@@ -74,6 +81,7 @@ public class SqlInstance :
             Ensure.NotWhiteSpace(directory);
         }
 
+        this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
@@ -165,7 +173,8 @@ public class SqlInstance :
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
         var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
-        return new(connection, dbName, () => Wrapper.DeleteDatabase(dbName));
+        Func<Task>? takeOffline = dbAutoOffline ? () => Wrapper.TakeOffline(dbName) : null;
+        return new(connection, dbName, () => Wrapper.DeleteDatabase(dbName), takeOffline);
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;

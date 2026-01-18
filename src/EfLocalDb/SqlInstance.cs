@@ -13,6 +13,7 @@ public partial class SqlInstance<TDbContext> :
     ConstructInstance<TDbContext> constructInstance = null!;
     static Storage defaultStorage;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
+    bool dbAutoOffline;
 
     static SqlInstance()
     {
@@ -78,6 +79,11 @@ public partial class SqlInstance<TDbContext> :
     /// Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
+    /// <param name="dbAutoOffline">
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -86,7 +92,8 @@ public partial class SqlInstance<TDbContext> :
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
-        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null) :
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
+        bool? dbAutoOffline = null) :
         this(
             constructInstance,
             BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -95,7 +102,8 @@ public partial class SqlInstance<TDbContext> :
             templateSize,
             existingTemplate,
             callback,
-            sqlOptionsBuilder)
+            sqlOptionsBuilder,
+            dbAutoOffline)
     {
     }
 
@@ -147,6 +155,11 @@ public partial class SqlInstance<TDbContext> :
     /// Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
+    /// <param name="dbAutoOffline">
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// When null (default), automatically enables offline mode if the CI environment variable is detected.
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection<TDbContext> buildTemplate,
@@ -155,7 +168,8 @@ public partial class SqlInstance<TDbContext> :
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
-        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null)
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
+        bool? dbAutoOffline = null)
     {
         if (!Guard.IsWindows)
         {
@@ -168,6 +182,7 @@ public partial class SqlInstance<TDbContext> :
         InitEntityMapping();
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
+        this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
 
         var storageValue = storage.Value;
         StorageDirectory = storageValue.Directory;
