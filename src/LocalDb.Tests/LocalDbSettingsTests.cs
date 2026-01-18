@@ -2,13 +2,13 @@
 public class LocalDbSettingsTests
 {
     [Test]
-    public void ShutdownTimeout_DefaultsTo30()
+    public void ShutdownTimeout_DefaultsTo500()
     {
-        // If LocalDBShutdownTimeout env var is not set, default is 30
+        // If LocalDBShutdownTimeout env var is not set, default is 500
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
         if (envValue is null)
         {
-            That(LocalDbSettings.ShutdownTimeout, Is.EqualTo(30));
+            That(LocalDbSettings.ShutdownTimeout, Is.EqualTo(500));
         }
     }
 
