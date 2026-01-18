@@ -17,6 +17,29 @@ By default (`dbAutoOffline: null`), auto-offline is enabled when a CI environmen
 To override this behavior, explicitly set `dbAutoOffline: true` or `dbAutoOffline: false`.
 
 
+## Environment Variable Override
+
+The `LocalDBAutoOffline` environment variable can be used to override the default CI detection behavior without modifying code:
+
+| Value | Effect |
+|-------|--------|
+| `true` | Force auto-offline on |
+| `false` | Force auto-offline off |
+| Not set | Fall back to CI detection |
+
+This is useful for:
+
+ * Forcing consistent behavior across different machines
+ * Overriding CI detection in build scripts
+ * Testing auto-offline behavior locally
+
+**Priority order:**
+
+ 1. Explicit `dbAutoOffline` parameter in code (highest priority)
+ 2. `LocalDBAutoOffline` environment variable
+ 3. CI environment detection (lowest priority)
+
+
 ## Detected CI Systems
 
 The following CI systems are automatically detected:

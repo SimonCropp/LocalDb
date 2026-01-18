@@ -16,10 +16,18 @@ public class CiDetectionTests
     }
 
     [Test]
-    public void ResolveDbAutoOffline_Null_ReturnsIsCI()
+    public void ResolveDbAutoOffline_Null_RespectsEnvironmentVariableAndCIDetection()
     {
+        var localDbAutoOfflineEnv = Environment.GetEnvironmentVariable("LocalDBAutoOffline");
+        var expectedFromEnv = localDbAutoOfflineEnv switch
+        {
+            "true" => true,
+            "false" => false,
+            _ => (bool?)null
+        };
+
         var result = CiDetection.ResolveDbAutoOffline(null);
-        That(result, Is.EqualTo(CiDetection.IsCI));
+        That(result, Is.EqualTo(expectedFromEnv ?? CiDetection.IsCI));
     }
 
     [Test]
@@ -32,5 +40,30 @@ public class CiDetectionTests
             Environment.GetEnvironmentVariable("JENKINS_URL") is not null ||
             Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
         That(CiDetection.IsCI, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void LocalDBAutoOffline_ParsesEnvironmentVariable()
+    {
+        var envValue = Environment.GetEnvironmentVariable("LocalDBAutoOffline");
+        var expected = envValue switch
+        {
+            "true" => true,
+            "false" => false,
+            _ => (bool?)null
+        };
+
+        // When LocalDBAutoOffline is set, it should override CI detection
+        // When not set, CI detection should be used
+        var result = CiDetection.ResolveDbAutoOffline(null);
+        That(result, Is.EqualTo(expected ?? CiDetection.IsCI));
+    }
+
+    [Test]
+    public void ResolveDbAutoOffline_ExplicitParameter_OverridesEnvironmentVariable()
+    {
+        // Explicit parameter should always take precedence over environment variable
+        That(CiDetection.ResolveDbAutoOffline(true), Is.True);
+        That(CiDetection.ResolveDbAutoOffline(false), Is.False);
     }
 }

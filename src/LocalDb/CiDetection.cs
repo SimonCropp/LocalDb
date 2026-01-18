@@ -7,6 +7,14 @@ static class CiDetection
         Environment.GetEnvironmentVariable("JENKINS_URL") is not null ||
         Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
 
+    static bool? LocalDBAutoOffline { get; } =
+        Environment.GetEnvironmentVariable("LocalDBAutoOffline") switch
+        {
+            "true" => true,
+            "false" => false,
+            _ => null
+        };
+
     public static bool ResolveDbAutoOffline(bool? dbAutoOffline) =>
-        dbAutoOffline ?? IsCI;
+        dbAutoOffline ?? LocalDBAutoOffline ?? IsCI;
 }
