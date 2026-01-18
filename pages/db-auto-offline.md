@@ -12,7 +12,7 @@ The `dbAutoOffline` parameter controls whether databases are automatically taken
 The default it to leave databases online after they go out scope. The reason for this behavior is to facilitate interrogating the database contents after a test has executed. 
 
 
-## Usage
+## SqlInstance Usage
 
 <!-- snippet: DbAutoOfflineUsage -->
 <a id='snippet-DbAutoOfflineUsage'></a>
@@ -24,48 +24,6 @@ using var instance = new SqlInstance(
 ```
 <sup><a href='/src/LocalDb.Tests/DbAutoOfflineTests.cs#L7-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-DbAutoOfflineUsage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
-
-
-## Behavior
-
-When `dbAutoOffline: true`:
-
- * Database is taken offline when the `SqlDatabase` is disposed (not deleted)
- * `.mdf` and `.ldf` files remain in place on disk
- * Reduces LocalDB memory usage for large test suites
- * Database can be brought back online manually if needed
-
-
-## Trade-offs
-
-**Benefits:**
-
- * Lower memory usage during large test suites
- * Faster disposal compared to deleting (no file deletion overhead)
- * Files preserved for potential inspection
-
-**Drawbacks:**
-
- * If a test fails, the database must be manually brought online to inspect:
-
-```sql
-ALTER DATABASE [dbName] SET ONLINE;
-```
-
-
-## When to Use
-
-Consider using `dbAutoOffline: true` when:
-
- * Running CI/CD pipelines where memory is constrained
- * Large test suites create many databases
- * Inspection of failed test databases is not frequently needed
-
-Consider leaving the default (`dbAutoOffline: false`) when:
-
- * Test databases are regularly connected to via SSMS for debugging
- * Memory usage is not a concern
- * Databases need to remain accessible after tests
 
 
 ## EF Core Usage
@@ -93,3 +51,44 @@ static SqlInstance<MyDbContext> sqlInstance = new(
 ```
 <sup><a href='/src/EfClassicLocalDb.Tests/Snippets/DbAutoOfflineSnippetTests.cs#L4-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-DbAutoOfflineUsageEfClassic' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
+
+
+## Behavior
+
+When `dbAutoOffline: true`:
+
+ * Database is taken offline when the `SqlDatabase` is disposed (not deleted)
+ * `.mdf` and `.ldf` files remain in place on disk
+ * Reduces LocalDB memory usage for large test suites
+ * Database can be brought back online manually if needed
+
+
+## Trade-offs
+
+**Benefits:**
+
+ * Lower memory usage during large test suites
+
+**Drawbacks:**
+
+ * If a test fails, the database must be manually brought online to inspect:
+
+```sql
+ALTER DATABASE [dbName] SET ONLINE;
+```
+
+
+## When to Use
+
+Consider using `dbAutoOffline: true` when:
+
+ * Running CI/CD pipelines where memory is constrained
+ * Large test suites create many databases
+ * Inspection of failed test databases is not frequently needed
+
+Consider leaving the default (`dbAutoOffline: false`) when:
+
+ * Test databases are regularly connected to via SSMS for debugging
+ * Memory usage is not a concern
+ * Databases need to remain accessible after tests
+
