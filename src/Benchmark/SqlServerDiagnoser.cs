@@ -1,22 +1,12 @@
-using BenchmarkDotNet.Analysers;
-using BenchmarkDotNet.Diagnosers;
-using BenchmarkDotNet.Engines;
-using BenchmarkDotNet.Exporters;
-using BenchmarkDotNet.Loggers;
-using BenchmarkDotNet.Reports;
-using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Validators;
-using Microsoft.Data.SqlClient;
-
 public class SqlServerDiagnoser : IDiagnoser
 {
-    const string DiagnoserId = nameof(SqlServerDiagnoser);
+    const string diagnoserId = nameof(SqlServerDiagnoser);
 
     readonly List<SqlServerMetrics> metrics = [];
     long ioReadBytesBefore;
     long ioWriteBytesBefore;
 
-    public IEnumerable<string> Ids => [DiagnoserId];
+    public IEnumerable<string> Ids => [diagnoserId];
     public IEnumerable<IExporter> Exporters => [];
     public IEnumerable<IAnalyser> Analysers => [];
 

@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
-using Microsoft.Data.SqlClient;
 
 [MemoryDiagnoser]
 [WarmupCount(10)]
