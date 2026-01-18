@@ -308,5 +308,16 @@ class Wrapper : IDisposable
         File.Delete(logFile);
     }
 
+    [Time("dbName: '{dbName}'")]
+    public async Task TakeOffline(string dbName)
+    {
+#if NET5_0_OR_GREATER
+        await using var connection = await OpenMasterConnection();
+#else
+        using var connection = await OpenMasterConnection();
+#endif
+        await connection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(dbName));
+    }
+
     public void Dispose() => semaphoreSlim.Dispose();
 }

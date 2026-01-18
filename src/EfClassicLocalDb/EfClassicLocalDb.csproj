@@ -33,7 +33,8 @@
     <Compile Include="..\LocalDb\SqlExtensions.cs" />
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\State.cs" />
-    
+    <Compile Include="..\LocalDb\CiDetection.cs" />
+
     <!-- explicit ref to avoid CVE -->
     <PackageReference Include="System.Drawing.Common" />
 
