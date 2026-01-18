@@ -79,6 +79,11 @@ public partial class SqlInstance<TDbContext> :
     /// Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
+    /// <param name="shutdownTimeout">
+    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
+    /// </param>
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.
     /// When true, databases are taken offline (reduces memory). When false, databases remain online.
@@ -93,6 +98,7 @@ public partial class SqlInstance<TDbContext> :
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
+        ushort? shutdownTimeout = null,
         bool? dbAutoOffline = null) :
         this(
             constructInstance,
@@ -103,6 +109,7 @@ public partial class SqlInstance<TDbContext> :
             existingTemplate,
             callback,
             sqlOptionsBuilder,
+            shutdownTimeout,
             dbAutoOffline)
     {
     }
@@ -155,6 +162,11 @@ public partial class SqlInstance<TDbContext> :
     /// Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
+    /// <param name="shutdownTimeout">
+    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
+    /// </param>
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.
     /// When true, databases are taken offline (reduces memory). When false, databases remain online.
@@ -169,6 +181,7 @@ public partial class SqlInstance<TDbContext> :
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
+        ushort? shutdownTimeout = null,
         bool? dbAutoOffline = null)
     {
         if (!Guard.IsWindows)
@@ -212,7 +225,8 @@ public partial class SqlInstance<TDbContext> :
             StorageDirectory,
             templateSize,
             existingTemplate,
-            wrapperCallback);
+            wrapperCallback,
+            shutdownTimeout);
 
         Wrapper.Start(resultTimestamp, BuildTemplate);
     }
