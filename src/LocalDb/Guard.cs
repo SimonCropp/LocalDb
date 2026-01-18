@@ -26,12 +26,4 @@ static class Guard
             throw new ArgumentOutOfRangeException(name, size, "3MB is the min allowed value");
         }
     }
-
-    public static void AgainstZeroShutdownTimeout(ushort timeout, [CallerArgumentExpression("timeout")] string? name = null)
-    {
-        if (timeout == 0)
-        {
-            throw new ArgumentOutOfRangeException(name, timeout, "Shutdown timeout must be greater than zero");
-        }
-    }
 }

@@ -78,11 +78,6 @@ public partial class SqlInstance<TDbContext> :
     /// Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
-    /// <param name="shutdownTimeout">
-    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
-    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
-    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 30 seconds).
-    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -91,8 +86,7 @@ public partial class SqlInstance<TDbContext> :
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
-        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
-        ushort? shutdownTimeout = null) :
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null) :
         this(
             constructInstance,
             BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -101,8 +95,7 @@ public partial class SqlInstance<TDbContext> :
             templateSize,
             existingTemplate,
             callback,
-            sqlOptionsBuilder,
-            shutdownTimeout)
+            sqlOptionsBuilder)
     {
     }
 
@@ -154,11 +147,6 @@ public partial class SqlInstance<TDbContext> :
     /// Passed to <see cref="SqlServerDbContextOptionsExtensions.UseSqlServer(DbContextOptionsBuilder,string,Action{SqlServerDbContextOptionsBuilder})"/>.
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
-    /// <param name="shutdownTimeout">
-    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
-    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
-    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 30 seconds).
-    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection<TDbContext> buildTemplate,
@@ -167,8 +155,7 @@ public partial class SqlInstance<TDbContext> :
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
-        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
-        ushort? shutdownTimeout = null)
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null)
     {
         if (!Guard.IsWindows)
         {
@@ -210,8 +197,7 @@ public partial class SqlInstance<TDbContext> :
             StorageDirectory,
             templateSize,
             existingTemplate,
-            wrapperCallback,
-            shutdownTimeout);
+            wrapperCallback);
 
         Wrapper.Start(resultTimestamp, BuildTemplate);
     }

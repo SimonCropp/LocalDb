@@ -50,11 +50,6 @@ public class SqlInstance :
     /// Useful for seeding reference data or performing post-creation setup.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> at startup.
     /// </param>
-    /// <param name="shutdownTimeout">
-    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
-    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
-    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 30 seconds).
-    /// </param>
     public SqlInstance(
         string name,
         Func<SqlConnection, Task> buildTemplate,
@@ -62,8 +57,7 @@ public class SqlInstance :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<SqlConnection, Task>? callback = null,
-        ushort? shutdownTimeout = null)
+        Func<SqlConnection, Task>? callback = null)
     {
         if (!Guard.IsWindows)
         {
@@ -84,7 +78,7 @@ public class SqlInstance :
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
 
-        Wrapper = new(name, directory, templateSize, exitingTemplate, callback, shutdownTimeout);
+        Wrapper = new(name, directory, templateSize, exitingTemplate, callback);
         Wrapper.Start(resultTimestamp, buildTemplate);
     }
 
