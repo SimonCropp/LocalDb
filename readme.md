@@ -48,6 +48,11 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
     * [Inputs](#inputs)
     * [SqlInstance Startup Flow](#sqlinstance-startup-flow)
     * [Create SqlDatabase Flow](#create-sqldatabase-flow)
+  * [Performance](#performance)
+    * [Hardware](#hardware)
+    * [Scenarios](#scenarios)
+    * [Results](#results)
+    * [Key Insights](#key-insights)
   * [Debugging](#debugging)
   * [SqlLocalDb](#sqllocaldb)
   * [ReSharper Test Runner](#resharper-test-runner)
@@ -328,6 +333,52 @@ flowchart TD
     openNewConn --> returnConn
 ```
 
+
+## Performance
+
+Benchmarks measuring SqlInstance startup performance under different LocalDB states.
+Results collected using [BenchmarkDotNet](https://benchmarkdotnet.org/).
+
+
+### Hardware
+
+ * BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.7623)
+ * AMD Ryzen 9 5900X 3.70GHz, 1 CPU, 24 logical and 12 physical cores
+ * .NET SDK 10.0.102
+
+
+### Scenarios
+
+| Scenario    | Description | When It Occurs |
+|-------------|-------------|----------------|
+| **Cold**    | LocalDB instance does not exist. Full startup from scratch. | First run on a machine, or after `sqllocaldb delete`. Rare in practice. |
+| **Stopped** | LocalDB instance exists but is stopped (files on disk). | After LocalDB auto-shutdown (default: 5 min idle) or system restart. Occasional. |
+| **Rebuild** | LocalDB running, but template timestamp changed. | After code changes that modify the `buildTemplate` delegate's assembly. Common during development. |
+| **Warm**    | LocalDB running with valid template. | Typical test runs when instance is already warm. **Most common scenario.** |
+
+
+### Results
+
+All times in milliseconds.
+
+| DBs | Cold total | Cold per DB | Stopped total | Stopped per DB | Rebuild total | Rebuild per DB | Warm total | Warm per DB |
+|----:|-----:|--------:|--------:|-----------:|--------:|-----------:|-----:|--------:|
+| 0 | 6389 | - | 6250 | - | 101 | - | 3 | - |
+| 1 | 6445 | 6445 | 6442 | 6442 | 125 | 125 | 42 | 42 |
+| 5 | 6587 | 1317 | 6407 | 1281 | 250 | 50 | 203 | 41 |
+| 10 | 6746 | 675 | 6595 | 660 | 435 | 44 | 369 | 37 |
+| 100 | 9990 | 100 | 9602 | 96 | 3423 | 34 | 3623 | 36 |
+
+
+### Key Insights
+
+ * **Cold ≈ Stopped**: A stopped instance provides no performance benefit. The library deletes and recreates the instance when LocalDB isn't running, resulting in similar times (~6.3s baseline).
+ * **Warm is 2000x faster than Cold**: With 0 databases, warm start takes ~3ms vs ~6.4s for cold start. This is the primary optimization the library provides.
+ * **Rebuild is 63x faster than Cold**: When only the template needs rebuilding (code changed), startup is ~100ms vs ~6.4s.
+ * **Marginal cost per database converges to ~35ms**: Regardless of startup scenario, each additional database adds approximately 35ms once the instance is running.
+ * **At scale, database creation dominates**: With 100 databases, all scenarios converge to similar total times (~3.4-3.6s for Warm/Rebuild, ~9.6-10s for Cold/Stopped) because database creation time dominates.
+ * **Tests re-run within 5 minutes** will benefit from warm starts (LocalDB auto-shuts down after idle timeout)
+ * **Minimize databases per test** when possible, as each database adds ~35ms overhead
 
 
 ## Debugging
