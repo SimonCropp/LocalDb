@@ -150,9 +150,11 @@ class Wrapper : IDisposable
 
         if (!info.IsRunning)
         {
-            LocalDbApi.DeleteInstance(instance);
-            CleanStart();
-            return;
+            // Instead of deleting and recreating, just start the stopped instance.
+            // This preserves the existing template files on disk and allows
+            // warm/rebuild scenarios instead of always doing a cold start.
+            LocalDbApi.StartInstance(instance);
+            // Fall through to the data file and timestamp checks below
         }
 
         if (!File.Exists(DataFile))
