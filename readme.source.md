@@ -328,22 +328,22 @@ All times in milliseconds.
 
 | DBs | Cold total | Cold per DB | Stopped total | Stopped per DB | Rebuild total | Rebuild per DB | Warm total | Warm per DB |
 |----:|-----:|--------:|--------:|-----------:|--------:|-----------:|-----:|--------:|
-| 0 | 6389 | - | 6250 | - | 101 | - | 3 | - |
-| 1 | 6445 | 6445 | 6442 | 6442 | 125 | 125 | 42 | 42 |
-| 5 | 6587 | 1317 | 6407 | 1281 | 250 | 50 | 203 | 41 |
-| 10 | 6746 | 675 | 6595 | 660 | 435 | 44 | 369 | 37 |
-| 100 | 9990 | 100 | 9602 | 96 | 3423 | 34 | 3623 | 36 |
+| 0 | 6471 | - | 494 | - | 88 | - | 3 | - |
+| 1 | 6437 | 6437 | 526 | 526 | 156 | 156 | 44 | 44 |
+| 5 | 6580 | 1316 | 676 | 135 | 362 | 72 | 234 | 47 |
+| 10 | 6768 | 677 | 822 | 82 | 473 | 47 | 468 | 47 |
+| 100 | 10112 | 101 | 4766 | 48 | 4527 | 45 | 4658 | 47 |
 
 
 ### Key Insights
 
- * **Stopped ≈ Warm/Rebuild**: When a stopped instance is detected, the library starts it and reuses the existing template files. This provides Warm (~3ms) or Rebuild (~100ms) performance instead of Cold (~6.3s). [More info](/pages/shutdown-timeout.md)
- * **Warm is 2000x faster than Cold**: With 0 databases, warm start takes ~3ms vs ~6.4s for cold start. This is the primary optimization the library provides.
- * **Rebuild is 63x faster than Cold**: When only the template needs rebuilding (code changed), startup is ~100ms vs ~6.4s.
- * **Marginal cost per database converges to ~35ms**: Regardless of startup scenario, each additional database adds approximately 35ms once the instance is running.
- * **At scale, database creation dominates**: With 100 databases, Warm/Rebuild/Stopped scenarios converge to similar total times (~3.4-3.6s) because database creation time dominates. Cold remains slower (~9.6-10s).
+ * **Stopped ≈ Warm/Rebuild**: When a stopped instance is detected, the library starts it and reuses the existing template files. This provides ~500ms performance instead of Cold (~6.5s). [More info](/pages/shutdown-timeout.md)
+ * **Warm is 2000x faster than Cold**: With 0 databases, warm start takes ~3ms vs ~6.5s for cold start. This is the primary optimization the library provides.
+ * **Rebuild is 74x faster than Cold**: When only the template needs rebuilding (code changed), startup is ~88ms vs ~6.5s.
+ * **Marginal cost per database converges to ~47ms**: Regardless of startup scenario, each additional database adds approximately 47ms once the instance is running.
+ * **At scale, database creation dominates**: With 100 databases, Warm/Rebuild/Stopped scenarios converge to similar total times (~4.5-4.8s) because database creation time dominates. Cold remains slower (~10s).
  * **Tests re-run after system restart** will now benefit from stopped instance reconstitution, avoiding cold start times. [More info](/pages/shutdown-timeout.md)
- * **Minimize databases per test** when possible, as each database adds ~35ms overhead
+ * **Minimize databases per test** when possible, as each database adds ~47ms overhead
 
 
 ## Debugging
