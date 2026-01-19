@@ -481,10 +481,10 @@ end;
         // First: Create instance with template
         using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
         {
-            wrapper.Start(timestamp, async connection =>
+            wrapper.Start(timestamp, connection =>
             {
                 buildTemplateCallCount++;
-                await TestDbBuilder.CreateTable(connection);
+                return TestDbBuilder.CreateTable(connection);
             });
             await wrapper.AwaitStart();
 
@@ -514,10 +514,10 @@ end;
         buildTemplateCallCount = 0;
         using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
         {
-            wrapper.Start(timestamp, async connection =>
+            wrapper.Start(timestamp, connection =>
             {
                 buildTemplateCallCount++;
-                await TestDbBuilder.CreateTable(connection);
+                return TestDbBuilder.CreateTable(connection);
             });
             await wrapper.AwaitStart();
 
@@ -552,10 +552,10 @@ end;
         // First: Create instance with template using original timestamp
         using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
         {
-            wrapper.Start(timestamp, async connection =>
+            wrapper.Start(timestamp, connection =>
             {
                 buildTemplateCallCount++;
-                await TestDbBuilder.CreateTable(connection);
+                return TestDbBuilder.CreateTable(connection);
             });
             await wrapper.AwaitStart();
             AreEqual(1, buildTemplateCallCount);
@@ -569,10 +569,10 @@ end;
         var newTimestamp = new DateTime(2001, 1, 1);
         using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
         {
-            wrapper.Start(newTimestamp, async connection =>
+            wrapper.Start(newTimestamp, connection =>
             {
                 buildTemplateCallCount++;
-                await TestDbBuilder.CreateTable(connection);
+                return TestDbBuilder.CreateTable(connection);
             });
             await wrapper.AwaitStart();
 
