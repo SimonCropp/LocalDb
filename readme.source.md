@@ -30,6 +30,8 @@ toc
   * [Logging](/pages/logging.md)
   * [Template database size](/pages/template-database-size.md)
   * [Template Re-generation](/pages/template-regen.md)
+  * [DB auto offline](/pages/db-auto-offline.md)
+  * [Shutdown Timeout](/pages/shutdown-timeout.md)
 
 
 ## NuGet packages

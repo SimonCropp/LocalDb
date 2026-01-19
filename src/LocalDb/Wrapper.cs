@@ -4,6 +4,7 @@ class Wrapper : IDisposable
 {
     public readonly string Directory;
     ushort size;
+    ushort shutdownTimeout;
     Func<SqlConnection, Task>? callback;
     SemaphoreSlim semaphoreSlim = new(1, 1);
     public readonly string MasterConnectionString;
@@ -20,7 +21,8 @@ class Wrapper : IDisposable
         string directory,
         ushort size = 3,
         ExistingTemplate? existingTemplate = null,
-        Func<SqlConnection, Task>? callback = null)
+        Func<SqlConnection, Task>? callback = null,
+        ushort? shutdownTimeout = null)
     {
         Guard.AgainstBadOS();
         Guard.AgainstDatabaseSize(size);
@@ -34,6 +36,8 @@ class Wrapper : IDisposable
 
         LocalDbLogging.LogIfVerbose($"Directory: {directory}");
         this.size = size;
+        this.shutdownTimeout = shutdownTimeout ?? LocalDbSettings.ShutdownTimeout;
+        Guard.AgainstZeroShutdownTimeout(this.shutdownTimeout);
         this.callback = callback;
         if (existingTemplate is null)
         {
@@ -187,7 +191,7 @@ class Wrapper : IDisposable
 
         if (optimizeModelDb)
         {
-            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizeModelDbCommand(size));
+            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetOptimizeModelDbCommand(size, shutdownTimeout));
         }
 
         if (rebuildTemplate && !templateProvided)
@@ -302,6 +306,17 @@ class Wrapper : IDisposable
         var logFile = Path.Combine(Directory, $"{dbName}_log.ldf");
         File.Delete(dataFile);
         File.Delete(logFile);
+    }
+
+    [Time("dbName: '{dbName}'")]
+    public async Task TakeOffline(string dbName)
+    {
+#if NET5_0_OR_GREATER
+        await using var connection = await OpenMasterConnection();
+#else
+        using var connection = await OpenMasterConnection();
+#endif
+        await connection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(dbName));
     }
 
     public void Dispose() => semaphoreSlim.Dispose();

@@ -14,6 +14,7 @@ public class SqlInstance<TDbContext> :
     internal Wrapper Wrapper { get; } = null!;
     ConstructInstance<TDbContext> constructInstance = null!;
     static Storage defaultStorage;
+    bool dbAutoOffline;
 
     static SqlInstance()
     {
@@ -71,6 +72,17 @@ public class SqlInstance<TDbContext> :
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
+    /// <param name="shutdownTimeout">
+    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
+    /// </param>
+    /// <param name="dbAutoOffline">
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// If not specified, defaults to <see cref="LocalDbSettings.DBAutoOffline"/> (which can be configured
+    /// via the <c>LocalDBAutoOffline</c> environment variable, defaulting to auto-detection based on CI environment).
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -78,7 +90,9 @@ public class SqlInstance<TDbContext> :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
-        Callback<TDbContext>? callback = null) :
+        Callback<TDbContext>? callback = null,
+        ushort? shutdownTimeout = null,
+        bool? dbAutoOffline = null) :
         this(
             constructInstance,
             BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -86,7 +100,9 @@ public class SqlInstance<TDbContext> :
             GetTimestamp(timestamp, buildTemplate),
             templateSize,
             existingTemplate,
-            callback)
+            callback,
+            shutdownTimeout,
+            dbAutoOffline)
     {
     }
 
@@ -133,6 +149,17 @@ public class SqlInstance<TDbContext> :
     /// Useful for seeding reference data or performing post-creation setup that requires the context.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance{TDbContext}"/> at startup.
     /// </param>
+    /// <param name="shutdownTimeout">
+    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
+    /// </param>
+    /// <param name="dbAutoOffline">
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// If not specified, defaults to <see cref="LocalDbSettings.DBAutoOffline"/> (which can be configured
+    /// via the <c>LocalDBAutoOffline</c> environment variable, defaulting to auto-detection based on CI environment).
+    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection buildTemplate,
@@ -140,7 +167,9 @@ public class SqlInstance<TDbContext> :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
-        Callback<TDbContext>? callback = null)
+        Callback<TDbContext>? callback = null,
+        ushort? shutdownTimeout = null,
+        bool? dbAutoOffline = null)
     {
         if (!Guard.IsWindows)
         {
@@ -151,6 +180,7 @@ public class SqlInstance<TDbContext> :
 
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         this.constructInstance = constructInstance;
+        this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
 
         var storageValue = storage.Value;
         DirectoryCleaner.CleanInstance(storageValue.Directory);
@@ -170,7 +200,8 @@ public class SqlInstance<TDbContext> :
             storageValue.Directory,
             templateSize,
             existingTemplate,
-            wrapperCallback);
+            wrapperCallback,
+            shutdownTimeout);
         Wrapper.Start(resultTimestamp, connection => buildTemplate(connection));
     }
 
@@ -253,11 +284,13 @@ public class SqlInstance<TDbContext> :
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
         var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
+        Func<Task>? takeOffline = dbAutoOffline ? () => Wrapper.TakeOffline(dbName) : null;
         var database = new SqlDatabase<TDbContext>(
             connection,
             dbName,
             constructInstance,
             () => Wrapper.DeleteDatabase(dbName),
+            takeOffline,
             data);
         await database.Start();
         return database;

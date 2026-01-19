@@ -60,11 +60,11 @@ static class SqlBuilder
         execute sp_detach_db N'template', 'true';
         """;
 
-    public static string GetOptimizeModelDbCommand(ushort size) =>
+    public static string GetOptimizeModelDbCommand(ushort size, ushort shutdownTimeout) =>
         $"""
          execute sp_configure 'show advanced options', 1;
          reconfigure;
-         execute sp_configure 'user instance timeout', 30;
+         execute sp_configure 'user instance timeout', {shutdownTimeout};
          reconfigure;
 
          -- begin-snippet: ShrinkModelDb

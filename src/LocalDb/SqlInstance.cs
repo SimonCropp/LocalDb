@@ -8,6 +8,7 @@ public class SqlInstance :
     IDisposable
 {
     internal readonly Wrapper Wrapper = null!;
+    bool dbAutoOffline;
 
     public string ServerName => Wrapper.ServerName;
 
@@ -50,6 +51,17 @@ public class SqlInstance :
     /// Useful for seeding reference data or performing post-creation setup.
     /// Guaranteed to be called exactly once per <see cref="SqlInstance"/> at startup.
     /// </param>
+    /// <param name="shutdownTimeout">
+    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
+    /// </param>
+    /// <param name="dbAutoOffline">
+    /// Controls whether databases are automatically taken offline when disposed.
+    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
+    /// If not specified, defaults to <see cref="LocalDbSettings.DBAutoOffline"/> (which can be configured
+    /// via the <c>LocalDBAutoOffline</c> environment variable, defaulting to auto-detection based on CI environment).
+    /// </param>
     public SqlInstance(
         string name,
         Func<SqlConnection, Task> buildTemplate,
@@ -57,7 +69,9 @@ public class SqlInstance :
         DateTime? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
-        Func<SqlConnection, Task>? callback = null)
+        Func<SqlConnection, Task>? callback = null,
+        ushort? shutdownTimeout = null,
+        bool? dbAutoOffline = null)
     {
         if (!Guard.IsWindows)
         {
@@ -74,11 +88,12 @@ public class SqlInstance :
             Ensure.NotWhiteSpace(directory);
         }
 
+        this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
         DirectoryCleaner.CleanInstance(directory);
         var callingAssembly = Assembly.GetCallingAssembly();
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate, callingAssembly);
 
-        Wrapper = new(name, directory, templateSize, exitingTemplate, callback);
+        Wrapper = new(name, directory, templateSize, exitingTemplate, callback, shutdownTimeout);
         Wrapper.Start(resultTimestamp, buildTemplate);
     }
 
@@ -165,7 +180,8 @@ public class SqlInstance :
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
         var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
-        return new(connection, dbName, () => Wrapper.DeleteDatabase(dbName));
+        Func<Task>? takeOffline = dbAutoOffline ? () => Wrapper.TakeOffline(dbName) : null;
+        return new(connection, dbName, () => Wrapper.DeleteDatabase(dbName), takeOffline);
     }
 
     public string MasterConnectionString => Wrapper.MasterConnectionString;
