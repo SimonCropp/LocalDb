@@ -230,7 +230,7 @@ flowchart TD
     start[Start]
     checkExists{Instance<br>Exists?}
     checkRunning{Instance<br>Running?}
-    deleteInstance[Delete Instance]
+    startInstance[Start Instance]
     checkDataFile{Data File<br>Exists?}
     stopAndDelete[Stop & Delete<br>Instance]
     cleanDir[Clean Directory]
@@ -267,8 +267,8 @@ flowchart TD
     checkExists -->|No| cleanDir
     checkExists -->|Yes| checkRunning
 
-    checkRunning -->|No| deleteInstance
-    deleteInstance --> cleanDir
+    checkRunning -->|No| startInstance
+    startInstance --> checkDataFile
 
     checkRunning -->|Yes| checkDataFile
 
@@ -354,7 +354,7 @@ Results collected using [BenchmarkDotNet](https://benchmarkdotnet.org/).
 | Scenario    | Description | When It Occurs |
 |-------------|-------------|----------------|
 | **Cold**    | LocalDB instance does not exist. Full startup from scratch. | First run on a machine, or after `sqllocaldb delete`. Rare in practice. |
-| **Stopped** | LocalDB instance exists but is stopped (files on disk). | After LocalDB auto-shutdown (default: 5 min idle) or system restart. Occasional. [More info](/pages/shutdown-timeout.md) |
+| **Stopped** | LocalDB instance exists but is stopped. Instance is started and existing template files are reused. | After LocalDB auto-shutdown (default: 5 min idle) or system restart. Performance similar to Warm/Rebuild. [More info](/pages/shutdown-timeout.md) |
 | **Rebuild** | LocalDB running, but template timestamp changed. | After code changes that modify the `buildTemplate` delegate's assembly. Common during development. [More info](/pages/template-regen.md) |
 | **Warm**    | LocalDB running with valid template. | Typical test runs when instance is already warm. **Most common scenario.** |
 
@@ -374,12 +374,12 @@ All times in milliseconds.
 
 ### Key Insights
 
- * **Cold ≈ Stopped**: A stopped instance provides no performance benefit. The library deletes and recreates the instance when LocalDB isn't running, resulting in similar times (~6.3s baseline). [More info](/pages/db-auto-offline.md)
+ * **Stopped ≈ Warm/Rebuild**: When a stopped instance is detected, the library starts it and reuses the existing template files. This provides Warm (~3ms) or Rebuild (~100ms) performance instead of Cold (~6.3s). [More info](/pages/shutdown-timeout.md)
  * **Warm is 2000x faster than Cold**: With 0 databases, warm start takes ~3ms vs ~6.4s for cold start. This is the primary optimization the library provides.
  * **Rebuild is 63x faster than Cold**: When only the template needs rebuilding (code changed), startup is ~100ms vs ~6.4s.
  * **Marginal cost per database converges to ~35ms**: Regardless of startup scenario, each additional database adds approximately 35ms once the instance is running.
- * **At scale, database creation dominates**: With 100 databases, all scenarios converge to similar total times (~3.4-3.6s for Warm/Rebuild, ~9.6-10s for Cold/Stopped) because database creation time dominates.
- * **Tests re-run within 5 minutes** will benefit from warm starts (LocalDB auto-shuts down after idle timeout). [More info](/pages/shutdown-timeout.md)
+ * **At scale, database creation dominates**: With 100 databases, Warm/Rebuild/Stopped scenarios converge to similar total times (~3.4-3.6s) because database creation time dominates. Cold remains slower (~9.6-10s).
+ * **Tests re-run after system restart** will now benefit from stopped instance reconstitution, avoiding cold start times. [More info](/pages/shutdown-timeout.md)
  * **Minimize databases per test** when possible, as each database adds ~35ms overhead
 
 

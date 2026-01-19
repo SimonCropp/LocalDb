@@ -5,9 +5,8 @@ using BenchmarkDotNet.Jobs;
 /// <summary>
 /// Scenario 2: Stopped Instance - LocalDB instance exists but is stopped, template files exist on disk.
 /// This simulates LocalDB auto-shutdown behavior.
-/// Note: Due to Wrapper behavior (Wrapper.cs:147-151), when an instance exists but is NOT running,
-/// the Wrapper deletes the instance and performs a clean start, wiping the directory.
-/// This means Scenario 2 effectively behaves like Scenario 1 (cold start).
+/// The Wrapper starts the stopped instance and reuses existing template files, providing
+/// Warm or Rebuild performance instead of Cold start performance.
 /// Each launch gets a fresh state via GlobalSetup.
 /// </summary>
 [MemoryDiagnoser]

@@ -467,6 +467,122 @@ end;
         instance.AwaitStart().GetAwaiter().GetResult();
     }
 
+    [Test]
+    public async Task StoppedInstanceReconstitution_UsesExistingTemplate()
+    {
+        // This test verifies that when an instance is stopped (but files exist),
+        // we start it and reuse the existing template instead of deleting and recreating.
+        var name = "StoppedInstanceReconstitution";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        var buildTemplateCallCount = 0;
+
+        // First: Create instance with template
+        using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
+        {
+            wrapper.Start(timestamp, async connection =>
+            {
+                buildTemplateCallCount++;
+                await TestDbBuilder.CreateTable(connection);
+            });
+            await wrapper.AwaitStart();
+
+            // Verify template was built
+            AreEqual(1, buildTemplateCallCount);
+
+            // Create a database to ensure everything works
+            await using (await wrapper.CreateDatabaseFromTemplate("TestDb1"))
+            {
+            }
+        }
+
+        // Stop the instance (but keep files on disk)
+        LocalDbApi.StopInstance(name, ShutdownMode.KillProcess);
+
+        // Verify instance exists but is stopped
+        var info = LocalDbApi.GetInstance(name);
+        True(info.Exists, "Instance should exist");
+        False(info.IsRunning, "Instance should be stopped");
+
+        // Verify template files still exist
+        var directory = DirectoryFinder.Find(name);
+        True(File.Exists(Path.Combine(directory, "template.mdf")), "Template data file should exist");
+        True(File.Exists(Path.Combine(directory, "template_log.ldf")), "Template log file should exist");
+
+        // Second: Create new wrapper with same timestamp - should NOT rebuild template
+        buildTemplateCallCount = 0;
+        using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
+        {
+            wrapper.Start(timestamp, async connection =>
+            {
+                buildTemplateCallCount++;
+                await TestDbBuilder.CreateTable(connection);
+            });
+            await wrapper.AwaitStart();
+
+            // buildTemplate should NOT have been called because:
+            // 1. Instance was started (not deleted/recreated)
+            // 2. Template file exists
+            // 3. Timestamp matches
+            AreEqual(0, buildTemplateCallCount, "buildTemplate should not be called when reconstituting stopped instance with matching timestamp");
+
+            // Verify we can create databases from the existing template
+            await using var connection = await wrapper.CreateDatabaseFromTemplate("TestDb2");
+            await using var command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(*) FROM MyTable";
+            var result = await command.ExecuteScalarAsync();
+            AreEqual(0, result); // Table exists and is empty
+
+            wrapper.DeleteInstance();
+        }
+    }
+
+    [Test]
+    public async Task StoppedInstanceReconstitution_RebuildWhenTimestampDiffers()
+    {
+        // This test verifies that when an instance is stopped with existing template,
+        // but timestamp differs, we rebuild the template (not cold start).
+        var name = "StoppedInstanceRebuild";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        var buildTemplateCallCount = 0;
+
+        // First: Create instance with template using original timestamp
+        using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
+        {
+            wrapper.Start(timestamp, async connection =>
+            {
+                buildTemplateCallCount++;
+                await TestDbBuilder.CreateTable(connection);
+            });
+            await wrapper.AwaitStart();
+            AreEqual(1, buildTemplateCallCount);
+        }
+
+        // Stop the instance
+        LocalDbApi.StopInstance(name, ShutdownMode.KillProcess);
+
+        // Second: Create new wrapper with DIFFERENT timestamp - should rebuild template
+        buildTemplateCallCount = 0;
+        var newTimestamp = new DateTime(2001, 1, 1);
+        using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
+        {
+            wrapper.Start(newTimestamp, async connection =>
+            {
+                buildTemplateCallCount++;
+                await TestDbBuilder.CreateTable(connection);
+            });
+            await wrapper.AwaitStart();
+
+            // buildTemplate SHOULD be called because timestamp differs
+            AreEqual(1, buildTemplateCallCount, "buildTemplate should be called when timestamp differs");
+
+            wrapper.DeleteInstance();
+        }
+    }
+
     [OneTimeTearDown]
     public void Cleanup() =>
         instance.DeleteInstance();
