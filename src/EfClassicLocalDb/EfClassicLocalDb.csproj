@@ -50,7 +50,7 @@
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <Reference Include="System.Transactions" Condition="$(TargetFramework) == 'net48'" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
-    <PackageReference Include="Microsoft.Sbom.Targets" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Sbom.Targets" PrivateAssets="all" Condition="$(Configuration)=='Release'" />
 
     <Content Include="buildTransitive\EfClassicLocalDb.props" PackagePath="buildTransitive\EfClassicLocalDb.props" />
     <Content Include="buildTransitive\EfClassicLocalDb.props" PackagePath="build\EfClassicLocalDb.props" />

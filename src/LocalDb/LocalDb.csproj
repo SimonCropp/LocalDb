@@ -14,7 +14,7 @@
     <PackageReference Include="Polyfill" PrivateAssets="all" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" />
-    <PackageReference Include="Microsoft.Sbom.Targets" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Sbom.Targets" PrivateAssets="all" Condition="$(Configuration)=='Release'" />
 
     <Content Include="buildTransitive\LocalDb.props" PackagePath="buildTransitive\LocalDb.props" />
     <Content Include="buildTransitive\LocalDb.props" PackagePath="build\LocalDb.props" />
