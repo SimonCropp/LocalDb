@@ -1,7 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-
 /// <summary>
 /// Scenario 2: Stopped Instance - LocalDB instance exists but is stopped, template files exist on disk.
 /// This simulates LocalDB auto-shutdown behavior.
@@ -47,7 +43,7 @@ public class StoppedInstanceBenchmarks
     [Benchmark]
     public async Task StoppedInstance()
     {
-        sqlInstance = new SqlInstance(name: InstanceName, buildTemplate: CreateTable);
+        sqlInstance = new(name: InstanceName, buildTemplate: CreateTable);
         await sqlInstance.Wrapper.AwaitStart();
 
         for (var i = 0; i < DatabaseCount; i++)

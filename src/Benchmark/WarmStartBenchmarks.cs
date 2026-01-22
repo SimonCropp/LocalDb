@@ -1,7 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-
 /// <summary>
 /// Scenario 3: Warm Start - LocalDB instance is already running and template files exist.
 /// This is the "happy path" where everything is ready.
@@ -42,7 +38,7 @@ public class WarmStartBenchmarks
     [Benchmark]
     public async Task WarmStart()
     {
-        sqlInstance = new SqlInstance(name: InstanceName, buildTemplate: CreateTable);
+        sqlInstance = new(name: InstanceName, buildTemplate: CreateTable);
         await sqlInstance.Wrapper.AwaitStart();
 
         for (var i = 0; i < DatabaseCount; i++)

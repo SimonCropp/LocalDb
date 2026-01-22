@@ -1,5 +1,3 @@
-using EfLocalDb;
-
 public static class ModuleInitializer
 {
     [ModuleInitializer]

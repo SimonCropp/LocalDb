@@ -1,7 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-
 /// <summary>
 /// Scenario 4: Template Rebuild - LocalDB instance is running but timestamp differs,
 /// so the template database needs to be rebuilt.
@@ -50,7 +46,7 @@ public class TemplateRebuildBenchmarks
     {
         // Use a newer timestamp to force template rebuild
         var newTimestamp = new DateTime(2025, 1, 1);
-        sqlInstance = new SqlInstance(
+        sqlInstance = new(
             name: InstanceName,
             buildTemplate: CreateTable,
             timestamp: newTimestamp);

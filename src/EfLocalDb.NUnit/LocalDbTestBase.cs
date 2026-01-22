@@ -15,7 +15,8 @@ public abstract partial class LocalDbTestBase<T> :
         ConstructInstance<T>? constructInstance = null,
         TemplateFromContext<T>? buildTemplate = null,
         ushort templateSize = 10,
-        Callback<T>? callback = null)
+        Callback<T>? callback = null,
+        DateTime? timestamp = null)
     {
         var callingAssembly = Assembly.GetCallingAssembly();
         ThrowIfInitialized();
@@ -28,7 +29,8 @@ public abstract partial class LocalDbTestBase<T> :
             },
             storage: GetStorage(callingAssembly),
             templateSize: templateSize,
-            callback: callback);
+            callback: callback,
+            timestamp: timestamp);
     }
 
     [SetUp]

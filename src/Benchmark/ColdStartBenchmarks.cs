@@ -1,7 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
-
 /// <summary>
 /// Scenario 1: Cold Start - LocalDB instance does not exist and template files do not exist.
 /// This measures the full cold start from scratch.
@@ -38,7 +34,7 @@ public class ColdStartBenchmarks
     [Benchmark]
     public async Task ColdStart()
     {
-        sqlInstance = new SqlInstance(name: InstanceName, buildTemplate: CreateTable);
+        sqlInstance = new(name: InstanceName, buildTemplate: CreateTable);
         await sqlInstance.Wrapper.AwaitStart();
 
         for (var i = 0; i < DatabaseCount; i++)
