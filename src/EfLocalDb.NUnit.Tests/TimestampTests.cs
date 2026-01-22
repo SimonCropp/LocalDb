@@ -8,6 +8,7 @@ public class TimestampTests :
         Initialize(
             buildTemplate: async data =>
             {
+                await data.Database.EnsureCreatedAsync();
                 data.Companies.Add(
                     new()
                     {

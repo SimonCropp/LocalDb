@@ -6,6 +6,7 @@ public class DefaultTimestampTests :
         Initialize(
             buildTemplate: async data =>
             {
+                await data.Database.EnsureCreatedAsync();
                 data.Companies.Add(
                     new()
                     {
