@@ -1,5 +1,7 @@
 global using System.Data.Common;
+global using System.Diagnostics.CodeAnalysis;
 global using BenchmarkDotNet.Analysers;
+global using BenchmarkDotNet.Attributes;
 global using BenchmarkDotNet.Diagnosers;
 global using BenchmarkDotNet.Engines;
 global using BenchmarkDotNet.Exporters;

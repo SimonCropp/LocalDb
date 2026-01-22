@@ -1,6 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-using BenchmarkDotNet.Attributes;
-
 [MemoryDiagnoser]
 [WarmupCount(10)]
 [IterationCount(50)]

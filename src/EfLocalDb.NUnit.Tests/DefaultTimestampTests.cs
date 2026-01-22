@@ -30,6 +30,6 @@ public class DefaultTimestampTests :
     {
         // The template company from Initialize should exist
         var count = await AssertData.Companies.CountAsync();
-        Assert.That(count, Is.EqualTo(1));
+        That(count, Is.EqualTo(1));
     }
 }
