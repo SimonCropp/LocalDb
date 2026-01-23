@@ -5,15 +5,54 @@ namespace EfLocalDb;
 #else
 namespace LocalDb;
 #endif
+
+class RowVersionDictionary : IReadOnlyDictionary<Guid, ulong>
+{
+    Dictionary<Guid, ulong> inner;
+
+    internal RowVersionDictionary(Dictionary<Guid, ulong> dictionary) =>
+        inner = dictionary;
+
+    public ulong this[Guid key]
+    {
+        get
+        {
+            if (inner.TryGetValue(key, out var value))
+            {
+                return value;
+            }
+
+            throw new KeyNotFoundException(
+                $"Row version not found for ID '{key}'. This suggests the entity might not be using a stable Id, or it does not exist in a table with both Id and RowVersion columns.");
+        }
+    }
+
+    public IEnumerable<Guid> Keys => inner.Keys;
+
+    public IEnumerable<ulong> Values => inner.Values;
+
+    public int Count => inner.Count;
+
+    public bool ContainsKey(Guid key) => inner.ContainsKey(key);
+
+    public IEnumerator<KeyValuePair<Guid, ulong>> GetEnumerator() => inner.GetEnumerator();
+
+    public bool TryGetValue(Guid key, out ulong value) => inner.TryGetValue(key, out value);
+
+    IEnumerator IEnumerable.GetEnumerator() => inner.GetEnumerator();
+}
+
 public static class RowVersions
-{    /// <summary>
+{
+    /// <summary>
     /// Retrieves the current row version (timestamp) for all rows in tables that have both an Id (UNIQUEIDENTIFIER) column and a RowVersion (ROWVERSION) column.
     /// </summary>
     /// <param name="connection">An open SQL Server connection.</param>
     /// <returns>
-    /// A dictionary mapping entity IDs (GUID) to their row versions (ulong).
+    /// A read-only dictionary mapping entity IDs (GUID) to their row versions (ulong).
     /// The row version is a monotonically increasing value that changes every time the row is modified.
     /// Returns an empty dictionary if no tables match the criteria or if tables are empty.
+    /// When accessing a key that doesn't exist via the indexer, throws a helpful exception suggesting the entity might not be using a stable ID.
     /// </returns>
     /// <remarks>
     /// This method dynamically discovers all base tables in the database that contain both:
@@ -36,7 +75,7 @@ public static class RowVersions
     /// }
     /// </code>
     /// </example>
-    public static async Task<Dictionary<Guid, ulong>> Read(SqlConnection connection)
+    public static async Task<IReadOnlyDictionary<Guid, ulong>> Read(SqlConnection connection)
     {
         var sql = """
             DECLARE @sql nvarchar(max);
@@ -70,6 +109,6 @@ public static class RowVersions
             result[reader.GetGuid(0)] = BinaryPrimitives.ReadUInt64BigEndian(bytes);
         }
 
-        return result;
+        return new RowVersionDictionary(result);
     }
 }
