@@ -568,4 +568,103 @@ public class RowVersionsTests
 
         instance.Cleanup();
     }
+
+    [Test]
+    public async Task IndexerThrowsForGuidEmpty()
+    {
+        using var instance = new SqlInstance("GetRowVersions_IndexerThrowsForGuidEmpty", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var exception = Throws<ArgumentException>(() =>
+        {
+            var _ = result[Guid.Empty];
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
+        That(exception.ParamName, Is.EqualTo("key"));
+
+        instance.Cleanup();
+    }
+
+    [Test]
+    public async Task TryGetValueThrowsForGuidEmpty()
+    {
+        using var instance = new SqlInstance("GetRowVersions_TryGetValueThrowsForGuidEmpty", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var exception = Throws<ArgumentException>(() =>
+        {
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            result.TryGetValue(Guid.Empty, out var _);
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
+        That(exception.ParamName, Is.EqualTo("key"));
+
+        instance.Cleanup();
+    }
+
+    [Test]
+    public async Task ContainsKeyThrowsForGuidEmpty()
+    {
+        using var instance = new SqlInstance("GetRowVersions_ContainsKeyThrowsForGuidEmpty", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var exception = Throws<ArgumentException>(() =>
+        {
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            result.ContainsKey(Guid.Empty);
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
+        That(exception.ParamName, Is.EqualTo("key"));
+
+        instance.Cleanup();
+    }
+
+    [Test]
+    public async Task ReadThrowsWhenDatabaseContainsGuidEmpty()
+    {
+        using var instance = new SqlInstance("GetRowVersions_ReadThrowsWhenDatabaseContainsGuidEmpty", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        // Insert a row with Guid.Empty
+        await InsertRow(connection, Guid.Empty, "Invalid");
+
+        var exception = ThrowsAsync<InvalidOperationException>(async () =>
+        {
+            await RowVersions.Read(connection);
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
+
+        instance.Cleanup();
+    }
 }
