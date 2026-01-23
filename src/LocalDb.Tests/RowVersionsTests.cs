@@ -454,4 +454,118 @@ public class RowVersionsTests
         command.Parameters.AddWithValue("@Value", $"Value{tableNumber}");
         await command.ExecuteNonQueryAsync();
     }
+
+    [Test]
+    public async Task IndexerThrowsForMissingKey()
+    {
+        using var instance = new SqlInstance("GetRowVersions_IndexerThrowsForMissingKey", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var existingId = Guid.NewGuid();
+        await InsertRow(connection, existingId, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var missingId = Guid.NewGuid();
+        var exception = Throws<KeyNotFoundException>(() =>
+        {
+            var _ = result[missingId];
+        });
+
+        That(exception!.Message, Does.Contain(missingId.ToString()));
+        That(exception.Message, Does.Contain("stable Id"));
+        That(exception.Message, Does.Contain("does not exist in a table with both Id and RowVersion columns"));
+
+        instance.Cleanup();
+    }
+
+    [Test]
+    public async Task TryGetValueReturnsFalseForMissingKey()
+    {
+        using var instance = new SqlInstance("GetRowVersions_TryGetValueReturnsFalseForMissingKey", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var existingId = Guid.NewGuid();
+        await InsertRow(connection, existingId, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var missingId = Guid.NewGuid();
+        var found = result.TryGetValue(missingId, out var version);
+
+        IsFalse(found);
+        AreEqual(0UL, version);
+
+        instance.Cleanup();
+    }
+
+    [Test]
+    public async Task ContainsKeyReturnsFalseForMissingKey()
+    {
+        using var instance = new SqlInstance("GetRowVersions_ContainsKeyReturnsFalseForMissingKey", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var existingId = Guid.NewGuid();
+        await InsertRow(connection, existingId, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var missingId = Guid.NewGuid();
+        IsFalse(result.ContainsKey(missingId));
+
+        instance.Cleanup();
+    }
+
+    [Test]
+    public async Task IndexerSucceedsForExistingKey()
+    {
+        using var instance = new SqlInstance("GetRowVersions_IndexerSucceedsForExistingKey", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var version = result[id];
+        IsTrue(version > 0);
+
+        instance.Cleanup();
+    }
+
+    [Test]
+    public async Task CanEnumerateRowVersionDictionary()
+    {
+        using var instance = new SqlInstance("GetRowVersions_CanEnumerateRowVersionDictionary", CreateTableWithRowVersion);
+
+        await using var database = await instance.Build();
+        var connection = database.Connection;
+
+        var id1 = Guid.NewGuid();
+        var id2 = Guid.NewGuid();
+        await InsertRow(connection, id1, "Test1");
+        await InsertRow(connection, id2, "Test2");
+
+        var result = await RowVersions.Read(connection);
+
+        var count = 0;
+        foreach (var kvp in result)
+        {
+            count++;
+            IsTrue(kvp.Key == id1 || kvp.Key == id2);
+            IsTrue(kvp.Value > 0);
+        }
+
+        AreEqual(2, count);
+
+        instance.Cleanup();
+    }
 }
