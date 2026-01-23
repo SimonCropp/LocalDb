@@ -153,6 +153,7 @@ class Wrapper : IDisposable
             // Instead of deleting and recreating, just start the stopped instance.
             // This preserves the existing template files on disk and allows
             // warm/rebuild scenarios instead of always doing a cold start.
+            LocalDbLogging.LogIfVerbose("LocalDb nor running. So start and respect timestamp checks");
             LocalDbApi.StartInstance(instance);
             // Fall through to the data file and timestamp checks below
         }
