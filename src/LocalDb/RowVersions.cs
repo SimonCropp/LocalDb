@@ -17,6 +17,11 @@ class RowVersionDictionary : IReadOnlyDictionary<Guid, ulong>
     {
         get
         {
+            if (key == Guid.Empty)
+            {
+                throw new ArgumentException("Guid.Empty is not a valid identifier for accessing row versions.", nameof(key));
+            }
+
             if (inner.TryGetValue(key, out var value))
             {
                 return value;
@@ -33,11 +38,27 @@ class RowVersionDictionary : IReadOnlyDictionary<Guid, ulong>
 
     public int Count => inner.Count;
 
-    public bool ContainsKey(Guid key) => inner.ContainsKey(key);
+    public bool ContainsKey(Guid key)
+    {
+        if (key == Guid.Empty)
+        {
+            throw new ArgumentException("Guid.Empty is not a valid identifier for accessing row versions.", nameof(key));
+        }
+
+        return inner.ContainsKey(key);
+    }
 
     public IEnumerator<KeyValuePair<Guid, ulong>> GetEnumerator() => inner.GetEnumerator();
 
-    public bool TryGetValue(Guid key, out ulong value) => inner.TryGetValue(key, out value);
+    public bool TryGetValue(Guid key, out ulong value)
+    {
+        if (key == Guid.Empty)
+        {
+            throw new ArgumentException("Guid.Empty is not a valid identifier for accessing row versions.", nameof(key));
+        }
+
+        return inner.TryGetValue(key, out value);
+    }
 
     IEnumerator IEnumerable.GetEnumerator() => inner.GetEnumerator();
 }
@@ -104,9 +125,15 @@ public static class RowVersions
 
         while (await reader.ReadAsync())
         {
+            var id = reader.GetGuid(0);
+            if (id == Guid.Empty)
+            {
+                throw new("Found Guid.Empty as an Id value. Guid.Empty is not a valid identifier for entities with row versions.");
+            }
+
             var bytes = (byte[])reader[1];
             // SQL Server returns ROWVERSION in big-endian format
-            result[reader.GetGuid(0)] = BinaryPrimitives.ReadUInt64BigEndian(bytes);
+            result[id] = BinaryPrimitives.ReadUInt64BigEndian(bytes);
         }
 
         return new RowVersionDictionary(result);

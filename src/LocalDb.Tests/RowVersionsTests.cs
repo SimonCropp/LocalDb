@@ -1,24 +1,48 @@
 [TestFixture]
 public class RowVersionsTests
 {
+    SqlInstance instanceWithRowVersion = null!;
+    SqlInstance instanceNoTables = null!;
+    SqlInstance instanceMultipleTables = null!;
+    SqlInstance instanceWithAndWithoutId = null!;
+    SqlInstance instanceDifferentIdTypes = null!;
+    SqlInstance instanceWithAndWithoutRowVersion = null!;
+
+    [OneTimeSetUp]
+    public void Setup()
+    {
+        instanceWithRowVersion = new("GetRowVersions_WithRowVersion", CreateTableWithRowVersion);
+        instanceNoTables = new("GetRowVersions_NoTables", _ => Task.CompletedTask);
+        instanceMultipleTables = new("GetRowVersions_MultipleTables", CreateMultipleTables);
+        instanceWithAndWithoutId = new("GetRowVersions_WithAndWithoutId", CreateTablesWithAndWithoutId);
+        instanceDifferentIdTypes = new("GetRowVersions_DifferentIdTypes", CreateTablesWithDifferentIdTypes);
+        instanceWithAndWithoutRowVersion = new("GetRowVersions_WithAndWithoutRowVersion", CreateTablesWithAndWithoutRowVersion);
+    }
+
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        instanceWithRowVersion.Cleanup();
+        instanceNoTables.Cleanup();
+        instanceMultipleTables.Cleanup();
+        instanceWithAndWithoutId.Cleanup();
+        instanceDifferentIdTypes.Cleanup();
+        instanceWithAndWithoutRowVersion.Cleanup();
+    }
+
     [Test]
     public async Task NoTables()
     {
-        using var instance = new SqlInstance("GetRowVersions_NoTables", _ => Task.CompletedTask);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceNoTables.Build();
         var result = await RowVersions.Read(database.Connection);
 
         IsEmpty(result);
-        instance.Cleanup();
     }
 
     [Test]
     public async Task SingleTable()
     {
-        using var instance = new SqlInstance("GetRowVersions_SingleTable", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var id1 = Guid.NewGuid();
@@ -35,16 +59,12 @@ public class RowVersionsTests
         IsTrue(result[id1] > 0);
         IsTrue(result[id2] > 0);
         AreNotEqual(result[id1], result[id2]);
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task Usage()
     {
-        using var instance = new SqlInstance("GetRowVersionsUsage", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
 
         #region RowVersionsRead
 
@@ -76,16 +96,12 @@ public class RowVersionsTests
         AreNotEqual(result[id1], result[id2]);
 
         #endregion
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task MultipleTables()
     {
-        using var instance = new SqlInstance("GetRowVersions_MultipleTables", CreateMultipleTables);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceMultipleTables.Build();
         var connection = database.Connection;
 
         var idTable1 = Guid.NewGuid();
@@ -101,16 +117,12 @@ public class RowVersionsTests
         True(result.ContainsKey(idTable2));
         IsTrue(result[idTable1] > 0);
         IsTrue(result[idTable2] > 0);
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task IgnoresTablesWithoutId()
     {
-        using var instance = new SqlInstance("GetRowVersions_IgnoresTablesWithoutId", CreateTablesWithAndWithoutId);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithAndWithoutId.Build();
         var connection = database.Connection;
 
         var id = Guid.NewGuid();
@@ -121,16 +133,12 @@ public class RowVersionsTests
 
         AreEqual(1, result.Count);
         True(result.ContainsKey(id));
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task IgnoresTablesWithWrongIdType()
     {
-        using var instance = new SqlInstance("GetRowVersions_IgnoresTablesWithWrongIdType", CreateTablesWithDifferentIdTypes);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceDifferentIdTypes.Build();
         var connection = database.Connection;
 
         var validId = Guid.NewGuid();
@@ -142,16 +150,12 @@ public class RowVersionsTests
         // Should only include the table with UNIQUEIDENTIFIER Id
         AreEqual(1, result.Count);
         True(result.ContainsKey(validId));
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task IgnoresTablesWithoutRowVersion()
     {
-        using var instance = new SqlInstance("GetRowVersions_IgnoresTablesWithoutRowVersion", CreateTablesWithAndWithoutRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithAndWithoutRowVersion.Build();
         var connection = database.Connection;
 
         var id = Guid.NewGuid();
@@ -162,16 +166,12 @@ public class RowVersionsTests
 
         AreEqual(1, result.Count);
         True(result.ContainsKey(id));
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task RowVersionChangesOnUpdate()
     {
-        using var instance = new SqlInstance("GetRowVersions_RowVersionChangesOnUpdate", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var id = Guid.NewGuid();
@@ -187,20 +187,15 @@ public class RowVersionsTests
 
         AreNotEqual(originalVersion, updatedVersion);
         IsTrue(updatedVersion > originalVersion);
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task EmptyTable()
     {
-        using var instance = new SqlInstance("GetRowVersions_EmptyTable", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var result = await RowVersions.Read(database.Connection);
 
         IsEmpty(result);
-        instance.Cleanup();
     }
 
     [Test]
@@ -240,9 +235,7 @@ public class RowVersionsTests
     [Test]
     public async Task RowVersionByteOrderIsCorrect()
     {
-        using var instance = new SqlInstance("GetRowVersions_ByteOrder", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var id = Guid.NewGuid();
@@ -271,8 +264,6 @@ public class RowVersionsTests
         // Also verify the value is reasonable (should be a small positive number)
         IsTrue(rowVersionFromHelper > 0, "RowVersion should be greater than 0");
         IsTrue(rowVersionFromHelper < 1_000_000, "RowVersion should be a reasonable value (not byte-swapped garbage)");
-
-        instance.Cleanup();
     }
 
     static async Task CreateTableWithRowVersion(SqlConnection connection)
@@ -458,9 +449,7 @@ public class RowVersionsTests
     [Test]
     public async Task IndexerThrowsForMissingKey()
     {
-        using var instance = new SqlInstance("GetRowVersions_IndexerThrowsForMissingKey", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var existingId = Guid.NewGuid();
@@ -477,16 +466,12 @@ public class RowVersionsTests
         That(exception!.Message, Does.Contain(missingId.ToString()));
         That(exception.Message, Does.Contain("stable Id"));
         That(exception.Message, Does.Contain("does not exist in a table with both Id and RowVersion columns"));
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task TryGetValueReturnsFalseForMissingKey()
     {
-        using var instance = new SqlInstance("GetRowVersions_TryGetValueReturnsFalseForMissingKey", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var existingId = Guid.NewGuid();
@@ -499,16 +484,12 @@ public class RowVersionsTests
 
         IsFalse(found);
         AreEqual(0UL, version);
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task ContainsKeyReturnsFalseForMissingKey()
     {
-        using var instance = new SqlInstance("GetRowVersions_ContainsKeyReturnsFalseForMissingKey", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var existingId = Guid.NewGuid();
@@ -518,16 +499,12 @@ public class RowVersionsTests
 
         var missingId = Guid.NewGuid();
         IsFalse(result.ContainsKey(missingId));
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task IndexerSucceedsForExistingKey()
     {
-        using var instance = new SqlInstance("GetRowVersions_IndexerSucceedsForExistingKey", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var id = Guid.NewGuid();
@@ -537,16 +514,12 @@ public class RowVersionsTests
 
         var version = result[id];
         IsTrue(version > 0);
-
-        instance.Cleanup();
     }
 
     [Test]
     public async Task CanEnumerateRowVersionDictionary()
     {
-        using var instance = new SqlInstance("GetRowVersions_CanEnumerateRowVersionDictionary", CreateTableWithRowVersion);
-
-        await using var database = await instance.Build();
+        await using var database = await instanceWithRowVersion.Build();
         var connection = database.Connection;
 
         var id1 = Guid.NewGuid();
@@ -565,7 +538,88 @@ public class RowVersionsTests
         }
 
         AreEqual(2, count);
+    }
 
-        instance.Cleanup();
+    [Test]
+    public async Task IndexerThrowsForGuidEmpty()
+    {
+        await using var database = await instanceWithRowVersion.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var exception = Throws<ArgumentException>(() =>
+        {
+            var _ = result[Guid.Empty];
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
+        That(exception.ParamName, Is.EqualTo("key"));
+    }
+
+    [Test]
+    public async Task TryGetValueThrowsForGuidEmpty()
+    {
+        await using var database = await instanceWithRowVersion.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var exception = Throws<ArgumentException>(() =>
+        {
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            result.TryGetValue(Guid.Empty, out var _);
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
+        That(exception.ParamName, Is.EqualTo("key"));
+    }
+
+    [Test]
+    public async Task ContainsKeyThrowsForGuidEmpty()
+    {
+        await using var database = await instanceWithRowVersion.Build();
+        var connection = database.Connection;
+
+        var id = Guid.NewGuid();
+        await InsertRow(connection, id, "Test");
+
+        var result = await RowVersions.Read(connection);
+
+        var exception = Throws<ArgumentException>(() =>
+        {
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            result.ContainsKey(Guid.Empty);
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
+        That(exception.ParamName, Is.EqualTo("key"));
+    }
+
+    [Test]
+    public async Task ReadThrowsWhenDatabaseContainsGuidEmpty()
+    {
+        await using var database = await instanceWithRowVersion.Build();
+        var connection = database.Connection;
+
+        // Insert a row with Guid.Empty
+        await InsertRow(connection, Guid.Empty, "Invalid");
+
+        var exception = ThrowsAsync<Exception>(async () =>
+        {
+            await RowVersions.Read(connection);
+        });
+
+        That(exception!.Message, Does.Contain("Guid.Empty"));
+        That(exception.Message, Does.Contain("not a valid identifier"));
     }
 }
