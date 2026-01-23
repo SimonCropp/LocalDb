@@ -45,7 +45,7 @@ IsTrue(result[id1] > 0);
 IsTrue(result[id2] > 0);
 AreNotEqual(result[id1], result[id2]);
 ```
-<sup><a href='/src/LocalDb.Tests/RowVersionsTests.cs#L49-L78' title='Snippet source file'>snippet source</a> | <a href='#snippet-RowVersionsRead' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/RowVersionsTests.cs#L69-L98' title='Snippet source file'>snippet source</a> | <a href='#snippet-RowVersionsRead' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 ### How It Works
