@@ -206,7 +206,7 @@ public abstract partial class LocalDbTestBase<T> :
         {
             if (BuildServerDetector.Detected)
             {
-                LocalDbLogging.Log($"Purging {Database.Name}");
+                LocalDbLogging.LogIfVerbose($"Purging {Database.Name}");
                 await Database.Delete();
             }
             else
