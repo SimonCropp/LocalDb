@@ -264,6 +264,57 @@ flowchart TD
 ```
 
 
+### Clean Directory Flow
+
+On first access, the library scans the data root directory (`%TEMP%\LocalDb` by default) and cleans up stale database files. This prevents unbounded disk growth from old test runs.
+
+```mermaid
+flowchart TD
+    start[Start: CleanRoot]
+    checkRootExists{Root Directory<br>Exists?}
+    iterateDirs[Iterate Instance<br>Directories]
+    collectFiles[Collect All DB Files<br>.mdf .ldf]
+    checkHasFiles{Has Files?}
+    checkDirAge{Directory Older<br>Than 6 Hours?}
+    deleteDirEmpty[Delete Directory]
+    findNewest[Find Newest<br>File Write Time]
+    checkNewest{Newest File<br>Older Than<br>6 Hours?}
+    stopInstance[Stop LocalDB<br>Instance If Running]
+    deleteAllFiles[Delete All Files]
+    checkEmptyAfter{Directory<br>Empty?}
+    deleteDirAfter[Delete Directory]
+    done[Done]
+
+    start --> checkRootExists
+    checkRootExists -->|No| done
+    checkRootExists -->|Yes| iterateDirs
+    iterateDirs --> collectFiles
+    collectFiles --> checkHasFiles
+    checkHasFiles -->|No| checkDirAge
+    checkDirAge -->|Yes| deleteDirEmpty
+    checkDirAge -->|No| done
+    deleteDirEmpty --> done
+    checkHasFiles -->|Yes| findNewest
+    findNewest --> checkNewest
+    checkNewest -->|No| done
+    checkNewest -->|Yes| stopInstance
+    stopInstance --> deleteAllFiles
+    deleteAllFiles --> checkEmptyAfter
+    checkEmptyAfter -->|Yes| deleteDirAfter
+    checkEmptyAfter -->|No| done
+    deleteDirAfter --> done
+```
+
+Key behaviors:
+
+ * **Triggered once** during `DirectoryFinder` static initialization, before any `SqlInstance` starts.
+ * **All-or-nothing cleanup**: The newest file write time in a directory determines whether the entire instance is stale. If any file is recent, nothing is touched. This avoids partially cleaning an active instance.
+ * **6-hour cutoff**: An instance directory is only cleaned if all its files have a last-write time older than 6 hours.
+ * **Stops running instances**: If stale files belong to a running LocalDB instance, the instance is stopped (via `KillProcess`) before deletion. This prevents `UnauthorizedAccessException` from locked `.mdf`/`.ldf` files.
+ * **Empty directory cleanup**: Empty directories older than 6 hours are removed.
+ * The instance name is derived from the directory name (e.g. `%TEMP%\LocalDb\MyTestInstance` → instance name `MyTestInstance`).
+
+
 ### Create SqlDatabase Flow
 
 This happens once per `SqlInstance.Build`, usually once per test method.

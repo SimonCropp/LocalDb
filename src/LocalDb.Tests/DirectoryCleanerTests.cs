@@ -126,4 +126,42 @@ public class DirectoryCleanerTests
             Directory.Delete(tempDir, true);
         }
     }
+
+    [Test]
+    public async Task OldDbFiles_RunningInstance()
+    {
+        var name = "CleanerRunningInstanceTest";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        // Create and start a real LocalDB instance so it locks the .mdf/.ldf files
+        var directory = DirectoryFinder.Find(name);
+        using var wrapper = new Wrapper(name, directory);
+        wrapper.Start(new(2000, 1, 1), TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+
+        // Verify the instance is running and files exist
+        var info = LocalDbApi.GetInstance(name);
+        True(info.IsRunning);
+        True(File.Exists(wrapper.DataFile));
+        True(File.Exists(wrapper.LogFile));
+
+        // Backdate the files so the cleaner considers them stale
+        File.SetLastWriteTime(wrapper.DataFile, DateTime.Now.AddDays(-3));
+        File.SetLastWriteTime(wrapper.LogFile, DateTime.Now.AddDays(-3));
+
+        // This would throw UnauthorizedAccessException before the fix
+        // because the running instance has the files locked
+        DirectoryCleaner.CleanInstance(directory);
+
+        // Verify the files were successfully deleted
+        False(File.Exists(wrapper.DataFile));
+        False(File.Exists(wrapper.LogFile));
+
+        // Verify the instance was stopped
+        var infoAfter = LocalDbApi.GetInstance(name);
+        False(infoAfter.IsRunning);
+
+        LocalDbApi.StopAndDelete(name);
+    }
 }
