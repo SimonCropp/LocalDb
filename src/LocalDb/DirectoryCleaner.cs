@@ -20,19 +20,46 @@
             return;
         }
 
-        var cutoff = DateTime.Now.AddHours(-6);
-        foreach (var file in GetDbFiles(directory))
+        var files = GetDbFiles(directory).ToList();
+
+        if (files.Count == 0)
         {
-            if (File.GetLastWriteTime(file) < cutoff)
+            var cutoff = DateTime.Now.AddHours(-6);
+            if (Directory.GetCreationTime(directory) < cutoff)
             {
-                File.Delete(file);
+                Directory.Delete(directory, false);
             }
+
+            return;
         }
 
-        if (Directory.GetFileSystemEntries(directory).Length == 0 &&
-            Directory.GetCreationTime(directory) < cutoff)
+        var newestWriteTime = files.Max(File.GetLastWriteTime);
+
+        if (newestWriteTime >= DateTime.Now.AddHours(-6))
+        {
+            return;
+        }
+
+        StopIfRunning(directory);
+
+        foreach (var file in files)
+        {
+            File.Delete(file);
+        }
+
+        if (Directory.GetFileSystemEntries(directory).Length == 0)
         {
             Directory.Delete(directory, false);
+        }
+    }
+
+    static void StopIfRunning(string directory)
+    {
+        var instanceName = Path.GetFileName(directory);
+        var info = LocalDbApi.GetInstance(instanceName);
+        if (info.Exists && info.IsRunning)
+        {
+            LocalDbApi.StopInstance(instanceName, ShutdownMode.KillProcess);
         }
     }
 
@@ -44,21 +71,6 @@
         }
 
         foreach (var logFile in Directory.EnumerateFiles(instanceDirectory, "*.ldf"))
-        {
-            yield return logFile;
-        }
-
-        foreach (var logFile in Directory.EnumerateFiles(instanceDirectory, "*.xel"))
-        {
-            yield return logFile;
-        }
-
-        foreach (var logFile in Directory.EnumerateFiles(instanceDirectory, "*.log"))
-        {
-            yield return logFile;
-        }
-
-        foreach (var logFile in Directory.EnumerateFiles(instanceDirectory, "*.bin"))
         {
             yield return logFile;
         }
