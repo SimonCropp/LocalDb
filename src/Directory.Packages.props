@@ -22,7 +22,7 @@
     <PackageVersion Include="NUnit" Version="4.4.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="5.2.0" Pinned="true" />
     <PackageVersion Include="Polyfill" Version="9.8.1" />
-    <PackageVersion Include="ProjectDefaults" Version="1.0.170" />
+    <PackageVersion Include="ProjectDefaults" Version="1.0.171" />
     <PackageVersion Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageVersion Include="System.Drawing.Common" Version="10.0.2" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
