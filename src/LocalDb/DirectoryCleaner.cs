@@ -57,7 +57,7 @@
     {
         var instanceName = Path.GetFileName(directory);
         var info = LocalDbApi.GetInstance(instanceName);
-        if (info.Exists && info.IsRunning)
+        if (info is { Exists: true, IsRunning: true })
         {
             LocalDbApi.StopInstance(instanceName, ShutdownMode.KillProcess);
         }

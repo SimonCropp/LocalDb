@@ -43,6 +43,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
     * [Raw SqlConnection](#raw-sqlconnection)
     * [EntityFramework Classic](#entityframework-classic)
     * [EntityFramework Core](#entityframework-core)
+    * [EntityFramework Core NUnit](#entityframework-core-nunit)
   * [LocalDB](#localdb)
   * [How this project works](#how-this-project-works)
     * [Inputs](#inputs)
@@ -62,6 +63,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * [Raw Connection Usage](/pages/raw-usage.md)
   * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)
   * [EntityFramework Core Usage](/pages/ef-usage.md)
+  * [EntityFramework Core NUnit Usage](/pages/ef-nunit-usage.md)
   * [EntityFramework Core Migrations](/pages/efmigrations.md)
   * [Directory and name resolution](/pages/directory-and-name-resolution.md)
   * [Sql Management Studio](/pages/sql-management-studio.md)
@@ -76,6 +78,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
 
   * https://www.nuget.org/packages/LocalDb/
   * https://www.nuget.org/packages/EfLocalDb/
+  * https://www.nuget.org/packages/EfLocalDb.NUnit/
   * https://www.nuget.org/packages/EfClassicLocalDb/
 
 
@@ -146,6 +149,13 @@ Interactions with SqlLocalDB via [Entity Framework Classic](https://docs.microso
 Interactions with SqlLocalDB via [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/).
 
 [Full Usage](/pages/ef-usage.md)
+
+
+### EntityFramework Core NUnit
+
+NUnit test base class wrapping EfLocalDb with Arrange-Act-Assert phase enforcement.
+
+[Full Usage](/pages/ef-nunit-usage.md)
 
 
 ## LocalDB
