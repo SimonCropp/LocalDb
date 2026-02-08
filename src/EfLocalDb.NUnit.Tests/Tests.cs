@@ -21,6 +21,7 @@ public class Tests :
         await Verify(result);
     }
 
+    // begin-snippet: StaticInstance
     [Test]
     public async Task StaticInstance()
     {
@@ -39,7 +40,9 @@ public class Tests :
         var result = await Instance.AssertData.Companies.SingleAsync();
         await Verify(result);
     }
+    // end-snippet
 
+    // begin-snippet: Combinations
     [Test]
     public Task Combinations()
     {
@@ -64,6 +67,7 @@ public class Tests :
             return await AssertData.Companies.SingleAsync();
         }
     }
+    // end-snippet
 
     [Test]
     public Task Name() =>
@@ -124,6 +128,7 @@ public class Tests :
         }
     }
 
+    // begin-snippet: VerifyEntity
     [Test]
     public async Task VerifyEntity()
     {
@@ -136,11 +141,13 @@ public class Tests :
         await ArrangeData.SaveChangesAsync();
         await VerifyEntity<Company>(company.Id);
     }
+    // end-snippet
 
     [Test]
     public async Task VerifyEntityNull() =>
         await VerifyEntity<Company>(Guid.NewGuid());
 
+    // begin-snippet: VerifyEntityWithInclude
     [Test]
     public async Task VerifyEntityWithInclude()
     {
@@ -160,7 +167,9 @@ public class Tests :
         await VerifyEntity<Company>(company.Id)
             .Include(_ => _.Employees);
     }
+    // end-snippet
 
+    // begin-snippet: VerifyEntityWithThenInclude
     [Test]
     public async Task VerifyEntityWithThenInclude()
     {
@@ -187,7 +196,9 @@ public class Tests :
             .Include(_ => _.Employees)
             .ThenInclude(_ => _.Vehicles);
     }
+    // end-snippet
 
+    // begin-snippet: VerifyEntities_DbSet
     [Test]
     public async Task VerifyEntities_DbSet()
     {
@@ -200,6 +211,7 @@ public class Tests :
         await ArrangeData.SaveChangesAsync();
         await VerifyEntities(AssertData.Companies);
     }
+    // end-snippet
 
     [Test]
     public async Task VerifyEntities_Queryable()
@@ -214,6 +226,7 @@ public class Tests :
         await VerifyEntities(AssertData.Companies.Where(_ => _.Id == company.Id));
     }
 
+    // begin-snippet: VerifyEntity_Queryable
     [Test]
     public async Task VerifyEntity_Queryable()
     {
@@ -226,6 +239,7 @@ public class Tests :
         await ArrangeData.SaveChangesAsync();
         await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
     }
+    // end-snippet
 
     [Test]
     public async Task ArrangeQueryableAfterAct()
