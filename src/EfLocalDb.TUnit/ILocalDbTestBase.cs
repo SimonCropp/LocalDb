@@ -1,0 +1,4 @@
+interface ILocalDbTestBase
+{
+    Task Reset();
+}

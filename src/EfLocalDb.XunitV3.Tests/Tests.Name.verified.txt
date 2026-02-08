@@ -1,0 +1,4 @@
+﻿{
+  Name: Tests_Name,
+  DataSource: (LocalDb)\TheDbContext_LocalDb_EfLocalDb.XunitV3.Tests
+}

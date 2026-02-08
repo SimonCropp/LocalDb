@@ -1,0 +1,68 @@
+﻿{
+  value1: {
+    target: {
+      Id: Guid_1,
+      Name: value1
+    },
+    ef: [
+      {
+        Type: ReaderExecutedAsync,
+        HasTransaction: false,
+        Text:
+select top (2) c.Id,
+               c.Name
+from   Companies as c
+      },
+      {
+        Type: ReaderExecutedAsync,
+        HasTransaction: false,
+        Parameters: {
+          @p0 (String): value1,
+          @p1 (Guid): Guid_1
+        },
+        Text:
+set implicit_transactions off;
+
+set nocount on;
+
+update Companies
+set    Name = @p0
+output 1
+where  Id = @p1
+      }
+    ]
+  },
+  value2: {
+    target: {
+      Id: Guid_2,
+      Name: value2
+    },
+    ef: [
+      {
+        Type: ReaderExecutedAsync,
+        HasTransaction: false,
+        Text:
+select top (2) c.Id,
+               c.Name
+from   Companies as c
+      },
+      {
+        Type: ReaderExecutedAsync,
+        HasTransaction: false,
+        Parameters: {
+          @p0 (String): value2,
+          @p1 (Guid): Guid_2
+        },
+        Text:
+set implicit_transactions off;
+
+set nocount on;
+
+update Companies
+set    Name = @p0
+output 1
+where  Id = @p1
+      }
+    ]
+  }
+}

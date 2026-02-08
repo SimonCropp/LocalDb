@@ -11,9 +11,15 @@
   <Project Path="Benchmark/Benchmark.csproj" />
   <Project Path="EfClassicLocalDb.Tests/EfClassicLocalDb.Tests.csproj" />
   <Project Path="EfClassicLocalDb/EfClassicLocalDb.csproj" />
+  <Project Path="EfLocalDb.MSTest.Tests/EfLocalDb.MSTest.Tests.csproj" />
+  <Project Path="EfLocalDb.MSTest/EfLocalDb.MSTest.csproj" />
   <Project Path="EfLocalDb.NUnit.Tests/EfLocalDb.NUnit.Tests.csproj" />
   <Project Path="EfLocalDb.NUnit/EfLocalDb.NUnit.csproj" />
   <Project Path="EfLocalDb.Tests/EfLocalDb.Tests.csproj" />
+  <Project Path="EfLocalDb.TUnit.Tests/EfLocalDb.TUnit.Tests.csproj" />
+  <Project Path="EfLocalDb.TUnit/EfLocalDb.TUnit.csproj" />
+  <Project Path="EfLocalDb.XunitV3.Tests/EfLocalDb.XunitV3.Tests.csproj" />
+  <Project Path="EfLocalDb.XunitV3/EfLocalDb.XunitV3.csproj" />
   <Project Path="EfLocalDb/EfLocalDb.csproj" />
   <Project Path="LoadTest/LoadTest.csproj" />
   <Project Path="LocalDb.Tests/LocalDb.Tests.csproj" />

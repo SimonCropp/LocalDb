@@ -1,0 +1,18 @@
+﻿{
+  Id: Guid_1,
+  Name: the Company,
+  Employees: [
+    {
+      CompanyId: Guid_1,
+      Id: Guid_2,
+      Name: the Employee,
+      Vehicles: [
+        {
+          EmployeeId: Guid_2,
+          Id: Guid_3,
+          Model: the Vehicle
+        }
+      ]
+    }
+  ]
+}

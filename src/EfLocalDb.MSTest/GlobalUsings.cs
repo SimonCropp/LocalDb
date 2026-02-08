@@ -1,0 +1,9 @@
+global using System;
+global using System.Diagnostics.Contracts;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using DiffEngine;
+global using EfLocalDb;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.VisualStudio.TestTools.UnitTesting;
+global using VerifyTests;
