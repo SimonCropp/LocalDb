@@ -27,7 +27,7 @@
     <PackageVersion Include="System.Drawing.Common" Version="10.0.2" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageVersion Include="System.Memory" Version="4.6.3" />
-    <PackageVersion Include="Verify.NUnit" Version="31.12.0" />
+    <PackageVersion Include="Verify.NUnit" Version="31.12.1" />
     <PackageVersion Include="Verify.EntityFramework" Version="15.0.2" />
     <PackageVersion Include="Verify.DiffPlex" Version="3.1.2" />
     <PackageVersion Include="Verify.SqlServer" Version="11.3.1" />
