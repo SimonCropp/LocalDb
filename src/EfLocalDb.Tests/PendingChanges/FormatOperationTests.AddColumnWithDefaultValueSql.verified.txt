@@ -1,0 +1,1 @@
+﻿AddColumn: Orders.CreatedAt datetime2 NOT NULL DEFAULT GETUTCDATE()

@@ -1,0 +1,1 @@
+﻿AlterColumn: dbo.Orders.Total decimal(18,4) NOT NULL

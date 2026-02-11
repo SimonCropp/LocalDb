@@ -1,0 +1,1 @@
+﻿AddColumn: Orders.FullName nvarchar(max) NOT NULL AS [FirstName] + ' ' + [LastName]

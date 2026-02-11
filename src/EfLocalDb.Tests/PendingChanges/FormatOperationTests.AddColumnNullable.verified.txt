@@ -1,0 +1,1 @@
+﻿AddColumn: Orders.Notes nvarchar(max)

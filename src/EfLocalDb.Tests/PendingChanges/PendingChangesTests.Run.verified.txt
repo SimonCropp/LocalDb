@@ -3,9 +3,10 @@
   Message:
 The model for context 'PendingChangesDbContext' has pending changes. Add a new migration before updating the database.
 Pending changes:
-  AddColumn: PendingChangesEntities.NewProperty (String)
+  AddColumn: PendingChangesEntities.NewProperty nvarchar(max)
 ,
   StackTrace:
+at PendingChanges.ThrowIfPendingChanges[TDbContext](TDbContext data)
 --- End of stack trace from previous location ---
 --- End of stack trace from previous location ---
 at Wrapper.Rebuild(DateTime timestamp, Func`2 buildTemplate, SqlConnection masterConnection)
