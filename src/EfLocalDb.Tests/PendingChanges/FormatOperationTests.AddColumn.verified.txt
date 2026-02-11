@@ -1,0 +1,1 @@
+﻿AddColumn: dbo.Orders.Total decimal(18,2) NOT NULL

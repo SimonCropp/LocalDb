@@ -1,0 +1,1 @@
+﻿DropCheckConstraint: CK_Orders_Total on dbo.Orders

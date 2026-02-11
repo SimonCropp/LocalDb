@@ -1,0 +1,1 @@
+﻿CreateTable: dbo.Orders Columns: [Id int NOT NULL, Name nvarchar(200) NOT NULL MaxLength=200]

@@ -1,0 +1,1 @@
+﻿AddForeignKey: FK_Orders_Customers on dbo.Orders [CustomerId] -> dbo.Customers [Id]

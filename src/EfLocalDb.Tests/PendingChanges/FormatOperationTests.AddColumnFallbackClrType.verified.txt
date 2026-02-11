@@ -1,0 +1,1 @@
+﻿AddColumn: Orders.Flag Boolean NOT NULL

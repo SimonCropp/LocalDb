@@ -2,7 +2,7 @@
 <Project>
   <PropertyGroup>
     <NoWarn>CS1591;CA1416;CS8632;NU1608;NU1109</NoWarn>
-    <Version>23.4.3</Version>
+    <Version>23.4.4</Version>
     <LangVersion>preview</LangVersion>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <ContinuousIntegrationBuild>false</ContinuousIntegrationBuild>

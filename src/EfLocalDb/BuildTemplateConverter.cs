@@ -13,6 +13,8 @@ static class BuildTemplateConverter
             }
             else
             {
+                data.ThrowIfPendingChanges();
+
                 await buildTemplate(data);
             }
         };
