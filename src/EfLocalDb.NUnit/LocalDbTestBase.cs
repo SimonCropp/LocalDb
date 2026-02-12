@@ -14,6 +14,7 @@ public abstract partial class LocalDbTestBase<T> :
     static SqlDatabase<T>? dbQueryDatabase;
     static SemaphoreSlim dbQueryLock = new(1, 1);
     bool isDbQuery;
+    bool isDbQueryWithTransaction;
     SqlTransaction? dbQueryTransaction;
 
     public static void Initialize(
@@ -47,9 +48,12 @@ public abstract partial class LocalDbTestBase<T> :
         }
 
         var test = TestContext.CurrentContext.Test;
-        isDbQuery = GetType()
+        var methods = GetType()
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Any(m => m.Name == test.MethodName && m.GetCustomAttribute<DbQueryAttribute>() != null);
+            .Where(m => m.Name == test.MethodName)
+            .ToArray();
+        isDbQueryWithTransaction = methods.Any(m => m.GetCustomAttribute<DbQueryWithTransactionAttribute>() != null);
+        isDbQuery = isDbQueryWithTransaction || methods.Any(m => m.GetCustomAttribute<DbQueryAttribute>() != null);
 
         QueryFilter.Enable();
         return Reset();
@@ -91,7 +95,7 @@ public abstract partial class LocalDbTestBase<T> :
         arrangeData.DisableRecording();
         actData = Database.NewDbContext();
 
-        if (isDbQuery)
+        if (isDbQueryWithTransaction)
         {
             actData.Database.UseTransaction(dbQueryTransaction);
         }
@@ -113,9 +117,14 @@ public abstract partial class LocalDbTestBase<T> :
         }
 
         var database = await sqlInstance.BuildFromExisting("DbQuery");
-        dbQueryTransaction = (SqlTransaction) await database.Connection.BeginTransactionAsync();
-        database.Context.Database.UseTransaction(dbQueryTransaction);
-        database.NoTrackingContext.Database.UseTransaction(dbQueryTransaction);
+
+        if (isDbQueryWithTransaction)
+        {
+            dbQueryTransaction = (SqlTransaction) await database.Connection.BeginTransactionAsync();
+            database.Context.Database.UseTransaction(dbQueryTransaction);
+            database.NoTrackingContext.Database.UseTransaction(dbQueryTransaction);
+        }
+
         return database;
     }
 
@@ -259,7 +268,7 @@ public abstract partial class LocalDbTestBase<T> :
 
         if (isDbQuery)
         {
-            if (dbQueryTransaction != null)
+            if (isDbQueryWithTransaction && dbQueryTransaction != null)
             {
                 await dbQueryTransaction.RollbackAsync();
                 await dbQueryTransaction.DisposeAsync();

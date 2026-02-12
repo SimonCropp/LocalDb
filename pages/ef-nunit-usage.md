@@ -621,7 +621,11 @@ public async Task VerifyEntity_Queryable()
 
 ## DbQuery
 
-Mark test methods with `[DbQuery]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and each test runs inside an auto-rolling-back transaction. This eliminates per-test DB creation overhead for tests that only query data.
+Mark test methods with `[DbQuery]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.
+
+Use `[DbQueryWithTransaction]` instead when tests need to write data. Each test runs inside an auto-rolling-back transaction, ensuring test isolation while still sharing the database instance.
+
+Both attributes can be mixed in the same test fixture:
 
 <!-- snippet: DbQueryTests -->
 <a id='snippet-DbQueryTests'></a>
@@ -632,22 +636,30 @@ public class DbQueryTests :
 {
     [Test]
     [DbQuery]
+    public async Task ReadFromSharedDb()
+    {
+        var count = await ActData.Companies.CountAsync();
+        AreEqual(0, count);
+    }
+
+    [Test]
+    [DbQueryWithTransaction]
     public async Task CanReadAndWrite()
     {
         ArrangeData.Companies.Add(
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "DbQuery Company"
+                Name = "DbQueryWithTransaction Company"
             });
         await ArrangeData.SaveChangesAsync();
 
         var entity = await ActData.Companies.SingleAsync();
-        AreEqual("DbQuery Company", entity.Name);
+        AreEqual("DbQueryWithTransaction Company", entity.Name);
     }
 
     [Test]
-    [DbQuery]
+    [DbQueryWithTransaction]
     public async Task DataIsRolledBack()
     {
         ArrangeData.Companies.Add(
@@ -663,7 +675,7 @@ public class DbQueryTests :
     }
 
     [Test]
-    [DbQuery]
+    [DbQueryWithTransaction]
     public async Task StartsWithEmptyDatabase()
     {
         var count = await ActData.Companies.CountAsync();
@@ -671,7 +683,7 @@ public class DbQueryTests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/DbQueryTests.cs#L1-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-DbQueryTests' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.NUnit.Tests/DbQueryTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-DbQueryTests' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

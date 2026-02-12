@@ -5,22 +5,30 @@ public class DbQueryTests :
 {
     [Test]
     [DbQuery]
+    public async Task ReadFromSharedDb()
+    {
+        var count = await ActData.Companies.CountAsync();
+        AreEqual(0, count);
+    }
+
+    [Test]
+    [DbQueryWithTransaction]
     public async Task CanReadAndWrite()
     {
         ArrangeData.Companies.Add(
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "DbQuery Company"
+                Name = "DbQueryWithTransaction Company"
             });
         await ArrangeData.SaveChangesAsync();
 
         var entity = await ActData.Companies.SingleAsync();
-        AreEqual("DbQuery Company", entity.Name);
+        AreEqual("DbQueryWithTransaction Company", entity.Name);
     }
 
     [Test]
-    [DbQuery]
+    [DbQueryWithTransaction]
     public async Task DataIsRolledBack()
     {
         ArrangeData.Companies.Add(
@@ -36,7 +44,7 @@ public class DbQueryTests :
     }
 
     [Test]
-    [DbQuery]
+    [DbQueryWithTransaction]
     public async Task StartsWithEmptyDatabase()
     {
         var count = await ActData.Companies.CountAsync();
