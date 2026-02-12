@@ -39,6 +39,18 @@ public class LocalDbBenchmarks
     }
 
     [Benchmark]
+    public async Task BuildSharedNoTransaction()
+    {
+        await using var database = await sqlInstance.BuildShared(useTransaction: false);
+    }
+
+    [Benchmark]
+    public async Task BuildSharedWithTransaction()
+    {
+        await using var database = await sqlInstance.BuildShared(useTransaction: true);
+    }
+
+    [Benchmark]
     public async Task BuildAndInsert()
     {
         var dbName = $"InsertDb{Interlocked.Increment(ref databaseCounter)}";
