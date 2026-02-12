@@ -1,26 +1,26 @@
-// begin-snippet: QueryOnlyTests
+// begin-snippet: DbQueryTests
 [TestFixture]
-public class QueryOnlyTests :
+public class DbQueryTests :
     LocalDbTestBase<TheDbContext>
 {
     [Test]
-    [QueryOnly]
+    [DbQuery]
     public async Task CanReadAndWrite()
     {
         ArrangeData.Companies.Add(
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "QueryOnly Company"
+                Name = "DbQuery Company"
             });
         await ArrangeData.SaveChangesAsync();
 
         var entity = await ActData.Companies.SingleAsync();
-        AreEqual("QueryOnly Company", entity.Name);
+        AreEqual("DbQuery Company", entity.Name);
     }
 
     [Test]
-    [QueryOnly]
+    [DbQuery]
     public async Task DataIsRolledBack()
     {
         ArrangeData.Companies.Add(
@@ -36,7 +36,7 @@ public class QueryOnlyTests :
     }
 
     [Test]
-    [QueryOnly]
+    [DbQuery]
     public async Task StartsWithEmptyDatabase()
     {
         var count = await ActData.Companies.CountAsync();

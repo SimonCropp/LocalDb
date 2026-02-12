@@ -11,10 +11,10 @@ public abstract partial class LocalDbTestBase<T> :
     T actData = null!;
     T arrangeData = null!;
 
-    static SqlDatabase<T>? queryOnlyDatabase;
-    static SemaphoreSlim queryOnlyLock = new(1, 1);
-    bool isQueryOnly;
-    SqlTransaction? queryOnlyTransaction;
+    static SqlDatabase<T>? dbQueryDatabase;
+    static SemaphoreSlim dbQueryLock = new(1, 1);
+    bool isDbQuery;
+    SqlTransaction? dbQueryTransaction;
 
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
@@ -47,9 +47,9 @@ public abstract partial class LocalDbTestBase<T> :
         }
 
         var test = TestContext.CurrentContext.Test;
-        isQueryOnly = GetType()
+        isDbQuery = GetType()
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Any(m => m.Name == test.MethodName && m.GetCustomAttribute<QueryOnlyAttribute>() != null);
+            .Any(m => m.Name == test.MethodName && m.GetCustomAttribute<DbQueryAttribute>() != null);
 
         QueryFilter.Enable();
         return Reset();
@@ -64,13 +64,13 @@ public abstract partial class LocalDbTestBase<T> :
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if(Database != null)
         {
-            if (isQueryOnly)
+            if (isDbQuery)
             {
-                if (queryOnlyTransaction != null)
+                if (dbQueryTransaction != null)
                 {
-                    await queryOnlyTransaction.RollbackAsync();
-                    await queryOnlyTransaction.DisposeAsync();
-                    queryOnlyTransaction = null;
+                    await dbQueryTransaction.RollbackAsync();
+                    await dbQueryTransaction.DisposeAsync();
+                    dbQueryTransaction = null;
                 }
 
                 await Database.DisposeAsync();
@@ -82,8 +82,8 @@ public abstract partial class LocalDbTestBase<T> :
             }
         }
 
-        Database = isQueryOnly
-            ? await ResetQueryOnly()
+        Database = isDbQuery
+            ? await ResetDbQuery()
             : await sqlInstance.Build(type, null, member);
 
         Database.NoTrackingContext.DisableRecording();
@@ -91,31 +91,31 @@ public abstract partial class LocalDbTestBase<T> :
         arrangeData.DisableRecording();
         actData = Database.NewDbContext();
 
-        if (isQueryOnly)
+        if (isDbQuery)
         {
-            actData.Database.UseTransaction(queryOnlyTransaction);
+            actData.Database.UseTransaction(dbQueryTransaction);
         }
     }
 
-    async Task<SqlDatabase<T>> ResetQueryOnly()
+    async Task<SqlDatabase<T>> ResetDbQuery()
     {
-        if (queryOnlyDatabase == null)
+        if (dbQueryDatabase == null)
         {
-            await queryOnlyLock.WaitAsync();
+            await dbQueryLock.WaitAsync();
             try
             {
-                queryOnlyDatabase ??= await sqlInstance.Build("QueryOnly", (IEnumerable<object>?) null);
+                dbQueryDatabase ??= await sqlInstance.Build("DbQuery", (IEnumerable<object>?) null);
             }
             finally
             {
-                queryOnlyLock.Release();
+                dbQueryLock.Release();
             }
         }
 
-        var database = await sqlInstance.BuildFromExisting("QueryOnly");
-        queryOnlyTransaction = (SqlTransaction) await database.Connection.BeginTransactionAsync();
-        database.Context.Database.UseTransaction(queryOnlyTransaction);
-        database.NoTrackingContext.Database.UseTransaction(queryOnlyTransaction);
+        var database = await sqlInstance.BuildFromExisting("DbQuery");
+        dbQueryTransaction = (SqlTransaction) await database.Connection.BeginTransactionAsync();
+        database.Context.Database.UseTransaction(dbQueryTransaction);
+        database.NoTrackingContext.Database.UseTransaction(dbQueryTransaction);
         return database;
     }
 
@@ -257,13 +257,13 @@ public abstract partial class LocalDbTestBase<T> :
             await actData.DisposeAsync();
         }
 
-        if (isQueryOnly)
+        if (isDbQuery)
         {
-            if (queryOnlyTransaction != null)
+            if (dbQueryTransaction != null)
             {
-                await queryOnlyTransaction.RollbackAsync();
-                await queryOnlyTransaction.DisposeAsync();
-                queryOnlyTransaction = null;
+                await dbQueryTransaction.RollbackAsync();
+                await dbQueryTransaction.DisposeAsync();
+                dbQueryTransaction = null;
             }
 
             if (Database != null)

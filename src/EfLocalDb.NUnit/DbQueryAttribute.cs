@@ -1,4 +1,4 @@
 namespace EfLocalDbNunit;
 
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class QueryOnlyAttribute : Attribute;
+public sealed class DbQueryAttribute : Attribute;

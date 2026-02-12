@@ -67,11 +67,11 @@ snippet: VerifyEntities_DbSet
 snippet: VerifyEntity_Queryable
 
 
-## QueryOnly
+## DbQuery
 
-Mark test methods with `[QueryOnly]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and each test runs inside an auto-rolling-back transaction. This eliminates per-test DB creation overhead for tests that only query data.
+Mark test methods with `[DbQuery]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and each test runs inside an auto-rolling-back transaction. This eliminates per-test DB creation overhead for tests that only query data.
 
-snippet: QueryOnlyTests
+snippet: DbQueryTests
 
 
 ## Parallel Execution
