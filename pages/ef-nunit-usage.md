@@ -631,7 +631,6 @@ Both attributes can be mixed in the same test fixture:
 <a id='snippet-DbQueryTests'></a>
 ```cs
 [TestFixture]
-[SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class DbQueryTests :
     LocalDbTestBase<TheDbContext>
 {
@@ -682,54 +681,9 @@ public class DbQueryTests :
         var count = await ActData.Companies.CountAsync();
         AreEqual(0, count);
     }
-
-    [Test]
-    public void BothDbQueryAttributes_Throws()
-    {
-        var methods = typeof(DbQueryTests)
-            .GetMethods()
-            .Where(m => m.Name == nameof(MethodWithBothAttributes))
-            .ToArray();
-        var exception = Throws<Exception>(() => ValidateDbQueryAttributes(methods));
-        That(exception!.Message, Does.Contain("mutually exclusive"));
-    }
-
-    [Test]
-    public void DbQueryOnly_DoesNotThrow()
-    {
-        var methods = typeof(DbQueryTests)
-            .GetMethods()
-            .Where(m => m.Name == nameof(ReadFromSharedDb))
-            .ToArray();
-        DoesNotThrow(() => ValidateDbQueryAttributes(methods));
-    }
-
-    [Test]
-    public void DbQueryWithTransactionOnly_DoesNotThrow()
-    {
-        var methods = typeof(DbQueryTests)
-            .GetMethods()
-            .Where(m => m.Name == nameof(CanReadAndWrite))
-            .ToArray();
-        DoesNotThrow(() => ValidateDbQueryAttributes(methods));
-    }
-
-    [Test]
-    public void NeitherAttribute_DoesNotThrow()
-    {
-        var methods = typeof(DbQueryTests)
-            .GetMethods()
-            .Where(m => m.Name == nameof(NeitherAttribute_DoesNotThrow))
-            .ToArray();
-        DoesNotThrow(() => ValidateDbQueryAttributes(methods));
-    }
-
-    [DbQuery]
-    [DbQueryWithTransaction]
-    public void MethodWithBothAttributes() { }
 }
 ```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/DbQueryTests.cs#L1-L101' title='Snippet source file'>snippet source</a> | <a href='#snippet-DbQueryTests' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.NUnit.Tests/DbQueryTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-DbQueryTests' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
