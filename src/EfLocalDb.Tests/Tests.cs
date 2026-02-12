@@ -28,7 +28,7 @@ public class Tests
             objects.Add(provider.GetService<TestDbContext>());
         }
 
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         await using var asyncScope = database.CreateAsyncScope();
         await using var providerAsyncScope = ((IServiceProvider)database).CreateAsyncScope();
         await using var scopeFactoryAsyncScope = ((IServiceScopeFactory)database).CreateAsyncScope();
@@ -146,14 +146,14 @@ public class Tests
     [Test]
     public async Task SingleMissing()
     {
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         await ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
     }
 
     [Test]
     public async Task SingleMissingIgnoreFilters()
     {
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         await ThrowsTask(() => database.SingleIgnoreFilters<TestEntity>(entity => entity.Id == 10));
     }
 
@@ -184,14 +184,14 @@ public class Tests
     [Test]
     public async Task AnyMissing()
     {
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         await Verify(database.Any<TestEntity>(entity => entity.Id == 10));
     }
 
     [Test]
     public async Task AnyMissingIgnoreFilters()
     {
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         await Verify(database.AnyIgnoreFilters<TestEntity>(entity => entity.Id == 10));
     }
 
@@ -210,7 +210,7 @@ public class Tests
     [Test]
     public async Task CountMissingT()
     {
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         AreEqual(0, await database.Count<TestEntity>());
     }
 
@@ -485,7 +485,7 @@ public class Tests
     [Test]
     public async Task NewDbContext()
     {
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         await using var data = database.NewDbContext();
         AreNotEqual(database.Context, data);
         True(callbackCalled);
