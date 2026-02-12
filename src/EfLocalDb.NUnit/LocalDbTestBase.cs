@@ -45,12 +45,16 @@ public abstract partial class LocalDbTestBase<T> :
         }
 
         var test = TestContext.CurrentContext.Test;
-        var methods = GetType()
-            .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Where(m => m.Name == test.MethodName)
-            .ToArray();
-        isDbQueryWithTransaction = methods.Any(m => m.GetCustomAttribute<DbQueryWithTransactionAttribute>() != null);
-        isDbQuery = isDbQueryWithTransaction || methods.Any(m => m.GetCustomAttribute<DbQueryAttribute>() != null);
+        var methodInfo = test.Method!.MethodInfo;
+        isDbQueryWithTransaction = methodInfo.GetCustomAttribute<DbQueryWithTransactionAttribute>() != null;
+        var hasDbQueryAttribute = methodInfo.GetCustomAttribute<DbQueryAttribute>() != null;
+
+        if (isDbQueryWithTransaction && hasDbQueryAttribute)
+        {
+            throw new("[DbQuery] and [DbQueryWithTransaction] are mutually exclusive. Use only one on a test method.");
+        }
+
+        isDbQuery = isDbQueryWithTransaction || hasDbQueryAttribute;
 
         QueryFilter.Enable();
         return Reset();
