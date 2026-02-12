@@ -216,3 +216,60 @@ public class SnippetTests
 ```
 <sup><a href='/src/LocalDb.Tests/Snippets/SnippetTests.cs#L1-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-SnippetTests' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
+
+
+## Shared Database
+
+`BuildShared` creates a single database from the template once and reuses it across calls. This is useful for query-only tests that don't need per-test isolation.
+
+<!-- snippet: SharedDatabase -->
+<a id='snippet-SharedDatabase'></a>
+```cs
+[Test]
+public async Task SharedDatabase()
+{
+    using var instance = new SqlInstance(
+        "SharedDatabase",
+        TestDbBuilder.CreateTable);
+
+    await using var database = await instance.BuildShared();
+    var data = await TestDbBuilder.GetData(database);
+    AreEqual(0, data.Count);
+}
+```
+<sup><a href='/src/LocalDb.Tests/Tests.cs#L148-L162' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests:
+
+<!-- snippet: SharedDatabase_WithTransaction -->
+<a id='snippet-SharedDatabase_WithTransaction'></a>
+```cs
+[Test]
+public async Task SharedDatabase_WithTransaction()
+{
+    using var instance = new SqlInstance(
+        "SharedDb_Tran",
+        TestDbBuilder.CreateTable);
+
+    await using (var database =
+        await instance.BuildShared(useTransaction: true))
+    {
+        NotNull(database.Transaction);
+        await using var command =
+            database.Connection.CreateCommand();
+        command.Transaction = database.Transaction;
+        command.CommandText =
+            "insert into MyTable (Value) values (42);";
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Data should be rolled back
+    await using var database2 =
+        await instance.BuildShared();
+    var data = await TestDbBuilder.GetData(database2);
+    AreEqual(0, data.Count);
+}
+```
+<sup><a href='/src/LocalDb.Tests/Tests.cs#L180-L208' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->

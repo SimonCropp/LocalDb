@@ -655,4 +655,61 @@ public class Tests
         public int Id { get; init; }
         public Geometry? Location { get; init; }
     }
+
+    #region EfSharedDatabase
+
+    [Test]
+    public async Task SharedDatabase()
+    {
+        await using var database = await instance.BuildShared();
+        var count = await database.Context.TestEntities.CountAsync();
+        AreEqual(0, count);
+    }
+
+    #endregion
+
+    [Test]
+    public async Task SharedDatabase_MultipleCalls()
+    {
+        await using (await instance.BuildShared())
+        {
+        }
+
+        await using var database = await instance.BuildShared();
+        var count = await database.Context.TestEntities.CountAsync();
+        AreEqual(0, count);
+    }
+
+    #region EfSharedDatabase_WithTransaction
+
+    [Test]
+    public async Task SharedDatabase_WithTransaction()
+    {
+        await using (var database = await instance.BuildShared(useTransaction: true))
+        {
+            NotNull(database.Transaction);
+            database.Context.Add(new TestEntity { Property = "shared" });
+            await database.Context.SaveChangesAsync();
+        }
+
+        // Data should be rolled back
+        await using var database2 = await instance.BuildShared();
+        var count = await database2.Context.TestEntities.CountAsync();
+        AreEqual(0, count);
+    }
+
+    #endregion
+
+    [Test]
+    public async Task SharedDatabase_WithData()
+    {
+        using var dataInstance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
+            storage: Storage.FromSuffix<TestDbContext>("SharedDb_Data"));
+
+        var entity = new TestEntity { Property = "seed" };
+        await using var database = await dataInstance.BuildShared([entity]);
+        var count = await database.Context.TestEntities.CountAsync();
+        AreEqual(1, count);
+    }
 }

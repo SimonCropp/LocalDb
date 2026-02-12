@@ -167,6 +167,20 @@ class Wrapper : IDisposable
         return await OpenExistingDatabase("Shared");
     }
 
+    public long GetSharedFileSize() =>
+        new FileInfo(Path.Combine(Directory, "Shared.mdf")).Length;
+
+    public Task ThrowIfSharedDatabaseModified(long expectedSize)
+    {
+        var actual = GetSharedFileSize();
+        if (actual != expectedSize)
+        {
+            throw new("The shared database has been modified. Use BuildShared with useTransaction: true to enable writes.");
+        }
+
+        return Task.CompletedTask;
+    }
+
     void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
         void CleanStart()

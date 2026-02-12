@@ -17,6 +17,13 @@ public partial class SqlInstance
 #endif
         }
 
-        return new(connection, "Shared", () => Task.CompletedTask, transaction: transaction);
+        Func<Task>? verifyNotModified = null;
+        if (!useTransaction)
+        {
+            var size = Wrapper.GetSharedFileSize();
+            verifyNotModified = () => Wrapper.ThrowIfSharedDatabaseModified(size);
+        }
+
+        return new(connection, "Shared", () => Task.CompletedTask, verifyNotModified, transaction);
     }
 }
