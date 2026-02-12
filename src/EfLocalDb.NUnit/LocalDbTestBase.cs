@@ -87,7 +87,7 @@ public abstract partial class LocalDbTestBase<T> :
 
         if (isDbQueryWithTransaction)
         {
-            actData.Database.UseTransaction(Database.Transaction);
+            await actData.Database.UseTransactionAsync(Database.Transaction);
         }
     }
 
