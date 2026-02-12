@@ -33,7 +33,7 @@ public class RowVersionsTests
     [Test]
     public async Task NoTables()
     {
-        await using var database = await instanceNoTables.Build();
+        await using var database = await instanceNoTables.BuildShared();
         var result = await RowVersions.Read(database.Connection);
 
         IsEmpty(result);
@@ -192,7 +192,7 @@ public class RowVersionsTests
     [Test]
     public async Task EmptyTable()
     {
-        await using var database = await instanceWithRowVersion.Build();
+        await using var database = await instanceWithRowVersion.BuildShared();
         var result = await RowVersions.Read(database.Connection);
 
         IsEmpty(result);

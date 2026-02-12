@@ -55,7 +55,8 @@ public partial class SqlDatabase<TDbContext> :
         Func<Task> delete,
         Func<Task>? takeOffline,
         IEnumerable<object>? data,
-        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder,
+        SqlTransaction? transaction = null)
     {
         Name = name;
         this.instance = instance;
@@ -66,7 +67,14 @@ public partial class SqlDatabase<TDbContext> :
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         ConnectionString = connection.ConnectionString;
         Connection = connection;
+        Transaction = transaction;
     }
+
+    /// <summary>
+    /// Gets the <see cref="SqlTransaction"/> associated with this database, if any.
+    /// When set, the transaction is rolled back and disposed when the database is disposed.
+    /// </summary>
+    public SqlTransaction? Transaction { get; }
 
     /// <summary>
     /// Gets the name of this database.
@@ -114,6 +122,12 @@ public partial class SqlDatabase<TDbContext> :
     {
         Context = NewDbContext();
         NoTrackingContext = NewDbContext(QueryTrackingBehavior.NoTracking);
+
+        if (Transaction is not null)
+        {
+            Context.Database.UseTransaction(Transaction);
+            NoTrackingContext.Database.UseTransaction(Transaction);
+        }
 
         if (data is not null)
         {
@@ -194,6 +208,12 @@ public partial class SqlDatabase<TDbContext> :
             await NoTrackingContext.DisposeAsync();
         }
         // ReSharper restore ConditionIsAlwaysTrueOrFalse
+
+        if (Transaction != null)
+        {
+            await Transaction.RollbackAsync();
+            await Transaction.DisposeAsync();
+        }
 
         await Connection.DisposeAsync();
         if (takeOffline != null)

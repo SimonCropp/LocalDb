@@ -1,7 +1,7 @@
 #pragma warning disable EF1001
 // ReSharper disable once ClassNeverInstantiated.Global
-class KeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection)
-    : SqlServerCompiledQueryCacheKeyGenerator(dependencies, relationalDependencies, connection)
+class KeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, RelationalCompiledQueryCacheKeyGeneratorDependencies relationalDependencies, ISqlServerConnection connection) :
+    SqlServerCompiledQueryCacheKeyGenerator(dependencies, relationalDependencies, connection)
 {
     readonly ISqlServerConnection connection = connection;
 
@@ -14,8 +14,8 @@ class KeyGenerator(CompiledQueryCacheKeyGeneratorDependencies dependencies, Rela
     readonly struct SqlServerCompiledQueryCacheKey(
         RelationalCompiledQueryCacheKey relationalKey,
         bool mars,
-        bool queryFilterEnabled)
-        : IEquatable<SqlServerCompiledQueryCacheKey>
+        bool queryFilterEnabled) :
+        IEquatable<SqlServerCompiledQueryCacheKey>
     {
         readonly RelationalCompiledQueryCacheKey relationalKey = relationalKey;
         readonly bool mars = mars;

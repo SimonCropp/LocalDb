@@ -60,3 +60,14 @@ snippet: BuildContext
 The above are combined in a full test:
 
 snippet: SnippetTests
+
+
+## Shared Database
+
+`BuildShared` creates a single database from the template once and reuses it across calls. This is useful for query-only tests that don't need per-test isolation.
+
+snippet: SharedDatabase
+
+Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests:
+
+snippet: SharedDatabase_WithTransaction

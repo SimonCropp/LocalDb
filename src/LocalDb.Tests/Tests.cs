@@ -144,4 +144,66 @@ public class Tests
         AreEqual(customDirectory, actualDirectory, "The directory parameter should be used, not overwritten");
         instance.Cleanup();
     }
+
+    #region SharedDatabase
+
+    [Test]
+    public async Task SharedDatabase()
+    {
+        using var instance = new SqlInstance(
+            "SharedDatabase",
+            TestDbBuilder.CreateTable);
+
+        await using var database = await instance.BuildShared();
+        var data = await TestDbBuilder.GetData(database);
+        AreEqual(0, data.Count);
+    }
+
+    #endregion
+
+    [Test]
+    public async Task SharedDatabase_MultipleCalls()
+    {
+        using var instance = new SqlInstance(
+            "SharedDb_Multi",
+            TestDbBuilder.CreateTable);
+
+        await using (await instance.BuildShared())
+        {
+        }
+
+        await using var database = await instance.BuildShared();
+        var data = await TestDbBuilder.GetData(database);
+        AreEqual(0, data.Count);
+    }
+
+    #region SharedDatabase_WithTransaction
+
+    [Test]
+    public async Task SharedDatabase_WithTransaction()
+    {
+        using var instance = new SqlInstance(
+            "SharedDb_Tran",
+            TestDbBuilder.CreateTable);
+
+        await using (var database =
+            await instance.BuildShared(useTransaction: true))
+        {
+            NotNull(database.Transaction);
+            await using var command =
+                database.Connection.CreateCommand();
+            command.Transaction = database.Transaction;
+            command.CommandText =
+                "insert into MyTable (Value) values (42);";
+            await command.ExecuteNonQueryAsync();
+        }
+
+        // Data should be rolled back
+        await using var database2 =
+            await instance.BuildShared();
+        var data = await TestDbBuilder.GetData(database2);
+        AreEqual(0, data.Count);
+    }
+
+    #endregion
 }

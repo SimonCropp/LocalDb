@@ -67,6 +67,17 @@ snippet: VerifyEntities_DbSet
 snippet: VerifyEntity_Queryable
 
 
+## DbQuery
+
+Mark test methods with `[DbQuery]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.
+
+Use `[DbQueryWithTransaction]` instead when tests need to write data. Each test runs inside an auto-rolling-back transaction, ensuring test isolation while still sharing the database instance.
+
+Both attributes can be mixed in the same test fixture:
+
+snippet: DbQueryTests
+
+
 ## Parallel Execution
 
 To run tests in parallel, configure parallelism at the assembly level:

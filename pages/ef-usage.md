@@ -277,6 +277,49 @@ public class EfSnippetTests
 <!-- endSnippet -->
 
 
+## Shared Database
+
+`BuildShared` creates a single database from the template once and reuses it across calls. This is useful for query-only tests that don't need per-test isolation.
+
+<!-- snippet: EfSharedDatabase -->
+<a id='snippet-EfSharedDatabase'></a>
+```cs
+[Test]
+public async Task SharedDatabase()
+{
+    await using var database = await instance.BuildShared();
+    var count = await database.Context.TestEntities.CountAsync();
+    AreEqual(0, count);
+}
+```
+<sup><a href='/src/EfLocalDb.Tests/Tests.cs#L659-L669' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfSharedDatabase' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests:
+
+<!-- snippet: EfSharedDatabase_WithTransaction -->
+<a id='snippet-EfSharedDatabase_WithTransaction'></a>
+```cs
+[Test]
+public async Task SharedDatabase_WithTransaction()
+{
+    await using (var database = await instance.BuildShared(useTransaction: true))
+    {
+        NotNull(database.Transaction);
+        database.Context.Add(new TestEntity { Property = "shared" });
+        await database.Context.SaveChangesAsync();
+    }
+
+    // Data should be rolled back
+    await using var database2 = await instance.BuildShared();
+    var count = await database2.Context.TestEntities.CountAsync();
+    AreEqual(0, count);
+}
+```
+<sup><a href='/src/EfLocalDb.Tests/Tests.cs#L683-L701' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfSharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+
 ### EntityFramework DefaultOptionsBuilder
 
 When building a `DbContextOptionsBuilder` the default configuration is as follows:

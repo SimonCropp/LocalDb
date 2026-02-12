@@ -7,6 +7,8 @@ class Wrapper : IDisposable
     ushort shutdownTimeout;
     Func<SqlConnection, Task>? callback;
     SemaphoreSlim semaphoreSlim = new(1, 1);
+    SemaphoreSlim sharedLock = new(1, 1);
+    bool sharedCreated;
     public readonly string MasterConnectionString;
     string instance;
     public readonly string DataFile;
@@ -125,6 +127,59 @@ class Wrapper : IDisposable
     }
 
     public Task AwaitStart() => startupTask;
+
+    public async Task<SqlConnection> OpenExistingDatabase(string name)
+    {
+        await startupTask;
+        var connectionString = LocalDbSettings.BuildConnectionString(instance, name, false);
+        var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+
+    public async Task<SqlConnection> OpenSharedDatabase(
+        Func<SqlConnection, Task>? initialize = null)
+    {
+        await sharedLock.WaitAsync();
+        try
+        {
+            if (!sharedCreated)
+            {
+                var initConnection = await CreateDatabaseFromTemplate("Shared");
+                if (initialize != null)
+                {
+                    await initialize(initConnection);
+                }
+
+#if NET5_0_OR_GREATER
+                await initConnection.DisposeAsync();
+#else
+                initConnection.Dispose();
+#endif
+                sharedCreated = true;
+            }
+        }
+        finally
+        {
+            sharedLock.Release();
+        }
+
+        return await OpenExistingDatabase("Shared");
+    }
+
+    public long GetSharedFileSize() =>
+        new FileInfo(Path.Combine(Directory, "Shared.mdf")).Length;
+
+    public Task ThrowIfSharedDatabaseModified(long expectedSize)
+    {
+        var actual = GetSharedFileSize();
+        if (actual != expectedSize)
+        {
+            throw new("The shared database has been modified. Use BuildShared with useTransaction: true to enable writes.");
+        }
+
+        return Task.CompletedTask;
+    }
 
     void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {

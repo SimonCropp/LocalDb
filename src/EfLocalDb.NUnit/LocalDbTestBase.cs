@@ -11,6 +11,9 @@ public abstract partial class LocalDbTestBase<T> :
     T actData = null!;
     T arrangeData = null!;
 
+    bool isDbQuery;
+    bool isDbQueryWithTransaction;
+
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
         TemplateFromContext<T>? buildTemplate = null,
@@ -41,6 +44,18 @@ public abstract partial class LocalDbTestBase<T> :
             throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
         }
 
+        var test = TestContext.CurrentContext.Test;
+        var methodInfo = test.Method!.MethodInfo;
+        isDbQueryWithTransaction = methodInfo.GetCustomAttribute<DbQueryWithTransactionAttribute>() != null;
+        var hasDbQueryAttribute = methodInfo.GetCustomAttribute<DbQueryAttribute>() != null;
+
+        if (isDbQueryWithTransaction && hasDbQueryAttribute)
+        {
+            throw new("[DbQuery] and [DbQueryWithTransaction] are mutually exclusive. Use only one on a test method.");
+        }
+
+        isDbQuery = isDbQueryWithTransaction || hasDbQueryAttribute;
+
         QueryFilter.Enable();
         return Reset();
     }
@@ -54,14 +69,30 @@ public abstract partial class LocalDbTestBase<T> :
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if(Database != null)
         {
-            await Database.Delete();
-            await Database.DisposeAsync();
+            if (isDbQuery)
+            {
+                await Database.DisposeAsync();
+            }
+            else
+            {
+                await Database.Delete();
+                await Database.DisposeAsync();
+            }
         }
-        Database = await sqlInstance.Build(type, null, member);
+
+        Database = isDbQuery
+            ? await sqlInstance.BuildShared(useTransaction: isDbQueryWithTransaction)
+            : await sqlInstance.Build(type, null, member);
+
         Database.NoTrackingContext.DisableRecording();
         arrangeData = Database.Context;
         arrangeData.DisableRecording();
         actData = Database.NewDbContext();
+
+        if (isDbQueryWithTransaction)
+        {
+            await actData.Database.UseTransactionAsync(Database.Transaction);
+        }
     }
 
     static void ThrowIfInitialized()
@@ -204,7 +235,7 @@ public abstract partial class LocalDbTestBase<T> :
 
         if (Database != null)
         {
-            if (BuildServerDetector.Detected)
+            if (!isDbQuery && BuildServerDetector.Detected)
             {
                 LocalDbLogging.LogIfVerbose($"Purging {Database.Name}");
                 await Database.Delete();

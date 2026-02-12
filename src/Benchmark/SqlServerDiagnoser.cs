@@ -102,14 +102,14 @@ public class SqlServerDiagnoser : IDiagnoser
         logger.WriteLine("| Method              | I/O Read (MB) | I/O Write (MB) | Memory (MB) |");
         logger.WriteLine("|---------------------|---------------:|---------------:|------------:|");
 
-        foreach (var group in metrics.GroupBy(m => m.BenchmarkName))
+        foreach (var group in metrics.GroupBy(_ => _.BenchmarkName))
         {
             var avg = new SqlServerMetrics
             {
                 BenchmarkName = group.Key,
-                IoReadMB = group.Average(m => m.IoReadMB),
-                IoWriteMB = group.Average(m => m.IoWriteMB),
-                MemoryMB = group.Average(m => m.MemoryMB)
+                IoReadMB = group.Average(_ => _.IoReadMB),
+                IoWriteMB = group.Average(_ => _.IoWriteMB),
+                MemoryMB = group.Average(_ => _.MemoryMB)
             };
 
             logger.WriteLine($"| {avg.BenchmarkName,-19} | {avg.IoReadMB,14:F2} | {avg.IoWriteMB,14:F2} | {avg.MemoryMB,11:F2} |");

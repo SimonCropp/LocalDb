@@ -32,14 +32,21 @@ public partial class SqlDatabase :
     Func<Task> delete;
     Func<Task>? takeOffline;
 
-    internal SqlDatabase(SqlConnection connection, string name, Func<Task> delete, Func<Task>? takeOffline = null)
+    internal SqlDatabase(SqlConnection connection, string name, Func<Task> delete, Func<Task>? takeOffline = null, SqlTransaction? transaction = null)
     {
         this.delete = delete;
         this.takeOffline = takeOffline;
         ConnectionString = connection.ConnectionString;
         Name = name;
         Connection = connection;
+        Transaction = transaction;
     }
+
+    /// <summary>
+    /// Gets the <see cref="SqlTransaction"/> associated with this database, if any.
+    /// When set, the transaction is rolled back and disposed when the database is disposed.
+    /// </summary>
+    public SqlTransaction? Transaction { get; }
 
     /// <summary>
     /// Gets the connection string for this database.
@@ -89,6 +96,12 @@ public partial class SqlDatabase :
     /// </summary>
     public void Dispose()
     {
+        if (Transaction != null)
+        {
+            Transaction.Rollback();
+            Transaction.Dispose();
+        }
+
         Connection.Dispose();
         takeOffline?.Invoke().GetAwaiter().GetResult();
     }
@@ -100,6 +113,12 @@ public partial class SqlDatabase :
     /// </summary>
     public async ValueTask DisposeAsync()
     {
+        if (Transaction != null)
+        {
+            await Transaction.RollbackAsync();
+            await Transaction.DisposeAsync();
+        }
+
         await Connection.DisposeAsync();
         if (takeOffline != null)
         {

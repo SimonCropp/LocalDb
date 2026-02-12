@@ -4,7 +4,7 @@
 /// Manages the lifecycle of a SQL Server LocalDB instance for testing purposes.
 /// Provides template-based database creation for efficient test isolation.
 /// </summary>
-public class SqlInstance :
+public partial class SqlInstance :
     IDisposable
 {
     internal readonly Wrapper Wrapper = null!;
