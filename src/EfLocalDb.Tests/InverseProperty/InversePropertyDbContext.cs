@@ -21,8 +21,8 @@ public class InversePropertyDbContext(DbContextOptions options) :
     {
         builder.Entity<Device>();
         builder.Entity<Employee>()
-            .HasMany(x => x.Devices)
-            .WithMany(x => x.Employees)
+            .HasMany(_ => _.Devices)
+            .WithMany(_ => _.Employees)
             .UsingEntity("EmployeeDevice");
     }
 }
