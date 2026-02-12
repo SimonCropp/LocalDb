@@ -126,6 +126,15 @@ class Wrapper : IDisposable
 
     public Task AwaitStart() => startupTask;
 
+    public async Task<SqlConnection> OpenExistingDatabase(string name)
+    {
+        await startupTask;
+        var connectionString = LocalDbSettings.BuildConnectionString(instance, name, false);
+        var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+
     void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
         void CleanStart()

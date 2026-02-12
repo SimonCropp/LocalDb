@@ -7,7 +7,7 @@ namespace EfLocalDb;
 /// Provides template-based database creation for efficient test isolation with DbContext integration.
 /// </summary>
 /// <typeparam name="TDbContext">The Entity Framework DbContext type used for database operations.</typeparam>
-public class SqlInstance<TDbContext> :
+public partial class SqlInstance<TDbContext> :
     IDisposable
     where TDbContext : DbContext
 {

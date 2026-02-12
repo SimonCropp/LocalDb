@@ -11,6 +11,11 @@ public abstract partial class LocalDbTestBase<T> :
     T actData = null!;
     T arrangeData = null!;
 
+    static SqlDatabase<T>? queryOnlyDatabase;
+    static SemaphoreSlim queryOnlyLock = new(1, 1);
+    bool isQueryOnly;
+    SqlTransaction? queryOnlyTransaction;
+
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
         TemplateFromContext<T>? buildTemplate = null,
@@ -41,6 +46,11 @@ public abstract partial class LocalDbTestBase<T> :
             throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
         }
 
+        var test = TestContext.CurrentContext.Test;
+        isQueryOnly = GetType()
+            .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .Any(m => m.Name == test.MethodName && m.GetCustomAttribute<QueryOnlyAttribute>() != null);
+
         QueryFilter.Enable();
         return Reset();
     }
@@ -54,14 +64,59 @@ public abstract partial class LocalDbTestBase<T> :
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if(Database != null)
         {
-            await Database.Delete();
-            await Database.DisposeAsync();
+            if (isQueryOnly)
+            {
+                if (queryOnlyTransaction != null)
+                {
+                    await queryOnlyTransaction.RollbackAsync();
+                    await queryOnlyTransaction.DisposeAsync();
+                    queryOnlyTransaction = null;
+                }
+
+                await Database.DisposeAsync();
+            }
+            else
+            {
+                await Database.Delete();
+                await Database.DisposeAsync();
+            }
         }
-        Database = await sqlInstance.Build(type, null, member);
+
+        Database = isQueryOnly
+            ? await ResetQueryOnly()
+            : await sqlInstance.Build(type, null, member);
+
         Database.NoTrackingContext.DisableRecording();
         arrangeData = Database.Context;
         arrangeData.DisableRecording();
         actData = Database.NewDbContext();
+
+        if (isQueryOnly)
+        {
+            actData.Database.UseTransaction(queryOnlyTransaction);
+        }
+    }
+
+    async Task<SqlDatabase<T>> ResetQueryOnly()
+    {
+        if (queryOnlyDatabase == null)
+        {
+            await queryOnlyLock.WaitAsync();
+            try
+            {
+                queryOnlyDatabase ??= await sqlInstance.Build("QueryOnly", (IEnumerable<object>?) null);
+            }
+            finally
+            {
+                queryOnlyLock.Release();
+            }
+        }
+
+        var database = await sqlInstance.BuildFromExisting("QueryOnly");
+        queryOnlyTransaction = (SqlTransaction) await database.Connection.BeginTransactionAsync();
+        database.Context.Database.UseTransaction(queryOnlyTransaction);
+        database.NoTrackingContext.Database.UseTransaction(queryOnlyTransaction);
+        return database;
     }
 
     static void ThrowIfInitialized()
@@ -202,7 +257,21 @@ public abstract partial class LocalDbTestBase<T> :
             await actData.DisposeAsync();
         }
 
-        if (Database != null)
+        if (isQueryOnly)
+        {
+            if (queryOnlyTransaction != null)
+            {
+                await queryOnlyTransaction.RollbackAsync();
+                await queryOnlyTransaction.DisposeAsync();
+                queryOnlyTransaction = null;
+            }
+
+            if (Database != null)
+            {
+                await Database.DisposeAsync();
+            }
+        }
+        else if (Database != null)
         {
             if (BuildServerDetector.Detected)
             {
