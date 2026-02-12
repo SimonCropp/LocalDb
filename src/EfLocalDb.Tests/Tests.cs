@@ -73,7 +73,7 @@ public class Tests
     [Test]
     public async Task ThrowOnSaveForNoData()
     {
-        await using var database = await instance.Build();
+        await using var database = await instance.BuildShared();
         await ThrowsTask(() => database.SaveChangesAsync())
             .IgnoreStackTrace();
     }
