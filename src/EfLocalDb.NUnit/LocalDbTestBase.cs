@@ -11,11 +11,8 @@ public abstract partial class LocalDbTestBase<T> :
     T actData = null!;
     T arrangeData = null!;
 
-    static SqlDatabase<T>? dbQueryDatabase;
-    static SemaphoreSlim dbQueryLock = new(1, 1);
     bool isDbQuery;
     bool isDbQueryWithTransaction;
-    SqlTransaction? dbQueryTransaction;
 
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
@@ -70,13 +67,6 @@ public abstract partial class LocalDbTestBase<T> :
         {
             if (isDbQuery)
             {
-                if (dbQueryTransaction != null)
-                {
-                    await dbQueryTransaction.RollbackAsync();
-                    await dbQueryTransaction.DisposeAsync();
-                    dbQueryTransaction = null;
-                }
-
                 await Database.DisposeAsync();
             }
             else
@@ -87,7 +77,7 @@ public abstract partial class LocalDbTestBase<T> :
         }
 
         Database = isDbQuery
-            ? await ResetDbQuery()
+            ? await sqlInstance.BuildShared(useTransaction: isDbQueryWithTransaction)
             : await sqlInstance.Build(type, null, member);
 
         Database.NoTrackingContext.DisableRecording();
@@ -97,35 +87,8 @@ public abstract partial class LocalDbTestBase<T> :
 
         if (isDbQueryWithTransaction)
         {
-            actData.Database.UseTransaction(dbQueryTransaction);
+            actData.Database.UseTransaction(Database.Transaction);
         }
-    }
-
-    async Task<SqlDatabase<T>> ResetDbQuery()
-    {
-        if (dbQueryDatabase == null)
-        {
-            await dbQueryLock.WaitAsync();
-            try
-            {
-                dbQueryDatabase ??= await sqlInstance.Build("DbQuery", (IEnumerable<object>?) null);
-            }
-            finally
-            {
-                dbQueryLock.Release();
-            }
-        }
-
-        var database = await sqlInstance.BuildFromExisting("DbQuery");
-
-        if (isDbQueryWithTransaction)
-        {
-            dbQueryTransaction = (SqlTransaction) await database.Connection.BeginTransactionAsync();
-            database.Context.Database.UseTransaction(dbQueryTransaction);
-            database.NoTrackingContext.Database.UseTransaction(dbQueryTransaction);
-        }
-
-        return database;
     }
 
     static void ThrowIfInitialized()
@@ -266,23 +229,9 @@ public abstract partial class LocalDbTestBase<T> :
             await actData.DisposeAsync();
         }
 
-        if (isDbQuery)
+        if (Database != null)
         {
-            if (isDbQueryWithTransaction && dbQueryTransaction != null)
-            {
-                await dbQueryTransaction.RollbackAsync();
-                await dbQueryTransaction.DisposeAsync();
-                dbQueryTransaction = null;
-            }
-
-            if (Database != null)
-            {
-                await Database.DisposeAsync();
-            }
-        }
-        else if (Database != null)
-        {
-            if (BuildServerDetector.Detected)
+            if (!isDbQuery && BuildServerDetector.Detected)
             {
                 LocalDbLogging.LogIfVerbose($"Purging {Database.Name}");
                 await Database.Delete();
