@@ -619,23 +619,25 @@ public async Task VerifyEntity_Queryable()
 <!-- endSnippet -->
 
 
-## DbQuery
+## SharedDb
 
-Mark test methods with `[DbQuery]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.
+Mark test methods with `[SharedDb]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.
 
-Use `[DbQueryWithTransaction]` instead when tests need to write data. Each test runs inside an auto-rolling-back transaction, ensuring test isolation while still sharing the database instance.
+Use `[SharedDbWithTransaction]` instead when tests need to write data. Each test runs inside an auto-rolling-back transaction, ensuring test isolation while still sharing the database instance.
+
+Note: `[SharedDbWithTransaction]` means that on test failure the resulting database cannot be inspected (since the transaction is rolled back). A workaround when debugging a failure is to temporarily remove the attribute.
 
 Both attributes can be mixed in the same test fixture:
 
-<!-- snippet: DbQueryTests -->
-<a id='snippet-DbQueryTests'></a>
+<!-- snippet: SharedDbTests -->
+<a id='snippet-SharedDbTests'></a>
 ```cs
 [TestFixture]
-public class DbQueryTests :
+public class SharedDbTests :
     LocalDbTestBase<TheDbContext>
 {
     [Test]
-    [DbQuery]
+    [SharedDb]
     public async Task ReadFromSharedDb()
     {
         var count = await ActData.Companies.CountAsync();
@@ -643,23 +645,23 @@ public class DbQueryTests :
     }
 
     [Test]
-    [DbQueryWithTransaction]
+    [SharedDbWithTransaction]
     public async Task CanReadAndWrite()
     {
         ArrangeData.Companies.Add(
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "DbQueryWithTransaction Company"
+                Name = "SharedDbWithTransaction Company"
             });
         await ArrangeData.SaveChangesAsync();
 
         var entity = await ActData.Companies.SingleAsync();
-        AreEqual("DbQueryWithTransaction Company", entity.Name);
+        AreEqual("SharedDbWithTransaction Company", entity.Name);
     }
 
     [Test]
-    [DbQueryWithTransaction]
+    [SharedDbWithTransaction]
     public async Task DataIsRolledBack()
     {
         ArrangeData.Companies.Add(
@@ -675,7 +677,7 @@ public class DbQueryTests :
     }
 
     [Test]
-    [DbQueryWithTransaction]
+    [SharedDbWithTransaction]
     public async Task StartsWithEmptyDatabase()
     {
         var count = await ActData.Companies.CountAsync();
@@ -683,7 +685,7 @@ public class DbQueryTests :
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/DbQueryTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-DbQueryTests' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.NUnit.Tests/SharedDbTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTests' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
