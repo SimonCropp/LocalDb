@@ -240,7 +240,9 @@ public async Task SharedDatabase()
 <sup><a href='/src/LocalDb.Tests/Tests.cs#L148-L162' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
-Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests:
+Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests.
+
+Note: `useTransaction: true` means that on test failure the resulting database cannot be inspected (since the transaction is rolled back). A workaround when debugging a failure is to temporarily remove `useTransaction: true`.
 
 <!-- snippet: SharedDatabase_WithTransaction -->
 <a id='snippet-SharedDatabase_WithTransaction'></a>
