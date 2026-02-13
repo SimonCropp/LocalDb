@@ -3,8 +3,7 @@ namespace EfLocalDb;
 public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
-    public async Task<SqlDatabase<TDbContext>> BuildShared(
-        bool useTransaction = false)
+    public async Task<SqlDatabase<TDbContext>> BuildShared(bool useTransaction = false)
     {
         Guard.AgainstBadOS();
         var connection = await Wrapper.OpenSharedDatabase();
@@ -24,7 +23,8 @@ public partial class SqlInstance<TDbContext>
             null,
             null,
             sqlOptionsBuilder,
-            transaction);
+            readOnly: !useTransaction,
+            transaction: transaction);
         await database.Start();
         return database;
     }
@@ -64,7 +64,8 @@ public partial class SqlInstance<TDbContext>
             null,
             null,
             sqlOptionsBuilder,
-            transaction);
+            readOnly: !useTransaction,
+            transaction: transaction);
         await database.Start();
         return database;
     }
