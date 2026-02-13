@@ -583,6 +583,41 @@ end;
         }
     }
 
+    [Test]
+    public async Task SharedDatabaseFileSizeIsStable()
+    {
+        var name = "SharedDatabaseFileSize";
+        LocalDbApi.StopAndDelete(name);
+        DirectoryFinder.Delete(name);
+
+        using var wrapper = new Wrapper(name, DirectoryFinder.Find(name));
+        wrapper.Start(timestamp, async connection =>
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText =
+                """
+                create table MyTable (Value int);
+                insert into MyTable (Value)
+                select top 1000 row_number() over (order by (select null))
+                from sys.all_objects;
+                """;
+            await command.ExecuteNonQueryAsync();
+        });
+
+        await using var connection = await wrapper.OpenSharedDatabase();
+        var size = wrapper.GetSharedFileSize();
+
+        // Read from the shared database (simulating read-only usage)
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM MyTable";
+        await command.ExecuteScalarAsync();
+
+        // Verify ThrowIfSharedDatabaseModified does not throw
+        await wrapper.ThrowIfSharedDatabaseModified(size);
+
+        wrapper.DeleteInstance();
+    }
+
     [OneTimeTearDown]
     public void Cleanup() =>
         instance.DeleteInstance();

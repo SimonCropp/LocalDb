@@ -271,6 +271,7 @@ class Wrapper : IDisposable
                 {
                     await connection.OpenAsync();
                     await callback(connection);
+                    await connection.ExecuteCommandAsync("checkpoint");
                 }
 
                 // Detach the template database after callback completes
@@ -306,6 +307,8 @@ class Wrapper : IDisposable
             {
                 await callback(connection);
             }
+
+            await connection.ExecuteCommandAsync("checkpoint");
         }
 
         await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachAndShrinkTemplateCommand);
