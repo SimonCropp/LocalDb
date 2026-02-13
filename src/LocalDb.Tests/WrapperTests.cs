@@ -547,11 +547,11 @@ end;
         LocalDbApi.StopAndDelete(name);
         DirectoryFinder.Delete(name);
 
-        var buildTemplateCallCount = 0;
 
         // First: Create instance with template using original timestamp
         using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
         {
+            var buildTemplateCallCount = 0;
             wrapper.Start(timestamp, connection =>
             {
                 buildTemplateCallCount++;
@@ -565,10 +565,10 @@ end;
         LocalDbApi.StopInstance(name, ShutdownMode.KillProcess);
 
         // Second: Create new wrapper with DIFFERENT timestamp - should rebuild template
-        buildTemplateCallCount = 0;
         var newTimestamp = new DateTime(2001, 1, 1);
         using (var wrapper = new Wrapper(name, DirectoryFinder.Find(name)))
         {
+            var buildTemplateCallCount = 0;
             wrapper.Start(newTimestamp, connection =>
             {
                 buildTemplateCallCount++;
