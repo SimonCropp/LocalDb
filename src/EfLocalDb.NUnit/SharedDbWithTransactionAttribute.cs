@@ -1,4 +1,4 @@
 namespace EfLocalDbNunit;
 
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class DbQueryWithTransactionAttribute : Attribute;
+public sealed class SharedDbWithTransactionAttribute : Attribute;

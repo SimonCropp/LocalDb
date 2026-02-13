@@ -11,8 +11,8 @@ public abstract partial class LocalDbTestBase<T> :
     T actData = null!;
     T arrangeData = null!;
 
-    bool isDbQuery;
-    bool isDbQueryWithTransaction;
+    bool isSharedDb;
+    bool isSharedDbWithTransaction;
 
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
@@ -46,15 +46,15 @@ public abstract partial class LocalDbTestBase<T> :
 
         var test = TestContext.CurrentContext.Test;
         var methodInfo = test.Method!.MethodInfo;
-        isDbQueryWithTransaction = methodInfo.GetCustomAttribute<DbQueryWithTransactionAttribute>() != null;
-        var hasDbQueryAttribute = methodInfo.GetCustomAttribute<DbQueryAttribute>() != null;
+        isSharedDbWithTransaction = methodInfo.GetCustomAttribute<SharedDbWithTransactionAttribute>() != null;
+        var hasSharedDbAttribute = methodInfo.GetCustomAttribute<SharedDbAttribute>() != null;
 
-        if (isDbQueryWithTransaction && hasDbQueryAttribute)
+        if (isSharedDbWithTransaction && hasSharedDbAttribute)
         {
-            throw new("[DbQuery] and [DbQueryWithTransaction] are mutually exclusive. Use only one on a test method.");
+            throw new("[SharedDb] and [SharedDbWithTransaction] are mutually exclusive. Use only one on a test method.");
         }
 
-        isDbQuery = isDbQueryWithTransaction || hasDbQueryAttribute;
+        isSharedDb = isSharedDbWithTransaction || hasSharedDbAttribute;
 
         QueryFilter.Enable();
         return Reset();
@@ -69,7 +69,7 @@ public abstract partial class LocalDbTestBase<T> :
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if(Database != null)
         {
-            if (isDbQuery)
+            if (isSharedDb)
             {
                 await Database.DisposeAsync();
             }
@@ -80,8 +80,8 @@ public abstract partial class LocalDbTestBase<T> :
             }
         }
 
-        Database = isDbQuery
-            ? await sqlInstance.BuildShared(useTransaction: isDbQueryWithTransaction)
+        Database = isSharedDb
+            ? await sqlInstance.BuildShared(useTransaction: isSharedDbWithTransaction)
             : await sqlInstance.Build(type, null, member);
 
         Database.NoTrackingContext.DisableRecording();
@@ -89,7 +89,7 @@ public abstract partial class LocalDbTestBase<T> :
         arrangeData.DisableRecording();
         actData = Database.NewDbContext();
 
-        if (isDbQueryWithTransaction)
+        if (isSharedDbWithTransaction)
         {
             await actData.Database.UseTransactionAsync(Database.Transaction);
         }
@@ -235,7 +235,7 @@ public abstract partial class LocalDbTestBase<T> :
 
         if (Database != null)
         {
-            if (!isDbQuery && BuildServerDetector.Detected)
+            if (!isSharedDb && BuildServerDetector.Detected)
             {
                 LocalDbLogging.LogIfVerbose($"Purging {Database.Name}");
                 await Database.Delete();

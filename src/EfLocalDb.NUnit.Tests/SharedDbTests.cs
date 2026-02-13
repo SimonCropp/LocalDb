@@ -1,10 +1,10 @@
-// begin-snippet: DbQueryTests
+// begin-snippet: SharedDbTests
 [TestFixture]
-public class DbQueryTests :
+public class SharedDbTests :
     LocalDbTestBase<TheDbContext>
 {
     [Test]
-    [DbQuery]
+    [SharedDb]
     public async Task ReadFromSharedDb()
     {
         var count = await ActData.Companies.CountAsync();
@@ -12,23 +12,23 @@ public class DbQueryTests :
     }
 
     [Test]
-    [DbQueryWithTransaction]
+    [SharedDbWithTransaction]
     public async Task CanReadAndWrite()
     {
         ArrangeData.Companies.Add(
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "DbQueryWithTransaction Company"
+                Name = "SharedDbWithTransaction Company"
             });
         await ArrangeData.SaveChangesAsync();
 
         var entity = await ActData.Companies.SingleAsync();
-        AreEqual("DbQueryWithTransaction Company", entity.Name);
+        AreEqual("SharedDbWithTransaction Company", entity.Name);
     }
 
     [Test]
-    [DbQueryWithTransaction]
+    [SharedDbWithTransaction]
     public async Task DataIsRolledBack()
     {
         ArrangeData.Companies.Add(
@@ -44,7 +44,7 @@ public class DbQueryTests :
     }
 
     [Test]
-    [DbQueryWithTransaction]
+    [SharedDbWithTransaction]
     public async Task StartsWithEmptyDatabase()
     {
         var count = await ActData.Companies.CountAsync();

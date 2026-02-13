@@ -84,7 +84,9 @@ snippet: EfSnippetTests
 
 snippet: EfSharedDatabase
 
-Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests:
+Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests.
+
+Note: `useTransaction: true` means that on test failure the resulting database cannot be inspected (since the transaction is rolled back). A workaround when debugging a failure is to temporarily remove `useTransaction: true`.
 
 snippet: EfSharedDatabase_WithTransaction
 
