@@ -46,6 +46,7 @@ public partial class SqlDatabase<TDbContext> :
     Func<Task>? takeOffline;
     IEnumerable<object>? data;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
+    bool readOnly;
 
     internal SqlDatabase(
         SqlInstance<TDbContext> instance,
@@ -56,6 +57,7 @@ public partial class SqlDatabase<TDbContext> :
         Func<Task>? takeOffline,
         IEnumerable<object>? data,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder,
+        bool readOnly = false,
         SqlTransaction? transaction = null)
     {
         Name = name;
@@ -65,6 +67,7 @@ public partial class SqlDatabase<TDbContext> :
         this.takeOffline = takeOffline;
         this.data = data;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
+        this.readOnly = readOnly;
         ConnectionString = connection.ConnectionString;
         Connection = connection;
         Transaction = transaction;
@@ -171,6 +174,11 @@ public partial class SqlDatabase<TDbContext> :
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection, sqlOptionsBuilder);
         builder.ApplyQueryTracking(tracking);
+        if (readOnly)
+        {
+            builder.AddInterceptors(ReadOnlyInterceptor.Instance);
+        }
+
         return constructInstance(builder);
     }
 
@@ -186,6 +194,11 @@ public partial class SqlDatabase<TDbContext> :
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
         builder.ApplyQueryTracking(tracking);
+        if (readOnly)
+        {
+            builder.AddInterceptors(ReadOnlyInterceptor.Instance);
+        }
+
         return constructInstance(builder);
     }
 

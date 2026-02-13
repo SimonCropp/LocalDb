@@ -167,20 +167,6 @@ class Wrapper : IDisposable
         return await OpenExistingDatabase("Shared");
     }
 
-    public long GetSharedFileSize() =>
-        new FileInfo(Path.Combine(Directory, "Shared.mdf")).Length;
-
-    public Task ThrowIfSharedDatabaseModified(long expectedSize)
-    {
-        var actual = GetSharedFileSize();
-        if (actual != expectedSize)
-        {
-            throw new("The shared database has been modified. Use BuildShared with useTransaction: true to enable writes.");
-        }
-
-        return Task.CompletedTask;
-    }
-
     void InnerStart(DateTime timestamp, Func<SqlConnection, Task> buildTemplate)
     {
         void CleanStart()
@@ -271,7 +257,10 @@ class Wrapper : IDisposable
                 {
                     await connection.OpenAsync();
                     await callback(connection);
+                    await connection.ExecuteCommandAsync("checkpoint");
                 }
+
+                await masterConnection.ExecuteCommandAsync("alter database [template] set auto_update_statistics off");
 
                 // Detach the template database after callback completes
                 await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
@@ -306,8 +295,11 @@ class Wrapper : IDisposable
             {
                 await callback(connection);
             }
+
+            await connection.ExecuteCommandAsync("checkpoint");
         }
 
+        await masterConnection.ExecuteCommandAsync("alter database [template] set auto_update_statistics off");
         await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachAndShrinkTemplateCommand);
 
         File.SetCreationTime(DataFile, timestamp);

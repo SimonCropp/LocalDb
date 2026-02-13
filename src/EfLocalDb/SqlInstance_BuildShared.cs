@@ -3,8 +3,7 @@ namespace EfLocalDb;
 public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
-    public async Task<SqlDatabase<TDbContext>> BuildShared(
-        bool useTransaction = false)
+    public async Task<SqlDatabase<TDbContext>> BuildShared(bool useTransaction = false)
     {
         Guard.AgainstBadOS();
         var connection = await Wrapper.OpenSharedDatabase();
@@ -15,23 +14,17 @@ public partial class SqlInstance<TDbContext>
             transaction = (SqlTransaction) await connection.BeginTransactionAsync();
         }
 
-        Func<Task>? verifyNotModified = null;
-        if (!useTransaction)
-        {
-            var size = Wrapper.GetSharedFileSize();
-            verifyNotModified = () => Wrapper.ThrowIfSharedDatabaseModified(size);
-        }
-
         var database = new SqlDatabase<TDbContext>(
             this,
             connection,
             "Shared",
             constructInstance,
             () => Task.CompletedTask,
-            verifyNotModified,
+            null,
             null,
             sqlOptionsBuilder,
-            transaction);
+            readOnly: !useTransaction,
+            transaction: transaction);
         await database.Start();
         return database;
     }
@@ -62,23 +55,17 @@ public partial class SqlInstance<TDbContext>
             transaction = (SqlTransaction) await connection.BeginTransactionAsync();
         }
 
-        Func<Task>? verifyNotModified = null;
-        if (!useTransaction)
-        {
-            var size = Wrapper.GetSharedFileSize();
-            verifyNotModified = () => Wrapper.ThrowIfSharedDatabaseModified(size);
-        }
-
         var database = new SqlDatabase<TDbContext>(
             this,
             connection,
             "Shared",
             constructInstance,
             () => Task.CompletedTask,
-            verifyNotModified,
+            null,
             null,
             sqlOptionsBuilder,
-            transaction);
+            readOnly: !useTransaction,
+            transaction: transaction);
         await database.Start();
         return database;
     }

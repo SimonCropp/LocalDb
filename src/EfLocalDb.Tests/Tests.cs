@@ -712,4 +712,42 @@ public class Tests
         var count = await database.Context.TestEntities.CountAsync();
         AreEqual(1, count);
     }
+
+    [Test]
+    public async Task SharedDatabase_ReadOnly_ThrowsOnSave()
+    {
+        await using var database = await instance.BuildShared();
+        database.Context.Add(new TestEntity { Property = "blocked" });
+        await ThrowsTask(() => database.Context.SaveChangesAsync())
+            .IgnoreStackTrace();
+    }
+
+    [Test]
+    public async Task SharedDatabase_ReadOnly_NewDbContext()
+    {
+        await using var database = await instance.BuildShared();
+        await using var context = database.NewDbContext();
+        context.Add(new TestEntity { Property = "blocked" });
+        await ThrowsTask(() => context.SaveChangesAsync())
+            .IgnoreStackTrace();
+    }
+
+    [Test]
+    public async Task SharedDatabase_ReadOnly_NewConnectionOwnedDbContext()
+    {
+        await using var database = await instance.BuildShared();
+        await using var context = database.NewConnectionOwnedDbContext();
+        context.Add(new TestEntity { Property = "blocked" });
+        await ThrowsTask(() => context.SaveChangesAsync())
+            .IgnoreStackTrace();
+    }
+
+    [Test]
+    public async Task SharedDatabase_WithTransaction_AllowsWrites()
+    {
+        await using var database = await instance.BuildShared(useTransaction: true);
+        database.Context.Add(new TestEntity { Property = "allowed" });
+        var count = await database.Context.SaveChangesAsync();
+        AreEqual(1, count);
+    }
 }
