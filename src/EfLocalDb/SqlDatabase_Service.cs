@@ -1,7 +1,7 @@
 ﻿namespace EfLocalDb;
 
 public partial class SqlDatabase<TDbContext> :
-#if(NET7_0_OR_GREATER)
+#if NET7_0_OR_GREATER
     IServiceScopeFactory,
 #endif
     IServiceProvider
@@ -26,7 +26,7 @@ public partial class SqlDatabase<TDbContext> :
             return Context;
         }
 
-#if(NET7_0_OR_GREATER)
+#if NET7_0_OR_GREATER
         if (type == typeof(IServiceScopeFactory))
         {
             return this;
@@ -36,7 +36,7 @@ public partial class SqlDatabase<TDbContext> :
         return null;
     }
 
-#if(NET7_0_OR_GREATER)
+#if NET7_0_OR_GREATER
     /// <summary>
     /// Creates a new <see cref="IServiceScope"/> with its own database connection and DbContext.
     /// The scope's connection and context are independent of <see cref="Connection"/> and <see cref="Context"/>.
