@@ -19,8 +19,8 @@ https://nuget.org/packages/EfLocalDb.Xunit.V3/
 
 The snippets use a DbContext of the following form:
 
-<!-- snippet: EfLocalDb.Xunit.V3.Tests/Model/TheDbContext.cs -->
-<a id='snippet-EfLocalDb.Xunit.V3.Tests/Model/TheDbContext.cs'></a>
+<!-- snippet: EfLocalDb.MsTest.Tests/Model/TheDbContext.cs -->
+<a id='snippet-EfLocalDb.MsTest.Tests/Model/TheDbContext.cs'></a>
 ```cs
 public class TheDbContext(DbContextOptions options) : DbContext(options)
 {
@@ -42,11 +42,11 @@ public class TheDbContext(DbContextOptions options) : DbContext(options)
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Model/TheDbContext.cs#L1-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/Model/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Model/TheDbContext.cs#L1-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MsTest.Tests/Model/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
-<!-- snippet: EfLocalDb.Xunit.V3.Tests/Model/Company.cs -->
-<a id='snippet-EfLocalDb.Xunit.V3.Tests/Model/Company.cs'></a>
+<!-- snippet: EfLocalDb.MsTest.Tests/Model/Company.cs -->
+<a id='snippet-EfLocalDb.MsTest.Tests/Model/Company.cs'></a>
 ```cs
 public class Company
 {
@@ -55,11 +55,11 @@ public class Company
     public List<Employee> Employees { get; set; } = [];
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Model/Company.cs#L1-L6' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/Model/Company.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Model/Company.cs#L1-L6' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MsTest.Tests/Model/Company.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
-<!-- snippet: EfLocalDb.Xunit.V3.Tests/Model/Employee.cs -->
-<a id='snippet-EfLocalDb.Xunit.V3.Tests/Model/Employee.cs'></a>
+<!-- snippet: EfLocalDb.MsTest.Tests/Model/Employee.cs -->
+<a id='snippet-EfLocalDb.MsTest.Tests/Model/Employee.cs'></a>
 ```cs
 public class Employee
 {
@@ -70,7 +70,7 @@ public class Employee
     public List<Vehicle> Vehicles { get; set; } = [];
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Model/Employee.cs#L1-L8' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/Model/Employee.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Model/Employee.cs#L1-L8' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MsTest.Tests/Model/Employee.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

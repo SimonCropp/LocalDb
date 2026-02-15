@@ -12,11 +12,11 @@ https://nuget.org/packages/EfLocalDb.NUnit/
 
 The snippets use a DbContext of the following form:
 
-snippet: EfLocalDb.NUnit.Tests/Model/TheDbContext.cs
+snippet: EfLocalDb.MsTest.Tests/Model/TheDbContext.cs
 
-snippet: EfLocalDb.NUnit.Tests/Model/Company.cs
+snippet: EfLocalDb.MsTest.Tests/Model/Company.cs
 
-snippet: EfLocalDb.NUnit.Tests/Model/Employee.cs
+snippet: EfLocalDb.MsTest.Tests/Model/Employee.cs
 
 
 ## Initialize

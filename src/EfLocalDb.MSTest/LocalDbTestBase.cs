@@ -37,7 +37,7 @@ public abstract partial class LocalDbTestBase<T> :
     }
 
     [TestInitialize]
-    public virtual async Task SetUp()
+    public virtual Task SetUp()
     {
         if (sqlInstance == null)
         {
@@ -46,7 +46,7 @@ public abstract partial class LocalDbTestBase<T> :
 
         var methodInfo = GetType()
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .First(_ => _.Name == TestContext.TestName! && !_.IsGenericMethod);
+            .First(_ => _.Name == TestContext.TestName && !_.IsGenericMethod);
         isSharedDbWithTransaction = methodInfo.GetCustomAttribute<SharedDbWithTransactionAttribute>() != null;
         var hasSharedDbAttribute = methodInfo.GetCustomAttribute<SharedDbAttribute>() != null;
 
@@ -58,14 +58,14 @@ public abstract partial class LocalDbTestBase<T> :
         isSharedDb = isSharedDbWithTransaction || hasSharedDbAttribute;
 
         QueryFilter.Enable();
-        await Reset();
+        return Reset();
     }
 
     public async Task Reset()
     {
         phase = Phase.Arrange;
         var type = GetType().FullName!;
-        var member = TestContext.TestName!;
+        var member = TestContext.TestName;
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if(Database != null)
         {
