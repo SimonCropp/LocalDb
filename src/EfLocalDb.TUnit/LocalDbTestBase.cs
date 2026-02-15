@@ -34,15 +34,15 @@ public abstract partial class LocalDbTestBase<T> :
             timestamp: timestamp);
     }
 
-    [Before(HookType.Test)]
-    public virtual async Task SetUp()
+    [Before(Test)]
+    public virtual Task SetUp()
     {
         if (sqlInstance == null)
         {
             throw new("Call LocalDbTestBase<T>.Initialize in a [ModuleInitializer] or in a static constructor.");
         }
 
-        var context = TUnit.Core.TestContext.Current!;
+        var context = TestContext.Current!;
         var testDetails = context.Metadata.TestDetails;
         var methodInfo = testDetails.ClassType
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -65,13 +65,13 @@ public abstract partial class LocalDbTestBase<T> :
         instance.Value = this;
         context.AddAsyncLocalValues();
 
-        await Reset();
+        return Reset();
     }
 
     public async Task Reset()
     {
         phase = Phase.Arrange;
-        var context = TUnit.Core.TestContext.Current!;
+        var context = TestContext.Current!;
         var testDetails = context.Metadata.TestDetails;
         var type = testDetails.ClassType.FullName!;
         var member = GetMemberName(testDetails);
@@ -125,7 +125,7 @@ public abstract partial class LocalDbTestBase<T> :
         }
     }
 
-    static Storage GetStorage(System.Reflection.Assembly callingAssembly) =>
+    static Storage GetStorage(Assembly callingAssembly) =>
         Storage.FromSuffix<T>($"{AttributeReader.GetSolutionName(callingAssembly)}_{AttributeReader.GetProjectName(callingAssembly)}");
 
     public SqlDatabase<T> Database { get; private set; } = null!;
@@ -192,10 +192,6 @@ public abstract partial class LocalDbTestBase<T> :
         }
     }
 
-    protected LocalDbTestBase()
-    {
-    }
-
     static AsyncLocal<LocalDbTestBase<T>?> instance = new();
 
     public static LocalDbTestBase<T> Instance
@@ -227,7 +223,7 @@ public abstract partial class LocalDbTestBase<T> :
         return $"{method}_{args}";
     }
 
-    [After(HookType.Test)]
+    [After(Test)]
     public virtual async Task TearDown()
     {
         // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract

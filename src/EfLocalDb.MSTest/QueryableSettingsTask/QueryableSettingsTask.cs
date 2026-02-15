@@ -1,4 +1,4 @@
-namespace EfLocalDbMSTest;
+namespace EfLocalDb;
 
 /// <summary>
 ///  Wraps <see cref="IQueryable{TEntity}"/>

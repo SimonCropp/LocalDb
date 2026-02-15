@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace EfLocalDbMSTest;
+namespace EfLocalDb;
 
 /// <summary>
 ///  Wraps <see cref="IIncludableQueryable{TEntity,TProperty}"/>
