@@ -86,10 +86,6 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Initialize()
     {
-        // xunit.v3 uses stdout for JSON protocol communication.
-        // Redirect Console.Out to stderr to prevent LocalDb logging from breaking the protocol.
-        Console.SetOut(Console.Error);
-
         VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.InitializePlugins();
         LocalDbSettings.ConnectionBuilder(_ => _.ConnectTimeout = 300);
@@ -97,7 +93,7 @@ public static class ModuleInitializer
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs#L1-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs#L1-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
