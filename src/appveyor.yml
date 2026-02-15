@@ -10,11 +10,13 @@ build_script:
 - dotnet build src --configuration Release
 - pwsh: |
       $ErrorActionPreference = 'Stop'
-      Get-ChildItem src/*Tests/*.csproj -Exclude *TUnit* |
+      Get-ChildItem src/*Tests/*.csproj -Exclude *TUnit*,*Xunit* |
         ForEach-Object {
-          dotnet test $_.FullName --configuration Release --no-build --no-restore
+          dotnet test --project $_.FullName --configuration Release --no-build --no-restore
           if ($LASTEXITCODE -ne 0) { throw "Tests failed for $_" }
         }
+      dotnet run --project src/EfLocalDb.Xunit.V3.Tests --configuration Release --no-build
+      if ($LASTEXITCODE -ne 0) { throw "xUnit v3 tests failed" }
       dotnet run --project src/EfLocalDb.TUnit.Tests --configuration Release --no-build
       if ($LASTEXITCODE -ne 0) { throw "TUnit tests failed" }
 on_failure:
