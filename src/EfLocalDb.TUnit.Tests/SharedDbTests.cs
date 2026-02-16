@@ -1,3 +1,4 @@
+// begin-snippet: SharedDbTestsTUnit
 public class SharedDbTests : LocalDbTestBase<TheDbContext>
 {
     [Test]
@@ -12,18 +13,31 @@ public class SharedDbTests : LocalDbTestBase<TheDbContext>
     [SharedDbWithTransaction]
     public async Task CanReadAndWrite()
     {
-        ArrangeData.Companies.Add(new() { Id = Guid.NewGuid(), Name = "SharedDbWithTransaction Company" });
+        ArrangeData.Companies.Add(
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "SharedDbWithTransaction Company"
+            });
         await ArrangeData.SaveChangesAsync();
+
         var entity = await ActData.Companies.SingleAsync();
-        await Assert.That(entity.Name).IsEqualTo("SharedDbWithTransaction Company");
+        await Assert.That(entity.Name)
+            .IsEqualTo("SharedDbWithTransaction Company");
     }
 
     [Test]
     [SharedDbWithTransaction]
     public async Task DataIsRolledBack()
     {
-        ArrangeData.Companies.Add(new() { Id = Guid.NewGuid(), Name = "Should Not Persist" });
+        ArrangeData.Companies.Add(
+            new()
+            {
+                Id = Guid.NewGuid(),
+                Name = "Should Not Persist"
+            });
         await ArrangeData.SaveChangesAsync();
+
         var count = await ActData.Companies.CountAsync();
         await Assert.That(count).IsEqualTo(1);
     }
@@ -36,3 +50,4 @@ public class SharedDbTests : LocalDbTestBase<TheDbContext>
         await Assert.That(count).IsEqualTo(0);
     }
 }
+// end-snippet

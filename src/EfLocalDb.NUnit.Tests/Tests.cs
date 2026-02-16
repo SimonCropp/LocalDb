@@ -128,7 +128,7 @@ public class Tests :
         }
     }
 
-    // begin-snippet: VerifyEntity
+    // begin-snippet: VerifyEntityNUnit
     [Test]
     public async Task VerifyEntity()
     {
@@ -147,7 +147,7 @@ public class Tests :
     public async Task VerifyEntityNull() =>
         await VerifyEntity<Company>(Guid.NewGuid());
 
-    // begin-snippet: VerifyEntityWithInclude
+    // begin-snippet: VerifyEntityWithIncludeNUnit
     [Test]
     public async Task VerifyEntityWithInclude()
     {
@@ -169,7 +169,7 @@ public class Tests :
     }
     // end-snippet
 
-    // begin-snippet: VerifyEntityWithThenInclude
+    // begin-snippet: VerifyEntityWithThenIncludeNUnit
     [Test]
     public async Task VerifyEntityWithThenInclude()
     {
@@ -198,7 +198,7 @@ public class Tests :
     }
     // end-snippet
 
-    // begin-snippet: VerifyEntities_DbSet
+    // begin-snippet: VerifyEntities_DbSetNUnit
     [Test]
     public async Task VerifyEntities_DbSet()
     {
@@ -226,7 +226,7 @@ public class Tests :
         await VerifyEntities(AssertData.Companies.Where(_ => _.Id == company.Id));
     }
 
-    // begin-snippet: VerifyEntity_Queryable
+    // begin-snippet: VerifyEntity_QueryableNUnit
     [Test]
     public async Task VerifyEntity_Queryable()
     {

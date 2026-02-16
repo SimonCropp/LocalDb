@@ -51,20 +51,20 @@ snippet: CombinationsNUnit
 
 Helpers for verifying entities by primary key, with optional Include/ThenInclude:
 
-snippet: VerifyEntity
+snippet: VerifyEntityNUnit
 
-snippet: VerifyEntityWithInclude
+snippet: VerifyEntityWithIncludeNUnit
 
-snippet: VerifyEntityWithThenInclude
+snippet: VerifyEntityWithThenIncludeNUnit
 
 
 ## VerifyEntities
 
 Verify a collection of entities from a `DbSet` or `IQueryable`:
 
-snippet: VerifyEntities_DbSet
+snippet: VerifyEntities_DbSetNUnit
 
-snippet: VerifyEntity_Queryable
+snippet: VerifyEntity_QueryableNUnit
 
 
 ## SharedDb
@@ -77,7 +77,7 @@ Note: `[SharedDbWithTransaction]` means that on test failure the resulting datab
 
 Both attributes can be mixed in the same test fixture:
 
-snippet: SharedDbTests
+snippet: SharedDbTestsNUnit
 
 
 ## Parallel Execution

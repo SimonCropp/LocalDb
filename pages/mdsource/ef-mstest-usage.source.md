@@ -51,20 +51,20 @@ snippet: CombinationsMSTest
 
 Helpers for verifying entities by primary key, with optional Include/ThenInclude:
 
-snippet: VerifyEntity
+snippet: VerifyEntityMSTest
 
-snippet: VerifyEntityWithInclude
+snippet: VerifyEntityWithIncludeMSTest
 
-snippet: VerifyEntityWithThenInclude
+snippet: VerifyEntityWithThenIncludeMSTest
 
 
 ## VerifyEntities
 
 Verify a collection of entities from a `DbSet` or `IQueryable`:
 
-snippet: VerifyEntities_DbSet
+snippet: VerifyEntities_DbSetMSTest
 
-snippet: VerifyEntity_Queryable
+snippet: VerifyEntity_QueryableMSTest
 
 
 ## SharedDb
@@ -77,7 +77,7 @@ Note: `[SharedDbWithTransaction]` means that on test failure the resulting datab
 
 Both attributes can be mixed in the same test fixture:
 
-snippet: SharedDbTests
+snippet: SharedDbTestsMSTest
 
 
 ## Parallel Execution

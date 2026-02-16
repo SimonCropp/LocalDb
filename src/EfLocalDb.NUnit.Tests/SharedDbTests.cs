@@ -1,4 +1,4 @@
-// begin-snippet: SharedDbTests
+// begin-snippet: SharedDbTestsNUnit
 [TestFixture]
 public class SharedDbTests :
     LocalDbTestBase<TheDbContext>

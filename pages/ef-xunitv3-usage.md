@@ -422,74 +422,8 @@ public class Tests :
 
 The current test instance can be accessed via `LocalDbTestBase<T>.Instance`. This is useful when test helpers need to access the database outside the test class:
 
-<!-- snippet: StaticInstance -->
-<a id='snippet-StaticInstance'></a>
-```cs
-[TestMethod]
-public async Task StaticInstance()
-{
-    Instance.ArrangeData.Companies.Add(
-        new()
-        {
-            Id = Guid.NewGuid(),
-            Name = "value"
-        });
-    await Instance.ArrangeData.SaveChangesAsync();
-
-    var entity = await Instance.ActData.Companies.SingleAsync();
-    entity.Name = "value2";
-    await Instance.ActData.SaveChangesAsync();
-
-    var result = await Instance.AssertData.Companies.SingleAsync();
-    await Verify(result);
-}
-```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L24-L43' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticInstance' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-StaticInstance-1'></a>
-```cs
-[Test]
-public async Task StaticInstance()
-{
-    Instance.ArrangeData.Companies.Add(
-        new()
-        {
-            Id = Guid.NewGuid(),
-            Name = "value"
-        });
-    await Instance.ArrangeData.SaveChangesAsync();
-
-    var entity = await Instance.ActData.Companies.SingleAsync();
-    entity.Name = "value2";
-    await Instance.ActData.SaveChangesAsync();
-
-    var result = await Instance.AssertData.Companies.SingleAsync();
-    await Verify(result);
-}
-```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/Tests.cs#L24-L43' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticInstance-1' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-StaticInstance-2'></a>
-```cs
-[Test]
-public async Task StaticInstance()
-{
-    Instance.ArrangeData.Companies.Add(
-        new()
-        {
-            Id = Guid.NewGuid(),
-            Name = "value"
-        });
-    await Instance.ArrangeData.SaveChangesAsync();
-
-    var entity = await Instance.ActData.Companies.SingleAsync();
-    entity.Name = "value2";
-    await Instance.ActData.SaveChangesAsync();
-
-    var result = await Instance.AssertData.Companies.SingleAsync();
-    await Verify(result);
-}
-```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L23-L42' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticInstance-2' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-StaticInstance-3'></a>
+<!-- snippet: StaticInstanceXunitV3 -->
+<a id='snippet-StaticInstanceXunitV3'></a>
 ```cs
 [Fact]
 public async Task StaticInstance()
@@ -510,7 +444,7 @@ public async Task StaticInstance()
     await Verify(result);
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L23-L42' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticInstance-3' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L23-L42' title='Snippet source file'>snippet source</a> | <a href='#snippet-StaticInstanceXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -518,92 +452,8 @@ public async Task StaticInstance()
 
 [Verify Combinations](https://github.com/VerifyTests/Verify#combinations) are supported. The database is reset for each combination:
 
-<!-- snippet: Combinations -->
-<a id='snippet-Combinations'></a>
-```cs
-[TestMethod]
-public Task Combinations()
-{
-    string[] inputs = ["value1", "value2"];
-    return Combination()
-        .Verify(Run, inputs);
-
-    async Task<Company> Run(string input)
-    {
-        ArrangeData.Companies.Add(
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Name = "value"
-            });
-        await ArrangeData.SaveChangesAsync();
-
-        var entity = await ActData.Companies.SingleAsync();
-        entity.Name = input;
-        await ActData.SaveChangesAsync();
-
-        return await AssertData.Companies.SingleAsync();
-    }
-}
-```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L45-L70' title='Snippet source file'>snippet source</a> | <a href='#snippet-Combinations' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-Combinations-1'></a>
-```cs
-[Test]
-public Task Combinations()
-{
-    string[] inputs = ["value1", "value2"];
-    return Combination()
-        .Verify(Run, inputs);
-
-    async Task<Company> Run(string input)
-    {
-        ArrangeData.Companies.Add(
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Name = "value"
-            });
-        await ArrangeData.SaveChangesAsync();
-
-        var entity = await ActData.Companies.SingleAsync();
-        entity.Name = input;
-        await ActData.SaveChangesAsync();
-
-        return await AssertData.Companies.SingleAsync();
-    }
-}
-```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/Tests.cs#L45-L70' title='Snippet source file'>snippet source</a> | <a href='#snippet-Combinations-1' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-Combinations-2'></a>
-```cs
-[Test]
-public Task Combinations()
-{
-    string[] inputs = ["value1", "value2"];
-    return Combination()
-        .Verify(Run, inputs);
-
-    async Task<Company> Run(string input)
-    {
-        ArrangeData.Companies.Add(
-            new()
-            {
-                Id = Guid.NewGuid(),
-                Name = "value"
-            });
-        await ArrangeData.SaveChangesAsync();
-
-        var entity = await ActData.Companies.SingleAsync();
-        entity.Name = input;
-        await ActData.SaveChangesAsync();
-
-        return await AssertData.Companies.SingleAsync();
-    }
-}
-```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L44-L69' title='Snippet source file'>snippet source</a> | <a href='#snippet-Combinations-2' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-Combinations-3'></a>
+<!-- snippet: CombinationsXunitV3 -->
+<a id='snippet-CombinationsXunitV3'></a>
 ```cs
 [Fact]
 public Task Combinations()
@@ -630,7 +480,7 @@ public Task Combinations()
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L44-L69' title='Snippet source file'>snippet source</a> | <a href='#snippet-Combinations-3' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L44-L69' title='Snippet source file'>snippet source</a> | <a href='#snippet-CombinationsXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -638,56 +488,8 @@ public Task Combinations()
 
 Helpers for verifying entities by primary key, with optional Include/ThenInclude:
 
-<!-- snippet: VerifyEntity -->
-<a id='snippet-VerifyEntity'></a>
-```cs
-[TestMethod]
-public async Task VerifyEntityById()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "value"
-    };
-    ArrangeData.Companies.Add(company);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id);
-}
-```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L122-L135' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntity-1'></a>
-```cs
-[Test]
-public async Task VerifyEntity()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "value"
-    };
-    ArrangeData.Companies.Add(company);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id);
-}
-```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/Tests.cs#L131-L144' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity-1' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntity-2'></a>
-```cs
-[Test]
-public async Task VerifyEntityById()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "value"
-    };
-    ArrangeData.Companies.Add(company);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id);
-}
-```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L130-L143' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity-2' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntity-3'></a>
+<!-- snippet: VerifyEntityXunitV3 -->
+<a id='snippet-VerifyEntityXunitV3'></a>
 ```cs
 [Fact]
 public async Task VerifyEntityById()
@@ -702,80 +504,11 @@ public async Task VerifyEntityById()
     await VerifyEntity<Company>(company.Id);
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L130-L143' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity-3' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L130-L143' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
-<!-- snippet: VerifyEntityWithInclude -->
-<a id='snippet-VerifyEntityWithInclude'></a>
-```cs
-[TestMethod]
-public async Task VerifyEntityWithInclude()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "the Company"
-    };
-    var employee = new Employee
-    {
-        Id = Guid.NewGuid(),
-        CompanyId = company.Id,
-        Name = "the Employee"
-    };
-    ArrangeData.AddRange(company, employee);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id)
-        .Include(_ => _.Employees);
-}
-```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L141-L161' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithInclude' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntityWithInclude-1'></a>
-```cs
-[Test]
-public async Task VerifyEntityWithInclude()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "the Company"
-    };
-    var employee = new Employee
-    {
-        Id = Guid.NewGuid(),
-        CompanyId = company.Id,
-        Name = "the Employee"
-    };
-    ArrangeData.AddRange(company, employee);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id)
-        .Include(_ => _.Employees);
-}
-```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/Tests.cs#L150-L170' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithInclude-1' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntityWithInclude-2'></a>
-```cs
-[Test]
-public async Task VerifyEntityWithInclude()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "the Company"
-    };
-    var employee = new Employee
-    {
-        Id = Guid.NewGuid(),
-        CompanyId = company.Id,
-        Name = "the Employee"
-    };
-    ArrangeData.AddRange(company, employee);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id)
-        .Include(_ => _.Employees);
-}
-```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L149-L169' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithInclude-2' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntityWithInclude-3'></a>
+<!-- snippet: VerifyEntityWithIncludeXunitV3 -->
+<a id='snippet-VerifyEntityWithIncludeXunitV3'></a>
 ```cs
 [Fact]
 public async Task VerifyEntityWithInclude()
@@ -797,101 +530,11 @@ public async Task VerifyEntityWithInclude()
         .Include(_ => _.Employees);
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L149-L169' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithInclude-3' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L149-L169' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithIncludeXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
-<!-- snippet: VerifyEntityWithThenInclude -->
-<a id='snippet-VerifyEntityWithThenInclude'></a>
-```cs
-[TestMethod]
-public async Task VerifyEntityWithThenInclude()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "the Company"
-    };
-    var employee = new Employee
-    {
-        Id = Guid.NewGuid(),
-        CompanyId = company.Id,
-        Name = "the Employee"
-    };
-    var vehicle = new Vehicle
-    {
-        Id = Guid.NewGuid(),
-        EmployeeId = employee.Id,
-        Model = "the Vehicle"
-    };
-    ArrangeData.AddRange(company, employee, vehicle);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id)
-        .Include(_ => _.Employees)
-        .ThenInclude(_ => _.Vehicles);
-}
-```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L163-L190' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenInclude' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntityWithThenInclude-1'></a>
-```cs
-[Test]
-public async Task VerifyEntityWithThenInclude()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "the Company"
-    };
-    var employee = new Employee
-    {
-        Id = Guid.NewGuid(),
-        CompanyId = company.Id,
-        Name = "the Employee"
-    };
-    var vehicle = new Vehicle
-    {
-        Id = Guid.NewGuid(),
-        EmployeeId = employee.Id,
-        Model = "the Vehicle"
-    };
-    ArrangeData.AddRange(company, employee, vehicle);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id)
-        .Include(_ => _.Employees)
-        .ThenInclude(_ => _.Vehicles);
-}
-```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/Tests.cs#L172-L199' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenInclude-1' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntityWithThenInclude-2'></a>
-```cs
-[Test]
-public async Task VerifyEntityWithThenInclude()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "the Company"
-    };
-    var employee = new Employee
-    {
-        Id = Guid.NewGuid(),
-        CompanyId = company.Id,
-        Name = "the Employee"
-    };
-    var vehicle = new Vehicle
-    {
-        Id = Guid.NewGuid(),
-        EmployeeId = employee.Id,
-        Model = "the Vehicle"
-    };
-    ArrangeData.AddRange(company, employee, vehicle);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity<Company>(company.Id)
-        .Include(_ => _.Employees)
-        .ThenInclude(_ => _.Vehicles);
-}
-```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L171-L198' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenInclude-2' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntityWithThenInclude-3'></a>
+<!-- snippet: VerifyEntityWithThenIncludeXunitV3 -->
+<a id='snippet-VerifyEntityWithThenIncludeXunitV3'></a>
 ```cs
 [Fact]
 public async Task VerifyEntityWithThenInclude()
@@ -920,7 +563,7 @@ public async Task VerifyEntityWithThenInclude()
         .ThenInclude(_ => _.Vehicles);
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L171-L198' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenInclude-3' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L171-L198' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenIncludeXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -928,56 +571,8 @@ public async Task VerifyEntityWithThenInclude()
 
 Verify a collection of entities from a `DbSet` or `IQueryable`:
 
-<!-- snippet: VerifyEntities_DbSet -->
-<a id='snippet-VerifyEntities_DbSet'></a>
-```cs
-[TestMethod]
-public async Task VerifyEntities_DbSet()
-{
-    ArrangeData.Companies.Add(
-        new()
-        {
-            Id = Guid.NewGuid(),
-            Name = "value"
-        });
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntities(AssertData.Companies);
-}
-```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L192-L205' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSet' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntities_DbSet-1'></a>
-```cs
-[Test]
-public async Task VerifyEntities_DbSet()
-{
-    ArrangeData.Companies.Add(
-        new()
-        {
-            Id = Guid.NewGuid(),
-            Name = "value"
-        });
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntities(AssertData.Companies);
-}
-```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/Tests.cs#L201-L214' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSet-1' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntities_DbSet-2'></a>
-```cs
-[Test]
-public async Task VerifyEntities_DbSet()
-{
-    ArrangeData.Companies.Add(
-        new()
-        {
-            Id = Guid.NewGuid(),
-            Name = "value"
-        });
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntities(AssertData.Companies);
-}
-```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L200-L213' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSet-2' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntities_DbSet-3'></a>
+<!-- snippet: VerifyEntities_DbSetXunitV3 -->
+<a id='snippet-VerifyEntities_DbSetXunitV3'></a>
 ```cs
 [Fact]
 public async Task VerifyEntities_DbSet()
@@ -992,59 +587,11 @@ public async Task VerifyEntities_DbSet()
     await VerifyEntities(AssertData.Companies);
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L200-L213' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSet-3' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L200-L213' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSetXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
-<!-- snippet: VerifyEntity_Queryable -->
-<a id='snippet-VerifyEntity_Queryable'></a>
-```cs
-[TestMethod]
-public async Task VerifyEntity_Queryable()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "value"
-    };
-    ArrangeData.Companies.Add(company);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
-}
-```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L220-L233' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_Queryable' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntity_Queryable-1'></a>
-```cs
-[Test]
-public async Task VerifyEntity_Queryable()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "value"
-    };
-    ArrangeData.Companies.Add(company);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
-}
-```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/Tests.cs#L229-L242' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_Queryable-1' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntity_Queryable-2'></a>
-```cs
-[Test]
-public async Task VerifyEntity_Queryable()
-{
-    var company = new Company
-    {
-        Id = Guid.NewGuid(),
-        Name = "value"
-    };
-    ArrangeData.Companies.Add(company);
-    await ArrangeData.SaveChangesAsync();
-    await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
-}
-```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L228-L241' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_Queryable-2' title='Start of snippet'>anchor</a></sup>
-<a id='snippet-VerifyEntity_Queryable-3'></a>
+<!-- snippet: VerifyEntity_QueryableXunitV3 -->
+<a id='snippet-VerifyEntity_QueryableXunitV3'></a>
 ```cs
 [Fact]
 public async Task VerifyEntity_Queryable()
@@ -1059,7 +606,7 @@ public async Task VerifyEntity_Queryable()
     await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L228-L241' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_Queryable-3' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/Tests.cs#L228-L241' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_QueryableXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -1073,22 +620,20 @@ Note: `[SharedDbWithTransaction]` means that on test failure the resulting datab
 
 Both attributes can be mixed in the same test fixture:
 
-<!-- snippet: SharedDbTests -->
-<a id='snippet-SharedDbTests'></a>
+<!-- snippet: SharedDbTestsXunitV3 -->
+<a id='snippet-SharedDbTestsXunitV3'></a>
 ```cs
-[TestFixture]
-public class SharedDbTests :
-    LocalDbTestBase<TheDbContext>
+public class SharedDbTests : LocalDbTestBase<TheDbContext>
 {
-    [Test]
+    [Fact]
     [SharedDb]
     public async Task ReadFromSharedDb()
     {
         var count = await ActData.Companies.CountAsync();
-        AreEqual(0, count);
+        Assert.Equal(0, count);
     }
 
-    [Test]
+    [Fact]
     [SharedDbWithTransaction]
     public async Task CanReadAndWrite()
     {
@@ -1101,10 +646,10 @@ public class SharedDbTests :
         await ArrangeData.SaveChangesAsync();
 
         var entity = await ActData.Companies.SingleAsync();
-        AreEqual("SharedDbWithTransaction Company", entity.Name);
+        Assert.Equal("SharedDbWithTransaction Company", entity.Name);
     }
 
-    [Test]
+    [Fact]
     [SharedDbWithTransaction]
     public async Task DataIsRolledBack()
     {
@@ -1117,19 +662,19 @@ public class SharedDbTests :
         await ArrangeData.SaveChangesAsync();
 
         var count = await ActData.Companies.CountAsync();
-        AreEqual(1, count);
+        Assert.Equal(1, count);
     }
 
-    [Test]
+    [Fact]
     [SharedDbWithTransaction]
     public async Task StartsWithEmptyDatabase()
     {
         var count = await ActData.Companies.CountAsync();
-        AreEqual(0, count);
+        Assert.Equal(0, count);
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/SharedDbTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTests' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/SharedDbTests.cs#L1-L52' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTestsXunitV3' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
