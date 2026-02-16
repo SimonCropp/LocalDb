@@ -175,6 +175,7 @@ public class Tests
         await using var database = await instance.BuildShared();
         var data = await TestDbBuilder.GetData(database);
         AreEqual(0, data.Count);
+        instance.Cleanup();
     }
 
     #region SharedDatabase_WithTransaction

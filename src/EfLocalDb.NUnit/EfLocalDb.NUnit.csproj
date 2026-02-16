@@ -8,6 +8,13 @@
   <ItemGroup>
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
+    <Compile Include="..\EfLocalDb.MSTest\CombinationCallbackSetup.cs" Link="CombinationCallbackSetup.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\ILocalDbTestBase.cs" Link="ILocalDbTestBase.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\Phase.cs" Link="Phase.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\SharedDbAttribute.cs" Link="SharedDbAttribute.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\SharedDbWithTransactionAttribute.cs" Link="SharedDbWithTransactionAttribute.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\QueryableSettingsTask.cs" Link="QueryableSettingsTask\QueryableSettingsTask.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\NestedQueryableSettingsTask.cs" Link="QueryableSettingsTask\NestedQueryableSettingsTask.cs" />
     <PackageReference Include="Verify.EntityFramework" />
     <PackageReference Include="Verify.NUnit" />
     <PackageReference Include="Argon" />

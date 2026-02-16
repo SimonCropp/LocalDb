@@ -24,7 +24,7 @@
 /// </code>
 /// </example>
 public partial class SqlDatabase :
-#if(NET5_0_OR_GREATER)
+#if NET5_0_OR_GREATER
     IAsyncDisposable,
 #endif
     IDisposable
@@ -106,7 +106,7 @@ public partial class SqlDatabase :
         takeOffline?.Invoke().GetAwaiter().GetResult();
     }
 
-#if(!NET48)
+#if !NET48
     /// <summary>
     /// Asynchronously disposes the database connection.
     /// If <c>dbAutoOffline</c> was enabled on the <see cref="SqlInstance"/>, the database is also taken offline.
@@ -135,7 +135,7 @@ public partial class SqlDatabase :
     // ReSharper disable once ReplaceAsyncWithTaskReturn
     public async Task Delete()
     {
-#if(NET48)
+#if NET48
         Dispose();
 #else
         await DisposeAsync();

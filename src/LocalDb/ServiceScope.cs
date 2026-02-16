@@ -1,5 +1,5 @@
 class ServiceScope(SqlConnection connection) :
-#if(NET5_0_OR_GREATER)
+#if NET5_0_OR_GREATER
     IAsyncDisposable,
 #endif
 #if NET7_0_OR_GREATER
@@ -10,7 +10,7 @@ class ServiceScope(SqlConnection connection) :
     public void Dispose() =>
         connection.Dispose();
 
-#if(NET5_0_OR_GREATER)
+#if NET5_0_OR_GREATER
     public ValueTask DisposeAsync() =>
         connection.DisposeAsync();
 #endif

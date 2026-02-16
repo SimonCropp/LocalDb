@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <EnableNUnitRunner>true</EnableNUnitRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <DefineConstants>$(DefineConstants);EF</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
@@ -12,6 +15,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NetTopologySuite" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit3TestAdapter" />
@@ -23,7 +27,6 @@
     <PackageReference Include="Verify" />
     <PackageReference Include="DiffPlex" />
     <PackageReference Include="Verify.DiffPlex" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <Using Include="NUnit.Framework.Legacy.ClassicAssert" Static="True" />

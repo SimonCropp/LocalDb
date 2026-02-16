@@ -1,0 +1,4 @@
+﻿{
+  Name: Tests_NameWithParams_case,
+  DataSource: (LocalDb)\TheDbContext_LocalDb_EfLocalDb.Xunit.V3.Tests
+}

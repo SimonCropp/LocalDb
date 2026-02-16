@@ -11,7 +11,7 @@
 
     static async Task<string?> ReadFileName(this SqlConnection connection, string dbName, string type)
     {
-#if(NET5_0_OR_GREATER)
+#if NET5_0_OR_GREATER
         await using var command = connection.CreateCommand();
 #else
         using var command = connection.CreateCommand();
@@ -25,7 +25,7 @@
             inner join sys.databases d on d.database_id = f.database_id
             where d.name = N'{dbName}' and f.type_desc = N'{type}'
             """;
-#if(NET5_0_OR_GREATER)
+#if NET5_0_OR_GREATER
         await using var reader = await command.ExecuteReaderAsync();
 #else
         using var reader = await command.ExecuteReaderAsync();

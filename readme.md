@@ -12,6 +12,9 @@ To change this file edit the source file and then run MarkdownSnippets.
 [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.svg?label=nuget:EfLocalDb)](https://www.nuget.org/packages/EfLocalDb/)
 [![NuGet Status](https://img.shields.io/nuget/v/EfClassicLocalDb.svg?label=nuget:EfClassicLocalDb)](https://www.nuget.org/packages/EfClassicLocalDb/)
 [![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.NUnit.svg?label=nuget:EfLocalDb.NUnit)](https://www.nuget.org/packages/EfLocalDb.NUnit/)
+[![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.Xunit.V3.svg?label=nuget:EfLocalDb.Xunit.V3)](https://www.nuget.org/packages/EfLocalDb.Xunit.V3/)
+[![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.MSTest.svg?label=nuget:EfLocalDb.MSTest)](https://www.nuget.org/packages/EfLocalDb.MSTest/)
+[![NuGet Status](https://img.shields.io/nuget/v/EfLocalDb.TUnit.svg?label=nuget:EfLocalDb.TUnit)](https://www.nuget.org/packages/EfLocalDb.TUnit/)
 
 Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb) to simplify running tests against [Entity Framework](https://docs.microsoft.com/en-us/ef/core/) or a raw SQL Database.<!-- singleLineInclude: intro. path: /docs/mdsource/intro.include.md -->
 
@@ -44,6 +47,9 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
     * [EntityFramework Classic](#entityframework-classic)
     * [EntityFramework Core](#entityframework-core)
     * [EntityFramework Core NUnit](#entityframework-core-nunit)
+    * [EntityFramework Core xunit.v3](#entityframework-core-xunitv3)
+    * [EntityFramework Core MSTest](#entityframework-core-mstest)
+    * [EntityFramework Core TUnit](#entityframework-core-tunit)
   * [LocalDB](#localdb)
   * [How this project works](#how-this-project-works)
     * [Inputs](#inputs)
@@ -64,6 +70,9 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)
   * [EntityFramework Core Usage](/pages/ef-usage.md)
   * [EntityFramework Core NUnit Usage](/pages/ef-nunit-usage.md)
+  * [EntityFramework Core xunit.v3 Usage](/pages/ef-xunitv3-usage.md)
+  * [EntityFramework Core MSTest Usage](/pages/ef-mstest-usage.md)
+  * [EntityFramework Core TUnit Usage](/pages/ef-tunit-usage.md)
   * [EntityFramework Core Migrations](/pages/efmigrations.md)
   * [Directory and name resolution](/pages/directory-and-name-resolution.md)
   * [Sql Management Studio](/pages/sql-management-studio.md)
@@ -79,6 +88,9 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * https://www.nuget.org/packages/LocalDb/
   * https://www.nuget.org/packages/EfLocalDb/
   * https://www.nuget.org/packages/EfLocalDb.NUnit/
+  * https://www.nuget.org/packages/EfLocalDb.Xunit.V3/
+  * https://www.nuget.org/packages/EfLocalDb.MSTest/
+  * https://www.nuget.org/packages/EfLocalDb.TUnit/
   * https://www.nuget.org/packages/EfClassicLocalDb/
 
 
@@ -156,6 +168,27 @@ Interactions with SqlLocalDB via [Entity Framework Core](https://docs.microsoft.
 NUnit test base class wrapping EfLocalDb with Arrange-Act-Assert phase enforcement.
 
 [Full Usage](/pages/ef-nunit-usage.md)
+
+
+### EntityFramework Core xunit.v3
+
+xunit.v3 test base class wrapping EfLocalDb with Arrange-Act-Assert phase enforcement.
+
+[Full Usage](/pages/ef-xunitv3-usage.md)
+
+
+### EntityFramework Core MSTest
+
+MSTest test base class wrapping EfLocalDb with Arrange-Act-Assert phase enforcement.
+
+[Full Usage](/pages/ef-mstest-usage.md)
+
+
+### EntityFramework Core TUnit
+
+TUnit test base class wrapping EfLocalDb with Arrange-Act-Assert phase enforcement.
+
+[Full Usage](/pages/ef-tunit-usage.md)
 
 
 ## LocalDB

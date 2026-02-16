@@ -62,7 +62,7 @@ public static class LocalDbLogging
     {
         try
         {
-            Console.WriteLine($"LocalDb: {message}");
+            Console.Error.WriteLine($"LocalDb: {message}");
         }
         // dont care if log fails
         catch

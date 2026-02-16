@@ -1,6 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <EnableNUnitRunner>true</EnableNUnitRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\TestData\suppliedTemplate.mdf" Link="suppliedTemplate.mdf">
@@ -9,6 +12,7 @@
     <None Include="..\TestData\suppliedTemplate_log.ldf" Link="suppliedTemplate_log.ldf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit3TestAdapter" />
     <PackageReference Include="Verify.NUnit" />
@@ -20,7 +24,6 @@
     <PackageReference Include="DiffPlex" />
     <PackageReference Include="Verify.DiffPlex" />
     <PackageReference Include="Verify.SqlServer" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="MarkdownSnippets.MsBuild" PrivateAssets="all" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />

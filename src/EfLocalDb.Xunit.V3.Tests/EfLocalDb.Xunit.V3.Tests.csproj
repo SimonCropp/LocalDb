@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <DefineConstants>$(DefineConstants);EF</DefineConstants>
+    <NoWarn>$(NoWarn);xUnit1051</NoWarn>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="Argon" />
+    <PackageReference Include="DiffEngine" />
+    <PackageReference Include="EmptyFiles" />
+    <PackageReference Include="SimpleInfoName" />
+    <PackageReference Include="Verify" />
+    <PackageReference Include="DiffPlex" />
+    <PackageReference Include="Verify.DiffPlex" />
+    <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
+    <ProjectReference Include="..\EfLocalDb.Xunit.V3\EfLocalDb.Xunit.V3.csproj" />
+    <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
+    <Compile Include="..\EfLocalDb.MSTest.Tests\Model\Company.cs" Link="Model\Company.cs" />
+    <Compile Include="..\EfLocalDb.MSTest.Tests\Model\Employee.cs" Link="Model\Employee.cs" />
+    <Compile Include="..\EfLocalDb.MSTest.Tests\Model\Vehicle.cs" Link="Model\Vehicle.cs" />
+    <Compile Include="..\EfLocalDb.MSTest.Tests\Model\TheDbContext.cs" Link="Model\TheDbContext.cs" />
+    <Compile Include="..\EfLocalDb.MSTest.Tests\Model\DefaultTimestampDbContext.cs" Link="Model\DefaultTimestampDbContext.cs" />
+    <Compile Include="..\EfLocalDb.MSTest.Tests\Model\TimestampDbContext.cs" Link="Model\TimestampDbContext.cs" />
+  </ItemGroup>
+</Project>
