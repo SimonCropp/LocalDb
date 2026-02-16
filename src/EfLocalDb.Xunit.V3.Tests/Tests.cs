@@ -20,7 +20,7 @@ public class Tests :
         await Verify(result);
     }
 
-    // begin-snippet: StaticInstance
+    // begin-snippet: StaticInstanceXunitV3
     [Fact]
     public async Task StaticInstance()
     {
@@ -41,7 +41,7 @@ public class Tests :
     }
     // end-snippet
 
-    // begin-snippet: Combinations
+    // begin-snippet: CombinationsXunitV3
     [Fact]
     public Task Combinations()
     {

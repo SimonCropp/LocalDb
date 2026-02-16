@@ -21,7 +21,7 @@ public class Tests :
         await Verify(result);
     }
 
-    // begin-snippet: StaticInstance
+    // begin-snippet: StaticInstanceMSTest
     [TestMethod]
     public async Task StaticInstance()
     {
@@ -42,7 +42,7 @@ public class Tests :
     }
     // end-snippet
 
-    // begin-snippet: Combinations
+    // begin-snippet: CombinationsMSTest
     [TestMethod]
     public Task Combinations()
     {

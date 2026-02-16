@@ -42,7 +42,7 @@ public class Tests :
     }
     // end-snippet
 
-    // begin-snippet: Combinations
+    // begin-snippet: CombinationsNUnit
     [Test]
     public Task Combinations()
     {

@@ -37,14 +37,14 @@ snippet: EfLocalDb.MSTest.Tests/Tests.cs
 
 The current test instance can be accessed via `LocalDbTestBase<T>.Instance`. This is useful when test helpers need to access the database outside the test class:
 
-snippet: StaticInstance
+snippet: StaticInstanceMSTest
 
 
 ## Combinations
 
 [Verify Combinations](https://github.com/VerifyTests/Verify#combinations) are supported. The database is reset for each combination:
 
-snippet: Combinations
+snippet: CombinationsMSTest
 
 
 ## VerifyEntity
