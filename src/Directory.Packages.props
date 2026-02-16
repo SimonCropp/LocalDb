@@ -21,7 +21,7 @@
     <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
     <PackageVersion Include="NUnit" Version="4.4.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="5.2.0" Pinned="true" />
-    <PackageVersion Include="Polyfill" Version="9.8.1" />
+    <PackageVersion Include="Polyfill" Version="9.9.0" />
     <PackageVersion Include="ProjectDefaults" Version="1.0.172" />
     <PackageVersion Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageVersion Include="System.Drawing.Common" Version="10.0.3" />
