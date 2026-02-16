@@ -292,7 +292,7 @@ public async Task SharedDatabase()
     AreEqual(0, count);
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Tests.cs#L659-L669' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfSharedDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Tests.cs#L674-L684' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfSharedDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests.
@@ -318,7 +318,7 @@ public async Task SharedDatabase_WithTransaction()
     AreEqual(0, count);
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Tests.cs#L683-L701' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfSharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Tests.cs#L698-L716' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfSharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

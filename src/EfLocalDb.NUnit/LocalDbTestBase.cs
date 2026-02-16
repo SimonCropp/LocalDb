@@ -95,6 +95,13 @@ public abstract partial class LocalDbTestBase<T> :
         }
     }
 
+    public static void Shutdown()
+    {
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        sqlInstance?.Cleanup();
+        sqlInstance = null!;
+    }
+
     static void ThrowIfInitialized()
     {
         if (sqlInstance != null)

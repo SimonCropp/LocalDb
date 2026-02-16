@@ -347,6 +347,7 @@ public class Tests
         };
         await using var database = await instance.Build([entity]);
         NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
+        instance.Cleanup();
     }
 
     [Test]
@@ -368,6 +369,7 @@ public class Tests
         await using var database = await instance.Build([entity]);
         NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
         True(optionsBuilderCalled);
+        instance.Cleanup();
     }
 
     [Test]
@@ -385,6 +387,7 @@ public class Tests
 
         await using var database = await instance.Build();
         AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 
     [Test]
@@ -396,6 +399,7 @@ public class Tests
 
         await using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 
     [Test]
@@ -411,6 +415,7 @@ public class Tests
 
         await using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 
     // [Test]
@@ -532,6 +537,7 @@ public class Tests
         // BuildModel is called in the constructor, which creates a DbContext to extract the Model
         // That context should be disposed, so disposedCount should be 1
         AreEqual(1, disposedCount, "BuildModel should dispose the DbContext it creates");
+        testInstance.Cleanup();
     }
 
     public class DisposableTrackingDbContext(DbContextOptions options) : DbContext(options)
@@ -561,6 +567,13 @@ public class Tests
                 return Task.CompletedTask;
             });
 
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        instance.Cleanup();
+        instance.Dispose();
+    }
+
     [Test]
     public async Task BuildTemplate()
     {
@@ -578,6 +591,7 @@ public class Tests
         };
         await using var database = await instance.Build([entity]);
         NotNull(await database.Context.FindAsync<TestEntity>(entity.Id));
+        instance.Cleanup();
     }
 
     [Test]
@@ -643,6 +657,7 @@ public class Tests
             _ => new(_.Options),
             sqlOptionsBuilder: _ => _.UseNetTopologySuite());
         NotNull(instance);
+        instance.Cleanup();
     }
 
     public class GeometryDbContext(DbContextOptions options) : DbContext(options)
@@ -711,6 +726,7 @@ public class Tests
         await using var database = await dataInstance.BuildShared([entity]);
         var count = await database.Context.TestEntities.CountAsync();
         AreEqual(1, count);
+        dataInstance.Cleanup();
     }
 
     [Test]

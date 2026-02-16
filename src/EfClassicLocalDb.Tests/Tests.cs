@@ -162,6 +162,7 @@ public class Tests
         };
         using var database = await instance.Build([entity]);
         NotNull(await database.Context.TestEntities.FindAsync(entity.Id));
+        instance.Cleanup();
     }
 
 #if DEBUG
@@ -177,6 +178,7 @@ public class Tests
 
         using var database = await instance.Build();
         AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 
     [Test]
@@ -188,6 +190,7 @@ public class Tests
 
         using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 
     [Test]
@@ -200,6 +203,7 @@ public class Tests
 
         using var database = await instance.Build();
         AreEqual(Timestamp.LastModified<Tests>(), File.GetCreationTime(instance.Wrapper.DataFile));
+        instance.Cleanup();
     }
 #endif
 
