@@ -21,7 +21,7 @@ public class Tests :
         await Verify(result);
     }
 
-    // begin-snippet: StaticInstance
+    // begin-snippet: StaticInstanceNUnit
     [Test]
     public async Task StaticInstance()
     {
