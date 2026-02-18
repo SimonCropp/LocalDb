@@ -45,7 +45,9 @@ public abstract partial class LocalDbTestBase<T> :
         }
 
         var test = TestContext.CurrentContext.Test;
+#pragma warning disable CS0618 // Type or member is obsolete
         var methodInfo = test.Method!.MethodInfo;
+#pragma warning restore CS0618 // Type or member is obsolete
         isSharedDbWithTransaction = methodInfo.GetCustomAttribute<SharedDbWithTransactionAttribute>() != null;
         var hasSharedDbAttribute = methodInfo.GetCustomAttribute<SharedDbAttribute>() != null;
 
