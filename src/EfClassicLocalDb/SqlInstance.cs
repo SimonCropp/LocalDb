@@ -53,9 +53,9 @@ public partial class SqlInstance<TDbContext> :
     /// Use <see cref="Storage.FromSuffix{TDbContext}"/> to create a suffixed instance for parallel test runs.
     /// </param>
     /// <param name="timestamp">
-    /// A timestamp used to determine if the template database needs to be rebuilt. Optional.
-    /// If the timestamp is newer than the existing template, the template is recreated.
-    /// Defaults to the last modified time of <paramref name="buildTemplate"/> or <typeparamref name="TDbContext"/> assembly.
+    /// A function that transforms the auto-resolved timestamp used to determine if the template database needs to be rebuilt. Optional.
+    /// Receives the auto-resolved timestamp (last modified time of <paramref name="buildTemplate"/> or <typeparamref name="TDbContext"/> assembly) and returns the timestamp to use.
+    /// If null, the auto-resolved timestamp is used as-is.
     /// </param>
     /// <param name="templateSize">
     /// The initial size in MB for the template database. Optional. Defaults to 3 MB.
@@ -87,7 +87,7 @@ public partial class SqlInstance<TDbContext> :
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
         Storage? storage = null,
-        DateTime? timestamp = null,
+        TimestampTransform? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
@@ -130,9 +130,9 @@ public partial class SqlInstance<TDbContext> :
     /// Use <see cref="Storage.FromSuffix{TDbContext}"/> to create a suffixed instance for parallel test runs.
     /// </param>
     /// <param name="timestamp">
-    /// A timestamp used to determine if the template database needs to be rebuilt. Optional.
-    /// If the timestamp is newer than the existing template, the template is recreated.
-    /// Defaults to the last modified time of <paramref name="buildTemplate"/> or <typeparamref name="TDbContext"/> assembly.
+    /// A function that transforms the auto-resolved timestamp used to determine if the template database needs to be rebuilt. Optional.
+    /// Receives the auto-resolved timestamp (last modified time of <paramref name="buildTemplate"/> or <typeparamref name="TDbContext"/> assembly) and returns the timestamp to use.
+    /// If null, the auto-resolved timestamp is used as-is.
     /// </param>
     /// <param name="templateSize">
     /// The initial size in MB for the template database. Optional. Defaults to 3 MB.
@@ -164,7 +164,7 @@ public partial class SqlInstance<TDbContext> :
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection buildTemplate,
         Storage? storage = null,
-        DateTime? timestamp = null,
+        TimestampTransform? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
@@ -205,19 +205,19 @@ public partial class SqlInstance<TDbContext> :
         Wrapper.Start(resultTimestamp, connection => buildTemplate(connection));
     }
 
-    static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate)
+    static DateTime GetTimestamp(TimestampTransform? timestamp, Delegate? buildTemplate)
     {
-        if (timestamp is not null)
+        DateTime resolved;
+        if (buildTemplate is null)
         {
-            return timestamp.Value;
+            resolved = Timestamp.LastModified<TDbContext>();
+        }
+        else
+        {
+            resolved = Timestamp.LastModified(buildTemplate);
         }
 
-        if (buildTemplate is not null)
-        {
-            return Timestamp.LastModified(buildTemplate);
-        }
-
-        return Timestamp.LastModified<TDbContext>();
+        return timestamp is not null ? timestamp(resolved) : resolved;
     }
 
     public void Cleanup()

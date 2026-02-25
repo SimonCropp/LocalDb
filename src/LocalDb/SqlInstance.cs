@@ -32,9 +32,9 @@ public partial class SqlInstance :
     /// If not specified, a directory is derived based on <paramref name="name"/>.
     /// </param>
     /// <param name="timestamp">
-    /// A timestamp used to determine if the template database needs to be rebuilt. Optional.
-    /// If the timestamp is newer than the existing template, the template is recreated.
-    /// Defaults to the last modified time of the assembly containing <paramref name="buildTemplate"/>.
+    /// A function that transforms the auto-resolved timestamp used to determine if the template database needs to be rebuilt. Optional.
+    /// Receives the auto-resolved timestamp (last modified time of <paramref name="buildTemplate"/> or calling assembly) and returns the timestamp to use.
+    /// If null, the auto-resolved timestamp is used as-is.
     /// </param>
     /// <param name="templateSize">
     /// The initial size in MB for the template database. Optional. Defaults to 3 MB.
@@ -66,7 +66,7 @@ public partial class SqlInstance :
         string name,
         Func<SqlConnection, Task> buildTemplate,
         string? directory = null,
-        DateTime? timestamp = null,
+        TimestampTransform? timestamp = null,
         ushort templateSize = 3,
         ExistingTemplate? exitingTemplate = null,
         Func<SqlConnection, Task>? callback = null,
@@ -97,19 +97,19 @@ public partial class SqlInstance :
         Wrapper.Start(resultTimestamp, buildTemplate);
     }
 
-    static DateTime GetTimestamp(DateTime? timestamp, Delegate? buildTemplate, Assembly callingAssembly)
+    static DateTime GetTimestamp(TimestampTransform? timestamp, Delegate? buildTemplate, Assembly callingAssembly)
     {
-        if (timestamp is not null)
-        {
-            return timestamp.Value;
-        }
-
+        DateTime resolved;
         if (buildTemplate is not null)
         {
-            return Timestamp.LastModified(buildTemplate);
+            resolved = Timestamp.LastModified(buildTemplate);
+        }
+        else
+        {
+            resolved = Timestamp.LastModified(callingAssembly);
         }
 
-        return Timestamp.LastModified(callingAssembly);
+        return timestamp is not null ? timestamp(resolved) : resolved;
     }
 
     public void Cleanup()

@@ -18,7 +18,7 @@ public abstract partial class LocalDbTestBase<T> :
         TemplateFromContext<T>? buildTemplate = null,
         ushort templateSize = 10,
         Callback<T>? callback = null,
-        DateTime? timestamp = null)
+        TimestampTransform? timestamp = null)
     {
         var callingAssembly = Assembly.GetCallingAssembly();
         ThrowIfInitialized();

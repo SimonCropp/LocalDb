@@ -1,5 +1,6 @@
 ﻿global using System.ComponentModel.DataAnnotations.Schema;
 global using EfLocalDb;
+global using LocalDb;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Infrastructure;

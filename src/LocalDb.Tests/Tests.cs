@@ -96,7 +96,7 @@ public class Tests
     public async Task Defined_TimeStamp()
     {
         var dateTime = DateTime.Now;
-        using var instance = new SqlInstance("Defined_TimeStamp", TestDbBuilder.CreateTable, timestamp: dateTime);
+        using var instance = new SqlInstance("Defined_TimeStamp", TestDbBuilder.CreateTable, timestamp: _ => dateTime);
 
         await using var database = await instance.Build();
         AreEqual(dateTime, File.GetCreationTime(instance.Wrapper.DataFile));

@@ -5,6 +5,7 @@ global using System.Reflection;
 global using System.Threading.Tasks;
 global using DiffEngine;
 global using EfLocalDb;
+global using LocalDb;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using NUnit.Framework;

@@ -8,7 +8,7 @@ public class TimestampTests : LocalDbTestBase<TimestampDbContext>
                 data.Companies.Add(new() { Id = Guid.NewGuid(), Name = "Template Company" });
                 await data.SaveChangesAsync();
             },
-            timestamp: Timestamp.LastModified<TimestampDbContext>());
+            timestamp: _ => Timestamp.LastModified<TimestampDbContext>());
 
     [Fact]
     public async Task ExplicitTimestamp_UsesDbContextAssemblyTimestamp()

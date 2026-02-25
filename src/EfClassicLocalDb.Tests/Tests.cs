@@ -173,7 +173,7 @@ public class Tests
         using var instance = new SqlInstance<TestDbContext>(
             connection => new(connection),
             context => context.CreateOnExistingDb(),
-            timestamp: dateTime,
+            timestamp: _ => dateTime,
             storage: Storage.FromSuffix<TestDbContext>("Classic_Defined_TimeStamp"));
 
         using var database = await instance.Build();

@@ -382,7 +382,7 @@ public class Tests
             {
                 await context.Database.EnsureCreatedAsync();
             },
-            timestamp: dateTime,
+            timestamp: _ => dateTime,
             storage: Storage.FromSuffix<TestDbContext>("Defined_TimeStamp"));
 
         await using var database = await instance.Build();

@@ -27,7 +27,7 @@ public class TemplateRebuildBenchmarks
         var setupInstance = new SqlInstance(
             name: InstanceName,
             buildTemplate: CreateTable,
-            timestamp: oldTimestamp);
+            timestamp: _ => oldTimestamp);
         await setupInstance.Wrapper.AwaitStart();
         setupInstance.Dispose();
         // Instance remains running, but we'll use a newer timestamp in the benchmark
@@ -49,7 +49,7 @@ public class TemplateRebuildBenchmarks
         sqlInstance = new(
             name: InstanceName,
             buildTemplate: CreateTable,
-            timestamp: newTimestamp);
+            timestamp: _ => newTimestamp);
         await sqlInstance.Wrapper.AwaitStart();
 
         for (var i = 0; i < DatabaseCount; i++)

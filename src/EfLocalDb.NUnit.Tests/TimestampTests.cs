@@ -15,7 +15,7 @@ public class TimestampTests :
                     });
                 await data.SaveChangesAsync();
             },
-            timestamp: Timestamp.LastModified<TimestampDbContext>());
+            timestamp: _ => Timestamp.LastModified<TimestampDbContext>());
 
     [Test]
     public async Task ExplicitTimestamp_UsesDbContextAssemblyTimestamp()
