@@ -6,7 +6,7 @@
 
         try
         {
-            var stopwatch = Stopwatch.StartNew();
+            var stopwatch = LocalDbLogging.SqlLoggingEnabled ? Stopwatch.StartNew() : null;
 
 #if NET5_0_OR_GREATER
             await using (var command = connection.CreateCommand())
@@ -18,7 +18,7 @@
                 await command.ExecuteNonQueryAsync();
             }
 
-            if (LocalDbLogging.SqlLoggingEnabled)
+            if (stopwatch != null)
             {
                 LocalDbLogging.Log($"""
                     Executed SQL ({stopwatch.ElapsedMilliseconds}.ms):
