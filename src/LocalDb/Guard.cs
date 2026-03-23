@@ -5,7 +5,7 @@ static class Guard
 
     public static void AgainstInvalidFileName(string value, [CallerArgumentExpression("value")] string? name = null)
     {
-        if (value.Any(invalidFileNameChars.Contains))
+        if (value.IndexOfAny(invalidFileNameChars) >= 0)
         {
             throw new ArgumentException($"Invalid file name: {value}", name);
         }
