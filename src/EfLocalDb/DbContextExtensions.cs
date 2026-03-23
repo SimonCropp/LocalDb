@@ -2,7 +2,7 @@ namespace EfLocalDb;
 
 public static class DbContextExtensions
 {
-    internal static IEnumerable<object> ExpandEnumerable(IEnumerable<object> entities, IReadOnlyList<IEntityType> entityTypes)
+    internal static IEnumerable<object> ExpandEnumerable(IEnumerable<object> entities, IEnumerable<IEntityType> entityTypes)
     {
         foreach (var entity in entities)
         {
@@ -26,13 +26,13 @@ public static class DbContextExtensions
 
     public static Task AddData<TDbContext>(this TDbContext context, IEnumerable<object> entities)
         where TDbContext : DbContext =>
-        context.AddData(entities, context.Model.GetEntityTypes().ToArray());
+        context.AddData(entities, context.Model.GetEntityTypes());
 
     public static Task AddData<TDbContext>(this TDbContext context, params object[] entities)
         where TDbContext : DbContext =>
         context.AddData((IEnumerable<object>) entities);
 
-    internal static Task AddData<TDbContext>(this TDbContext context, IEnumerable<object> entities, IReadOnlyList<IEntityType> entityTypes)
+    internal static Task AddData<TDbContext>(this TDbContext context, IEnumerable<object> entities, IEnumerable<IEntityType> entityTypes)
         where TDbContext : DbContext
     {
         foreach (var entity in ExpandEnumerable(entities, entityTypes))
@@ -45,13 +45,13 @@ public static class DbContextExtensions
 
     public static Task RemoveData<TDbContext>(this TDbContext context, IEnumerable<object> entities)
         where TDbContext : DbContext =>
-        context.RemoveData(entities, context.Model.GetEntityTypes().ToArray());
+        context.RemoveData(entities, context.Model.GetEntityTypes());
 
     public static Task RemoveData<TDbContext>(this TDbContext context, params object[] entities)
         where TDbContext : DbContext =>
         context.RemoveData((IEnumerable<object>) entities);
 
-    internal static Task RemoveData<TDbContext>(this TDbContext context, IEnumerable<object> entities, IReadOnlyList<IEntityType> entityTypes)
+    internal static Task RemoveData<TDbContext>(this TDbContext context, IEnumerable<object> entities, IEnumerable<IEntityType> entityTypes)
         where TDbContext : DbContext
     {
         foreach (var entity in ExpandEnumerable(entities, entityTypes))
