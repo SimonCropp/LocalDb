@@ -46,8 +46,7 @@ public partial class SqlInstance<TDbContext>
     {
         (var keyTypes, var key, find) = entityKeyMap[typeof(T)];
 
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToList();
-        if (keyTypes.SequenceEqual(inputKeyTypes))
+        if (KeyTypesMatch(keyTypes, keys))
         {
             return key;
         }
@@ -57,15 +56,31 @@ public partial class SqlInstance<TDbContext>
 
     IEnumerable<(IKey key, MethodInfo find)> FindKeys(object[] keys)
     {
-        var inputKeyTypes = keys.Select(_ => _.GetType()).ToArray();
-
         foreach (var (keyTypes, key, find) in entityKeyMap.Values)
         {
-            if (keyTypes.SequenceEqual(inputKeyTypes))
+            if (KeyTypesMatch(keyTypes, keys))
             {
                 yield return new(key, find);
             }
         }
+    }
+
+    static bool KeyTypesMatch(Type[] keyTypes, object[] keys)
+    {
+        if (keyTypes.Length != keys.Length)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < keyTypes.Length; i++)
+        {
+            if (keyTypes[i] != keys[i].GetType())
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     internal static Task<object?> InvokeFind(TDbContext context, bool ignoreFilters, object[] keys, MethodInfo find, IKey key) =>
