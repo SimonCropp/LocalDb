@@ -20,6 +20,7 @@
     <Content Include="buildTransitive\LocalDb.props" PackagePath="build\LocalDb.props" />
     <PackageReference Include="System.Memory" />
   </ItemGroup>
+  <!-- remove when SqlClient 7.0.1 -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <Reference Include="System.Data.Common" />
   </ItemGroup>
