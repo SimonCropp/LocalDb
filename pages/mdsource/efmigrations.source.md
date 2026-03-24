@@ -40,3 +40,20 @@ Perform a [Runtime apply of migrations](https://docs.microsoft.com/en-us/ef/core
 snippet: Migrate
 
 This constructs a `DbContext` using the options builder (which is pre-configured to connect to the template database) and then applies all pending migrations. After this point the template database has the full schema and is ready to be cloned for individual tests.
+
+
+## Testing a specific migration
+
+To test a single migration in isolation, build the template up to the migration _before_ the one under test using `IMigrator.MigrateAsync("targetMigration")`. Each test then receives a clone at that point and can apply the next migration independently.
+
+### Build the template to a known migration
+
+snippet: MigrateToSpecificTarget
+
+This uses `IMigrator` (resolved from the EF Core service provider) instead of `Database.MigrateAsync()` so a target migration name can be specified. The template is frozen at that point and cloned for every test.
+
+### Apply and verify the next migration
+
+snippet: TestSingleMigration
+
+Each test gets its own database clone at the earlier migration state. It then applies the target migration and verifies the expected schema change. Because every test starts from the same cloned template, migrations under test are fully isolated from each other.

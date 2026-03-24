@@ -76,3 +76,62 @@ await data.Database.MigrateAsync();
 <!-- endSnippet -->
 
 This constructs a `DbContext` using the options builder (which is pre-configured to connect to the template database) and then applies all pending migrations. After this point the template database has the full schema and is ready to be cloned for individual tests.
+
+
+## Testing a specific migration
+
+To test a single migration in isolation, build the template up to the migration _before_ the one under test using `IMigrator.MigrateAsync("targetMigration")`. Each test then receives a clone at that point and can apply the next migration independently.
+
+### Build the template to a known migration
+
+<!-- snippet: MigrateToSpecificTarget -->
+<a id='snippet-MigrateToSpecificTarget'></a>
+```cs
+static SqlInstance<MyDbContext> sqlInstance = new(
+    buildTemplate: async (connection, options) =>
+    {
+        await using var data = new MyDbContext(options.Options);
+        var migrator = data.GetInfrastructure()
+            .GetRequiredService<IMigrator>();
+        // apply up to and including a target migration
+        await migrator.MigrateAsync("Migration_002_AddOrders");
+    },
+    constructInstance: builder => new(builder.Options));
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TestSpecificMigration.cs#L5-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-MigrateToSpecificTarget' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+This uses `IMigrator` (resolved from the EF Core service provider) instead of `Database.MigrateAsync()` so a target migration name can be specified. The template is frozen at that point and cloned for every test.
+
+### Apply and verify the next migration
+
+<!-- snippet: TestSingleMigration -->
+<a id='snippet-TestSingleMigration'></a>
+```cs
+[Test]
+public async Task TestNextMigration()
+{
+    await using var database = await sqlInstance.Build();
+
+    // apply the next migration under test
+    var migrator = database.Context
+        .GetInfrastructure()
+        .GetRequiredService<IMigrator>();
+    await migrator.MigrateAsync("Migration_003_AddOrderStatus");
+
+    // verify the migration applied the expected schema change
+    await using var command = database.Connection.CreateCommand();
+    command.CommandText = """
+        SELECT COUNT(*)
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_NAME = 'Orders'
+          AND COLUMN_NAME = 'Status'
+        """;
+    var result = (int) (await command.ExecuteScalarAsync())!;
+    That(result, Is.EqualTo(1));
+}
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TestSpecificMigration.cs#L20-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-TestSingleMigration' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+Each test gets its own database clone at the earlier migration state. It then applies the target migration and verifies the expected schema change. Because every test starts from the same cloned template, migrations under test are fully isolated from each other.
