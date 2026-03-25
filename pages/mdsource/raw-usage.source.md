@@ -38,6 +38,40 @@ If multiple tests need to use the SqlInstance, then the SqlInstance should be in
 snippet: TestBase
 
 
+## Anti-patterns
+
+### Do not call Build once and share the ConnectionString
+
+A common mistake is to call `Build()` once (e.g. in a static constructor) and reuse the resulting `ConnectionString` across all tests:
+
+```cs
+// WRONG: defeats per-test isolation
+static Connection()
+{
+    var database = sqlInstance.Build("shared").GetAwaiter().GetResult();
+    ConnectionString = database.ConnectionString;
+}
+
+// All tests share the same database
+public static SqlConnection OpenConnection() => new(ConnectionString);
+```
+
+This defeats the purpose of LocalDb's template cloning. All tests share the same database, requiring manual cleanup (`DELETE FROM ...`) between tests, preventing parallel execution, and risking test interference.
+
+Instead, call `Build()` in each test method to get an isolated database clone:
+
+```cs
+// CORRECT: each test gets its own database
+[Test]
+public async Task MyTest()
+{
+    await using var database = await sqlInstance.Build();
+    var connection = database.Connection;
+    // connection points to a fresh database cloned from the template
+}
+```
+
+
 ## Usage in a Test
 
 Usage inside a test consists of two parts:
