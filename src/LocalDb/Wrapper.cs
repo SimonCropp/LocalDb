@@ -146,6 +146,9 @@ class Wrapper : IDisposable
             if (!sharedCreated)
             {
                 var initConnection = await CreateDatabaseFromTemplate("Shared");
+                // RCSI lets readers use row versions instead of S locks, avoiding
+                // reader/writer blocking between parallel [SharedDbWithTransaction] tests.
+                await initConnection.ExecuteCommandAsync("alter database current set read_committed_snapshot on");
                 if (initialize != null)
                 {
                     await initialize(initConnection);

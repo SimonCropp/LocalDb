@@ -162,6 +162,20 @@ public class Tests
     #endregion
 
     [Test]
+    public async Task SharedDatabase_HasReadCommittedSnapshotEnabled()
+    {
+        using var instance = new SqlInstance(
+            "SharedDb_Rcsi",
+            TestDbBuilder.CreateTable);
+
+        await using var database = await instance.BuildShared();
+        await using var command = database.Connection.CreateCommand();
+        command.CommandText = "select is_read_committed_snapshot_on from sys.databases where name = db_name()";
+        var result = (bool) (await command.ExecuteScalarAsync())!;
+        IsTrue(result);
+    }
+
+    [Test]
     public async Task SharedDatabase_MultipleCalls()
     {
         using var instance = new SqlInstance(

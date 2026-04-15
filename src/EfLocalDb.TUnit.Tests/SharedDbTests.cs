@@ -1,4 +1,5 @@
 // begin-snippet: SharedDbTestsTUnit
+[NotInParallel]
 public class SharedDbTests : LocalDbTestBase<TheDbContext>
 {
     [Test]

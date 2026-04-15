@@ -307,5 +307,5 @@ public async Task SharedDatabase_WithTransaction()
     AreEqual(0, data.Count);
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Tests.cs#L181-L209' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Tests.cs#L195-L223' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
