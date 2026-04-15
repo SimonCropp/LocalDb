@@ -624,6 +624,7 @@ Both attributes can be mixed in the same test fixture:<!-- endInclude -->
 <!-- snippet: SharedDbTestsTUnit -->
 <a id='snippet-SharedDbTestsTUnit'></a>
 ```cs
+[NotInParallel]
 public class SharedDbTests : LocalDbTestBase<TheDbContext>
 {
     [Test]
@@ -676,7 +677,7 @@ public class SharedDbTests : LocalDbTestBase<TheDbContext>
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/SharedDbTests.cs#L1-L53' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTestsTUnit' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/SharedDbTests.cs#L1-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTestsTUnit' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
