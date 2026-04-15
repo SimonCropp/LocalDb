@@ -94,7 +94,7 @@ static SqlInstance<MyDbContext> sqlInstance = new(
         var migrator = data.GetInfrastructure()
             .GetRequiredService<IMigrator>();
         // apply up to and including a target migration
-        await migrator.MigrateAsync("Migration_002_AddOrders");
+        await migrator.MigrateAsync("AddOrders");
     },
     constructInstance: builder => new(builder.Options));
 ```
@@ -117,7 +117,7 @@ public async Task TestNextMigration()
     var migrator = database.Context
         .GetInfrastructure()
         .GetRequiredService<IMigrator>();
-    await migrator.MigrateAsync("Migration_003_AddOrderStatus");
+    await migrator.MigrateAsync("AddOrderStatus");
 
     // verify the migration applied the expected schema change
     await using var command = database.Connection.CreateCommand();
