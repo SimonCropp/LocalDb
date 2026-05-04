@@ -26,6 +26,7 @@
     <PackageReference Include="Verify.SqlServer" />
     <PackageReference Include="MarkdownSnippets.MsBuild" PrivateAssets="all" />
     <ProjectReference Include="..\LocalDb\LocalDb.csproj" />
+    <ProjectReference Include="..\LocalDb.MultiProcessHelper\LocalDb.MultiProcessHelper.csproj" ReferenceOutputAssembly="false" Private="false" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <Using Include="NUnit.Framework.Legacy.ClassicAssert" Static="True" />
     <Using Include="NUnit.Framework.Assert" Static="True" />

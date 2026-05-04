@@ -22,6 +22,7 @@
   <Project Path="EfLocalDb.Tests/EfLocalDb.Tests.csproj" />
   <Project Path="EfLocalDb/EfLocalDb.csproj" />
   <Project Path="LoadTest/LoadTest.csproj" />
+  <Project Path="LocalDb.MultiProcessHelper/LocalDb.MultiProcessHelper.csproj" />
   <Project Path="LocalDb.Tests/LocalDb.Tests.csproj" />
   <Project Path="LocalDb/LocalDb.csproj" />
 </Solution>
