@@ -1,12 +1,17 @@
-﻿using MethodTimer;
+﻿using System.Collections.Concurrent;
+using MethodTimer;
 
 class Wrapper : IDisposable
 {
+    // Per-instance-name in-process gate — two Wrapper instances in one process
+    // for the same LocalDB instance share a semaphore and serialize their Start calls.
+    static readonly ConcurrentDictionary<string, SemaphoreSlim> InProcessStartLocks =
+        new(StringComparer.OrdinalIgnoreCase);
+
     public readonly string Directory;
     ushort size;
     ushort shutdownTimeout;
     Func<SqlConnection, Task>? callback;
-    SemaphoreSlim semaphoreSlim = new(1, 1);
     SemaphoreSlim sharedLock = new(1, 1);
     bool sharedCreated;
     public readonly string MasterConnectionString;
@@ -17,6 +22,10 @@ class Wrapper : IDisposable
     public readonly string ServerName;
     Task startupTask = null!;
     bool templateProvided;
+    // Cross-process gate — a sentinel file opened with FileShare.None blocks every
+    // other Wrapper.Start in any process for the same LocalDB instance until our
+    // startupTask completes.
+    readonly string crossProcessLockPath;
 
     public Wrapper(
         string instance,
@@ -58,6 +67,7 @@ class Wrapper : IDisposable
         directoryInfo.ResetAccess();
 
         ServerName = $@"(LocalDb)\{instance}";
+        crossProcessLockPath = Path.Combine(Path.GetTempPath(), $"localdb_wrapper_{instance}.lock");
     }
 
     [Time("Name: '{name}'")]
@@ -113,7 +123,37 @@ class Wrapper : IDisposable
         {
 #endif
         var stopwatch = Stopwatch.StartNew();
-        InnerStart(timestamp, buildTemplate);
+
+        // Acquire both locks before touching any LocalDB state. They are released only after
+        // startupTask completes (see ReleaseAfterAsync) so that another Wrapper.Start cannot
+        // start its own InnerStart while our master-DB template build is still running.
+        var inProcess = InProcessStartLocks.GetOrAdd(instance, _ => new SemaphoreSlim(1, 1));
+        inProcess.Wait();
+        FileStream? crossProcess;
+        try
+        {
+            crossProcess = AcquireCrossProcessLock(crossProcessLockPath);
+        }
+        catch
+        {
+            inProcess.Release();
+            throw;
+        }
+
+        try
+        {
+            InnerStart(timestamp, buildTemplate);
+            // Hand off lock ownership to a continuation that releases when startupTask finishes.
+            startupTask = ReleaseAfterAsync(startupTask, crossProcess, inProcess);
+            crossProcess = null;
+        }
+        catch
+        {
+            crossProcess?.Dispose();
+            inProcess.Release();
+            throw;
+        }
+
         var message = $"Start `{ServerName}` {stopwatch.ElapsedMilliseconds}ms.";
 
         LocalDbLogging.Log(message);
@@ -124,6 +164,34 @@ class Wrapper : IDisposable
             throw ExceptionBuilder.WrapLocalDbFailure(instance, Directory, exception);
         }
 #endif
+    }
+
+    static FileStream AcquireCrossProcessLock(string path)
+    {
+        while (true)
+        {
+            try
+            {
+                return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException)
+            {
+                Thread.Sleep(50);
+            }
+        }
+    }
+
+    static async Task ReleaseAfterAsync(Task originalTask, FileStream crossProcessLock, SemaphoreSlim inProcessLock)
+    {
+        try
+        {
+            await originalTask;
+        }
+        finally
+        {
+            crossProcessLock.Dispose();
+            inProcessLock.Release();
+        }
     }
 
     public Task AwaitStart() => startupTask;
@@ -369,5 +437,5 @@ class Wrapper : IDisposable
         await connection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(dbName));
     }
 
-    public void Dispose() => semaphoreSlim.Dispose();
+    public void Dispose() => sharedLock.Dispose();
 }
