@@ -102,22 +102,9 @@ The barrier flips this around: each child spawns, waits in a polling loop for a 
 
 Both multi-process tests need to find the helper exe at runtime, and the path resolution is non-trivial enough to want one place to update if the build layout changes. Pulling it out also avoids duplicate logic that could drift between the two tests.
 
-## Fix applied in this PR
+## Suggested fix in `LocalDb`
 
-`Wrapper.cs` now serializes `Start` per instance name across two layers:
-
-* **In-process** — a static `ConcurrentDictionary<string, SemaphoreSlim>` keyed by instance name. Two `Wrapper` instances in one process for the same LocalDB instance now share a semaphore, replacing the per-instance `SemaphoreSlim` field that was declared but never used.
-* **Cross-process** — a sentinel file in `%TEMP%\localdb_wrapper_<instanceName>.lock` opened with `FileShare.None`. File handles aren't thread-affine (unlike `Mutex`), so the handle can be acquired in `Start` and released asynchronously in a continuation chained onto `startupTask`.
-
-Both locks are acquired before `InnerStart` and released only after `startupTask` completes — that span covers both the synchronous `LocalDbApi.*` calls and the async `CreateAndDetachTemplate` master-DB DDL.
-
-After the fix:
-
-* `ConcurrentStartTests.ConcurrentStartWithMissingTemplateShouldNotRace` — passes. Second `Wrapper.Start` in the same process now waits for the first to finish, takes the fast no-rebuild path on its second turn (the first run created the template).
-* `MultiProcessConcurrentStartTests.MultiProcessConcurrentStartShouldNotRace` — passes. Subsequent processes block on the file lock and pick up the template the first process produced.
-* `InstanceDoesNotExistRaceTests.KillerVsVictimSurfacesInstanceDoesNotExist` — still passes. This test bypasses `Wrapper` and exercises `LocalDbApi.StopAndDelete` directly against `SqlConnection.Open`, so the fix does not (and should not) change its behaviour — it stays in the suite as documentation of the underlying OS-level race that `Wrapper`'s lock now protects callers from.
-
-The existing `WrapperTests` suite continues to pass unchanged.
+Wire up the existing `Wrapper.semaphoreSlim` field around `InnerStart`'s body to handle the in-process race, and add a named OS mutex keyed on the instance name (e.g. `Global\\LocalDb_Wrapper_InnerStart_{instanceName}`) around the entire `InnerStart` operation to handle the cross-process race. Both tests in this folder should pass once that lock is in place; if either still fails, the lock isn't covering the right span.
 
 ## Running the tests
 
