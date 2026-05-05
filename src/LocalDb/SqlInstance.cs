@@ -79,6 +79,11 @@ public partial class SqlInstance :
         }
 
         Ensure.NotNullOrWhiteSpace(name);
+        if (AiCliDetector.Detected)
+        {
+            name = "chatbot_" + name;
+        }
+
         if (directory == null)
         {
             directory = DirectoryFinder.Find(name);

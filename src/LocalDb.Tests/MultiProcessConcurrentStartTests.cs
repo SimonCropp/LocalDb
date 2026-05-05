@@ -1,16 +1,12 @@
 using System.Diagnostics;
 
-// Reproduces the multi-process race surfaced when two test-host processes share a LocalDB
-// user instance: each process independently runs Wrapper.InnerStart, which when the template
-// files are missing calls LocalDbApi.StopAndDelete + LocalDbApi.CreateInstance + StartInstance.
-// One process's StopAndDelete deletes the instance the other is mid-using, surfacing as
-// LOCALDB_ERROR_INSTANCE_DOES_NOT_EXIST (native 0x89C50107) or LOCALDB_ERROR_INSTANCE_BUSY.
-//
-// The single-process variant (ConcurrentStartTests) catches the SQL-DDL deadlock that occurs
-// even within one process. This test catches the additional LocalDB-API state race that only
-// surfaces across separate Windows processes. Both races dissolve under the same fix:
-// serialize Wrapper.InnerStart per-instance with an in-process lock + a named cross-process
-// mutex keyed by instance name.
+// Demonstrates that the AiCliDetector prefix scheme isolates an AI process from a human
+// process at the LocalDB-instance level. The "human" child uses the unprefixed name; the
+// "AI" child has the CLAUDECODE env var set and runs against the chatbot_-prefixed name.
+// They target different LocalDB user instances, so the multi-process StopAndDelete /
+// CreateInstance / StartInstance race that previously produced
+// LOCALDB_ERROR_INSTANCE_DOES_NOT_EXIST (native 0x89C50107) and instance-busy errors
+// no longer has a shared instance to race on.
 
 [TestFixture]
 public class MultiProcessConcurrentStartTests
@@ -18,19 +14,21 @@ public class MultiProcessConcurrentStartTests
     [Test]
     public async Task MultiProcessConcurrentStartShouldNotRace()
     {
-        const string name = "MultiProcessConcurrentStart";
-        const int processCount = 3;
-        var directory = DirectoryFinder.Find(name);
+        const string humanName = "MultiProcessConcurrentStart";
+        var aiName = "chatbot_" + humanName;
         var helperExe = HelperExeResolver.Resolve();
 
-        // Pre-condition that triggers Wrapper.InnerStart's StopAndDelete + CleanStart branch:
-        // instance exists, but template.mdf does not.
-        LocalDbApi.StopAndDelete(name);
-        DirectoryFinder.Delete(name);
-        LocalDbApi.CreateInstance(name);
-        LocalDbApi.StartInstance(name);
+        // Pre-condition that triggers Wrapper.InnerStart's StopAndDelete + CleanStart branch
+        // for each instance: instance exists, but template.mdf does not.
+        foreach (var instanceName in new[] { humanName, aiName })
+        {
+            LocalDbApi.StopAndDelete(instanceName);
+            DirectoryFinder.Delete(instanceName);
+            LocalDbApi.CreateInstance(instanceName);
+            LocalDbApi.StartInstance(instanceName);
+        }
 
-        var signalFile = Path.Combine(Path.GetTempPath(), $"{name}_{Guid.NewGuid():N}.signal");
+        var signalFile = Path.Combine(Path.GetTempPath(), $"{humanName}_{Guid.NewGuid():N}.signal");
         if (File.Exists(signalFile))
         {
             File.Delete(signalFile);
@@ -41,18 +39,28 @@ public class MultiProcessConcurrentStartTests
 
         try
         {
-            for (var i = 0; i < processCount; i++)
+            // "Human" child — no AI env var, unprefixed name.
+            var humanPsi = new ProcessStartInfo(helperExe)
             {
-                var psi = new ProcessStartInfo(helperExe)
-                {
-                    ArgumentList = { "wrapper-start", name, directory, signalFile },
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                processes.Add(Process.Start(psi)!);
-            }
+                ArgumentList = { "wrapper-start", humanName, DirectoryFinder.Find(humanName), signalFile },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            processes.Add(Process.Start(humanPsi)!);
+
+            // "AI" child — CLAUDECODE env var set, runs against the chatbot_-prefixed instance.
+            var aiPsi = new ProcessStartInfo(helperExe)
+            {
+                ArgumentList = { "wrapper-start", aiName, DirectoryFinder.Find(aiName), signalFile },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            aiPsi.Environment["CLAUDECODE"] = "1";
+            processes.Add(Process.Start(aiPsi)!);
 
             // Give every child enough time to load its CLR, hit the signal-file wait loop, and be ready.
             await Task.Delay(750);
@@ -76,8 +84,11 @@ public class MultiProcessConcurrentStartTests
             {
                 File.Delete(signalFile);
             }
-            LocalDbApi.StopAndDelete(name);
-            DirectoryFinder.Delete(name);
+            foreach (var instanceName in new[] { humanName, aiName })
+            {
+                LocalDbApi.StopAndDelete(instanceName);
+                DirectoryFinder.Delete(instanceName);
+            }
         }
 
         var failures = outputs.Where(o => o.ExitCode != 0).ToList();
@@ -86,7 +97,7 @@ public class MultiProcessConcurrentStartTests
             var summary = string.Join(
                 Environment.NewLine,
                 failures.Select(f => $"  exit {f.ExitCode}: {f.Stderr.Trim().Replace(Environment.NewLine, " | ")}"));
-            Assert.Fail($"{failures.Count}/{processCount} child processes failed:{Environment.NewLine}{summary}");
+            Assert.Fail($"{failures.Count}/{processes.Count} child processes failed:{Environment.NewLine}{summary}");
         }
     }
 }
