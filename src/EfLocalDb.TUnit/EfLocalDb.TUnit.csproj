@@ -16,6 +16,7 @@
     <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\QueryableSettingsTask.cs" Link="QueryableSettingsTask\QueryableSettingsTask.cs" />
     <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\NestedQueryableSettingsTask.cs" Link="QueryableSettingsTask\NestedQueryableSettingsTask.cs" />
     <PackageReference Include="Verify.EntityFramework" />
+    <PackageReference Include="TUnit" />
     <PackageReference Include="Verify.TUnit" />
     <PackageReference Include="Argon" />
     <PackageReference Include="DiffEngine" />

@@ -4,6 +4,7 @@ public static class DbContextExtensions
 {
     internal static IEnumerable<object> ExpandEnumerable(IEnumerable<object> entities, IEnumerable<IEntityType> entityTypes)
     {
+        entityTypes = entityTypes.ToList();
         foreach (var entity in entities)
         {
             if (entity is IEnumerable enumerable)
