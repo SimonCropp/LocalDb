@@ -79,6 +79,19 @@ public class Tests
     }
 
     [Test]
+    public async Task TemplateHasReadCommittedSnapshot()
+    {
+        // Guards against accidental removal of the ALTER DATABASE statement that enables
+        // READ_COMMITTED_SNAPSHOT on the template — required to avoid S/X-lock deadlocks
+        // between parallel [SharedDbWithTransaction] tests on the same shared database.
+        await using var database = await instance.Build();
+        await using var command = database.Connection.CreateCommand();
+        command.CommandText = "select is_read_committed_snapshot_on from sys.databases where name = db_name()";
+        var enabled = (bool) (await command.ExecuteScalarAsync())!;
+        True(enabled);
+    }
+
+    [Test]
     public async Task RemoveData()
     {
         var entity = new TestEntity
