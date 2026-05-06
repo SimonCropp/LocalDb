@@ -193,7 +193,7 @@ public partial class SqlInstance<TDbContext> :
 
         storage ??= defaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-        Model = BuildModel(constructInstance, sqlOptionsBuilder);
+        Model = BuildModel(constructInstance, sqlOptionsBuilder, temporalSchemas);
         InitEntityMapping();
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
@@ -250,11 +250,26 @@ public partial class SqlInstance<TDbContext> :
         return Timestamp.LastModified(buildTemplate);
     }
 
-    static IModel BuildModel(ConstructInstance<TDbContext> constructInstance, Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
+    static IModel BuildModel(
+        ConstructInstance<TDbContext> constructInstance,
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder,
+        Dictionary<Type, TemporalSchema> temporalSchemas)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer("Fake", sqlOptionsBuilder);
         using var context = constructInstance(builder);
+
+        // Temporal metadata is stripped from the runtime model — read from design-time.
+        var designModel = context.GetService<IDesignTimeModel>().Model;
+        foreach (var entityType in designModel.GetEntityTypes())
+        {
+            var schema = TemporalSchema.TryBuild(entityType);
+            if (schema is not null)
+            {
+                temporalSchemas[entityType.ClrType] = schema;
+            }
+        }
+
         return context.Model;
     }
 
