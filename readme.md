@@ -78,6 +78,7 @@ Provides a wrapper around [SqlLocalDB](https://docs.microsoft.com/en-us/sql/data
   * [EntityFramework Core MSTest Usage](/pages/ef-mstest-usage.md)
   * [EntityFramework Core TUnit Usage](/pages/ef-tunit-usage.md)
   * [EntityFramework Core Migrations](/pages/efmigrations.md)
+  * [Temporal helper](/pages/temporal-helper.md)
   * [Directory and name resolution](/pages/directory-and-name-resolution.md)
   * [Sql Management Studio](/pages/sql-management-studio.md)
   * [Logging](/pages/logging.md)

@@ -48,15 +48,15 @@ public class TemporalSnippetTests
         // Anchor close to "now" so any related entities still exist at that
         // temporal point. Each step must be strictly greater than the previous.
         var anchor = DateTime.UtcNow.AddSeconds(-10);
-        await database.Context.SetCurrentPeriodStart(request, anchor);
+        await database.SetCurrentPeriodStart(request, anchor);
 
         request.Status = "ChiefOfStaffReview";
         await database.Context.SaveChangesAsync();
-        await database.Context.SetCurrentPeriodStart(request, anchor.AddMilliseconds(100));
+        await database.SetCurrentPeriodStart(request, anchor.AddMilliseconds(100));
 
         request.Status = "Approved";
         await database.Context.SaveChangesAsync();
-        await database.Context.SetCurrentPeriodStart(request, anchor.AddMilliseconds(200));
+        await database.SetCurrentPeriodStart(request, anchor.AddMilliseconds(200));
 
         // Subsequent TemporalAsOf queries can now resolve each transition by its
         // distinct, deterministic PeriodStart instead of relying on Task.Delay.

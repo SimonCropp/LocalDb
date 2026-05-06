@@ -19,7 +19,7 @@ public class TemporalTests
         await database.Context.SaveChangesAsync();
 
         var anchor = DateTime.UtcNow.AddSeconds(-30);
-        await database.Context.SetCurrentPeriodStart<TemporalEntity>(entity.Id, anchor);
+        await database.SetCurrentPeriodStart<TemporalEntity>(entity.Id, anchor);
 
         var actual = await database.Context.Set<TemporalEntity>()
             .Where(_ => _.Id == entity.Id)
@@ -37,13 +37,13 @@ public class TemporalTests
         await database.Context.SaveChangesAsync();
 
         var anchor1 = DateTime.UtcNow.AddSeconds(-30);
-        await database.Context.SetCurrentPeriodStart(entity, anchor1);
+        await database.SetCurrentPeriodStart(entity, anchor1);
 
         entity.Property = "v2";
         await database.Context.SaveChangesAsync();
 
         var anchor2 = anchor1.AddSeconds(1);
-        await database.Context.SetCurrentPeriodStart(entity, anchor2);
+        await database.SetCurrentPeriodStart(entity, anchor2);
 
         var maxPeriod = new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Utc);
         var historyEnd = await database.Context.Set<TemporalEntity>()
@@ -71,7 +71,7 @@ public class TemporalTests
         // Helper's UPDATE bumps RowVersion. Entity overload reloads, so the next
         // SaveChanges must succeed without a concurrency exception.
         var anchor = DateTime.UtcNow.AddSeconds(-10);
-        await database.Context.SetCurrentPeriodStart(entity, anchor);
+        await database.SetCurrentPeriodStart(entity, anchor);
 
         entity.Property = "v2";
         await database.Context.SaveChangesAsync();
@@ -82,7 +82,7 @@ public class TemporalTests
     {
         await using var database = await instance.Build();
         var ex = ThrowsAsync<InvalidOperationException>(() =>
-            database.Context.SetCurrentPeriodStart<NonTemporalEntity>(Guid.NewGuid(), DateTime.UtcNow));
+            database.SetCurrentPeriodStart<NonTemporalEntity>(Guid.NewGuid(), DateTime.UtcNow));
         That(ex!.Message, Does.Contain("not configured as a temporal table"));
     }
 }
