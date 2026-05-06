@@ -1,13 +1,9 @@
 namespace EfLocalDb;
 
 sealed record TemporalSchema(
-    string Schema,
-    string Table,
-    string HistorySchema,
-    string HistoryTable,
-    string PeriodStart,
-    string PeriodEnd,
-    string KeyColumn,
+    string OpenSql,
+    string UpdateSql,
+    string CloseSql,
     string KeyPropertyName)
 {
     public static TemporalSchema? TryBuild(IReadOnlyEntityType entityType)
@@ -50,53 +46,45 @@ sealed record TemporalSchema(
             return null;
         }
 
-        return new(
-            rawSchema ?? "dbo",
-            table,
-            root.GetHistoryTableSchema() ?? rawSchema ?? "dbo",
-            historyTable,
-            periodStart,
-            periodEnd,
-            keyColumn,
-            keyProperty.Name);
-    }
-
-    public async Task Apply(DbContext db, object id, DateTime periodStart)
-    {
-        var qTable = $"[{Schema}].[{Table}]";
-        var qHistory = $"[{HistorySchema}].[{HistoryTable}]";
-        var qStart = $"[{PeriodStart}]";
-        var qEnd = $"[{PeriodEnd}]";
-        var qKey = $"[{KeyColumn}]";
+        var qTable = $"[{rawSchema ?? "dbo"}].[{table}]";
+        var qHistory = $"[{root.GetHistoryTableSchema() ?? rawSchema ?? "dbo"}].[{historyTable}]";
+        var qStart = $"[{periodStart}]";
+        var qEnd = $"[{periodEnd}]";
+        var qKey = $"[{keyColumn}]";
 
         // SQL Server caches the GENERATED ALWAYS check at batch parse time, so the DDL that
         // drops the PERIOD must commit in its own batch before the UPDATE — otherwise the
         // UPDATE is rejected even though PERIOD is gone by execution time. The two UPDATEs
-        // and the closing DDL pair have no such cross-batch constraint and can be combined.
-        await Exec(
-            db,
+        // and the closing DDL pair have no such cross-batch constraint and are combined.
+        var openSql =
             $"""
              ALTER TABLE {qTable} SET (SYSTEM_VERSIONING = OFF);
              ALTER TABLE {qTable} DROP PERIOD FOR SYSTEM_TIME;
-             """);
+             """;
+        var updateSql =
+            $$"""
+              UPDATE {{qTable}} SET {{qStart}} = {0} WHERE {{qKey}} = {1};
+              UPDATE {{qHistory}} SET {{qEnd}} = {0} WHERE {{qKey}} = {1} AND {{qEnd}} = (SELECT MAX({{qEnd}}) FROM {{qHistory}} WHERE {{qKey}} = {1});
+              """;
+        var closeSql =
+            $"""
+             ALTER TABLE {qTable} ADD PERIOD FOR SYSTEM_TIME ({qStart}, {qEnd});
+             ALTER TABLE {qTable} SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = {qHistory}));
+             """;
+
+        return new(openSql, updateSql, closeSql, keyProperty.Name);
+    }
+
+    public async Task Apply(DbContext db, object id, DateTime periodStart)
+    {
+        await Exec(db, OpenSql);
         try
         {
-            await Exec(
-                db,
-                $$"""
-                  UPDATE {{qTable}} SET {{qStart}} = {0} WHERE {{qKey}} = {1};
-                  UPDATE {{qHistory}} SET {{qEnd}} = {0} WHERE {{qKey}} = {1} AND {{qEnd}} = (SELECT MAX({{qEnd}}) FROM {{qHistory}} WHERE {{qKey}} = {1});
-                  """,
-                periodStart, id);
+            await Exec(db, UpdateSql, periodStart, id);
         }
         finally
         {
-            await Exec(
-                db,
-                $"""
-                 ALTER TABLE {qTable} ADD PERIOD FOR SYSTEM_TIME ({qStart}, {qEnd});
-                 ALTER TABLE {qTable} SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = {qHistory}));
-                 """);
+            await Exec(db, CloseSql);
         }
     }
 
