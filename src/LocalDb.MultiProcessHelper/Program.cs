@@ -9,10 +9,6 @@
 //   and exits 0 to signal "race observed". Any other failure exits 1. If no error fires
 //   within the duration, exits 2 ("race not observed in window").
 
-using System.ComponentModel;
-using LocalDb;
-using Microsoft.Data.SqlClient;
-
 if (args.Length < 1)
 {
     Console.Error.WriteLine("Usage: <mode> <args...>  (mode is wrapper-start | killer | victim)");
@@ -28,13 +24,13 @@ return mode switch
     _               => Fail($"Unknown mode: {mode}")
 };
 
-int Fail(string message)
+static int Fail(string message)
 {
     Console.Error.WriteLine(message);
     return 64;
 }
 
-async Task<int> RunWrapperStartAsync(string[] args)
+static async Task<int> RunWrapperStartAsync(string[] args)
 {
     if (args.Length < 3)
     {
@@ -49,8 +45,7 @@ async Task<int> RunWrapperStartAsync(string[] args)
     try
     {
         using var wrapper = new Wrapper(instanceName, directory);
-        Func<SqlConnection, Task> noOp = _ => Task.CompletedTask;
-        wrapper.Start(new DateTime(2000, 1, 1), noOp);
+        wrapper.Start(new(2000, 1, 1), _ => Task.CompletedTask);
         await wrapper.AwaitStart();
         Console.Out.WriteLine($"pid {Environment.ProcessId}: success");
         return 0;
@@ -62,7 +57,7 @@ async Task<int> RunWrapperStartAsync(string[] args)
     }
 }
 
-async Task<int> RunKillerAsync(string[] args)
+static async Task<int> RunKillerAsync(string[] args)
 {
     if (args.Length < 3)
     {
@@ -92,7 +87,7 @@ async Task<int> RunKillerAsync(string[] args)
     return 0;
 }
 
-async Task<int> RunVictimAsync(string[] args)
+static async Task<int> RunVictimAsync(string[] args)
 {
     if (args.Length < 3)
     {
@@ -149,7 +144,7 @@ async Task<int> RunVictimAsync(string[] args)
     return 1;
 }
 
-bool HasNativeCode(Exception exception, int code)
+static bool HasNativeCode(Exception exception, int code)
 {
     var current = exception;
     while (current != null)
@@ -163,7 +158,7 @@ bool HasNativeCode(Exception exception, int code)
     return false;
 }
 
-async Task WaitForSignalAsync(string signalFile)
+static async Task WaitForSignalAsync(string signalFile)
 {
     while (!File.Exists(signalFile))
     {
@@ -171,7 +166,7 @@ async Task WaitForSignalAsync(string signalFile)
     }
 }
 
-void ReportException(Exception exception)
+static void ReportException(Exception exception)
 {
     Console.Error.WriteLine($"pid {Environment.ProcessId}: {exception.GetType().Name}: {FirstLine(exception.Message)}");
     var inner = exception.InnerException;
@@ -186,4 +181,4 @@ void ReportException(Exception exception)
     }
 }
 
-string FirstLine(string message) => message.Replace("\r", "").Split('\n')[0];
+static string FirstLine(string message) => message.Replace("\r", "").Split('\n')[0];

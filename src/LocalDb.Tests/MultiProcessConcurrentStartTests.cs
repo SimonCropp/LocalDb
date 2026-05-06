@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 // Demonstrates that the AiCliDetector prefix scheme isolates an AI process from a human
 // process at the LocalDB-instance level. The "human" child uses the unprefixed name; the
 // "AI" child has the CLAUDECODE env var set and runs against the chatbot_-prefixed name.
@@ -57,9 +55,12 @@ public class MultiProcessConcurrentStartTests
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                Environment =
+                {
+                    ["CLAUDECODE"] = "1"
+                }
             };
-            aiPsi.Environment["CLAUDECODE"] = "1";
             processes.Add(Process.Start(aiPsi)!);
 
             // Give every child enough time to load its CLR, hit the signal-file wait loop, and be ready.
@@ -97,7 +98,7 @@ public class MultiProcessConcurrentStartTests
             var summary = string.Join(
                 Environment.NewLine,
                 failures.Select(f => $"  exit {f.ExitCode}: {f.Stderr.Trim().Replace(Environment.NewLine, " | ")}"));
-            Assert.Fail($"{failures.Count}/{processes.Count} child processes failed:{Environment.NewLine}{summary}");
+            Fail($"{failures.Count}/{processes.Count} child processes failed:{Environment.NewLine}{summary}");
         }
     }
 }

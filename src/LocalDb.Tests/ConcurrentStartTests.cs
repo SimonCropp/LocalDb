@@ -24,7 +24,7 @@
 [TestFixture]
 public class ConcurrentStartTests
 {
-    static readonly DateTime Timestamp = new(2000, 1, 1);
+    static readonly DateTime timestamp = new(2000, 1, 1);
 
     [Test]
     public async Task ConcurrentStartWithMissingTemplateShouldNotRace()
@@ -60,12 +60,12 @@ public class ConcurrentStartTests
                     await Task.WhenAll(
                         Task.Run(async () =>
                         {
-                            wrapperHuman.Start(Timestamp, TestDbBuilder.CreateTable);
+                            wrapperHuman.Start(timestamp, TestDbBuilder.CreateTable);
                             await wrapperHuman.AwaitStart();
                         }),
                         Task.Run(async () =>
                         {
-                            wrapperAi.Start(Timestamp, TestDbBuilder.CreateTable);
+                            wrapperAi.Start(timestamp, TestDbBuilder.CreateTable);
                             await wrapperAi.AwaitStart();
                         }));
                 }
@@ -97,7 +97,7 @@ public class ConcurrentStartTests
                     Environment.NewLine,
                     failures.Select(f => $"  iteration {f.Iteration}: {f.Exception.GetType().Name}: {f.Exception.Message.Split('\n')[0]} → innermost: {Describe(f.Exception)}"));
 
-                Assert.Fail(
+                Fail(
                     $"{failures.Count}/{iterations} concurrent Wrapper.Start iterations failed:{Environment.NewLine}{summary}");
             }
         }

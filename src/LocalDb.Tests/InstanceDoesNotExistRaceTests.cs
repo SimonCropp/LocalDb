@@ -1,4 +1,4 @@
-using System.Diagnostics;
+
 
 // Deterministic reproducer for native error 0x89C50107 / LOCALDB_ERROR_INSTANCE_DOES_NOT_EXIST.
 //
@@ -64,7 +64,7 @@ public class InstanceDoesNotExistRaceTests
 
             if (victim.ExitCode != 0)
             {
-                Assert.Fail(
+                Fail(
                     $"victim exit code {victim.ExitCode} (expected 0 = race observed).{Environment.NewLine}" +
                     $"victim stdout: {victimStdout.Trim()}{Environment.NewLine}" +
                     $"victim stderr: {victimStderr.Trim()}{Environment.NewLine}" +
