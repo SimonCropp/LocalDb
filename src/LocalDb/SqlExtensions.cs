@@ -1,8 +1,8 @@
 ﻿static class SqlExtensions
 {
-    public static async Task ExecuteCommandAsync(this SqlConnection connection, string commandText)
+    public static async Task ExecuteCommandAsync(this SqlConnection connection, params string[] commandTexts)
     {
-        commandText = commandText.Trim();
+        var commandText = string.Join('\n', commandTexts).Trim();
 
         try
         {

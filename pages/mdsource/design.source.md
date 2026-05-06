@@ -37,6 +37,17 @@ The usual approach for consuming the API in a test project is as follows.
 
 This assumes that there is a schema and data (and DbContext in the EntityFramework context) used for all tests. If those caveats are not correct then multiple SqlInstances can be used.
 
+
+## Template database settings
+
+When the template is built, a few database-level settings are applied. These persist in the template's `.mdf`/`.ldf` files and are inherited by every database attached from the template.
+
+ * `auto_update_statistics off` — avoids background statistics updates causing nondeterministic test timing.
+ * `read_committed_snapshot on` — `READ COMMITTED` uses row versioning instead of shared locks. Required to prevent S/X-lock deadlocks between parallel `[SharedDbWithTransaction]` tests against the same shared database.
+
+If the template files already exist on disk from a previous build, these settings are not reapplied — the template needs to be regenerated (delete the template files, or change the timestamp passed to `SqlInstance`) for new settings to take effect.
+
+
 More information:
 
  * [Raw SqlConnection Usage](/pages/raw-usage.md)
