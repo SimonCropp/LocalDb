@@ -69,26 +69,34 @@ sealed record TemporalSchema(
         var qEnd = $"[{PeriodEnd}]";
         var qKey = $"[{KeyColumn}]";
 
-        // SQL Server caches the GENERATED ALWAYS check at batch parse time, so DROP PERIOD
-        // must commit in its own batch before the UPDATE — otherwise the UPDATE is rejected
-        // even though PERIOD is gone by execution time.
-        await Exec(db, $"ALTER TABLE {qTable} SET (SYSTEM_VERSIONING = OFF);");
-        await Exec(db, $"ALTER TABLE {qTable} DROP PERIOD FOR SYSTEM_TIME;");
+        // SQL Server caches the GENERATED ALWAYS check at batch parse time, so the DDL that
+        // drops the PERIOD must commit in its own batch before the UPDATE — otherwise the
+        // UPDATE is rejected even though PERIOD is gone by execution time. The two UPDATEs
+        // and the closing DDL pair have no such cross-batch constraint and can be combined.
+        await Exec(
+            db,
+            $"""
+             ALTER TABLE {qTable} SET (SYSTEM_VERSIONING = OFF);
+             ALTER TABLE {qTable} DROP PERIOD FOR SYSTEM_TIME;
+             """);
         try
         {
             await Exec(
                 db,
-                $"UPDATE {qTable} SET {qStart} = {{0}} WHERE {qKey} = {{1}};",
-                periodStart, id);
-            await Exec(
-                db,
-                $"UPDATE {qHistory} SET {qEnd} = {{0}} WHERE {qKey} = {{1}} AND {qEnd} = (SELECT MAX({qEnd}) FROM {qHistory} WHERE {qKey} = {{1}});",
+                $$"""
+                  UPDATE {{qTable}} SET {{qStart}} = {0} WHERE {{qKey}} = {1};
+                  UPDATE {{qHistory}} SET {{qEnd}} = {0} WHERE {{qKey}} = {1} AND {{qEnd}} = (SELECT MAX({{qEnd}}) FROM {{qHistory}} WHERE {{qKey}} = {1});
+                  """,
                 periodStart, id);
         }
         finally
         {
-            await Exec(db, $"ALTER TABLE {qTable} ADD PERIOD FOR SYSTEM_TIME ({qStart}, {qEnd});");
-            await Exec(db, $"ALTER TABLE {qTable} SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = {qHistory}));");
+            await Exec(
+                db,
+                $"""
+                 ALTER TABLE {qTable} ADD PERIOD FOR SYSTEM_TIME ({qStart}, {qEnd});
+                 ALTER TABLE {qTable} SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = {qHistory}));
+                 """);
         }
     }
 
