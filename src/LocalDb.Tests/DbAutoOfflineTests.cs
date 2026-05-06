@@ -110,7 +110,7 @@ public class DbAutoOfflineTests
         AreEqual("ONLINE", state);
 
         // Verify data is intact
-        var dbConnectionString = $"Data Source=(LocalDb)\\DbAutoOffline_Reattach;Database={dbName};Integrated Security=True;Encrypt=False";
+        var dbConnectionString = $"Data Source={instance.ServerName};Database={dbName};Integrated Security=True;Encrypt=False";
         await using var dbConnection = new SqlConnection(dbConnectionString);
         await dbConnection.OpenAsync();
         var values = await TestDbBuilder.GetData(dbConnection);
