@@ -260,15 +260,7 @@ class Wrapper : IDisposable
                     await connection.ExecuteCommandAsync("checkpoint");
                 }
 
-                await masterConnection.ExecuteCommandAsync("alter database [template] set auto_update_statistics off");
-
-                // Enable READ_COMMITTED_SNAPSHOT so READ COMMITTED uses row versioning instead
-                // of shared locks. Required for parallel [SharedDbWithTransaction] tests against
-                // the same shared database — without it, two concurrent test transactions can
-                // hit textbook S/X-lock deadlocks (each holds shared locks the other needs to
-                // upgrade for writes). The setting is persisted in the database file, so all
-                // databases attached from this template inherit it.
-                await masterConnection.ExecuteCommandAsync("alter database [template] set read_committed_snapshot on");
+                await masterConnection.ExecuteCommandAsync(SqlBuilder.TemplateSettingsCommand);
 
                 // Detach the template database after callback completes
                 await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
@@ -307,16 +299,7 @@ class Wrapper : IDisposable
             await connection.ExecuteCommandAsync("checkpoint");
         }
 
-        await masterConnection.ExecuteCommandAsync("alter database [template] set auto_update_statistics off");
-
-        // Enable READ_COMMITTED_SNAPSHOT so READ COMMITTED uses row versioning instead of
-        // shared locks. Required for parallel [SharedDbWithTransaction] tests against the
-        // same shared database — without it, two concurrent test transactions can hit
-        // textbook S/X-lock deadlocks (each holds shared locks the other needs to upgrade
-        // for writes). The setting is persisted in the database file, so all databases
-        // attached from this template inherit it.
-        await masterConnection.ExecuteCommandAsync("alter database [template] set read_committed_snapshot on");
-
+        await masterConnection.ExecuteCommandAsync(SqlBuilder.TemplateSettingsCommand);
         await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachAndShrinkTemplateCommand);
 
         File.SetCreationTime(DataFile, timestamp);

@@ -50,6 +50,20 @@ static class SqlBuilder
         execute sp_detach_db N'template', 'true';
         """;
 
+    // Database-level settings applied to the template before detach. Persisted in the
+    // .mdf/.ldf files, so every database attached from the template inherits them.
+    //   auto_update_statistics off  - avoids background stats updates causing
+    //                                 nondeterministic test timing.
+    //   read_committed_snapshot on  - READ COMMITTED uses row versioning instead of
+    //                                 shared locks, preventing S/X-lock deadlocks
+    //                                 between parallel [SharedDbWithTransaction] tests
+    //                                 against the same shared database.
+    public static string TemplateSettingsCommand =
+        """
+        alter database [template] set auto_update_statistics off;
+        alter database [template] set read_committed_snapshot on;
+        """;
+
     public static string DetachAndShrinkTemplateCommand =
         """
         use [template];
