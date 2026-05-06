@@ -101,6 +101,22 @@ For each call the helper runs, in separate batches:
 Steps 5 and 6 run in a `finally` so a failed UPDATE doesn't leave the table without versioning.
 
 
+## Performance
+
+Each call performs three round trips to SQL Server (opening DDL pair, the two UPDATEs combined, closing DDL pair). The dominant costs are:
+
+- Four `ALTER TABLE` statements, each taking a `Sch-M` lock on the table and invalidating the plan cache for that table.
+- The data-consistency check that runs when re-enabling system versioning. This validates that the current table's periods don't overlap any rows in the entire history table — it scales with history-row count, not with the entity being touched.
+
+Typical cost on a small test database is around 5–15 ms per call. By comparison, replacing `await Task.Delay(TimeSpan.FromSeconds(5))` between four saves with four `SetCurrentPeriodStart` calls reduces test time from roughly 20 s to roughly 40 ms while making the timing deterministic.
+
+
+### Scaling pitfalls
+
+- **Avoid loops over many rows.** Calling `SetCurrentPeriodStart` after each of N inserts on the same table makes the Nth call re-validate all N existing history rows — overall cost is O(N²). For seeding many rows with backdated history, write a dedicated bulk path that disables versioning, inserts directly into the history table, then re-enables.
+- **Plan cache flush.** Each call invalidates plans for the affected table. Subsequent EF queries pay one recompile each. Negligible for a few calls, measurable in the hundreds.
+
+
 ## Caveats
 
 - `periodStart` must be **strictly greater** than the row's previous `PeriodStart`. Otherwise re-enabling system versioning fails with a period-overlap error.
