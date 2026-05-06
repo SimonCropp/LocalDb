@@ -260,10 +260,10 @@ class Wrapper : IDisposable
                     await connection.ExecuteCommandAsync("checkpoint");
                 }
 
-                await masterConnection.ExecuteCommandAsync(SqlBuilder.TemplateSettingsCommand);
-
-                // Detach the template database after callback completes
-                await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachTemplateCommand);
+                // Apply template settings then detach in a single batch.
+                await masterConnection.ExecuteCommandAsync(
+                    SqlBuilder.TemplateSettingsCommand,
+                    SqlBuilder.DetachTemplateCommand);
             }
         }
     }
@@ -299,8 +299,9 @@ class Wrapper : IDisposable
             await connection.ExecuteCommandAsync("checkpoint");
         }
 
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.TemplateSettingsCommand);
-        await masterConnection.ExecuteCommandAsync(SqlBuilder.DetachAndShrinkTemplateCommand);
+        await masterConnection.ExecuteCommandAsync(
+            SqlBuilder.TemplateSettingsCommand,
+            SqlBuilder.DetachAndShrinkTemplateCommand);
 
         File.SetCreationTime(DataFile, timestamp);
     }
