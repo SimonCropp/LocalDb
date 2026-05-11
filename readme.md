@@ -137,9 +137,10 @@ See the official guidance: [InMemory is not a relational database](https://docs.
 
  * [Which Edition of SQL Server is Best for Development Work?](https://www.red-gate.com/simple-talk/sql/sql-development/edition-sql-server-best-development-work/#8)
  * [Introducing SqlLocalDB, an improved SQL Express](https://blogs.msdn.microsoft.com/sqlexpress/2011/07/12/introducing-localdb-an-improved-sql-express/)
- * [SQL LocalDB 2022 Download](https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi)
+ * [SQL LocalDB 2022 Download](https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi) — currently the newest standalone `SqlLocalDB.msi` direct link Microsoft publishes.
  * [SQL Server 2022 Cumulative Update](https://learn.microsoft.com/en-us/troubleshoot/sql/releases/sqlserver-2022/build-versions) required to update LocalDb to the latest version.
  * [SQL Server 2022 Express via Chocolatey](https://community.chocolatey.org/packages/sql-server-express): `choco install sql-server-express`
+ * SQL Server 2025 LocalDB has no equivalent standalone direct-download MSI. It ships inside the SQL Server 2025 Express installer — run the Express bootstrapper and choose "Download Media" to extract `SqlLocalDB.msi` from `<media>\<LCID>_ENU_LP\x64\Setup\x64\`. Note: the original 2025 LocalDB MSI is missing native binaries for new engine features (REGEXP, VECTOR); [fixed in CU3](https://erikej.github.io/sqlserver/localdb/2026/03/13/localdb-sqlserver-2025.html).
 
 
 ## Usage
