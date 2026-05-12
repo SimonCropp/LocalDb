@@ -73,7 +73,6 @@ class Wrapper : IDisposable
             throw new ArgumentException($"Invalid database name. Name must be valid to use as a file name. Value: {name}", nameof(name));
         }
 
-        // Explicitly dont take offline here, since that is done at startup
         var dataFile = Path.Combine(Directory, $"{name}.mdf");
         var logFile = Path.Combine(Directory, $"{name}_log.ldf");
 
@@ -88,7 +87,12 @@ class Wrapper : IDisposable
         using (var masterConnection = await OpenMasterConnection())
 #endif
         {
-            await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
+            // Only take offline if the target files already exist — otherwise the DB cannot be attached
+            // and the round-trip is wasted (common case for fresh test DB names).
+            if (File.Exists(dataFile))
+            {
+                await masterConnection.ExecuteCommandAsync(SqlBuilder.GetTakeDbsOfflineCommand(name));
+            }
 
             // Copy data and log files in parallel for better performance
             await Task.WhenAll(
