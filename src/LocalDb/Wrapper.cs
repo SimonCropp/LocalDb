@@ -140,28 +140,33 @@ class Wrapper : IDisposable
     public async Task<SqlConnection> OpenSharedDatabase(
         Func<SqlConnection, Task>? initialize = null)
     {
-        await sharedLock.WaitAsync();
-        try
+        // Double-checked pattern: once the Shared DB is created the lock is no longer needed,
+        // and the common case (after first call) skips the semaphore entirely.
+        if (!Volatile.Read(ref sharedCreated))
         {
-            if (!sharedCreated)
+            await sharedLock.WaitAsync();
+            try
             {
-                var initConnection = await CreateDatabaseFromTemplate("Shared");
-                if (initialize != null)
+                if (!sharedCreated)
                 {
-                    await initialize(initConnection);
-                }
+                    var initConnection = await CreateDatabaseFromTemplate("Shared");
+                    if (initialize != null)
+                    {
+                        await initialize(initConnection);
+                    }
 
 #if NET5_0_OR_GREATER
-                await initConnection.DisposeAsync();
+                    await initConnection.DisposeAsync();
 #else
-                initConnection.Dispose();
+                    initConnection.Dispose();
 #endif
-                sharedCreated = true;
+                    Volatile.Write(ref sharedCreated, true);
+                }
             }
-        }
-        finally
-        {
-            sharedLock.Release();
+            finally
+            {
+                sharedLock.Release();
+            }
         }
 
         return await OpenExistingDatabase("Shared");
