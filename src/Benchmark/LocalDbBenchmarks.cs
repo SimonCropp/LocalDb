@@ -9,9 +9,7 @@ public class LocalDbBenchmarks
     int databaseCounter;
 
     [GlobalSetup]
-#pragma warning disable CA1822
-    public void Setup()
-#pragma warning restore CA1822
+    public async Task Setup()
     {
         LocalDbLogging.EnableVerbose();
         LocalDbSettings.ConnectionBuilder(_ => _.ConnectTimeout = 300);
@@ -22,6 +20,10 @@ public class LocalDbBenchmarks
         sqlInstance = new(
             name: "Benchmark",
             buildTemplate: CreateTable);
+
+        // Force template build to complete so the diagnoser (which connects from the BDN host process)
+        // can reach the LocalDB instance once warmup starts.
+        await sqlInstance.Wrapper.AwaitStart();
     }
 
     [GlobalCleanup]
