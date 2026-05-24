@@ -58,10 +58,14 @@ static class SqlBuilder
     //                                 shared locks, preventing S/X-lock deadlocks
     //                                 between parallel [SharedDbWithTransaction] tests
     //                                 against the same shared database.
+    // read_committed_snapshot requires exclusive access to the database, so it uses
+    // "with rollback immediate" to evict any sessions a buildTemplate/callback left
+    // open (e.g. an SMO ServerConnection). Without it the statement blocks on those
+    // sessions until the command timeout expires.
     public static string TemplateSettingsCommand =
         """
         alter database [template] set auto_update_statistics off;
-        alter database [template] set read_committed_snapshot on;
+        alter database [template] set read_committed_snapshot on with rollback immediate;
         """;
 
     public static string DetachAndShrinkTemplateCommand =

@@ -78,6 +78,40 @@ public class Tests
         True(callbackCalled);
     }
 
+    [Test]
+    public async Task BuildTemplateLeavesConnectionOpen()
+    {
+        // Mimics a buildTemplate callback (e.g. an SMO ServerConnection) that opens its
+        // own connection to the template and leaves it open. Setting read_committed_snapshot
+        // requires exclusive access, so the rebuild must evict that lingering session
+        // ("with rollback immediate"); otherwise the alter blocks until the command timeout.
+        SqlConnection? leaked = null;
+        using var instance = new SqlInstance(
+            "Tests_BuildTemplateLeavesConnectionOpen",
+            async connection =>
+            {
+                await TestDbBuilder.CreateTable(connection);
+                leaked = new(connection.ConnectionString);
+                await leaked.OpenAsync();
+            });
+
+        try
+        {
+            await using var database = await instance.Build();
+            var data = await TestDbBuilder.AddData(database.Connection);
+            Contains(data, await TestDbBuilder.GetData(database.Connection));
+        }
+        finally
+        {
+            if (leaked != null)
+            {
+                await leaked.DisposeAsync();
+            }
+
+            instance.Cleanup();
+        }
+    }
+
     //[Test]
     //public async Task SuppliedTemplate()
     //{

@@ -271,7 +271,7 @@ public async Task SharedDatabase()
     AreEqual(0, data.Count);
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Tests.cs#L148-L162' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Tests.cs#L182-L196' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Pass `useTransaction: true` to get an auto-rolling-back transaction, allowing writes without affecting other tests.
@@ -307,5 +307,5 @@ public async Task SharedDatabase_WithTransaction()
     AreEqual(0, data.Count);
 }
 ```
-<sup><a href='/src/LocalDb.Tests/Tests.cs#L181-L209' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/LocalDb.Tests/Tests.cs#L215-L243' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDatabase_WithTransaction' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
