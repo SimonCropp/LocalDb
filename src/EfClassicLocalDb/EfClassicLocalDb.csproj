@@ -34,6 +34,7 @@
     <Compile Include="..\LocalDb\Wrapper.cs" />
     <Compile Include="..\LocalDb\State.cs" />
     <Compile Include="..\LocalDb\CiDetection.cs" />
+    <Compile Include="..\LocalDb\AiCliDetector.cs" />
 
     <!-- explicit ref to avoid CVE -->
     <PackageReference Include="System.Drawing.Common" />

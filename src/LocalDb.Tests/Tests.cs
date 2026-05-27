@@ -172,11 +172,56 @@ public class Tests
     [Test]
     public void DirectoryParameter_ShouldBeUsed()
     {
-        var customDirectory = Path.Combine(Path.GetTempPath(), "CustomLocalDbDirectory");
-        var instance = new SqlInstance("DirectoryTest", TestDbBuilder.CreateTable, directory: customDirectory);
-        var actualDirectory = instance.Wrapper.Directory;
-        AreEqual(customDirectory, actualDirectory, "The directory parameter should be used, not overwritten");
-        instance.Cleanup();
+        var originalDetected = AiCliDetector.Detected;
+        try
+        {
+            // Without AI detection, an explicit directory parameter is used verbatim.
+            AiCliDetector.Detected = false;
+
+            var customDirectory = Path.Combine(Path.GetTempPath(), "CustomLocalDbDirectory");
+            var instance = new SqlInstance("DirectoryTest", TestDbBuilder.CreateTable, directory: customDirectory);
+            try
+            {
+                var actualDirectory = instance.Wrapper.Directory;
+                AreEqual(customDirectory, actualDirectory, "The directory parameter should be used, not overwritten");
+            }
+            finally
+            {
+                instance.Cleanup();
+            }
+        }
+        finally
+        {
+            AiCliDetector.Detected = originalDetected;
+        }
+    }
+
+    [Test]
+    public void DirectoryParameter_LeafIsPrefixed_WhenAiDetected()
+    {
+        var originalDetected = AiCliDetector.Detected;
+        try
+        {
+            // With AI detection, the leaf segment of an explicit directory is prefixed so AI
+            // and human runs don't share a template folder even with caller-supplied paths.
+            AiCliDetector.Detected = true;
+
+            var customDirectory = Path.Combine(Path.GetTempPath(), "CustomLocalDbDirectory");
+            var expectedDirectory = Path.Combine(Path.GetTempPath(), "chatbot_CustomLocalDbDirectory");
+            var instance = new SqlInstance("DirectoryTestAi", TestDbBuilder.CreateTable, directory: customDirectory);
+            try
+            {
+                AreEqual(expectedDirectory, instance.Wrapper.Directory);
+            }
+            finally
+            {
+                instance.Cleanup();
+            }
+        }
+        finally
+        {
+            AiCliDetector.Detected = originalDetected;
+        }
     }
 
     #region SharedDatabase
