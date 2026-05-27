@@ -63,8 +63,8 @@ public struct Storage
     {
         Ensure.NotNullOrWhiteSpace(directory);
         Ensure.NotNullOrWhiteSpace(name);
-        Name = name;
-        Directory = directory;
+        Name = AiCliDetector.PrefixIfDetected(name);
+        Directory = AiCliDetector.PrefixDirectoryIfDetected(directory);
     }
 
     /// <summary>

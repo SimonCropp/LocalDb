@@ -79,10 +79,7 @@ public partial class SqlInstance :
         }
 
         Ensure.NotNullOrWhiteSpace(name);
-        if (AiCliDetector.Detected)
-        {
-            name = "chatbot_" + name;
-        }
+        name = AiCliDetector.PrefixIfDetected(name);
 
         if (directory == null)
         {
@@ -91,6 +88,7 @@ public partial class SqlInstance :
         else
         {
             Ensure.NotWhiteSpace(directory);
+            directory = AiCliDetector.PrefixDirectoryIfDetected(directory);
         }
 
         this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);

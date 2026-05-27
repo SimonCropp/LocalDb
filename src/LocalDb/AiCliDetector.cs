@@ -64,4 +64,45 @@ static class AiCliDetector
     }
 
     public static bool Detected { get; set; }
+
+    public const string Prefix = "chatbot_";
+
+    /// <summary>
+    /// Prepends <see cref="Prefix"/> to <paramref name="name"/> when an AI CLI session is
+    /// detected, isolating instance / storage names between AI and human-driven runs.
+    /// Idempotent — a name that already starts with <see cref="Prefix"/> is returned unchanged.
+    /// </summary>
+    public static string PrefixIfDetected(string name)
+    {
+        if (!Detected || name.StartsWith(Prefix, StringComparison.Ordinal))
+        {
+            return name;
+        }
+
+        return Prefix + name;
+    }
+
+    /// <summary>
+    /// Prepends <see cref="Prefix"/> to the leaf segment of <paramref name="directory"/> when
+    /// an AI CLI session is detected, so AI and human runs don't share an on-disk template
+    /// folder even when callers supply an explicit directory.
+    /// Idempotent — a leaf that already starts with <see cref="Prefix"/> is returned unchanged.
+    /// </summary>
+    public static string PrefixDirectoryIfDetected(string directory)
+    {
+        if (!Detected)
+        {
+            return directory;
+        }
+
+        var leaf = Path.GetFileName(directory);
+        if (leaf.StartsWith(Prefix, StringComparison.Ordinal))
+        {
+            return directory;
+        }
+
+        var parent = Path.GetDirectoryName(directory);
+        var prefixedLeaf = Prefix + leaf;
+        return parent is null ? prefixedLeaf : Path.Combine(parent, prefixedLeaf);
+    }
 }
