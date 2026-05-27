@@ -33,11 +33,7 @@ public class InstanceDoesNotExistRaceTests
         LocalDbApi.CreateInstance(name);
         LocalDbApi.StartInstance(name);
 
-        var signalFile = Path.Combine(Path.GetTempPath(), $"{name}_{Guid.NewGuid():N}.signal");
-        if (File.Exists(signalFile))
-        {
-            File.Delete(signalFile);
-        }
+        using var signalFile = new TempFile();
 
         Process? killer = null;
         Process? victim = null;
@@ -79,10 +75,6 @@ public class InstanceDoesNotExistRaceTests
         {
             killer?.Dispose();
             victim?.Dispose();
-            if (File.Exists(signalFile))
-            {
-                File.Delete(signalFile);
-            }
             LocalDbApi.StopAndDelete(name);
         }
     }

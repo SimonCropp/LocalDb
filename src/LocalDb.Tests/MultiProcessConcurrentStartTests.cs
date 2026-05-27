@@ -26,11 +26,7 @@ public class MultiProcessConcurrentStartTests
             LocalDbApi.StartInstance(instanceName);
         }
 
-        var signalFile = Path.Combine(Path.GetTempPath(), $"{humanName}_{Guid.NewGuid():N}.signal");
-        if (File.Exists(signalFile))
-        {
-            File.Delete(signalFile);
-        }
+        using var signalFile = new TempFile();
 
         var processes = new List<Process>();
         var outputs = new List<(int ExitCode, string Stdout, string Stderr)>();
@@ -80,10 +76,6 @@ public class MultiProcessConcurrentStartTests
             foreach (var process in processes)
             {
                 process.Dispose();
-            }
-            if (File.Exists(signalFile))
-            {
-                File.Delete(signalFile);
             }
             foreach (var instanceName in new[] { humanName, aiName })
             {

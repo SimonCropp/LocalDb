@@ -178,12 +178,12 @@ public class Tests
             // Without AI detection, an explicit directory parameter is used verbatim.
             AiCliDetector.Detected = false;
 
-            var customDirectory = Path.Combine(Path.GetTempPath(), "CustomLocalDbDirectory");
+            using var customDirectory = new TempDirectory();
             var instance = new SqlInstance("DirectoryTest", TestDbBuilder.CreateTable, directory: customDirectory);
             try
             {
                 var actualDirectory = instance.Wrapper.Directory;
-                AreEqual(customDirectory, actualDirectory, "The directory parameter should be used, not overwritten");
+                AreEqual(customDirectory.Path, actualDirectory, "The directory parameter should be used, not overwritten");
             }
             finally
             {
