@@ -9,7 +9,7 @@
     <PackageVersion Include="DiffPlex" Version="1.9.0" />
     <PackageVersion Include="EntityFramework" Version="6.5.2" />
     <PackageVersion Include="Fody" Version="6.9.3" />
-    <PackageVersion Include="MarkdownSnippets.MsBuild" Version="28.2.0" />
+    <PackageVersion Include="MarkdownSnippets.MsBuild" Version="28.3.0" />
     <PackageVersion Include="MethodTimer.Fody" Version="3.2.3" />
     <PackageVersion Include="Microsoft.Data.SqlClient" Version="7.0.1" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.8" />
@@ -41,7 +41,7 @@
     <PackageVersion Include="Verify.XunitV3" Version="31.18.0" />
     <PackageVersion Include="MSTest" Version="4.2.3" />
     <PackageVersion Include="Verify.MSTest" Version="31.18.0" />
-    <PackageVersion Include="TUnit" Version="1.45.29" />
+    <PackageVersion Include="TUnit" Version="1.46.0" />
     <PackageVersion Include="Verify.TUnit" Version="31.18.0" />
   </ItemGroup>
 </Project>
