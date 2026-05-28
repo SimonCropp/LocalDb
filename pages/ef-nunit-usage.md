@@ -86,7 +86,6 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Initialize()
     {
-        VerifyDiffPlex.Initialize(OutputType.Compact);
         VerifierSettings.InitializePlugins();
         LocalDbLogging.EnableVerbose();
         LocalDbSettings.ConnectionBuilder(_ => _.ConnectTimeout = 300);
@@ -94,7 +93,7 @@ public static class ModuleInitializer
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.NUnit.Tests/ModuleInitializer.cs#L1-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.NUnit.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.NUnit.Tests/ModuleInitializer.cs#L1-L11' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.NUnit.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
