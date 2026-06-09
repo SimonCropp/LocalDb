@@ -40,7 +40,7 @@
     <PackageVersion Include="Verify.XunitV3" Version="31.19.0" />
     <PackageVersion Include="MSTest" Version="4.2.3" />
     <PackageVersion Include="Verify.MSTest" Version="31.19.0" />
-    <PackageVersion Include="TUnit" Version="1.51.0" />
+    <PackageVersion Include="TUnit" Version="1.53.0" />
     <PackageVersion Include="Verify.TUnit" Version="31.19.0" />
   </ItemGroup>
 </Project>
