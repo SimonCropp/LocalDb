@@ -3,9 +3,32 @@ namespace EfLocalDb;
 public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
-    // Populated by BuildModel during construction (which holds the only DbContext we
-    // construct at init — keeps the single-context invariant).
-    Dictionary<Type, TemporalSchema> temporalSchemas = [];
+    // Temporal metadata is stripped from the runtime model, so reading it requires the
+    // design-time model — a second full model compilation. Built lazily so instances that
+    // never use the temporal APIs skip that cost at startup.
+    Lazy<Dictionary<Type, TemporalSchema>> temporalSchemas;
+
+    static Dictionary<Type, TemporalSchema> BuildTemporalSchemas(
+        ConstructInstance<TDbContext> constructInstance,
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
+    {
+        var builder = DefaultOptionsBuilder.Build<TDbContext>();
+        builder.UseSqlServer("Fake", sqlOptionsBuilder);
+        using var context = constructInstance(builder);
+
+        var schemas = new Dictionary<Type, TemporalSchema>();
+        var designModel = context.GetService<IDesignTimeModel>().Model;
+        foreach (var entityType in designModel.GetEntityTypes())
+        {
+            var schema = TemporalSchema.TryBuild(entityType);
+            if (schema is not null)
+            {
+                schemas[entityType.ClrType] = schema;
+            }
+        }
+
+        return schemas;
+    }
 
     /// <summary>
     /// Re-stamps the entity's current PeriodStart and aligns the most recent history row's
@@ -24,7 +47,7 @@ public partial class SqlInstance<TDbContext>
     internal TemporalSchema ResolveSchema<TEntity>()
         where TEntity : class
     {
-        if (temporalSchemas.TryGetValue(typeof(TEntity), out var info))
+        if (temporalSchemas.Value.TryGetValue(typeof(TEntity), out var info))
         {
             return info;
         }

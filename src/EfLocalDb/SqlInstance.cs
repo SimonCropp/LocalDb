@@ -186,6 +186,8 @@ public partial class SqlInstance<TDbContext> :
         ushort? shutdownTimeout = null,
         bool? dbAutoOffline = null)
     {
+        temporalSchemas = new(() => BuildTemporalSchemas(constructInstance, sqlOptionsBuilder));
+
         if (!Guard.IsWindows)
         {
             return;
@@ -193,8 +195,6 @@ public partial class SqlInstance<TDbContext> :
 
         storage ??= defaultStorage;
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
-        Model = BuildModel(constructInstance, sqlOptionsBuilder, temporalSchemas);
-        InitEntityMapping();
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
@@ -202,6 +202,11 @@ public partial class SqlInstance<TDbContext> :
         var storageValue = storage.Value;
         StorageDirectory = storageValue.Directory;
         DirectoryCleaner.CleanInstance(StorageDirectory);
+
+        // The model build is CPU-bound, while Wrapper.Start blocks on the LocalDB instance
+        // spin-up and then runs the template build in the background. Neither the template
+        // build nor the callback reads Model, so the two can run concurrently.
+        var modelTask = Task.Run(() => BuildModel(constructInstance, sqlOptionsBuilder));
 
         Task BuildTemplate(SqlConnection connection)
         {
@@ -231,6 +236,9 @@ public partial class SqlInstance<TDbContext> :
             shutdownTimeout);
 
         Wrapper.Start(resultTimestamp, BuildTemplate);
+
+        Model = modelTask.GetAwaiter().GetResult();
+        InitEntityMapping();
     }
 
     public string StorageDirectory { get; } = null!;
@@ -252,24 +260,11 @@ public partial class SqlInstance<TDbContext> :
 
     static IModel BuildModel(
         ConstructInstance<TDbContext> constructInstance,
-        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder,
-        Dictionary<Type, TemporalSchema> temporalSchemas)
+        Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer("Fake", sqlOptionsBuilder);
         using var context = constructInstance(builder);
-
-        // Temporal metadata is stripped from the runtime model — read from design-time.
-        var designModel = context.GetService<IDesignTimeModel>().Model;
-        foreach (var entityType in designModel.GetEntityTypes())
-        {
-            var schema = TemporalSchema.TryBuild(entityType);
-            if (schema is not null)
-            {
-                temporalSchemas[entityType.ClrType] = schema;
-            }
-        }
-
         return context.Model;
     }
 
