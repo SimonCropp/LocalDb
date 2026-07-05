@@ -126,6 +126,14 @@ class Wrapper : IDisposable
 #endif
     }
 
+    // Must live on this non-generic type: a lambda inside SqlInstance<T> compiles into a
+    // closure class generic over T, and executing it resolves T's type handle. When the
+    // SqlInstance constructor runs inside a module or static initializer of T's assembly,
+    // that resolution on a thread-pool thread blocks on the initializer lock, and the
+    // constructor joining this task before returning turns that into a deadlock.
+    public Task StartOnThreadPool(DateTime timestamp, Func<SqlConnection, Task> buildTemplate) =>
+        Task.Run(() => Start(timestamp, buildTemplate));
+
     public Task AwaitStart() => startupTask;
 
     public async Task<SqlConnection> OpenExistingDatabase(string name)

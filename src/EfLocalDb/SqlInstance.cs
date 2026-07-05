@@ -203,11 +203,6 @@ public partial class SqlInstance<TDbContext> :
         StorageDirectory = storageValue.Directory;
         DirectoryCleaner.CleanInstance(StorageDirectory);
 
-        // The model build is CPU-bound, while Wrapper.Start blocks on the LocalDB instance
-        // spin-up and then runs the template build in the background. Neither the template
-        // build nor the callback reads Model, so the two can run concurrently.
-        var modelTask = Task.Run(() => BuildModel(constructInstance, sqlOptionsBuilder));
-
         Task BuildTemplate(SqlConnection connection)
         {
             var builder = DefaultOptionsBuilder.Build<TDbContext>();
@@ -235,10 +230,23 @@ public partial class SqlInstance<TDbContext> :
             wrapperCallback,
             shutdownTimeout);
 
-        Wrapper.Start(resultTimestamp, BuildTemplate);
-
-        Model = modelTask.GetAwaiter().GetResult();
-        InitEntityMapping();
+        // Wrapper.Start blocks on the LocalDB instance spin-up while the model build is
+        // CPU-bound, so run them concurrently: the instance start on a thread-pool task,
+        // the model build on the constructing thread. The model build cannot move to
+        // another thread: this constructor is commonly invoked from a module initializer,
+        // and code generic over TDbContext (or user code touching the initializing
+        // assembly) deadlocks on any thread but this one until that initializer completes.
+        // For the same reason the thread-pool dispatch lives on the non-generic Wrapper.
+        var startTask = Wrapper.StartOnThreadPool(resultTimestamp, BuildTemplate);
+        try
+        {
+            Model = BuildModel(constructInstance, sqlOptionsBuilder);
+            InitEntityMapping();
+        }
+        finally
+        {
+            startTask.GetAwaiter().GetResult();
+        }
     }
 
     public string StorageDirectory { get; } = null!;
