@@ -87,12 +87,16 @@ public static class ModuleInitializer
     public static void Initialize()
     {
         VerifierSettings.InitializePlugins();
+        // AiCliDetector.Prefix ("chatbot_") is prepended to the LocalDb instance name when
+        // running under an AI CLI (e.g. Claude Code). Scrub it so snapshots that capture the
+        // instance name / DataSource are stable regardless of environment. No-op otherwise.
+        VerifierSettings.AddScrubber(_ => _.Replace("chatbot_", ""));
         LocalDbSettings.ConnectionBuilder(_ => _.ConnectTimeout = 300);
         LocalDbTestBase<TheDbContext>.Initialize();
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs#L1-L10' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs#L1-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
