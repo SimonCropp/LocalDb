@@ -110,6 +110,13 @@ static class SqlBuilder
              size = 512KB,
              filegrowth = 100KB
          );
+         -- mixed_page_allocation on lets small objects share mixed extents instead of
+         -- each index reserving a dedicated 64KB uniform extent. Test schemas are usually
+         -- many small tables, so with the SQL Server default (off) most of the seeded
+         -- template is empty extents. Setting this before the schema is built keeps the
+         -- template (and therefore every per-test database cloned from it) far smaller:
+         -- a representative 80-temporal-table schema drops from ~26MB to ~8MB.
+         alter database template set mixed_page_allocation on;
          """;
 
     public static string BuildDeleteDbCommand(string dbName) =>

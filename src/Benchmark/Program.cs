@@ -9,5 +9,6 @@ BenchmarkSwitcher.FromTypes(
     typeof(ColdStartBenchmarks),
     typeof(StoppedInstanceBenchmarks),
     typeof(WarmStartBenchmarks),
-    typeof(TemplateRebuildBenchmarks)
+    typeof(TemplateRebuildBenchmarks),
+    typeof(MixedPageAllocationBenchmarks)
 ]).Run(args, config);
