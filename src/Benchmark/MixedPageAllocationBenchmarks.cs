@@ -14,16 +14,18 @@
 /// clone copy is an OS file copy, so it does not show in the SQL I/O diagnoser columns.)
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RunStrategy.ColdStart, launchCount: 3, warmupCount: 0, iterationCount: 1)]
+[WarmupCount(5)]
+[IterationCount(25)]
 [GcServer(true)]
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class MixedPageAllocationBenchmarks
 {
     const string InstanceName = "Benchmark";
-    const int TableCount = 80;
-    const int DatabaseCount = 10;
     SqlInstance? sqlInstance;
     int databaseCounter;
+
+    [Params(10, 40, 80)]
+    public int TableCount { get; set; }
 
     [Params(false, true)]
     public bool MixedPageAllocation { get; set; }
@@ -51,12 +53,9 @@ public class MixedPageAllocationBenchmarks
     }
 
     [Benchmark]
-    public async Task CloneDatabases()
+    public async Task CloneDatabase()
     {
-        for (var i = 0; i < DatabaseCount; i++)
-        {
-            await using var database = await sqlInstance!.Build($"Clone{Interlocked.Increment(ref databaseCounter)}");
-        }
+        await using var database = await sqlInstance!.Build($"Clone{Interlocked.Increment(ref databaseCounter)}");
     }
 
     async Task BuildManySmallTables(SqlConnection connection)
