@@ -9,7 +9,7 @@ public class LocalDbBenchmarks
     int databaseCounter;
 
     [GlobalSetup]
-    public async Task Setup()
+    public Task Setup()
     {
         LocalDbLogging.EnableVerbose();
         LocalDbSettings.ConnectionBuilder(_ => _.ConnectTimeout = 300);
@@ -23,7 +23,7 @@ public class LocalDbBenchmarks
 
         // Force template build to complete so the diagnoser (which connects from the BDN host process)
         // can reach the LocalDB instance once warmup starts.
-        await sqlInstance.Wrapper.AwaitStart();
+        return sqlInstance.Wrapper.AwaitStart();
     }
 
     [GlobalCleanup]
