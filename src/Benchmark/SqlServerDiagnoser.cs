@@ -49,7 +49,7 @@ public class SqlServerDiagnoser : IDiagnoser
                 metrics.Add(
                     new()
                     {
-                        BenchmarkName = parameters.BenchmarkCase.Descriptor.WorkloadMethod.Name,
+                        BenchmarkName = Describe(parameters.BenchmarkCase),
                         IoReadMB = (ioReadBytesAfter - ioReadBytesBefore) / (1024.0 * 1024.0),
                         IoWriteMB = (ioWriteBytesAfter - ioWriteBytesBefore) / (1024.0 * 1024.0),
                         MemoryMB = memoryMb
@@ -117,6 +117,15 @@ public class SqlServerDiagnoser : IDiagnoser
         }
     }
 
+    // Include parameter values so parameterized benchmarks (e.g. mixed_page_allocation on vs off)
+    // are reported as separate rows instead of being averaged together under the method name.
+    static string Describe(BenchmarkCase benchmarkCase)
+    {
+        var method = benchmarkCase.Descriptor.WorkloadMethod.Name;
+        var paramInfo = benchmarkCase.Parameters.DisplayInfo;
+        return paramInfo.Length == 0 ? method : $"{method} {paramInfo}";
+    }
+
     public IEnumerable<Metric> ProcessResults(DiagnoserResults results) => [];
 
     public void DisplayResults(ILogger logger)
@@ -141,8 +150,8 @@ public class SqlServerDiagnoser : IDiagnoser
         logger.WriteLine();
         logger.WriteLineHeader("// * SQL Server (LocalDB) Metrics *");
         logger.WriteLine();
-        logger.WriteLine("| Method              | I/O Read (MB) | I/O Write (MB) | Memory (MB) |");
-        logger.WriteLine("|---------------------|---------------:|---------------:|------------:|");
+        logger.WriteLine($"| {"Method",-50} | I/O Read (MB) | I/O Write (MB) | Memory (MB) |");
+        logger.WriteLine($"|{new string('-', 52)}|---------------:|---------------:|------------:|");
 
         foreach (var group in metrics.GroupBy(_ => _.BenchmarkName))
         {
@@ -154,7 +163,7 @@ public class SqlServerDiagnoser : IDiagnoser
                 MemoryMB = group.Average(_ => _.MemoryMB)
             };
 
-            logger.WriteLine($"| {avg.BenchmarkName,-19} | {avg.IoReadMB,14:F2} | {avg.IoWriteMB,14:F2} | {avg.MemoryMB,11:F2} |");
+            logger.WriteLine($"| {avg.BenchmarkName,-50} | {avg.IoReadMB,14:F2} | {avg.IoWriteMB,14:F2} | {avg.MemoryMB,11:F2} |");
         }
 
         logger.WriteLine();

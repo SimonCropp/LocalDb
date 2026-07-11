@@ -158,6 +158,18 @@ class Wrapper : IDisposable
                 if (!sharedCreated)
                 {
                     var initConnection = await CreateDatabaseFromTemplate("Shared");
+
+                    // Attach resets auto_close to the model default (on), under which the database
+                    // cleanly shuts down whenever its last connection closes and the next
+                    // connection pays a full database startup. Shared-database connections are
+                    // opened with pooling disabled and tests using it need not overlap, so that
+                    // close/reopen cycle recurs for the lifetime of the run. Benchmark
+                    // (AutoCloseBenchmarks): open-query-close cycles are ~6x faster with
+                    // auto_close off. Per-test databases are left as-is: they hold a single
+                    // connection for their whole life (never reopen), and auto_close lets the
+                    // instance release their memory once disposed.
+                    await initConnection.ExecuteCommandAsync("alter database [Shared] set auto_close off;");
+
                     if (initialize != null)
                     {
                         await initialize(initConnection);
