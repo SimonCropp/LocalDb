@@ -54,6 +54,12 @@ static class SqlBuilder
     // .mdf/.ldf files, so every database attached from the template inherits them.
     //   auto_update_statistics off  - avoids background stats updates causing
     //                                 nondeterministic test timing.
+    //   delayed_durability forced   - commits return without waiting for the log flush. Test
+    //                                 databases are disposable, so crash durability of the
+    //                                 last commits is worthless, while test workloads are
+    //                                 thousands of tiny commits. Benchmark
+    //                                 (DelayedDurabilityBenchmarks): autocommit inserts are
+    //                                 ~40% faster and write ~70% less log I/O.
     //   read_committed_snapshot on  - READ COMMITTED uses row versioning instead of
     //                                 shared locks, preventing S/X-lock deadlocks
     //                                 between parallel [SharedDbWithTransaction] tests
@@ -62,9 +68,13 @@ static class SqlBuilder
     // "with rollback immediate" to evict any sessions a buildTemplate/callback left
     // open (e.g. an SMO ServerConnection). Without it the statement blocks on those
     // sessions until the command timeout expires.
+    // Note: auto_close cannot be fixed here — "create database ... for attach" resets it to the
+    // model default (on), so a template-level setting never reaches the attached copies. See
+    // OpenSharedDatabase, which turns it off for the one database that reopens repeatedly.
     public static string TemplateSettingsCommand =
         """
         alter database [template] set auto_update_statistics off;
+        alter database [template] set delayed_durability = forced;
         alter database [template] set read_committed_snapshot on with rollback immediate;
         """;
 

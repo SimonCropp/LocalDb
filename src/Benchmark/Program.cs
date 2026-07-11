@@ -11,5 +11,7 @@ BenchmarkSwitcher.FromTypes(
     typeof(WarmStartBenchmarks),
     typeof(TemplateRebuildBenchmarks),
     typeof(MixedPageAllocationBenchmarks),
-    typeof(MixedPageContentionBenchmarks)
+    typeof(MixedPageContentionBenchmarks),
+    typeof(DelayedDurabilityBenchmarks),
+    typeof(AutoCloseBenchmarks)
 ]).Run(args, config);
