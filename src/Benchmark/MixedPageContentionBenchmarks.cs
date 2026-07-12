@@ -18,8 +18,8 @@
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class MixedPageContentionBenchmarks
 {
-    const string InstanceName = "Benchmark";
-    const int TotalOperations = 320;
+    const string instanceName = "Benchmark";
+    const int totalOperations = 320;
     SqlInstance? sqlInstance;
     string dbConnectionString = null!;
 
@@ -32,10 +32,10 @@ public class MixedPageContentionBenchmarks
     [GlobalSetup]
     public async Task GlobalSetup()
     {
-        LocalDbApi.StopAndDelete(InstanceName);
-        DirectoryFinder.Delete(InstanceName);
+        LocalDbApi.StopAndDelete(instanceName);
+        DirectoryFinder.Delete(instanceName);
 
-        sqlInstance = new(name: InstanceName, buildTemplate: _ => Task.CompletedTask);
+        sqlInstance = new(name: instanceName, buildTemplate: _ => Task.CompletedTask);
         await sqlInstance.Wrapper.AwaitStart();
 
         // Place the database files in the instance directory (fresh each case, deleted with the
@@ -67,9 +67,9 @@ public class MixedPageContentionBenchmarks
     }
 
     [Benchmark]
-    public async Task ConcurrentAllocate()
+    public Task ConcurrentAllocate()
     {
-        var operationsPerWorker = TotalOperations / Concurrency;
+        var operationsPerWorker = totalOperations / Concurrency;
         var tasks = new Task[Concurrency];
         for (var worker = 0; worker < Concurrency; worker++)
         {
@@ -97,7 +97,7 @@ public class MixedPageContentionBenchmarks
             });
         }
 
-        await Task.WhenAll(tasks);
+        return Task.WhenAll(tasks);
     }
 
     static async Task Execute(SqlConnection connection, string commandText)
