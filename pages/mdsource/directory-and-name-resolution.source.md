@@ -39,7 +39,9 @@ Both directories hold database files that are written to constantly while tests 
 
 snippet: Set-LocalDb-AV-Exclusions.ps1
 
-Needs to be run elevated. Note that excluding a path is a trade off against the protection it provides, and on a managed machine it is usually controlled by policy rather than being the developer's decision.
+Adding an exclusion needs elevation, so the script raises a UAC prompt if it is not already running as administrator. The paths are resolved before elevating, since elevation can switch to an account with a different profile.
+
+Note that excluding a path is a trade off against the protection it provides, and on a managed machine it is usually controlled by policy rather than being the developer's decision.
 
 
 ## Building using Azure machines
