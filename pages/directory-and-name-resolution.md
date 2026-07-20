@@ -114,6 +114,22 @@ Adding an exclusion needs elevation, so the script raises a UAC prompt if it is 
 Note that excluding a path is a trade off against the protection it provides, and on a managed machine it is usually controlled by policy rather than being the developer's decision.
 
 
+### In CI
+
+Hosted agents need nothing. GitHub hosted runners and Azure Pipelines Microsoft hosted agents are built from the same [images](https://github.com/actions/runner-images), and that build [turns off real time monitoring](https://github.com/actions/runner-images/blob/main/images/windows/scripts/build/Configure-WindowsDefender.ps1) along with behavior monitoring, script scanning and scheduled scans. There is nothing left to exclude from.
+
+Self hosted agents are worth excluding, as part of provisioning the machine rather than as a build step. Two things differ from running the script on a developer machine:
+
+ * The agent usually runs as a service account with no interactive desktop, so the UAC prompt cannot be raised. Run the script from an already elevated shell.
+ * The directories belong to the profile of the account the agent runs as. When provisioning from a different account, pass them explicitly:
+
+```ps1
+.\Set-LocalDb-AV-Exclusions.ps1 `
+    -dataRoot 'C:\Users\svc-agent\AppData\Local\Temp\LocalDb' `
+    -instanceRoot 'C:\Users\svc-agent\AppData\Local\Microsoft\Microsoft SQL Server Local DB\Instances'
+```
+
+
 ## Building using Azure machines
 
 When using azure hosted machines for build agents, it makes sense to use the agent temp directory as defined by the `AGENT_TEMPDIRECTORY` environment variable. The reason for this is that the temp directory is located on a secondary drive. However this drive has some strange permissions that will cause run time errors, usually manifesting as a SqlException with `Could not open new database...`. To work around this run the following script at machine startup:
