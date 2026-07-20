@@ -9,7 +9,7 @@ That InstanceName is then used to derive the data directory. In order:
  * If `LocalDBData` environment variable exists then use `LocalDBData\InstanceName`.
  * Use `%Temp%\LocalDb\InstanceName`.
 
-Database files older than a day will be purged from the data directory.
+Instances that have not been written to for six hours are purged: the database files are deleted from the data directory, and the LocalDB instance and the directory LocalDB keeps for it are removed.
 
 There is an explicit registration override that takes an instance name and a directory for that instance:
 
@@ -22,6 +22,24 @@ snippet: ExplicitName
 ## For EntityFramework:
 
 snippet: EfExplicitName
+
+
+## The LocalDB instance directory
+
+As well as the data directory above, LocalDB keeps a directory of its own for each instance at `%LocalAppData%\Microsoft\Microsoft SQL Server Local DB\Instances\InstanceName`. It holds the system databases (`master`, `model`, `msdb` and `tempdb`), the error logs, and the extended event files.
+
+That location is owned by LocalDB and cannot be changed. It is derived from the local application data folder, the API that creates an instance takes no path, and the `LocalDBData` environment variable does not apply to it.
+
+Deleting an instance reclaims the system databases but leaves the logs and event files behind, so purging an instance removes both the instance and this directory.
+
+
+## Virus scanning exclusions
+
+Both directories hold database files that are written to constantly while tests run: template files are copied for every database built, and instances are created, attached, and detached throughout a run. Real time virus scanning of that activity is a well known drag on SQL Server performance, so on development and build machines consider excluding both:
+
+snippet: Set-LocalDb-AV-Exclusions.ps1
+
+Needs to be run elevated. Note that excluding a path is a trade off against the protection it provides, and on a managed machine it is usually controlled by policy rather than being the developer's decision.
 
 
 ## Building using Azure machines
