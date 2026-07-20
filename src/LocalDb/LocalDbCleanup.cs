@@ -5,11 +5,11 @@ namespace LocalDb;
 #endif
 
 /// <summary>
-/// Removes LocalDB instances left behind by previous runs.
+/// Immediately removes LocalDB instances left behind by previous runs.
 /// <para>
-/// The automatic cleanup only knows about instances that still have a data directory. Once that
-/// directory has been removed, for example by the temp directory being cleared, the instance is
-/// orphaned and the system databases, logs and traces LocalDB keeps for it are never reclaimed.
+/// The same instances are removed automatically once they have been untouched for
+/// <see cref="LocalDbSettings.InstanceCleanupThreshold" />. This is the forced version, for when
+/// they should be reclaimed now rather than waiting for that threshold.
 /// </para>
 /// </summary>
 public static class LocalDbCleanup
@@ -17,7 +17,7 @@ public static class LocalDbCleanup
     /// <summary>
     /// Instances that LocalDB creates and manages itself, and that are never owned by this library.
     /// </summary>
-    static bool IsDefaultInstance(string name) =>
+    internal static bool IsDefaultInstance(string name) =>
         name == "MSSQLLocalDB" ||
         // automatic instances, eg "v11.0"
         name.Length > 1 && name[0] == 'v' && char.IsDigit(name[1]);

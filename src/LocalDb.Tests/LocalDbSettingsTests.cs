@@ -82,4 +82,21 @@ public class LocalDbSettingsTests
             LocalDbSettings.DBAutoOffline = original;
         }
     }
+
+    // the default cannot be asserted here: the module initializer sets this to zero so the
+    // suite does not sweep the real instance root
+    [Test]
+    public void InstanceCleanupThreshold_CanBeSetProgrammatically()
+    {
+        var original = LocalDbSettings.InstanceCleanupThreshold;
+        try
+        {
+            LocalDbSettings.InstanceCleanupThreshold = TimeSpan.FromDays(7);
+            That(LocalDbSettings.InstanceCleanupThreshold, Is.EqualTo(TimeSpan.FromDays(7)));
+        }
+        finally
+        {
+            LocalDbSettings.InstanceCleanupThreshold = original;
+        }
+    }
 }

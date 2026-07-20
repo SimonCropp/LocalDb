@@ -7,6 +7,7 @@
         dataRoot = FindDataRoot();
         var root = dataRoot;
         DirectoryCleaner.CleanRoot(root);
+        DirectoryCleaner.CleanInstanceRoot(instanceRoot, root, LocalDbSettings.InstanceCleanupThreshold);
     }
 
     public static string Find(string instanceName) => Path.Combine(dataRoot, instanceName);
@@ -25,7 +26,7 @@
     /// logs and traces of each instance. The location is owned by LocalDB and cannot be
     /// configured: it is always derived from the local application data folder.
     /// </summary>
-    static string instanceRoot = Path.Combine(
+    public static string instanceRoot = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "Microsoft",
         "Microsoft SQL Server Local DB",

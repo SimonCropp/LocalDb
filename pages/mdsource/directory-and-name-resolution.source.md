@@ -32,6 +32,8 @@ That location is owned by LocalDB and cannot be changed. It is derived from the 
 
 Deleting an instance reclaims the system databases but leaves the logs and event files behind, so purging an instance removes both the instance and this directory.
 
+The per run purge above only sees instances that still have a data directory. Once that directory is gone, cleared with the temp directory or by the purge itself, nothing under the data root points at the instance and it can no longer be found that way. To catch these, this directory is also swept: any instance directory untouched for a threshold, defaulting to 30 days, is removed, along with directories left behind by instances that were already deleted. Instances that LocalDB creates and manages itself, such as `MSSQLLocalDB`, are never touched. The threshold can be configured via the `LocalDBInstanceCleanupDays` environment variable, or `LocalDbSettings.InstanceCleanupThreshold`; set it to zero to disable. To reclaim these immediately rather than waiting for the threshold, call `LocalDbCleanup.DeleteOrphanInstances`.
+
 
 ## Virus scanning exclusions
 
