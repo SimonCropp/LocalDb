@@ -335,6 +335,7 @@ class Wrapper : IDisposable
     public void DeleteInstance(ShutdownMode mode = ShutdownMode.KillProcess)
     {
         LocalDbApi.StopAndDelete(instance, mode);
+        DirectoryFinder.DeleteInstance(instance);
         DeleteDirectory();
         Dispose();
     }
@@ -343,6 +344,7 @@ class Wrapper : IDisposable
     public void DeleteInstance(ShutdownMode mode, TimeSpan timeout)
     {
         LocalDbApi.StopAndDelete(instance, mode, timeout);
+        DirectoryFinder.DeleteInstance(instance);
         DeleteDirectory();
         Dispose();
     }
