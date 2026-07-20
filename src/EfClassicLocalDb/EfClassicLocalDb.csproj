@@ -17,6 +17,7 @@
     <Compile Include="..\LocalDb\RowVersions.cs" />
     <Compile Include="..\LocalDb\Settings.cs" />
     <Compile Include="..\LocalDb\DirectoryCleaner.cs" />
+    <Compile Include="..\LocalDb\LocalDbCleanup.cs" />
     <Compile Include="..\LocalDb\StringExtensions.cs" />
     <Compile Include="..\LocalDb\Timestamp.cs" />
     <Compile Include="..\LocalDb\LocalDbLogging.cs" />

@@ -113,6 +113,58 @@ public class DirectoryCleanerTests
         var infoAfter = LocalDbApi.GetInstance(name);
         False(infoAfter.IsRunning);
 
+        // CleanInstance targets an instance that is about to be started, so the
+        // instance itself must survive to avoid a costly recreate
+        True(infoAfter.Exists);
+
         LocalDbApi.StopAndDelete(name);
+    }
+
+    [Test]
+    public async Task CleanRoot_DeletesStaleInstance()
+    {
+        var name = "CleanerStaleInstanceTest";
+        LocalDbApi.StopAndDelete(name);
+
+        // the instance directory has to live under a root of its own, otherwise the
+        // sweep would run over every instance on the machine
+        using var tempDir = new TempDirectory();
+        var directory = Path.Combine(tempDir, name);
+        using var wrapper = new Wrapper(name, directory);
+        wrapper.Start(new(2000, 1, 1), TestDbBuilder.CreateTable);
+        await wrapper.AwaitStart();
+
+        var instanceDirectory = DirectoryFinder.FindInstance(name);
+        True(LocalDbApi.GetInstance(name).Exists);
+        True(Directory.Exists(instanceDirectory));
+
+        File.SetLastWriteTime(wrapper.DataFile, DateTime.Now.AddDays(-3));
+        File.SetLastWriteTime(wrapper.LogFile, DateTime.Now.AddDays(-3));
+
+        DirectoryCleaner.CleanRoot(tempDir);
+
+        // the sweep targets instances that are not about to be used, so the instance
+        // and the directory LocalDB keeps for it are both reclaimed
+        False(LocalDbApi.GetInstance(name).Exists);
+        False(Directory.Exists(instanceDirectory));
+        False(Directory.Exists(directory));
+    }
+
+    [Test]
+    public void RemoveInstance_DeletesLocalDbDirectory()
+    {
+        var name = "CleanerRemoveInstanceTest";
+        LocalDbApi.CreateInstance(name);
+        LocalDbApi.StartInstance(name);
+
+        var instanceDirectory = DirectoryFinder.FindInstance(name);
+        True(Directory.Exists(instanceDirectory));
+
+        DirectoryCleaner.RemoveInstance(name);
+
+        False(LocalDbApi.GetInstance(name).Exists);
+        // deleting the instance leaves the logs and traces behind, so the
+        // directory has to be removed explicitly
+        False(Directory.Exists(instanceDirectory));
     }
 }
