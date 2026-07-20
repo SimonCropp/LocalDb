@@ -88,12 +88,32 @@ static class SqlBuilder
         execute sp_detach_db N'template', 'true';
         """;
 
+    // The default trace and the system_health session write diagnostics for the life of the
+    // instance into the directory LocalDB owns, which is never cleaned while the instance
+    // exists. Measured across ~280 instances they account for 18% of the on-disk size, and
+    // neither is of much use for a throwaway test instance. This is not a speed up:
+    // both are written in the background rather than on the startup path, and disabling
+    // them made no measurable difference to instance start time.
+    // hkenginexesession, the other event session that writes here, is owned by the XTP
+    // engine, is absent from sys.server_event_sessions, and cannot be altered.
     public static string GetOptimizeModelDbCommand(ushort size, ushort shutdownTimeout) =>
         $"""
          execute sp_configure 'show advanced options', 1;
          reconfigure;
          execute sp_configure 'user instance timeout', {shutdownTimeout};
          reconfigure;
+         execute sp_configure 'default trace enabled', 0;
+         reconfigure;
+
+         if exists (select * from sys.dm_xe_sessions where name = 'system_health')
+         begin
+             alter event session system_health on server state = stop;
+         end;
+
+         if exists (select * from sys.server_event_sessions where name = 'system_health')
+         begin
+             alter event session system_health on server with (startup_state = off);
+         end;
 
          -- begin-snippet: ShrinkModelDb
          use model;
