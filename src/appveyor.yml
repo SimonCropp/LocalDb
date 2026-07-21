@@ -18,11 +18,24 @@ build_script:
         'EfLocalDb.Xunit.V3.Tests'
         'EfLocalDb.TUnit.Tests'
       )
+      # xunit.v3 uses its own command line rather than the Microsoft.Testing.Platform
+      # one, so --report-trx is not a valid option for it.
+      $noTrx = @(
+        'EfLocalDb.Xunit.V3.Tests'
+      )
       $failed = @()
       foreach ($project in $projects)
       {
         Write-Host "::: $project"
-        dotnet test --project "src/$project" --configuration Release --no-build --no-restore
+        # Assigned this way rather than via an if expression: that returns a bare
+        # string for a single element, and splatting a string passes it one character
+        # at a time.
+        $trxArgs = @()
+        if ($noTrx -notcontains $project)
+        {
+          $trxArgs = @('--report-trx')
+        }
+        dotnet test --project "src/$project" --configuration Release --no-build --no-restore @trxArgs
         if ($LASTEXITCODE -ne 0)
         {
           $failed += $project
@@ -41,5 +54,14 @@ on_failure:
         Push-AppveyorArtifact $_.FullName -FileName $rel
       }
 test: off
+on_finish:
+- pwsh: |
+    $url = "https://ci.appveyor.com/api/testresults/mstest/$env:APPVEYOR_JOB_ID"
+    $client = [System.Net.WebClient]::new()
+    foreach ($trx in Get-ChildItem -Recurse -Filter *.trx -ErrorAction SilentlyContinue)
+    {
+      Write-Host "Uploading $($trx.FullName)"
+      $client.UploadFile($url, $trx.FullName)
+    }
 artifacts:
 - path: nugets\*.nupkg
