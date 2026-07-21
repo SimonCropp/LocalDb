@@ -62,10 +62,12 @@ public class InstanceRootCleanerTests
     }
 
     [Test]
-    public void LeavesRecentDirectory()
+    public void LeavesJustWrittenResidue()
     {
         using var instanceRoot = new TempDirectory();
         using var dataRoot = new TempDirectory();
+        // guards the window where LocalDB has created the directory but not yet registered
+        // the instance, so it would look like residue
         var dir = Path.Combine(instanceRoot, "RecentResidueTest");
         Directory.CreateDirectory(dir);
         File.WriteAllText(Path.Combine(dir, ".localdbwrapper"), "");
@@ -73,6 +75,26 @@ public class InstanceRootCleanerTests
         DirectoryCleaner.CleanInstanceRoot(instanceRoot, dataRoot, threshold, backlogPass: true);
 
         True(Directory.Exists(dir));
+    }
+
+    [Test]
+    public void RemovesResidueYoungerThanTheInstanceThreshold()
+    {
+        using var instanceRoot = new TempDirectory();
+        using var dataRoot = new TempDirectory();
+        // an hour old: well inside the instance threshold, but residue has no instance to
+        // race, so it must not be stranded by the backlog pass only running once
+        var dir = Path.Combine(instanceRoot, "YoungResidueTest");
+        Directory.CreateDirectory(dir);
+        var file = Path.Combine(dir, "error.log");
+        File.WriteAllText(file, "x");
+        var hourAgo = DateTime.Now.AddHours(-1);
+        File.SetLastWriteTime(file, hourAgo);
+        Directory.SetCreationTime(dir, hourAgo);
+
+        DirectoryCleaner.CleanInstanceRoot(instanceRoot, dataRoot, threshold, backlogPass: true);
+
+        False(Directory.Exists(dir));
     }
 
     [Test]

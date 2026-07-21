@@ -91,8 +91,9 @@
     /// reclaims unmarked directories that predate marking, and is run once per machine.
     /// </para>
     /// <para>
-    /// Only directories untouched for <paramref name="threshold" /> are processed, both to keep the
+    /// Only instances untouched for <paramref name="threshold" /> are processed, both to keep the
     /// startup scan cheap and to avoid racing an instance that is being created or is in use.
+    /// Residue has no instance to race, so it uses a short threshold of its own.
     /// </para>
     /// </summary>
     /// <returns>
@@ -136,6 +137,22 @@
         return true;
     }
 
+    /// <summary>
+    /// Instances that LocalDB creates and manages itself, and that are never owned by this library.
+    /// </summary>
+    static bool IsDefaultInstance(string name) =>
+        name == "MSSQLLocalDB" ||
+        // automatic instances, eg "v11.0"
+        name.Length > 1 && name[0] == 'v' && char.IsDigit(name[1]);
+
+    /// <summary>
+    /// Residue is only guarded against the window where LocalDB has created the directory for an
+    /// instance but not yet registered it, so it uses a short threshold of its own. Applying the
+    /// full threshold would strand any residue not yet old enough when the backlog pass runs,
+    /// since that pass only happens once.
+    /// </summary>
+    static readonly TimeSpan residueThreshold = TimeSpan.FromMinutes(5);
+
     internal static void CleanInstanceDirectory(
         string directory,
         string dataRoot,
@@ -146,17 +163,12 @@
         var name = Path.GetFileName(directory);
 
         // instances LocalDB creates and manages, never owned by this library
-        if (LocalDbCleanup.IsDefaultInstance(name))
+        if (IsDefaultInstance(name))
         {
             return;
         }
 
-        // recently touched, so either in use or too new to be sure it is abandoned
-        if (NewestWrite(directory) >= cutoff)
-        {
-            return;
-        }
-
+        var newestWrite = NewestWrite(directory);
         var marked = InstanceMarker.IsMarked(directory);
 
         if (!registered.Contains(name))
@@ -164,12 +176,19 @@
             // no instance backs this directory: the instance was already deleted and only the
             // logs and event files remain. Nothing can be harmed by removing them, but an
             // unmarked one is only taken in the backlog pass since it was not necessarily ours
-            if (marked || backlogPass)
+            if ((marked || backlogPass) &&
+                newestWrite < DateTime.Now - residueThreshold)
             {
                 LocalDbLogging.LogIfVerbose($"Removing residue directory: {name}");
                 Directory.Delete(directory, true);
             }
 
+            return;
+        }
+
+        // recently touched, so either in use or too new to be sure it is abandoned
+        if (newestWrite >= cutoff)
+        {
             return;
         }
 
