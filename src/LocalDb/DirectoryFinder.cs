@@ -7,7 +7,7 @@
         dataRoot = FindDataRoot();
         var root = dataRoot;
         DirectoryCleaner.CleanRoot(root);
-        DirectoryCleaner.CleanInstanceRoot(instanceRoot, root, LocalDbSettings.InstanceCleanupThreshold);
+        DirectoryCleaner.CleanInstanceRoot(instanceRoot, root, LocalDbSettings.InstanceCleanupThreshold, LocalDbSettings.InstanceCleanupLimit);
     }
 
     public static string Find(string instanceName) => Path.Combine(dataRoot, instanceName);

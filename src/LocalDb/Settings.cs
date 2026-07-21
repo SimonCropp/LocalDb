@@ -46,6 +46,14 @@ public static class LocalDbSettings
     /// </summary>
     public static TimeSpan InstanceCleanupThreshold { get; set; } = ResolveInstanceCleanupThreshold();
 
+    /// <summary>
+    /// The maximum number of instances and directories the automatic cleanup removes per run,
+    /// so a large backlog is drained over several runs rather than in a single startup.
+    /// Can be configured via the <c>LocalDBInstanceCleanupLimit</c> environment variable.
+    /// Defaults to 20. Set to 0 for no limit.
+    /// </summary>
+    public static ushort InstanceCleanupLimit { get; set; } = ResolveInstanceCleanupLimit();
+
     static ushort ResolveShutdownTimeout()
     {
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
@@ -87,5 +95,21 @@ public static class LocalDbSettings
         }
 
         throw new ArgumentException($"Failed to parse LocalDBInstanceCleanupDays environment variable: {envValue}");
+    }
+
+    static ushort ResolveInstanceCleanupLimit()
+    {
+        var envValue = Environment.GetEnvironmentVariable("LocalDBInstanceCleanupLimit");
+        if (envValue is null)
+        {
+            return 20;
+        }
+
+        if (ushort.TryParse(envValue, out var limit))
+        {
+            return limit;
+        }
+
+        throw new ArgumentException($"Failed to parse LocalDBInstanceCleanupLimit environment variable: {envValue}");
     }
 }

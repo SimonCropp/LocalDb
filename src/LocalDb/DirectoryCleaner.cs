@@ -90,7 +90,7 @@
     /// startup scan cheap and to avoid racing an instance that is being created or is in use.
     /// </para>
     /// </summary>
-    public static void CleanInstanceRoot(string instanceRoot, string dataRoot, TimeSpan threshold)
+    public static void CleanInstanceRoot(string instanceRoot, string dataRoot, TimeSpan threshold, int limit = 0)
     {
         if (threshold <= TimeSpan.Zero ||
             !Directory.Exists(instanceRoot))
@@ -111,11 +111,23 @@
             return;
         }
 
+        // each removal is disk work, so a backlog is drained over several runs rather than in
+        // one startup. Skips are cheap and do not count against the limit
+        var removed = 0;
         foreach (var directory in Directory.EnumerateDirectories(instanceRoot))
         {
+            if (limit > 0 &&
+                removed >= limit)
+            {
+                break;
+            }
+
             try
             {
-                CleanInstanceDirectory(directory, dataRoot, registered, cutoff);
+                if (CleanInstanceDirectory(directory, dataRoot, registered, cutoff))
+                {
+                    removed++;
+                }
             }
             catch (Exception exception)
             {
@@ -125,20 +137,20 @@
         }
     }
 
-    internal static void CleanInstanceDirectory(string directory, string dataRoot, HashSet<string> registered, DateTime cutoff)
+    internal static bool CleanInstanceDirectory(string directory, string dataRoot, HashSet<string> registered, DateTime cutoff)
     {
         var name = Path.GetFileName(directory);
 
         // instances LocalDB creates and manages, never owned by this library
         if (LocalDbCleanup.IsDefaultInstance(name))
         {
-            return;
+            return false;
         }
 
         // recently touched, so either in use or too new to be sure it is abandoned
         if (NewestWrite(directory) >= cutoff)
         {
-            return;
+            return false;
         }
 
         if (!registered.Contains(name))
@@ -146,23 +158,24 @@
             // no instance backs this directory: the instance was already deleted and only the
             // logs and event files remain. Safe to remove whatever created it
             Directory.Delete(directory, true);
-            return;
+            return true;
         }
 
         // likely in use by another process
         if (LocalDbApi.GetInstance(name).IsRunning)
         {
-            return;
+            return false;
         }
 
         // still tracked by a data directory, so CleanRoot governs when it is reclaimed
         if (Directory.Exists(Path.Combine(dataRoot, name)))
         {
-            return;
+            return false;
         }
 
         LocalDbLogging.LogIfVerbose($"Removing orphaned instance: {name}");
         RemoveInstance(name);
+        return true;
     }
 
     static DateTime NewestWrite(string directory)

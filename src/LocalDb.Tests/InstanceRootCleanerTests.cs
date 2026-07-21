@@ -59,6 +59,40 @@ public class InstanceRootCleanerTests
     }
 
     [Test]
+    public void RemovesAtMostLimitPerRun()
+    {
+        using var instanceRoot = new TempDirectory();
+        using var dataRoot = new TempDirectory();
+        MakeStaleDir(instanceRoot, "LimitResidueA", "error.log");
+        MakeStaleDir(instanceRoot, "LimitResidueB", "error.log");
+        MakeStaleDir(instanceRoot, "LimitResidueC", "error.log");
+
+        DirectoryCleaner.CleanInstanceRoot(instanceRoot, dataRoot, threshold, limit: 2);
+        AreEqual(1, Directory.EnumerateDirectories(instanceRoot).Count());
+
+        // the remainder is drained on the next run
+        DirectoryCleaner.CleanInstanceRoot(instanceRoot, dataRoot, threshold, limit: 2);
+        AreEqual(0, Directory.EnumerateDirectories(instanceRoot).Count());
+    }
+
+    [Test]
+    public void SkipsDoNotCountAgainstLimit()
+    {
+        using var instanceRoot = new TempDirectory();
+        using var dataRoot = new TempDirectory();
+        // a recent directory is skipped and must not consume the limit that the stale one needs
+        var recent = Path.Combine(instanceRoot, "LimitRecent");
+        Directory.CreateDirectory(recent);
+        File.WriteAllText(Path.Combine(recent, "error.log"), "x");
+        var stale = MakeStaleDir(instanceRoot, "LimitStale", "error.log");
+
+        DirectoryCleaner.CleanInstanceRoot(instanceRoot, dataRoot, threshold, limit: 1);
+
+        False(Directory.Exists(stale));
+        True(Directory.Exists(recent));
+    }
+
+    [Test]
     public void LeavesEverythingWhenDisabled()
     {
         using var instanceRoot = new TempDirectory();
