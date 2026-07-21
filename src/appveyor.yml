@@ -8,20 +8,31 @@ build_script:
       Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile "./dotnet-install.ps1"
       ./dotnet-install.ps1 -JSonFile global.json -Architecture x64 -InstallDir 'C:\Program Files\dotnet'
 - dotnet build src --configuration Release
-- dotnet test --project src/LocalDb.Tests --configuration Release --no-build --no-restore
-- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
-- dotnet test --project src/EfClassicLocalDb.Tests --configuration Release --no-build --no-restore
-- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
-- dotnet test --project src/EfLocalDb.Tests --configuration Release --no-build --no-restore
-- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
-- dotnet test --project src/EfLocalDb.NUnit.Tests --configuration Release --no-build --no-restore
-- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
-- dotnet test --project src/EfLocalDb.MSTest.Tests --configuration Release --no-build --no-restore
-- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
-- dotnet run --project src/EfLocalDb.Xunit.V3.Tests --configuration Release --no-build
-- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
-- dotnet run --project src/EfLocalDb.TUnit.Tests --configuration Release --no-build
-- pwsh: sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
+- pwsh: |
+      $projects = @(
+        'LocalDb.Tests'
+        'EfClassicLocalDb.Tests'
+        'EfLocalDb.Tests'
+        'EfLocalDb.NUnit.Tests'
+        'EfLocalDb.MSTest.Tests'
+        'EfLocalDb.Xunit.V3.Tests'
+        'EfLocalDb.TUnit.Tests'
+      )
+      $failed = @()
+      foreach ($project in $projects)
+      {
+        Write-Host "::: $project"
+        dotnet test --project "src/$project" --configuration Release --no-build --no-restore
+        if ($LASTEXITCODE -ne 0)
+        {
+          $failed += $project
+        }
+        sqllocaldb info | ForEach-Object { sqllocaldb stop $_ ; sqllocaldb delete $_ }
+      }
+      if ($failed.Count -gt 0)
+      {
+        throw "Failed test projects: $($failed -join ', ')"
+      }
 on_failure:
   - ps: |
       $root = (Get-Location).Path
