@@ -307,7 +307,7 @@ flowchart TD
 
 ### Clean Directory Flow
 
-On first access, the library scans the data root directory (`%TEMP%\LocalDb` by default) and cleans up stale database files. This prevents unbounded disk growth from old test runs.
+On first access, the library scans the data root directory (`%TEMP%\LocalDb` by default) and cleans up stale database files. This prevents unbounded disk growth from old test runs. The directory LocalDB keeps for each instance is swept separately, see [Clean Instance Root Flow](#clean-instance-root-flow).
 
 ```mermaid
 flowchart TD
@@ -320,7 +320,7 @@ flowchart TD
     deleteDirEmpty[Delete Directory]
     findNewest[Find Newest<br>File Write Time]
     checkNewest{Newest File<br>Older Than<br>6 Hours?}
-    stopInstance[Stop LocalDB<br>Instance If Running]
+    stopInstance[Remove Instance:<br>Stop, Delete, and Remove<br>Its LocalDB Directory]
     deleteAllFiles[Delete All Files]
     checkEmptyAfter{Directory<br>Empty?}
     deleteDirAfter[Delete Directory]
@@ -351,9 +351,89 @@ Key behaviors:
  * **Triggered once** during `DirectoryFinder` static initialization, before any `SqlInstance` starts.
  * **All-or-nothing cleanup**: The newest file write time in a directory determines whether the entire instance is stale. If any file is recent, nothing is touched. This avoids partially cleaning an active instance.
  * **6-hour cutoff**: An instance directory is only cleaned if all its files have a last-write time older than 6 hours.
- * **Stops running instances**: If stale files belong to a running LocalDB instance, the instance is stopped (via `KillProcess`) before deletion. This prevents `UnauthorizedAccessException` from locked `.mdf`/`.ldf` files.
+ * **Removes the instance, not only the files**: If stale files belong to a LocalDB instance, the instance is stopped (via `KillProcess`), deleted, and the directory LocalDB keeps for it removed. Stopping first prevents `UnauthorizedAccessException` from locked `.mdf`/`.ldf` files. Removing the instance along with its data means it never becomes an orphan that nothing under the data root points at.
  * **Empty directory cleanup**: Empty directories older than 6 hours are removed.
  * The instance name is derived from the directory name (e.g. `%TEMP%\LocalDb\MyTestInstance` → instance name `MyTestInstance`).
+ * The instance that is about to be started is treated differently: only its stale data files are removed, and the instance is left in place to be reused, since recreating one is significantly slower than restarting it.
+
+
+### Clean Instance Root Flow
+
+LocalDB keeps a directory of its own for every instance at `%LocalAppData%\Microsoft\Microsoft SQL Server Local DB\Instances\InstanceName`, holding the system databases (`master`, `model`, `msdb`, `tempdb`), the error logs, and the extended event files. That location is owned by LocalDB and cannot be moved.
+
+The flow above only sees instances that still have a data directory. Once that directory is gone, cleared with the temp directory or by the flow above, nothing under the data root points at the instance and it is invisible there. Those orphans, and the directories left behind by instances that were already deleted, are reclaimed by this second sweep.
+
+LocalDB instances are shared by everything on the machine that uses LocalDB, and nothing in an instance records what created it. So a marker file is written into the directory of each instance this library starts, and the sweep only reclaims instances carrying that marker.
+
+```mermaid
+flowchart TD
+    start[Start: CleanInstanceRoot]
+    checkEnabled{Cleanup Enabled?<br>threshold not zero}
+    checkRootExists{Instance Root<br>Exists?}
+    iterateDirs[Iterate Instance<br>Directories]
+    checkDefault{LocalDB Managed?<br>MSSQLLocalDB, v11.0}
+    checkRegistered{Backed By A<br>Registered Instance?}
+
+    checkResidueOwn{Marked, Or<br>Backlog Pass?}
+    checkResidueAge{Untouched For<br>5 Minutes?}
+    deleteResidue[Delete Directory]
+
+    checkAge{Untouched For<br>Threshold?<br>default 30 days}
+    checkRunning{Running?}
+    checkDataDir{Has A Data<br>Directory?}
+    checkMarked{Marked As Created<br>By This Library?}
+    checkBacklog{Backlog Pass?}
+    checkModel{model.mdf<br>Shrunk?}
+    removeInstance[Remove Instance:<br>Stop, Delete, and Remove<br>Its LocalDB Directory]
+
+    leave[Leave Alone]
+    done[Done]
+
+    start --> checkEnabled
+    checkEnabled -->|No| done
+    checkEnabled -->|Yes| checkRootExists
+    checkRootExists -->|No| done
+    checkRootExists -->|Yes| iterateDirs
+    iterateDirs --> checkDefault
+    checkDefault -->|Yes| leave
+    checkDefault -->|No| checkRegistered
+
+    checkRegistered -->|No: residue| checkResidueOwn
+    checkResidueOwn -->|No| leave
+    checkResidueOwn -->|Yes| checkResidueAge
+    checkResidueAge -->|No| leave
+    checkResidueAge -->|Yes| deleteResidue
+    deleteResidue --> done
+
+    checkRegistered -->|Yes| checkAge
+    checkAge -->|No| leave
+    checkAge -->|Yes| checkRunning
+    checkRunning -->|Yes| leave
+    checkRunning -->|No| checkDataDir
+    checkDataDir -->|Yes: handled above| leave
+    checkDataDir -->|No: orphan| checkMarked
+    checkMarked -->|Yes| removeInstance
+    checkMarked -->|No| checkBacklog
+    checkBacklog -->|No| leave
+    checkBacklog -->|Yes| checkModel
+    checkModel -->|No| leave
+    checkModel -->|Yes| removeInstance
+
+    removeInstance --> done
+    leave --> done
+```
+
+Key behaviors:
+
+ * **Triggered once** during `DirectoryFinder` static initialization, immediately after the data root cleanup above.
+ * **Only reclaims what it created**: an instance with no marker is never removed, so an instance belonging to anything else on the machine is left alone. The default instances LocalDB manages itself are always skipped.
+ * **Marked on start as well as on create**: instances that predate marking are picked up the next time they are used.
+ * **An instance is only an orphan if it has no data directory**: while one exists, the data root cleanup above governs when it is reclaimed, so the two never contend.
+ * **Running instances are skipped**: they are likely in use by another process.
+ * **30-day threshold** for instances, configurable via the `LocalDBInstanceCleanupDays` environment variable or `LocalDbSettings.InstanceCleanupThreshold`. Set it to zero to disable the sweep.
+ * **Residue uses a 5-minute threshold** instead. A directory with no registered instance behind it has no instance to race, only the window where LocalDB has created the directory but not yet registered the instance. Using the full threshold would strand any residue not old enough when the backlog pass runs, since that pass only happens once.
+ * **The backlog pass runs once per machine**: instances that predate marking cannot be told apart from instances belonging to anything else, so they get a single best effort pass which takes unmarked residue and unmarked orphans that still carry the shrunk `model.mdf` this library leaves behind. A fresh instance leaves `model.mdf` at 8MB, so an instance created by anything else is never matched. That the pass has run is recorded under `%LocalAppData%\LocalDb`, and only once a sweep actually completes.
+ * **Never fails a test run**: every directory is handled independently and any failure is logged and skipped.
 
 
 ### Create SqlDatabase Flow
