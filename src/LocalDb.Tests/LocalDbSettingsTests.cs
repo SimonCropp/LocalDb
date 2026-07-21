@@ -100,28 +100,4 @@ public class LocalDbSettingsTests
         }
     }
 
-    [Test]
-    public void InstanceCleanupLimit_DefaultsTo20WhenEnvVarNotSet()
-    {
-        var envValue = Environment.GetEnvironmentVariable("LocalDBInstanceCleanupLimit");
-        if (envValue is null)
-        {
-            That(LocalDbSettings.InstanceCleanupLimit, Is.EqualTo(20));
-        }
-    }
-
-    [Test]
-    public void InstanceCleanupLimit_CanBeSetProgrammatically()
-    {
-        var original = LocalDbSettings.InstanceCleanupLimit;
-        try
-        {
-            LocalDbSettings.InstanceCleanupLimit = 5;
-            That(LocalDbSettings.InstanceCleanupLimit, Is.EqualTo(5));
-        }
-        finally
-        {
-            LocalDbSettings.InstanceCleanupLimit = original;
-        }
-    }
 }

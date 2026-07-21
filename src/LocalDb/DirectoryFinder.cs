@@ -7,7 +7,44 @@
         dataRoot = FindDataRoot();
         var root = dataRoot;
         DirectoryCleaner.CleanRoot(root);
-        DirectoryCleaner.CleanInstanceRoot(instanceRoot, root, LocalDbSettings.InstanceCleanupThreshold, LocalDbSettings.InstanceCleanupLimit);
+
+        var threshold = LocalDbSettings.InstanceCleanupThreshold;
+        if (threshold > TimeSpan.Zero)
+        {
+            // instances that predate marking cannot be told apart from instances belonging to
+            // anything else, so they get one best effort pass and are then left alone
+            var backlogPass = !File.Exists(backlogFlag);
+            var swept = DirectoryCleaner.CleanInstanceRoot(instanceRoot, root, threshold, backlogPass);
+            // only recorded when the pass actually ran, so a sweep that could not start does not
+            // consume the one chance the unattributable backlog gets
+            if (backlogPass && swept)
+            {
+                WriteBacklogFlag();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Records that the one time pass over instances predating marking has been run. Persistent,
+    /// unlike the data directory, so the pass happens once rather than after every temp clear.
+    /// </summary>
+    static string backlogFlag = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "LocalDb",
+        "backlog-cleaned");
+
+    static void WriteBacklogFlag()
+    {
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(backlogFlag)!);
+            File.WriteAllText(backlogFlag, string.Empty);
+        }
+        catch (Exception exception)
+        {
+            // only costs a repeat of the pass on the next run
+            LocalDbLogging.LogIfVerbose($"Failed to write backlog flag. {exception.Message}");
+        }
     }
 
     public static string Find(string instanceName) => Path.Combine(dataRoot, instanceName);

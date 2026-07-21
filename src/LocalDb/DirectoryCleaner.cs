@@ -86,16 +86,25 @@
     /// were already deleted, since LocalDB does not remove the logs and event files on delete.
     /// </para>
     /// <para>
+    /// Only instances marked as created by this library are reclaimed, so an instance belonging to
+    /// anything else on the machine is never removed. <paramref name="backlogPass" /> additionally
+    /// reclaims unmarked directories that predate marking, and is run once per machine.
+    /// </para>
+    /// <para>
     /// Only directories untouched for <paramref name="threshold" /> are processed, both to keep the
     /// startup scan cheap and to avoid racing an instance that is being created or is in use.
     /// </para>
     /// </summary>
-    public static void CleanInstanceRoot(string instanceRoot, string dataRoot, TimeSpan threshold, int limit = 0)
+    /// <returns>
+    /// Whether the sweep ran to completion. False when it was disabled or could not start, so a
+    /// caller recording that the backlog pass has happened does not do so for a pass that never ran.
+    /// </returns>
+    public static bool CleanInstanceRoot(string instanceRoot, string dataRoot, TimeSpan threshold, bool backlogPass)
     {
         if (threshold <= TimeSpan.Zero ||
             !Directory.Exists(instanceRoot))
         {
-            return;
+            return false;
         }
 
         var cutoff = DateTime.Now - threshold;
@@ -108,26 +117,14 @@
         catch (Exception exception)
         {
             LocalDbLogging.LogIfVerbose($"Failed to enumerate instances, skipping instance root cleanup. {exception.Message}");
-            return;
+            return false;
         }
 
-        // each removal is disk work, so a backlog is drained over several runs rather than in
-        // one startup. Skips are cheap and do not count against the limit
-        var removed = 0;
         foreach (var directory in Directory.EnumerateDirectories(instanceRoot))
         {
-            if (limit > 0 &&
-                removed >= limit)
-            {
-                break;
-            }
-
             try
             {
-                if (CleanInstanceDirectory(directory, dataRoot, registered, cutoff))
-                {
-                    removed++;
-                }
+                CleanInstanceDirectory(directory, dataRoot, registered, cutoff, backlogPass);
             }
             catch (Exception exception)
             {
@@ -135,47 +132,73 @@
                 LocalDbLogging.LogIfVerbose($"Failed to clean instance directory: {directory}. {exception.Message}");
             }
         }
+
+        return true;
     }
 
-    internal static bool CleanInstanceDirectory(string directory, string dataRoot, HashSet<string> registered, DateTime cutoff)
+    internal static void CleanInstanceDirectory(
+        string directory,
+        string dataRoot,
+        HashSet<string> registered,
+        DateTime cutoff,
+        bool backlogPass)
     {
         var name = Path.GetFileName(directory);
 
         // instances LocalDB creates and manages, never owned by this library
         if (LocalDbCleanup.IsDefaultInstance(name))
         {
-            return false;
+            return;
         }
 
         // recently touched, so either in use or too new to be sure it is abandoned
         if (NewestWrite(directory) >= cutoff)
         {
-            return false;
+            return;
         }
+
+        var marked = InstanceMarker.IsMarked(directory);
 
         if (!registered.Contains(name))
         {
             // no instance backs this directory: the instance was already deleted and only the
-            // logs and event files remain. Safe to remove whatever created it
-            Directory.Delete(directory, true);
-            return true;
+            // logs and event files remain. Nothing can be harmed by removing them, but an
+            // unmarked one is only taken in the backlog pass since it was not necessarily ours
+            if (marked || backlogPass)
+            {
+                LocalDbLogging.LogIfVerbose($"Removing residue directory: {name}");
+                Directory.Delete(directory, true);
+            }
+
+            return;
         }
 
         // likely in use by another process
         if (LocalDbApi.GetInstance(name).IsRunning)
         {
-            return false;
+            return;
         }
 
         // still tracked by a data directory, so CleanRoot governs when it is reclaimed
         if (Directory.Exists(Path.Combine(dataRoot, name)))
         {
-            return false;
+            return;
+        }
+
+        if (!marked)
+        {
+            // predates marking. Only reclaimed in the backlog pass, and only when it still
+            // carries the shrunk model this library leaves behind, so an instance created by
+            // anything else is never removed
+            if (!backlogPass ||
+                !InstanceMarker.HasShrunkModel(directory))
+            {
+                return;
+            }
         }
 
         LocalDbLogging.LogIfVerbose($"Removing orphaned instance: {name}");
         RemoveInstance(name);
-        return true;
     }
 
     static DateTime NewestWrite(string directory)

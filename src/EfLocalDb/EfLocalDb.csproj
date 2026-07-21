@@ -21,6 +21,7 @@
     <Compile Include="..\LocalDb\DirectoryFinder.cs" />
     <Compile Include="..\LocalDb\DirectoryCleaner.cs" />
     <Compile Include="..\LocalDb\LocalDbCleanup.cs" />
+    <Compile Include="..\LocalDb\InstanceMarker.cs" />
     <Compile Include="..\LocalDb\ExceptionBuilder.cs" />
     <Compile Include="..\LocalDb\FileExtensions.cs" />
     <Compile Include="..\LocalDb\Guard.cs" />
