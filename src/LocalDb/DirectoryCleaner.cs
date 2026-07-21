@@ -79,6 +79,163 @@
     }
 
     /// <summary>
+    /// Reclaims instances and residue from the directory LocalDB keeps for each instance.
+    /// <para>
+    /// Covers what <see cref="CleanRoot" /> cannot see: instances whose data directory is gone, so
+    /// nothing under the data root points at them, and directories left behind by instances that
+    /// were already deleted, since LocalDB does not remove the logs and event files on delete.
+    /// </para>
+    /// <para>
+    /// Only instances marked as created by this library are reclaimed, so an instance belonging to
+    /// anything else on the machine is never removed. <paramref name="backlogPass" /> additionally
+    /// reclaims unmarked directories that predate marking, and is run once per machine.
+    /// </para>
+    /// <para>
+    /// Only instances untouched for <paramref name="threshold" /> are processed, both to keep the
+    /// startup scan cheap and to avoid racing an instance that is being created or is in use.
+    /// Residue has no instance to race, so it uses a short threshold of its own.
+    /// </para>
+    /// </summary>
+    /// <returns>
+    /// Whether the sweep ran to completion. False when it was disabled or could not start, so a
+    /// caller recording that the backlog pass has happened does not do so for a pass that never ran.
+    /// </returns>
+    public static bool CleanInstanceRoot(string instanceRoot, string dataRoot, TimeSpan threshold, bool backlogPass)
+    {
+        if (threshold <= TimeSpan.Zero ||
+            !Directory.Exists(instanceRoot))
+        {
+            return false;
+        }
+
+        var cutoff = DateTime.Now - threshold;
+
+        HashSet<string> registered;
+        try
+        {
+            registered = new(LocalDbApi.GetInstanceNames(), StringComparer.OrdinalIgnoreCase);
+        }
+        catch (Exception exception)
+        {
+            LocalDbLogging.LogIfVerbose($"Failed to enumerate instances, skipping instance root cleanup. {exception.Message}");
+            return false;
+        }
+
+        foreach (var directory in Directory.EnumerateDirectories(instanceRoot))
+        {
+            try
+            {
+                CleanInstanceDirectory(directory, dataRoot, registered, cutoff, backlogPass);
+            }
+            catch (Exception exception)
+            {
+                // cleanup must never break the test run that triggered it
+                LocalDbLogging.LogIfVerbose($"Failed to clean instance directory: {directory}. {exception.Message}");
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Instances that LocalDB creates and manages itself, and that are never owned by this library.
+    /// </summary>
+    static bool IsDefaultInstance(string name) =>
+        name == "MSSQLLocalDB" ||
+        // automatic instances, eg "v11.0"
+        name.Length > 1 && name[0] == 'v' && char.IsDigit(name[1]);
+
+    /// <summary>
+    /// Residue is only guarded against the window where LocalDB has created the directory for an
+    /// instance but not yet registered it, so it uses a short threshold of its own. Applying the
+    /// full threshold would strand any residue not yet old enough when the backlog pass runs,
+    /// since that pass only happens once.
+    /// </summary>
+    static readonly TimeSpan residueThreshold = TimeSpan.FromMinutes(5);
+
+    internal static void CleanInstanceDirectory(
+        string directory,
+        string dataRoot,
+        HashSet<string> registered,
+        DateTime cutoff,
+        bool backlogPass)
+    {
+        var name = Path.GetFileName(directory);
+
+        // instances LocalDB creates and manages, never owned by this library
+        if (IsDefaultInstance(name))
+        {
+            return;
+        }
+
+        var newestWrite = NewestWrite(directory);
+        var marked = InstanceMarker.IsMarked(directory);
+
+        if (!registered.Contains(name))
+        {
+            // no instance backs this directory: the instance was already deleted and only the
+            // logs and event files remain. Nothing can be harmed by removing them, but an
+            // unmarked one is only taken in the backlog pass since it was not necessarily ours
+            if ((marked || backlogPass) &&
+                newestWrite < DateTime.Now - residueThreshold)
+            {
+                LocalDbLogging.LogIfVerbose($"Removing residue directory: {name}");
+                Directory.Delete(directory, true);
+            }
+
+            return;
+        }
+
+        // recently touched, so either in use or too new to be sure it is abandoned
+        if (newestWrite >= cutoff)
+        {
+            return;
+        }
+
+        // likely in use by another process
+        if (LocalDbApi.GetInstance(name).IsRunning)
+        {
+            return;
+        }
+
+        // still tracked by a data directory, so CleanRoot governs when it is reclaimed
+        if (Directory.Exists(Path.Combine(dataRoot, name)))
+        {
+            return;
+        }
+
+        if (!marked)
+        {
+            // predates marking. Only reclaimed in the backlog pass, and only when it still
+            // carries the shrunk model this library leaves behind, so an instance created by
+            // anything else is never removed
+            if (!backlogPass ||
+                !InstanceMarker.HasShrunkModel(directory))
+            {
+                return;
+            }
+        }
+
+        LocalDbLogging.LogIfVerbose($"Removing orphaned instance: {name}");
+        RemoveInstance(name);
+    }
+
+    static DateTime NewestWrite(string directory)
+    {
+        var newest = Directory.GetCreationTime(directory);
+        foreach (var file in Directory.EnumerateFiles(directory))
+        {
+            var write = File.GetLastWriteTime(file);
+            if (write > newest)
+            {
+                newest = write;
+            }
+        }
+
+        return newest;
+    }
+
+    /// <summary>
     /// Stops and deletes an instance, then removes the directory LocalDB keeps for it. Deleting
     /// the instance only reclaims the system databases: the logs and traces are left behind.
     /// </summary>

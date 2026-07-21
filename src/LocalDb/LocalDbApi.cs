@@ -164,8 +164,11 @@ static partial class LocalDbApi
         DeleteInstance(instanceName);
     }
 
-    public static void CreateInstance(string instanceName) =>
+    public static void CreateInstance(string instanceName)
+    {
         createInstance(ApiVersion, instanceName, 0);
+        InstanceMarker.Mark(instanceName);
+    }
 
     public static State CreateAndStart(string instance)
     {
@@ -192,6 +195,9 @@ static partial class LocalDbApi
         var size = connection.Capacity;
 
         startInstance(instanceName, 0, connection, ref size);
+        // also marked here, not just on create, so instances created before marking existed
+        // are picked up the next time they are used
+        InstanceMarker.Mark(instanceName);
     }
 
     public static void StopInstance(string instanceName, ShutdownMode mode = ShutdownMode.UseSqlShutdown) =>

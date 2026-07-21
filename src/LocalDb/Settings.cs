@@ -37,6 +37,15 @@ public static class LocalDbSettings
     /// </summary>
     public static bool? DBAutoOffline { get; set; } = ResolveDBAutoOffline();
 
+    /// <summary>
+    /// How long an instance directory must be untouched before automatic cleanup removes the
+    /// instance and the directory LocalDB keeps for it. This reclaims instances whose data
+    /// directory is gone, which the per run cleanup can no longer see.
+    /// Can be configured via the <c>LocalDBInstanceCleanupDays</c> environment variable.
+    /// Defaults to 30 days. Set to <see cref="TimeSpan.Zero" /> to disable.
+    /// </summary>
+    public static TimeSpan InstanceCleanupThreshold { get; set; } = ResolveInstanceCleanupThreshold();
+
     static ushort ResolveShutdownTimeout()
     {
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
@@ -62,5 +71,21 @@ public static class LocalDbSettings
             "false" => false,
             _ => null
         };
+    }
+
+    static TimeSpan ResolveInstanceCleanupThreshold()
+    {
+        var envValue = Environment.GetEnvironmentVariable("LocalDBInstanceCleanupDays");
+        if (envValue is null)
+        {
+            return TimeSpan.FromDays(30);
+        }
+
+        if (ushort.TryParse(envValue, out var days))
+        {
+            return TimeSpan.FromDays(days);
+        }
+
+        throw new ArgumentException($"Failed to parse LocalDBInstanceCleanupDays environment variable: {envValue}");
     }
 }

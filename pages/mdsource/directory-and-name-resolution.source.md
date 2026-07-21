@@ -32,6 +32,12 @@ That location is owned by LocalDB and cannot be changed. It is derived from the 
 
 Deleting an instance reclaims the system databases but leaves the logs and event files behind, so purging an instance removes both the instance and this directory.
 
+The per run purge above only sees instances that still have a data directory. Once that directory is gone, cleared with the temp directory or by the purge itself, nothing under the data root points at the instance and it can no longer be found that way. To catch these, this directory is also swept.
+
+LocalDB instances are shared by everything on the machine that uses LocalDB, and nothing in an instance records what created it. So a marker file is written into the directory of each instance this library starts, and the sweep only ever reclaims marked instances. An instance created by anything else has no marker and is never removed. A marked instance is reclaimed once it has no data directory, is not running, and has been untouched for a threshold defaulting to 30 days. Configurable via the `LocalDBInstanceCleanupDays` environment variable, or `LocalDbSettings.InstanceCleanupThreshold`; set it to zero to disable the sweep.
+
+Instances that predate marking cannot be told apart from instances belonging to anything else. They get a single best effort pass, once per machine, which removes directories left behind by already deleted instances and orphaned instances that still carry the shrunk `model.mdf` this library leaves behind. Anything else is left alone, since there is no way to tell it apart from an instance belonging to something else, and is left for `SqlLocalDB.exe delete` to remove by hand. That the pass has run is recorded under `%LocalAppData%\LocalDb`.
+
 
 ## Virus scanning exclusions
 
