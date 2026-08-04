@@ -57,3 +57,23 @@ This uses `IMigrator` (resolved from the EF Core service provider) instead of `D
 snippet: TestSingleMigration
 
 Each test gets its own database clone at the earlier migration state. It then applies the target migration and verifies the expected schema change. Because every test starts from the same cloned template, migrations under test are fully isolated from each other.
+
+## Replaying recent migrations
+
+The migration tests above apply migrations to a database built by migrating an empty one. Deployed databases are not like that: a deployment applies state *after* migrating, such as enabling change tracking, rebuilding views, or re-granting permissions. That state can make DDL that is valid against an empty database fail against a real one. SQL Server, for example, refuses to drop a primary key while change tracking is enabled on the table.
+
+`ReplayRecentMigrations` applies the most recent migrations one at a time, running a callback after each, so migrations meet the conditions a deployment gives them.
+
+snippet: MigrationReplayInstance
+
+snippet: MigrationReplayUsage
+
+The callback applies whatever the deployment applies after migrating.
+
+snippet: MigrationReplayAfterEach
+
+Everything before the window is applied in a single hop, since those migrations are not under test. From there each migration is applied on its own, with the callback in between.
+
+The one at a time part is the point. Applying the window in a single hop and running the callback once at the end is not equivalent: a table created by a migration *inside* the window would never have the state applied to it before a later migration alters it, and that is exactly the case that tends to break.
+
+Requires a database with no migrations applied, since it migrates forward from empty. Migrating a database that is already up to date would revert migrations by running their `Down`, so this throws rather than doing that.
