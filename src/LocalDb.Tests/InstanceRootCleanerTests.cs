@@ -126,7 +126,7 @@ public class InstanceRootCleanerTests
     // would process every instance on the machine. A cutoff in the future makes every
     // directory count as stale, isolating the branch under test from timing.
     static HashSet<string> Registered() =>
-        new(LocalDbApi.GetInstanceNames(), StringComparer.OrdinalIgnoreCase);
+        [with(LocalDbApi.GetInstanceNames(), StringComparer.OrdinalIgnoreCase)];
 
     static void Clean(string directory, string dataRoot, bool backlogPass = false) =>
         DirectoryCleaner.CleanInstanceDirectory(

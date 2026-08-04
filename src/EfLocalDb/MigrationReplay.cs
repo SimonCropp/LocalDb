@@ -43,8 +43,8 @@ public static class MigrationReplay
 
         var database = data.Database;
 
-        var applied = await database.GetAppliedMigrationsAsync(cancel);
-        if (applied.Any())
+        var applied = (await database.GetAppliedMigrationsAsync(cancel)).ToArray();
+        if (applied.Length != 0)
         {
             throw new InvalidOperationException(
                 $"""

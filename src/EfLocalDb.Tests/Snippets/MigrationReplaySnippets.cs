@@ -26,8 +26,8 @@ public class MigrationReplaySnippets
 
     #region MigrationReplayAfterEach
 
-    // whatever the deployment does after migrating: enabling change tracking, rebuilding views,
-    // re-granting permissions
+    // whatever the deployment does after migrating: enabling
+    // change tracking, rebuilding views, re-granting permissions
     static Task ApplyDeploymentState(MyDbContext data) =>
         Task.CompletedTask;
 

@@ -135,3 +135,51 @@ public async Task TestNextMigration()
 <!-- endSnippet -->
 
 Each test gets its own database clone at the earlier migration state. It then applies the target migration and verifies the expected schema change. Because every test starts from the same cloned template, migrations under test are fully isolated from each other.
+
+## Replaying recent migrations
+
+The migration tests above apply migrations to a database built by migrating an empty one. Deployed databases are not like that: a deployment applies state *after* migrating, such as enabling change tracking, rebuilding views, or re-granting permissions. That state can make DDL that is valid against an empty database fail against a real one. SQL Server, for example, refuses to drop a primary key while change tracking is enabled on the table.
+
+`ReplayRecentMigrations` applies the most recent migrations one at a time, running a callback after each, so migrations meet the conditions a deployment gives them.
+
+<!-- snippet: MigrationReplayInstance -->
+<a id='snippet-MigrationReplayInstance'></a>
+```cs
+// the template is left empty, so each test migrates forward from nothing
+static SqlInstance<MyDbContext> sqlInstance = new(
+    constructInstance: builder => new(builder.Options),
+    buildTemplate: _ => Task.CompletedTask);
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/MigrationReplaySnippets.cs#L5-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-MigrationReplayInstance' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+<!-- snippet: MigrationReplayUsage -->
+<a id='snippet-MigrationReplayUsage'></a>
+```cs
+await using var database = await sqlInstance.Build();
+
+await database.Context.ReplayRecentMigrations(
+    count: 5,
+    afterEachMigration: ApplyDeploymentState);
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/MigrationReplaySnippets.cs#L16-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-MigrationReplayUsage' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+The callback applies whatever the deployment applies after migrating.
+
+<!-- snippet: MigrationReplayAfterEach -->
+<a id='snippet-MigrationReplayAfterEach'></a>
+```cs
+// whatever the deployment does after migrating: enabling
+// change tracking, rebuilding views, re-granting permissions
+static Task ApplyDeploymentState(MyDbContext data) =>
+    Task.CompletedTask;
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/MigrationReplaySnippets.cs#L27-L34' title='Snippet source file'>snippet source</a> | <a href='#snippet-MigrationReplayAfterEach' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+Everything before the window is applied in a single hop, since those migrations are not under test. From there each migration is applied on its own, with the callback in between.
+
+The one at a time part is the point. Applying the window in a single hop and running the callback once at the end is not equivalent: a table created by a migration *inside* the window would never have the state applied to it before a later migration alters it, and that is exactly the case that tends to break.
+
+Requires a database with no migrations applied, since it migrates forward from empty. Migrating a database that is already up to date would revert migrations by running their `Down`, so this throws rather than doing that.
