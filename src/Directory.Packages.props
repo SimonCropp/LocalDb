@@ -23,7 +23,7 @@
     <PackageVersion Include="NUnit" Version="4.6.1" />
     <PackageVersion Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageVersion Include="Polyfill" Version="11.2.0" />
-    <PackageVersion Include="ProjectDefaults" Version="1.0.176" />
+    <PackageVersion Include="ProjectDefaults" Version="1.0.180" />
     <PackageVersion Include="System.Data.SqlClient" Version="4.9.1" />
     <PackageVersion Include="System.Drawing.Common" Version="10.0.11" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
@@ -41,7 +41,7 @@
     <PackageVersion Include="Verify.XunitV3" Version="31.28.0" />
     <PackageVersion Include="MSTest" Version="4.3.3" />
     <PackageVersion Include="Verify.MSTest" Version="31.28.0" />
-    <PackageVersion Include="TUnit" Version="1.65.0" />
+    <PackageVersion Include="TUnit" Version="1.65.38" />
     <PackageVersion Include="Verify.TUnit" Version="31.28.0" />
   </ItemGroup>
 </Project>
