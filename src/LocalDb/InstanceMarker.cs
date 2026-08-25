@@ -65,7 +65,6 @@ static class InstanceMarker
         }
 
         var length = new FileInfo(model).Length;
-        return length > 0 &&
-               length < 8 * 1024 * 1024;
+        return length is > 0 and < 8 * 1024 * 1024;
     }
 }

@@ -113,7 +113,7 @@
         HashSet<string> registered;
         try
         {
-            registered = new(LocalDbApi.GetInstanceNames(), StringComparer.OrdinalIgnoreCase);
+            registered = [with(LocalDbApi.GetInstanceNames(), StringComparer.OrdinalIgnoreCase)];
         }
         catch (Exception exception)
         {
