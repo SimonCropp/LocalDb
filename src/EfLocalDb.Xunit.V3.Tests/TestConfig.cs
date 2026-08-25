@@ -1,1 +1,1 @@
-[assembly: CollectionBehavior(MaxParallelThreads = 2)]
+[assembly: Xunit.v3.Parallelization(MaxThreads = 2)]

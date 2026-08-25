@@ -688,7 +688,7 @@ To run tests in parallel, configure parallelism at the assembly level:
 <!-- snippet: EfLocalDb.Xunit.V3.Tests/TestConfig.cs -->
 <a id='snippet-EfLocalDb.Xunit.V3.Tests/TestConfig.cs'></a>
 ```cs
-[assembly: CollectionBehavior(MaxParallelThreads = 2)]
+[assembly: Xunit.v3.Parallelization(MaxThreads = 2)]
 ```
 <sup><a href='/src/EfLocalDb.Xunit.V3.Tests/TestConfig.cs#L1-L1' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.Xunit.V3.Tests/TestConfig.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
