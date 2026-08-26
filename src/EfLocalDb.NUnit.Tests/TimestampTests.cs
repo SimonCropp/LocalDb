@@ -22,7 +22,14 @@ public class TimestampTests :
     {
         // Template should have been built with timestamp from TimestampDbContext assembly
         var company = await AssertData.Companies.SingleAsync();
-        await Verify(company);
+        await Verify(company)
+            .Snapshot(
+                """
+                {
+                  Id: Guid_1,
+                  Name: Template Company
+                }
+                """);
     }
 
     [Test]

@@ -1,4 +1,0 @@
-﻿{
-  Type: Exception,
-  Message: Writes are not supported on shared databases. Use useTransaction: true to allow writes.
-}

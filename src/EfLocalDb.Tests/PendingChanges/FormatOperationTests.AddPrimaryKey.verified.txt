@@ -1,1 +1,0 @@
-﻿AddPrimaryKey: PK_Orders on dbo.Orders [Id]

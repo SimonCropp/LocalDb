@@ -86,6 +86,7 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Initialize()
     {
+        VerifierSettings.Inline(maxLines: 10, applyMaxLinesToExisting: true);
         VerifierSettings.InitializePlugins();
         // AiCliDetector.Prefix ("chatbot_") is prepended to the LocalDb instance name when
         // running under an AI CLI (e.g. Claude Code). Scrub it so snapshots that capture the
@@ -97,7 +98,7 @@ public static class ModuleInitializer
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/ModuleInitializer.cs#L1-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.TUnit.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/ModuleInitializer.cs#L1-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.TUnit.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

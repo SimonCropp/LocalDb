@@ -26,7 +26,20 @@ public class SqlLocalDbTests
         LocalDbApi.CreateAndStart("InfoTest");
         var info = LocalDbApi.GetInstance("InfoTest");
 
-        await Verify(info);
+        await Verify(info)
+            .Snapshot(
+                """
+                {
+                  Size: 1460,
+                  InstanceName: InfoTest,
+                  Exists: true,
+                  ConfigurationCorrupted: false,
+                  IsRunning: true,
+                  IsShared: false,
+                  SharedInstanceName: ,
+                  IsAutomatic: false
+                }
+                """);
         LocalDbApi.StopAndDelete("InfoTest");
         False(LocalDbApi.GetInstance("InfoTest").Exists);
     }

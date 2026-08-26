@@ -86,6 +86,7 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Initialize()
     {
+        VerifierSettings.Inline(maxLines: 10, applyMaxLinesToExisting: true);
         VerifierSettings.InitializePlugins();
         // AiCliDetector.Prefix ("chatbot_") is prepended to the LocalDb instance name when
         // running under an AI CLI (e.g. Claude Code). Scrub it so snapshots that capture the
@@ -97,7 +98,7 @@ public static class ModuleInitializer
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/ModuleInitializer.cs#L1-L15' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MSTest.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/ModuleInitializer.cs#L1-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MSTest.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -181,7 +182,14 @@ public class Tests :
         {
             Database.Name,
             Database.Connection.DataSource
-        });
+        })
+        .Snapshot(
+            """
+            {
+              Name: Tests_Name,
+              DataSource: (LocalDb)\TheDbContext_LocalDb_EfLocalDb.MSTest.Tests
+            }
+            """);
 
     [TestMethod]
     public Task ThrowForRedundantIgnoreQueryFilters() =>
@@ -191,7 +199,14 @@ public class Tests :
                     var entities = AssertData.Companies;
                     return entities.IgnoreQueryFilters().SingleAsync();
                 })
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Query filters are already disabled. Call to IgnoreQueryFilters is redundant.
+                }
+                """);
 
     [TestMethod]
     public async Task IgnoreQueryFiltersAllowedOnArrangeAndAct()
@@ -352,7 +367,14 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         return Throws(() => ActData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Assert. Check for a AssertData usage in the preceding code.
+                }
+                """);
     }
 
     [TestMethod]
@@ -397,7 +419,14 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         return Throws(() => ArrangeData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Assert. Check for a AssertData usage in the preceding code.
+                }
+                """);
     }
 
     [TestMethod]
@@ -406,11 +435,18 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var act = ActData;
         return Throws(() => ArrangeData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Act. Check for a ActData usage in the preceding code.
+                }
+                """);
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L1-L301' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MSTest.Tests/Tests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L1-L336' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MSTest.Tests/Tests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -500,7 +536,7 @@ public async Task VerifyEntityById()
     await VerifyEntity<Company>(company.Id);
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L122-L135' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L136-L149' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: VerifyEntityWithIncludeMSTest -->
@@ -526,7 +562,7 @@ public async Task VerifyEntityWithInclude()
         .Include(_ => _.Employees);
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L141-L161' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithIncludeMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L155-L175' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithIncludeMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: VerifyEntityWithThenIncludeMSTest -->
@@ -559,7 +595,7 @@ public async Task VerifyEntityWithThenInclude()
         .ThenInclude(_ => _.Vehicles);
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L163-L190' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenIncludeMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L177-L204' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenIncludeMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -583,7 +619,7 @@ public async Task VerifyEntities_DbSet()
     await VerifyEntities(AssertData.Companies);
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L192-L205' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSetMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L206-L219' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSetMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: VerifyEntity_QueryableMSTest -->
@@ -602,7 +638,7 @@ public async Task VerifyEntity_Queryable()
     await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L220-L233' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_QueryableMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Tests.cs#L234-L247' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_QueryableMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

@@ -1,4 +1,0 @@
-﻿{
-  Name: Tests_Name,
-  DataSource: (LocalDb)\TheDbContext_LocalDb_EfLocalDb.NUnit.Tests
-}

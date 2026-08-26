@@ -1,4 +1,0 @@
-﻿{
-  Type: Exception,
-  Message: Query filters are already disabled. Call to IgnoreQueryFilters is redundant.
-}

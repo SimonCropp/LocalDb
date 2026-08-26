@@ -22,7 +22,14 @@ public class DefaultTimestampTests :
     {
         // Template should have been built with default timestamp behavior
         var company = await AssertData.Companies.SingleAsync();
-        await Verify(company);
+        await Verify(company)
+            .Snapshot(
+                """
+                {
+                  Id: Guid_1,
+                  Name: Default Template Company
+                }
+                """);
     }
 
     [Test]

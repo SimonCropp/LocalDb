@@ -13,7 +13,8 @@ public class FormatOperationTests
                     new() { Name = "Id", ClrType = typeof(int), ColumnType = "int", IsNullable = false },
                     new() { Name = "Name", ClrType = typeof(string), ColumnType = "nvarchar(200)", MaxLength = 200 }
                 }
-            }));
+            }))
+            .Snapshot("CreateTable: dbo.Orders Columns: [Id int NOT NULL, Name nvarchar(200) NOT NULL MaxLength=200]");
 
     [Test]
     public Task CreateTableNoSchema() =>
@@ -25,37 +26,44 @@ public class FormatOperationTests
                 {
                     new() { Name = "Id", ClrType = typeof(int), ColumnType = "int", IsNullable = false }
                 }
-            }));
+            }))
+            .Snapshot("CreateTable: Orders Columns: [Id int NOT NULL]");
 
     [Test]
     public Task DropTable() =>
         Verify(PendingChanges.FormatOperation(
-            new DropTableOperation { Name = "Orders", Schema = "dbo" }));
+            new DropTableOperation { Name = "Orders", Schema = "dbo" }))
+            .Snapshot("DropTable: dbo.Orders");
 
     [Test]
     public Task DropTableNoSchema() =>
         Verify(PendingChanges.FormatOperation(
-            new DropTableOperation { Name = "Orders" }));
+            new DropTableOperation { Name = "Orders" }))
+            .Snapshot("DropTable: Orders");
 
     [Test]
     public Task RenameTable() =>
         Verify(PendingChanges.FormatOperation(
-            new RenameTableOperation { Name = "Orders", Schema = "dbo", NewName = "PurchaseOrders" }));
+            new RenameTableOperation { Name = "Orders", Schema = "dbo", NewName = "PurchaseOrders" }))
+            .Snapshot("RenameTable: dbo.Orders -> PurchaseOrders");
 
     [Test]
     public Task RenameTableWithSchemaChange() =>
         Verify(PendingChanges.FormatOperation(
-            new RenameTableOperation { Name = "Orders", Schema = "dbo", NewName = "Orders", NewSchema = "sales" }));
+            new RenameTableOperation { Name = "Orders", Schema = "dbo", NewName = "Orders", NewSchema = "sales" }))
+            .Snapshot("RenameTable: dbo.Orders -> sales.Orders");
 
     [Test]
     public Task RenameTableNameOnly() =>
         Verify(PendingChanges.FormatOperation(
-            new RenameTableOperation { Name = "Orders", NewName = "PurchaseOrders" }));
+            new RenameTableOperation { Name = "Orders", NewName = "PurchaseOrders" }))
+            .Snapshot("RenameTable: Orders -> PurchaseOrders");
 
     [Test]
     public Task AlterTable() =>
         Verify(PendingChanges.FormatOperation(
-            new AlterTableOperation { Name = "Orders", Schema = "dbo" }));
+            new AlterTableOperation { Name = "Orders", Schema = "dbo" }))
+            .Snapshot("AlterTable: dbo.Orders");
 
     [Test]
     public Task AddColumn() =>
@@ -68,7 +76,8 @@ public class FormatOperationTests
                 ClrType = typeof(decimal),
                 ColumnType = "decimal(18,2)",
                 IsNullable = false
-            }));
+            }))
+            .Snapshot("AddColumn: dbo.Orders.Total decimal(18,2) NOT NULL");
 
     [Test]
     public Task AddColumnNullable() =>
@@ -80,7 +89,8 @@ public class FormatOperationTests
                 ClrType = typeof(string),
                 ColumnType = "nvarchar(max)",
                 IsNullable = true
-            }));
+            }))
+            .Snapshot("AddColumn: Orders.Notes nvarchar(max)");
 
     [Test]
     public Task AddColumnWithDefaultValue() =>
@@ -93,7 +103,8 @@ public class FormatOperationTests
                 ColumnType = "int",
                 IsNullable = false,
                 DefaultValue = 0
-            }));
+            }))
+            .Snapshot("AddColumn: Orders.Status int NOT NULL DEFAULT 0");
 
     [Test]
     public Task AddColumnWithDefaultValueSql() =>
@@ -106,7 +117,8 @@ public class FormatOperationTests
                 ColumnType = "datetime2",
                 IsNullable = false,
                 DefaultValueSql = "GETUTCDATE()"
-            }));
+            }))
+            .Snapshot("AddColumn: Orders.CreatedAt datetime2 NOT NULL DEFAULT GETUTCDATE()");
 
     [Test]
     public Task AddColumnWithComputedSql() =>
@@ -118,7 +130,8 @@ public class FormatOperationTests
                 ClrType = typeof(string),
                 ColumnType = "nvarchar(max)",
                 ComputedColumnSql = "[FirstName] + ' ' + [LastName]"
-            }));
+            }))
+            .Snapshot("AddColumn: Orders.FullName nvarchar(max) NOT NULL AS [FirstName] + ' ' + [LastName]");
 
     [Test]
     public Task AddColumnWithMaxLength() =>
@@ -131,7 +144,8 @@ public class FormatOperationTests
                 ColumnType = "nvarchar(50)",
                 MaxLength = 50,
                 IsNullable = false
-            }));
+            }))
+            .Snapshot("AddColumn: Orders.Code nvarchar(50) NOT NULL MaxLength=50");
 
     [Test]
     public Task AddColumnFallbackClrType() =>
@@ -142,12 +156,14 @@ public class FormatOperationTests
                 Name = "Flag",
                 ClrType = typeof(bool),
                 IsNullable = false
-            }));
+            }))
+            .Snapshot("AddColumn: Orders.Flag Boolean NOT NULL");
 
     [Test]
     public Task DropColumn() =>
         Verify(PendingChanges.FormatOperation(
-            new DropColumnOperation { Table = "Orders", Schema = "dbo", Name = "OldColumn" }));
+            new DropColumnOperation { Table = "Orders", Schema = "dbo", Name = "OldColumn" }))
+            .Snapshot("DropColumn: dbo.Orders.OldColumn");
 
     [Test]
     public Task AlterColumn() =>
@@ -160,12 +176,14 @@ public class FormatOperationTests
                 ClrType = typeof(decimal),
                 ColumnType = "decimal(18,4)",
                 IsNullable = false
-            }));
+            }))
+            .Snapshot("AlterColumn: dbo.Orders.Total decimal(18,4) NOT NULL");
 
     [Test]
     public Task RenameColumn() =>
         Verify(PendingChanges.FormatOperation(
-            new RenameColumnOperation { Table = "Orders", Schema = "dbo", Name = "OldName", NewName = "NewName" }));
+            new RenameColumnOperation { Table = "Orders", Schema = "dbo", Name = "OldName", NewName = "NewName" }))
+            .Snapshot("RenameColumn: dbo.Orders.OldName -> NewName");
 
     [Test]
     public Task CreateIndex() =>
@@ -176,7 +194,8 @@ public class FormatOperationTests
                 Table = "Orders",
                 Schema = "dbo",
                 Columns = ["CustomerId"]
-            }));
+            }))
+            .Snapshot("CreateIndex: IX_Orders_CustomerId on dbo.Orders [CustomerId]");
 
     [Test]
     public Task CreateUniqueIndex() =>
@@ -188,7 +207,8 @@ public class FormatOperationTests
                 Schema = "dbo",
                 IsUnique = true,
                 Columns = ["OrderNumber"]
-            }));
+            }))
+            .Snapshot("CreateIndex: unique IX_Orders_OrderNumber on dbo.Orders [OrderNumber]");
 
     [Test]
     public Task CreateCompositeIndex() =>
@@ -198,17 +218,20 @@ public class FormatOperationTests
                 Name = "IX_Orders_Customer_Date",
                 Table = "Orders",
                 Columns = ["CustomerId", "OrderDate"]
-            }));
+            }))
+            .Snapshot("CreateIndex: IX_Orders_Customer_Date on Orders [CustomerId, OrderDate]");
 
     [Test]
     public Task DropIndex() =>
         Verify(PendingChanges.FormatOperation(
-            new DropIndexOperation { Name = "IX_Orders_CustomerId", Table = "Orders", Schema = "dbo" }));
+            new DropIndexOperation { Name = "IX_Orders_CustomerId", Table = "Orders", Schema = "dbo" }))
+            .Snapshot("DropIndex: IX_Orders_CustomerId on dbo.Orders");
 
     [Test]
     public Task RenameIndex() =>
         Verify(PendingChanges.FormatOperation(
-            new RenameIndexOperation { Name = "IX_Old", Table = "Orders", Schema = "dbo", NewName = "IX_New" }));
+            new RenameIndexOperation { Name = "IX_Old", Table = "Orders", Schema = "dbo", NewName = "IX_New" }))
+            .Snapshot("RenameIndex: dbo.Orders IX_Old -> IX_New");
 
     [Test]
     public Task AddForeignKey() =>
@@ -222,7 +245,8 @@ public class FormatOperationTests
                 PrincipalTable = "Customers",
                 PrincipalSchema = "dbo",
                 PrincipalColumns = ["Id"]
-            }));
+            }))
+            .Snapshot("AddForeignKey: FK_Orders_Customers on dbo.Orders [CustomerId] -> dbo.Customers [Id]");
 
     [Test]
     public Task AddForeignKeyComposite() =>
@@ -234,12 +258,14 @@ public class FormatOperationTests
                 Columns = ["OrderId", "LineNumber"],
                 PrincipalTable = "Orders",
                 PrincipalColumns = ["Id", "LineNumber"]
-            }));
+            }))
+            .Snapshot("AddForeignKey: FK_OrderItems_Orders on OrderItems [OrderId, LineNumber] -> Orders [Id, LineNumber]");
 
     [Test]
     public Task DropForeignKey() =>
         Verify(PendingChanges.FormatOperation(
-            new DropForeignKeyOperation { Name = "FK_Orders_Customers", Table = "Orders", Schema = "dbo" }));
+            new DropForeignKeyOperation { Name = "FK_Orders_Customers", Table = "Orders", Schema = "dbo" }))
+            .Snapshot("DropForeignKey: FK_Orders_Customers on dbo.Orders");
 
     [Test]
     public Task AddPrimaryKey() =>
@@ -250,7 +276,8 @@ public class FormatOperationTests
                 Table = "Orders",
                 Schema = "dbo",
                 Columns = ["Id"]
-            }));
+            }))
+            .Snapshot("AddPrimaryKey: PK_Orders on dbo.Orders [Id]");
 
     [Test]
     public Task AddCompositePrimaryKey() =>
@@ -260,12 +287,14 @@ public class FormatOperationTests
                 Name = "PK_OrderItems",
                 Table = "OrderItems",
                 Columns = ["OrderId", "LineNumber"]
-            }));
+            }))
+            .Snapshot("AddPrimaryKey: PK_OrderItems on OrderItems [OrderId, LineNumber]");
 
     [Test]
     public Task DropPrimaryKey() =>
         Verify(PendingChanges.FormatOperation(
-            new DropPrimaryKeyOperation { Name = "PK_Orders", Table = "Orders", Schema = "dbo" }));
+            new DropPrimaryKeyOperation { Name = "PK_Orders", Table = "Orders", Schema = "dbo" }))
+            .Snapshot("DropPrimaryKey: PK_Orders on dbo.Orders");
 
     [Test]
     public Task AddUniqueConstraint() =>
@@ -276,22 +305,26 @@ public class FormatOperationTests
                 Table = "Orders",
                 Schema = "dbo",
                 Columns = ["OrderNumber"]
-            }));
+            }))
+            .Snapshot("AddUniqueConstraint: UQ_Orders_OrderNumber on dbo.Orders [OrderNumber]");
 
     [Test]
     public Task DropUniqueConstraint() =>
         Verify(PendingChanges.FormatOperation(
-            new DropUniqueConstraintOperation { Name = "UQ_Orders_OrderNumber", Table = "Orders", Schema = "dbo" }));
+            new DropUniqueConstraintOperation { Name = "UQ_Orders_OrderNumber", Table = "Orders", Schema = "dbo" }))
+            .Snapshot("DropUniqueConstraint: UQ_Orders_OrderNumber on dbo.Orders");
 
     [Test]
     public Task AddCheckConstraint() =>
         Verify(PendingChanges.FormatOperation(
-            new AddCheckConstraintOperation { Name = "CK_Orders_Total", Table = "Orders", Schema = "dbo" }));
+            new AddCheckConstraintOperation { Name = "CK_Orders_Total", Table = "Orders", Schema = "dbo" }))
+            .Snapshot("AddCheckConstraint: CK_Orders_Total on dbo.Orders");
 
     [Test]
     public Task DropCheckConstraint() =>
         Verify(PendingChanges.FormatOperation(
-            new DropCheckConstraintOperation { Name = "CK_Orders_Total", Table = "Orders", Schema = "dbo" }));
+            new DropCheckConstraintOperation { Name = "CK_Orders_Total", Table = "Orders", Schema = "dbo" }))
+            .Snapshot("DropCheckConstraint: CK_Orders_Total on dbo.Orders");
 
     [Test]
     public Task InsertData() =>
@@ -302,7 +335,8 @@ public class FormatOperationTests
                 Schema = "dbo",
                 Columns = ["Id", "Name"],
                 Values = new object[,] { { 1, "Test" } }
-            }));
+            }))
+            .Snapshot("InsertData: dbo.Orders [Id, Name]");
 
     [Test]
     public Task DeleteData() =>
@@ -313,7 +347,8 @@ public class FormatOperationTests
                 Schema = "dbo",
                 KeyColumns = ["Id"],
                 KeyValues = new object[,] { { 1 } }
-            }));
+            }))
+            .Snapshot("DeleteData: dbo.Orders");
 
     [Test]
     public Task UpdateData() =>
@@ -326,10 +361,12 @@ public class FormatOperationTests
                 KeyColumns = ["Id"],
                 Values = new object[,] { { "Updated", 100m } },
                 KeyValues = new object[,] { { 1 } }
-            }));
+            }))
+            .Snapshot("UpdateData: dbo.Orders [Name, Total]");
 
     [Test]
     public Task UnknownOperation() =>
         Verify(PendingChanges.FormatOperation(
-            new SqlOperation { Sql = "SELECT 1" }));
+            new SqlOperation { Sql = "SELECT 1" }))
+            .Snapshot("Sql");
 }

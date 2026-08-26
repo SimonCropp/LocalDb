@@ -7,7 +7,8 @@ public class WrapperTests
     public Task InvalidInstanceName()
     {
         var exception = Throws<ArgumentException>(() => new Wrapper("<", "s"))!;
-        return Verify(exception.Message);
+        return Verify(exception.Message)
+            .Snapshot("Invalid file name: < (Parameter 'instance')");
     }
 
     [Test]
@@ -80,7 +81,16 @@ end;
             }
         }
 
-        await Verify(wrapper.ReadDatabaseState("Simple"));
+        await Verify(wrapper.ReadDatabaseState("Simple"))
+            .Snapshot(
+                """
+                {
+                  DataFileExists: true,
+                  LogFileExists: true,
+                  DbDataFileName: Simple.mdf,
+                  DbLogFileName: Simple_log.ldf
+                }
+                """);
         wrapper.DeleteInstance();
     }
 
@@ -94,7 +104,16 @@ end;
         using var wrapper = new Wrapper(name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        await Verify(wrapper.ReadDatabaseState("Simple"));
+        await Verify(wrapper.ReadDatabaseState("Simple"))
+            .Snapshot(
+                """
+                {
+                  DataFileExists: true,
+                  LogFileExists: true,
+                  DbDataFileName: Simple.mdf,
+                  DbLogFileName: Simple_log.ldf
+                }
+                """);
         wrapper.DeleteInstance();
     }
 
@@ -302,7 +321,16 @@ end;
         wrapper = new(name, DirectoryFinder.Find(name));
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        await Verify(wrapper.ReadDatabaseState("Simple"));
+        await Verify(wrapper.ReadDatabaseState("Simple"))
+            .Snapshot(
+                """
+                {
+                  DataFileExists: true,
+                  LogFileExists: true,
+                  DbDataFileName: Simple.mdf,
+                  DbLogFileName: Simple_log.ldf
+                }
+                """);
         wrapper.Dispose();
         wrapper.DeleteInstance();
     }
@@ -329,7 +357,16 @@ end;
         await newWrapper.AwaitStart();
         await newWrapper.CreateDatabaseFromTemplate("Simple");
 
-        await Verify(newWrapper.ReadDatabaseState("Simple"));
+        await Verify(newWrapper.ReadDatabaseState("Simple"))
+            .Snapshot(
+                """
+                {
+                  DataFileExists: true,
+                  LogFileExists: true,
+                  DbDataFileName: Simple.mdf,
+                  DbLogFileName: Simple_log.ldf
+                }
+                """);
     }
 
     [Test]
@@ -343,7 +380,16 @@ end;
         wrapper.Start(timestamp, TestDbBuilder.CreateTable);
         await wrapper.AwaitStart();
         await wrapper.CreateDatabaseFromTemplate("Simple");
-        await Verify(wrapper.ReadDatabaseState("Simple"));
+        await Verify(wrapper.ReadDatabaseState("Simple"))
+            .Snapshot(
+                """
+                {
+                  DataFileExists: true,
+                  LogFileExists: true,
+                  DbDataFileName: Simple.mdf,
+                  DbLogFileName: Simple_log.ldf
+                }
+                """);
         wrapper.DeleteInstance();
     }
 

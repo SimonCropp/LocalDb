@@ -1,1 +1,0 @@
-﻿DropColumn: dbo.Orders.OldColumn

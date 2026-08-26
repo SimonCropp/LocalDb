@@ -1,4 +1,0 @@
-﻿{
-  Type: Exception,
-  Message: Phase has already moved to Act. Check for a ActData usage in the preceding code.
-}

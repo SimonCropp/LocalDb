@@ -3,6 +3,7 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Initialize()
     {
+        VerifierSettings.Inline(maxLines: 10, applyMaxLinesToExisting: true);
         VerifierSettings.InitializePlugins();
         // AiCliDetector.Prefix ("chatbot_") is prepended to the LocalDb instance name when
         // running under an AI CLI (e.g. Claude Code). Scrub it so snapshots that capture the

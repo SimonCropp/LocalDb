@@ -1,1 +1,0 @@
-﻿AddColumn: Orders.Status int NOT NULL DEFAULT 0

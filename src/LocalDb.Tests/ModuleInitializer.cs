@@ -3,6 +3,7 @@ public static class ModuleInitializer
     [ModuleInitializer]
     public static void Initialize()
     {
+        VerifierSettings.Inline(maxLines: 10, applyMaxLinesToExisting: true);
         VerifierSettings.InitializePlugins();
         LocalDbLogging.EnableVerbose();
         // do not let the test suite sweep the real instance root as a side effect: it would

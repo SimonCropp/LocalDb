@@ -85,7 +85,14 @@ public class Tests
     {
         await using var database = await instance.BuildShared();
         await ThrowsTask(() => database.SaveChangesAsync())
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: No pending changes. It is possible Find or Single has been used, and the returned entity then modified. Find or Single use a non tracking context. Use the Context to dor modifications.
+                }
+                """);
     }
 
     [Test]
@@ -151,7 +158,14 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verify(database.Single<TestEntity>(_ => _.Id == entity.Id));
+        await Verify(database.Single<TestEntity>(_ => _.Id == entity.Id))
+            .Snapshot(
+                """
+                {
+                  Id: 1,
+                  Property: prop
+                }
+                """);
     }
 
     [Test]
@@ -163,21 +177,48 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verify(database.SingleIgnoreFilters<TestEntity>(_ => _.Id == entity.Id));
+        await Verify(database.SingleIgnoreFilters<TestEntity>(_ => _.Id == entity.Id))
+            .Snapshot(
+                """
+                {
+                  Id: 1,
+                  Property: filtered
+                }
+                """);
     }
 
     [Test]
     public async Task SingleMissing()
     {
         await using var database = await instance.BuildShared();
-        await ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10));
+        await ThrowsTask(() => database.Single<TestEntity>(entity => entity.Id == 10))
+            .Snapshot(
+                """
+                {
+                  Type: InvalidOperationException,
+                  Message: Sequence contains no elements.,
+                  StackTrace:
+                at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+                at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+                }
+                """);
     }
 
     [Test]
     public async Task SingleMissingIgnoreFilters()
     {
         await using var database = await instance.BuildShared();
-        await ThrowsTask(() => database.SingleIgnoreFilters<TestEntity>(entity => entity.Id == 10));
+        await ThrowsTask(() => database.SingleIgnoreFilters<TestEntity>(entity => entity.Id == 10))
+            .Snapshot(
+                """
+                {
+                  Type: InvalidOperationException,
+                  Message: Sequence contains no elements.,
+                  StackTrace:
+                at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+                at Microsoft.EntityFrameworkCore.Query.ShapedQueryCompilingExpressionVisitor.SingleAsync[TSource](IAsyncEnumerable`1 asyncEnumerable, CancellationToken cancellationToken)
+                }
+                """);
     }
 
     [Test]
@@ -189,7 +230,8 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verify(database.Any<TestEntity>(_ => _.Id == entity.Id));
+        await Verify(database.Any<TestEntity>(_ => _.Id == entity.Id))
+            .Snapshot("True");
     }
 
     [Test]
@@ -201,21 +243,24 @@ public class Tests
         };
         await using var database = await instance.Build();
         await database.AddDataUntracked(entity);
-        await Verify(database.AnyIgnoreFilters<TestEntity>(_ => _.Id == entity.Id));
+        await Verify(database.AnyIgnoreFilters<TestEntity>(_ => _.Id == entity.Id))
+            .Snapshot("True");
     }
 
     [Test]
     public async Task AnyMissing()
     {
         await using var database = await instance.BuildShared();
-        await Verify(database.Any<TestEntity>(entity => entity.Id == 10));
+        await Verify(database.Any<TestEntity>(entity => entity.Id == 10))
+            .Snapshot("False");
     }
 
     [Test]
     public async Task AnyMissingIgnoreFilters()
     {
         await using var database = await instance.BuildShared();
-        await Verify(database.AnyIgnoreFilters<TestEntity>(entity => entity.Id == 10));
+        await Verify(database.AnyIgnoreFilters<TestEntity>(entity => entity.Id == 10))
+            .Snapshot("False");
     }
 
     [Test]
@@ -758,7 +803,14 @@ public class Tests
         await using var database = await instance.BuildShared();
         database.Context.Add(new TestEntity { Property = "blocked" });
         await ThrowsTask(() => database.Context.SaveChangesAsync())
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Writes are not supported on shared databases. Use useTransaction: true to allow writes.
+                }
+                """);
     }
 
     [Test]
@@ -768,7 +820,14 @@ public class Tests
         await using var context = database.NewDbContext();
         context.Add(new TestEntity { Property = "blocked" });
         await ThrowsTask(() => context.SaveChangesAsync())
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Writes are not supported on shared databases. Use useTransaction: true to allow writes.
+                }
+                """);
     }
 
     [Test]
@@ -778,7 +837,14 @@ public class Tests
         await using var context = database.NewConnectionOwnedDbContext();
         context.Add(new TestEntity { Property = "blocked" });
         await ThrowsTask(() => context.SaveChangesAsync())
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Writes are not supported on shared databases. Use useTransaction: true to allow writes.
+                }
+                """);
     }
 
     [Test]
