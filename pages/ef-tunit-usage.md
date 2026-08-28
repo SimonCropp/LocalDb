@@ -181,7 +181,14 @@ public class Tests :
         {
             Database.Name,
             Database.Connection.DataSource
-        });
+        })
+        .Snapshot(
+            """
+            {
+              Name: Tests_Name,
+              DataSource: (LocalDb)\TheDbContext_LocalDb_EfLocalDb.TUnit.Tests
+            }
+            """);
 
     [Test]
     [Arguments("case")]
@@ -200,7 +207,14 @@ public class Tests :
                     var entities = AssertData.Companies;
                     return entities.IgnoreQueryFilters().SingleAsync();
                 })
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Query filters are already disabled. Call to IgnoreQueryFilters is redundant.
+                }
+                """);
 
     [Test]
     public async Task IgnoreQueryFiltersAllowedOnArrangeAndAct()
@@ -361,7 +375,14 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         return Throws(() => ActData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Assert. Check for a AssertData usage in the preceding code.
+                }
+                """);
     }
 
     [Test]
@@ -406,7 +427,14 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         return Throws(() => ArrangeData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Assert. Check for a AssertData usage in the preceding code.
+                }
+                """);
     }
 
     [Test]
@@ -415,11 +443,18 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var act = ActData;
         return Throws(() => ArrangeData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Act. Check for a ActData usage in the preceding code.
+                }
+                """);
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L1-L309' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.TUnit.Tests/Tests.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L1-L344' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.TUnit.Tests/Tests.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -509,7 +544,7 @@ public async Task VerifyEntityById()
     await VerifyEntity<Company>(company.Id);
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L130-L143' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityTUnit' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L144-L157' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityTUnit' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: VerifyEntityWithIncludeTUnit -->
@@ -535,7 +570,7 @@ public async Task VerifyEntityWithInclude()
         .Include(_ => _.Employees);
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L149-L169' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithIncludeTUnit' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L163-L183' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithIncludeTUnit' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: VerifyEntityWithThenIncludeTUnit -->
@@ -568,7 +603,7 @@ public async Task VerifyEntityWithThenInclude()
         .ThenInclude(_ => _.Vehicles);
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L171-L198' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenIncludeTUnit' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L185-L212' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntityWithThenIncludeTUnit' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -592,7 +627,7 @@ public async Task VerifyEntities_DbSet()
     await VerifyEntities(AssertData.Companies);
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L200-L213' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSetTUnit' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L214-L227' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntities_DbSetTUnit' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: VerifyEntity_QueryableTUnit -->
@@ -611,7 +646,7 @@ public async Task VerifyEntity_Queryable()
     await VerifyEntity(AssertData.Companies.Where(_ => _.Id == company.Id));
 }
 ```
-<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L228-L241' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_QueryableTUnit' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.TUnit.Tests/Tests.cs#L242-L255' title='Snippet source file'>snippet source</a> | <a href='#snippet-VerifyEntity_QueryableTUnit' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
