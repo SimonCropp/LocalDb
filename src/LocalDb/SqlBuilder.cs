@@ -62,7 +62,7 @@ static class SqlBuilder
     //                                 ~40% faster and write ~70% less log I/O.
     //   read_committed_snapshot on  - READ COMMITTED uses row versioning instead of
     //                                 shared locks, preventing S/X-lock deadlocks
-    //                                 between parallel [SharedDbWithTransaction] tests
+    //                                 between parallel transactional tests
     //                                 against the same shared database.
     // read_committed_snapshot requires exclusive access to the database, so it uses
     // "with rollback immediate" to evict any sessions a buildTemplate/callback left

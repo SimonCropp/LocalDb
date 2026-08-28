@@ -100,7 +100,7 @@ public class Tests
     {
         // Guards against accidental removal of the ALTER DATABASE statement that enables
         // READ_COMMITTED_SNAPSHOT on the template — required to avoid S/X-lock deadlocks
-        // between parallel [SharedDbWithTransaction] tests on the same shared database.
+        // between parallel transactional tests on the same database.
         await using var database = await instance.Build();
         await using var command = database.Connection.CreateCommand();
         command.CommandText = "select is_read_committed_snapshot_on from sys.databases where name = db_name()";

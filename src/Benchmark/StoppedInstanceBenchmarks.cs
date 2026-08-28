@@ -11,7 +11,7 @@
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class StoppedInstanceBenchmarks
 {
-    const string InstanceName = "BenchStopped";
+    const string instanceName = "BenchStopped";
     SqlInstance? sqlInstance;
 
     [Params(0, 1, 5, 10, 100)]
@@ -21,15 +21,15 @@ public class StoppedInstanceBenchmarks
     public async Task GlobalSetup()
     {
         // Create instance with template first, then stop it
-        LocalDbApi.StopAndDelete(InstanceName, ShutdownMode.KillProcess);
-        DirectoryFinder.Delete(InstanceName);
+        LocalDbApi.StopAndDelete(instanceName);
+        DirectoryFinder.Delete(instanceName);
 
-        var setupInstance = new SqlInstance(name: InstanceName, buildTemplate: CreateTable);
+        var setupInstance = new SqlInstance(name: instanceName, buildTemplate: CreateTable);
         await setupInstance.Wrapper.AwaitStart();
         setupInstance.Dispose();
 
         // Stop the instance (but keep files on disk)
-        LocalDbApi.StopInstance(InstanceName, ShutdownMode.KillProcess);
+        LocalDbApi.StopInstance(instanceName, ShutdownMode.KillProcess);
     }
 
     [GlobalCleanup]
@@ -43,7 +43,7 @@ public class StoppedInstanceBenchmarks
     [Benchmark]
     public async Task StoppedInstance()
     {
-        sqlInstance = new(name: InstanceName, buildTemplate: CreateTable);
+        sqlInstance = new(name: instanceName, buildTemplate: CreateTable);
         await sqlInstance.Wrapper.AwaitStart();
 
         for (var i = 0; i < DatabaseCount; i++)

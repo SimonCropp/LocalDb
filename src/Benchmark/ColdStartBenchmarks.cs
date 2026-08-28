@@ -9,7 +9,7 @@
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class ColdStartBenchmarks
 {
-    const string InstanceName = "BenchColdStart";
+    const string instanceName = "BenchColdStart";
     SqlInstance? sqlInstance;
 
     [Params(0, 1, 5, 10, 100)]
@@ -19,8 +19,8 @@ public class ColdStartBenchmarks
     public void GlobalSetup()
     {
         // Ensure complete cold start: delete instance and directory
-        LocalDbApi.StopAndDelete(InstanceName, ShutdownMode.KillProcess);
-        DirectoryFinder.Delete(InstanceName);
+        LocalDbApi.StopAndDelete(instanceName);
+        DirectoryFinder.Delete(instanceName);
     }
 
     [GlobalCleanup]
@@ -34,7 +34,7 @@ public class ColdStartBenchmarks
     [Benchmark]
     public async Task ColdStart()
     {
-        sqlInstance = new(name: InstanceName, buildTemplate: CreateTable);
+        sqlInstance = new(name: instanceName, buildTemplate: CreateTable);
         await sqlInstance.Wrapper.AwaitStart();
 
         for (var i = 0; i < DatabaseCount; i++)

@@ -646,11 +646,7 @@ public async Task VerifyEntity_Queryable()
 
 Mark test methods with `[SharedDb]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.<!-- include: shared-db. path: /pages/mdsource/shared-db.include.md -->
 
-Use `[SharedDbWithTransaction]` instead when tests need to write data. Each test runs inside an auto-rolling-back transaction, ensuring test isolation while still sharing the database instance.
-
-Note: `[SharedDbWithTransaction]` means that on test failure the resulting database cannot be inspected (since the transaction is rolled back). A workaround when debugging a failure is to temporarily remove the attribute.
-
-Both attributes can be mixed in the same test fixture:<!-- endInclude -->
+The shared database is read-only: attempting to save changes throws. Tests that need to write should use `[PooledDb]` instead.<!-- endInclude -->
 
 <!-- snippet: SharedDbTestsMSTest -->
 <a id='snippet-SharedDbTestsMSTest'></a>
@@ -665,49 +661,95 @@ public class SharedDbTests : LocalDbTestBase<TheDbContext>
         var count = await ActData.Companies.CountAsync();
         Assert.AreEqual(0, count);
     }
+}
+```
+<sup><a href='/src/EfLocalDb.MSTest.Tests/SharedDbTests.cs#L1-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTestsMSTest' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+
+## PooledDb
+
+Mark test methods with `[PooledDb]` to lease a database from a fixed pool instead of creating one per test. The pool is built once from the template, and each test leases a database for its duration, writes inside a transaction, and rolls that transaction back on release so the next test sees the template state again.<!-- include: pooled-db. path: /pages/mdsource/pooled-db.include.md -->
+
+Two costs disappear. The per-test file copy and attach is gone, and — usually the larger one — so is repeated query plan compilation: SQL Server keys the plan cache by database, so a database per test means every query is compiled afresh for every test and no plan is ever reused. A small pool lets those plans be reused for the rest of the run.
+
+Pool size is `LocalDbSettings.PoolSize`, configurable via the `LocalDBPoolSize` environment variable and defaulting to `Environment.ProcessorCount`. It bounds how many pooled tests run concurrently, since a database is leased to one test at a time. Set it to `1` to serialise pooled tests onto a single database.
+
+Not suited to every test:
+
+ * Tests that need their changes committed, or that assert on state outside their own transaction.
+ * Tests that assert on a timeline of changes. Inside one transaction every system-versioned temporal row shares the transaction start time, so a sequence of state changes collapses into a single instant.
+ * On failure the database cannot be inspected, since the transaction is rolled back. When debugging, temporarily remove the attribute.
+
+Those tests should be left to create a database per test.<!-- endInclude -->
+
+<!-- snippet: PooledDbTestsMSTest -->
+<a id='snippet-PooledDbTestsMSTest'></a>
+```cs
+[TestClass]
+public class PooledDbTests : LocalDbTestBase<TheDbContext>
+{
+    [TestMethod]
+    [PooledDb]
+    public async Task StartsFromTemplateState()
+    {
+        var count = await ActData.Companies.CountAsync();
+        Assert.AreEqual(0, count);
+    }
 
     [TestMethod]
-    [SharedDbWithTransaction]
+    [PooledDb]
     public async Task CanReadAndWrite()
     {
         ArrangeData.Companies.Add(
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "SharedDbWithTransaction Company"
+                Name = "PooledDb Company"
             });
         await ArrangeData.SaveChangesAsync();
 
         var entity = await ActData.Companies.SingleAsync();
-        Assert.AreEqual("SharedDbWithTransaction Company", entity.Name);
+        Assert.AreEqual("PooledDb Company", entity.Name);
     }
 
+    // The next four run concurrently and each writes a row. If the
+    // transaction were not rolled back on release, or two tests shared
+    // a lease, they would see each other's rows and the count would
+    // exceed one.
     [TestMethod]
-    [SharedDbWithTransaction]
-    public async Task DataIsRolledBack()
+    [PooledDb]
+    public Task IsolatedA() => AssertOnlyOwnRowVisible("A");
+
+    [TestMethod]
+    [PooledDb]
+    public Task IsolatedB() => AssertOnlyOwnRowVisible("B");
+
+    [TestMethod]
+    [PooledDb]
+    public Task IsolatedC() => AssertOnlyOwnRowVisible("C");
+
+    [TestMethod]
+    [PooledDb]
+    public Task IsolatedD() => AssertOnlyOwnRowVisible("D");
+
+    async Task AssertOnlyOwnRowVisible(string name)
     {
         ArrangeData.Companies.Add(
             new()
             {
                 Id = Guid.NewGuid(),
-                Name = "Should Not Persist"
+                Name = name
             });
         await ArrangeData.SaveChangesAsync();
 
-        var count = await ActData.Companies.CountAsync();
-        Assert.AreEqual(1, count);
-    }
-
-    [TestMethod]
-    [SharedDbWithTransaction]
-    public async Task StartsWithEmptyDatabase()
-    {
-        var count = await ActData.Companies.CountAsync();
-        Assert.AreEqual(0, count);
+        var companies = await ActData.Companies.ToListAsync();
+        Assert.AreEqual(1, companies.Count);
+        Assert.AreEqual(name, companies[0].Name);
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/SharedDbTests.cs#L1-L53' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTestsMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/PooledDbTests.cs#L1-L64' title='Snippet source file'>snippet source</a> | <a href='#snippet-PooledDbTestsMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 

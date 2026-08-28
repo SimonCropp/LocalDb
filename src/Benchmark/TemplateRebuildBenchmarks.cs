@@ -9,7 +9,7 @@
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class TemplateRebuildBenchmarks
 {
-    const string InstanceName = "BenchRebuild";
+    const string instanceName = "BenchRebuild";
     SqlInstance? sqlInstance;
 
     [Params(0, 1, 5, 10, 100)]
@@ -19,13 +19,13 @@ public class TemplateRebuildBenchmarks
     public async Task GlobalSetup()
     {
         // Create and start instance with initial template
-        LocalDbApi.StopAndDelete(InstanceName, ShutdownMode.KillProcess);
-        DirectoryFinder.Delete(InstanceName);
+        LocalDbApi.StopAndDelete(instanceName);
+        DirectoryFinder.Delete(instanceName);
 
         // Use a fixed old timestamp for initial setup
         var oldTimestamp = new DateTime(2020, 1, 1);
         var setupInstance = new SqlInstance(
-            name: InstanceName,
+            name: instanceName,
             buildTemplate: CreateTable,
             timestamp: oldTimestamp);
         await setupInstance.Wrapper.AwaitStart();
@@ -47,7 +47,7 @@ public class TemplateRebuildBenchmarks
         // Use a newer timestamp to force template rebuild
         var newTimestamp = new DateTime(2025, 1, 1);
         sqlInstance = new(
-            name: InstanceName,
+            name: instanceName,
             buildTemplate: CreateTable,
             timestamp: newTimestamp);
         await sqlInstance.Wrapper.AwaitStart();

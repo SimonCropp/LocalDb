@@ -74,6 +74,13 @@ include: shared-db
 snippet: SharedDbTestsXunitV3
 
 
+## PooledDb
+
+include: pooled-db
+
+snippet: PooledDbTestsXunitV3
+
+
 ## Parallel Execution
 
 To run tests in parallel, configure parallelism at the assembly level:

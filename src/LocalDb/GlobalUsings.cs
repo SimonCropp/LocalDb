@@ -1,4 +1,5 @@
 ﻿global using Microsoft.Data.SqlClient;
+global using System.Collections.Concurrent;
 global using System.ComponentModel;
 global using LocalDb;
 global using System.Diagnostics.CodeAnalysis;
