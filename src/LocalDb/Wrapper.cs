@@ -9,6 +9,10 @@ class Wrapper : IDisposable
     SemaphoreSlim semaphoreSlim = new(1, 1);
     SemaphoreSlim sharedLock = new(1, 1);
     bool sharedCreated;
+    SemaphoreSlim poolLock = new(1, 1);
+    SemaphoreSlim? poolLease;
+    ConcurrentQueue<string> poolAvailable = new();
+    bool poolCreated;
     public readonly string MasterConnectionString;
     string instance;
     public readonly string DataFile;
@@ -136,13 +140,98 @@ class Wrapper : IDisposable
 
     public Task AwaitStart() => startupTask;
 
-    public async Task<SqlConnection> OpenExistingDatabase(string name)
+    public async Task<SqlConnection> OpenExistingDatabase(string name, bool pool = false)
     {
         await startupTask;
-        var connectionString = LocalDbSettings.BuildConnectionString(instance, name, false);
+        var connectionString = LocalDbSettings.BuildConnectionString(instance, name, pool);
         var connection = new SqlConnection(connectionString);
         await connection.OpenAsync();
         return connection;
+    }
+
+    /// <summary>
+    /// Leases one database from the pool. The caller must call <see cref="ReleasePooled" />
+    /// with the returned name once finished, otherwise the pool will starve.
+    /// </summary>
+    public async Task<(SqlConnection Connection, string Name)> OpenPooledDatabase(
+        Func<SqlConnection, Task>? initialize = null)
+    {
+        // Double-checked pattern, as per OpenSharedDatabase: once the pool exists the lock is
+        // no longer needed and the common case skips the semaphore entirely.
+        if (!Volatile.Read(ref poolCreated))
+        {
+            await poolLock.WaitAsync();
+            try
+            {
+                if (!poolCreated)
+                {
+                    await CreatePool(initialize);
+                    Volatile.Write(ref poolCreated, true);
+                }
+            }
+            finally
+            {
+                poolLock.Release();
+            }
+        }
+
+        // Blocks once every pooled database is leased, which is what bounds pooled
+        // concurrency to PoolSize.
+        await poolLease!.WaitAsync();
+
+        if (!poolAvailable.TryDequeue(out var name))
+        {
+            poolLease.Release();
+            throw new("Pooled database lease was acquired but no database was available. This indicates a release was missed.");
+        }
+
+        // Connection pooling is on for pooled databases: they are opened and closed once per
+        // test, so returning the connection to the ADO.NET pool avoids a physical reconnect
+        // every time. auto_close is turned off when the pool is built, so the database itself
+        // also stays up between leases.
+        var connection = await OpenExistingDatabase(name, pool: true);
+        return (connection, name);
+    }
+
+    /// <summary>
+    /// Returns a database leased by <see cref="OpenPooledDatabase" /> to the pool.
+    /// </summary>
+    public void ReleasePooled(string name)
+    {
+        poolAvailable.Enqueue(name);
+        poolLease!.Release();
+    }
+
+    async Task CreatePool(Func<SqlConnection, Task>? initialize)
+    {
+        var size = LocalDbSettings.PoolSize;
+        poolLease = new(size, size);
+
+        for (var index = 1; index <= size; index++)
+        {
+            var name = $"Pooled{index}";
+            var connection = await CreateDatabaseFromTemplate(name);
+
+            // Attach resets auto_close to the model default (on), under which the database
+            // shuts down whenever its last connection closes and the next lease pays a full
+            // database startup. Pooled databases are reopened once per test for the lifetime
+            // of the run, so that cycle would recur constantly.
+            await connection.ExecuteCommandAsync($"alter database [{name}] set auto_close off;");
+
+            if (initialize != null)
+            {
+                await initialize(connection);
+            }
+
+#if NET5_0_OR_GREATER
+            await connection.DisposeAsync();
+#else
+            connection.Dispose();
+#endif
+            poolAvailable.Enqueue(name);
+        }
+
+        LocalDbLogging.LogIfVerbose($"Created pool of {size} databases");
     }
 
     public async Task<SqlConnection> OpenSharedDatabase(

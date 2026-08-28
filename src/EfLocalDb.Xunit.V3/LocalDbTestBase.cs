@@ -11,7 +11,7 @@ public abstract partial class LocalDbTestBase<T> :
     T arrangeData = null!;
 
     bool isSharedDb;
-    bool isSharedDbWithTransaction;
+    bool isPooledDb;
 
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
@@ -43,15 +43,13 @@ public abstract partial class LocalDbTestBase<T> :
         }
 
         var methodInfo = GetCurrentMethodInfo();
-        isSharedDbWithTransaction = methodInfo.GetCustomAttribute<SharedDbWithTransactionAttribute>() != null;
-        var hasSharedDbAttribute = methodInfo.GetCustomAttribute<SharedDbAttribute>() != null;
+        isSharedDb = methodInfo.GetCustomAttribute<SharedDbAttribute>() != null;
+        isPooledDb = methodInfo.GetCustomAttribute<PooledDbAttribute>() != null;
 
-        if (isSharedDbWithTransaction && hasSharedDbAttribute)
+        if (isPooledDb && isSharedDb)
         {
-            throw new("[SharedDb] and [SharedDbWithTransaction] are mutually exclusive. Use only one on a test method.");
+            throw new("[PooledDb] and [SharedDb] are mutually exclusive. Use only one on a test method.");
         }
-
-        isSharedDb = isSharedDbWithTransaction || hasSharedDbAttribute;
 
         QueryFilter.Enable();
         await Reset();
@@ -73,7 +71,9 @@ public abstract partial class LocalDbTestBase<T> :
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if(Database != null)
         {
-            if (isSharedDb)
+            // A pooled database is disposed, never deleted: disposing rolls the test's
+            // transaction back and returns the lease to the pool.
+            if (isSharedDb || isPooledDb)
             {
                 await Database.DisposeAsync();
             }
@@ -84,16 +84,25 @@ public abstract partial class LocalDbTestBase<T> :
             }
         }
 
-        Database = isSharedDb
-            ? await sqlInstance.BuildShared(useTransaction: isSharedDbWithTransaction)
-            : await sqlInstance.Build(type, null, member);
+        if (isPooledDb)
+        {
+            Database = await sqlInstance.BuildPooled();
+        }
+        else if (isSharedDb)
+        {
+            Database = await sqlInstance.BuildShared();
+        }
+        else
+        {
+            Database = await sqlInstance.Build(type, null, member);
+        }
 
         Database.NoTrackingContext.DisableRecording();
         arrangeData = Database.Context;
         arrangeData.DisableRecording();
         actData = Database.NewDbContext();
 
-        if (isSharedDbWithTransaction)
+        if (isPooledDb)
         {
             await actData.Database.UseTransactionAsync(Database.Transaction);
         }
@@ -252,7 +261,7 @@ public abstract partial class LocalDbTestBase<T> :
 
         if (Database != null)
         {
-            if (!isSharedDb && BuildServerDetector.Detected)
+            if (!isSharedDb && !isPooledDb && BuildServerDetector.Detected)
             {
                 LocalDbLogging.LogIfVerbose($"Purging {Database.Name}");
                 await Database.Delete();

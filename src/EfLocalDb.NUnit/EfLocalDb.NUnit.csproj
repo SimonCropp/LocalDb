@@ -11,6 +11,7 @@
     <Compile Include="..\EfLocalDb.MSTest\CombinationCallbackSetup.cs" Link="CombinationCallbackSetup.cs" />
     <Compile Include="..\EfLocalDb.MSTest\ILocalDbTestBase.cs" Link="ILocalDbTestBase.cs" />
     <Compile Include="..\EfLocalDb.MSTest\Phase.cs" Link="Phase.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\PooledDbAttribute.cs" Link="PooledDbAttribute.cs" />
     <Compile Include="..\EfLocalDb.MSTest\SharedDbAttribute.cs" Link="SharedDbAttribute.cs" />
     <Compile Include="..\EfLocalDb.MSTest\SharedDbWithTransactionAttribute.cs" Link="SharedDbWithTransactionAttribute.cs" />
     <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\QueryableSettingsTask.cs" Link="QueryableSettingsTask\QueryableSettingsTask.cs" />
