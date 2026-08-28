@@ -1,4 +1,0 @@
-﻿{
-  Id: Guid_1,
-  Name: Default Template Company
-}
