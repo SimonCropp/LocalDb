@@ -8,7 +8,7 @@
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class WarmStartBenchmarks
 {
-    const string InstanceName = "BenchWarm";
+    const string instanceName = "BenchWarm";
     SqlInstance? sqlInstance;
 
     [Params(0, 1, 5, 10, 100)]
@@ -18,10 +18,10 @@ public class WarmStartBenchmarks
     public async Task GlobalSetup()
     {
         // Create and start instance - leave it running for warm start
-        LocalDbApi.StopAndDelete(InstanceName, ShutdownMode.KillProcess);
-        DirectoryFinder.Delete(InstanceName);
+        LocalDbApi.StopAndDelete(instanceName);
+        DirectoryFinder.Delete(instanceName);
 
-        var setupInstance = new SqlInstance(name: InstanceName, buildTemplate: CreateTable);
+        var setupInstance = new SqlInstance(name: instanceName, buildTemplate: CreateTable);
         await setupInstance.Wrapper.AwaitStart();
         setupInstance.Dispose();
         // Instance remains running for warm start benchmark
@@ -38,7 +38,7 @@ public class WarmStartBenchmarks
     [Benchmark]
     public async Task WarmStart()
     {
-        sqlInstance = new(name: InstanceName, buildTemplate: CreateTable);
+        sqlInstance = new(name: instanceName, buildTemplate: CreateTable);
         await sqlInstance.Wrapper.AwaitStart();
 
         for (var i = 0; i < DatabaseCount; i++)

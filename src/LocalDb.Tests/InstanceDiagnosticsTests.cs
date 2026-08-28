@@ -37,7 +37,7 @@ public class InstanceDiagnosticsTests
 
     static async Task<int> Scalar(SqlConnection connection, string sql)
     {
-        using var command = connection.CreateCommand();
+        await using var command = connection.CreateCommand();
         command.CommandText = sql;
         var result = await command.ExecuteScalarAsync();
         return Convert.ToInt32(result);

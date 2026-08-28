@@ -68,8 +68,8 @@ public class InstanceDoesNotExistRaceTests
                     $"killer stderr: {killerStderr.Trim()}");
             }
 
-            TestContext.Out.WriteLine(victimStdout.Trim());
-            TestContext.Out.WriteLine(killerStdout.Trim());
+            await TestContext.Out.WriteLineAsync(victimStdout.Trim());
+            await TestContext.Out.WriteLineAsync(killerStdout.Trim());
         }
         finally
         {
