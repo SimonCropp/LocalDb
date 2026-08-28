@@ -1,4 +1,4 @@
-public class TimestampTests : LocalDbTestBase<TimestampDbContext>
+﻿public class TimestampTests : LocalDbTestBase<TimestampDbContext>
 {
     static TimestampTests() =>
         Initialize(
@@ -14,7 +14,14 @@ public class TimestampTests : LocalDbTestBase<TimestampDbContext>
     public async Task ExplicitTimestamp_UsesDbContextAssemblyTimestamp()
     {
         var company = await AssertData.Companies.SingleAsync();
-        await Verify(company);
+        await Verify(company)
+            .Snapshot(
+                """
+                {
+                  Id: Guid_1,
+                  Name: Template Company
+                }
+                """);
     }
 
     [Test]

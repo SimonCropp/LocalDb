@@ -1,4 +1,4 @@
-public class Tests :
+﻿public class Tests :
     LocalDbTestBase<TheDbContext>
 {
     [Fact]
@@ -74,7 +74,14 @@ public class Tests :
         {
             Database.Name,
             Database.Connection.DataSource
-        });
+        })
+        .Snapshot(
+            """
+            {
+              Name: Tests_Name,
+              DataSource: (LocalDb)\TheDbContext_LocalDb_EfLocalDb.Xunit.V3.Tests
+            }
+            """);
 
     [Theory]
     [InlineData("case")]
@@ -93,7 +100,14 @@ public class Tests :
                     var entities = AssertData.Companies;
                     return entities.IgnoreQueryFilters().SingleAsync();
                 })
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Query filters are already disabled. Call to IgnoreQueryFilters is redundant.
+                }
+                """);
 
     [Fact]
     public async Task IgnoreQueryFiltersAllowedOnArrangeAndAct()
@@ -264,7 +278,14 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         return Throws(() => ActData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Assert. Check for a AssertData usage in the preceding code.
+                }
+                """);
     }
 
     [Fact]
@@ -309,7 +330,14 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var assert = AssertData;
         return Throws(() => ArrangeData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Assert. Check for a AssertData usage in the preceding code.
+                }
+                """);
     }
 
     [Fact]
@@ -318,6 +346,13 @@ public class Tests :
         // ReSharper disable once UnusedVariable
         var act = ActData;
         return Throws(() => ArrangeData)
-            .IgnoreStackTrace();
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Phase has already moved to Act. Check for a ActData usage in the preceding code.
+                }
+                """);
     }
 }

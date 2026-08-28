@@ -1,4 +1,0 @@
-﻿{
-  Type: Exception,
-  Message: Phase has already moved to Assert. Check for a AssertData usage in the preceding code.
-}

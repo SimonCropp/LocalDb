@@ -1,4 +1,4 @@
-public class DefaultTimestampTests : LocalDbTestBase<DefaultTimestampDbContext>
+﻿public class DefaultTimestampTests : LocalDbTestBase<DefaultTimestampDbContext>
 {
     static DefaultTimestampTests() =>
         Initialize(
@@ -13,7 +13,14 @@ public class DefaultTimestampTests : LocalDbTestBase<DefaultTimestampDbContext>
     public async Task NoExplicitTimestamp_UsesDefaultBehavior()
     {
         var company = await AssertData.Companies.SingleAsync();
-        await Verify(company);
+        await Verify(company)
+            .Snapshot(
+                """
+                {
+                  Id: Guid_1,
+                  Name: Default Template Company
+                }
+                """);
     }
 
     [Test]
