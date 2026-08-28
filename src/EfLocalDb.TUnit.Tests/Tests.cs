@@ -1,4 +1,4 @@
-public class Tests :
+﻿public class Tests :
     LocalDbTestBase<TheDbContext>
 {
     [Test]
