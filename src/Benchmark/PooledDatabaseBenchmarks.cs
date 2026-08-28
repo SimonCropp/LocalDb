@@ -21,9 +21,9 @@
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class PooledDatabaseBenchmarks
 {
-    const string InstanceName = "BenchPooled";
-    const int TableCount = 12;
-    const int UnionBranches = 40;
+    const string instanceName = "BenchPooled";
+    const int tableCount = 12;
+    const int unionBranches = 40;
     SqlInstance? sqlInstance;
     int counter;
 
@@ -34,14 +34,14 @@ public class PooledDatabaseBenchmarks
     public int Tests { get; set; }
 
     [GlobalSetup]
-    public async Task GlobalSetup()
+    public Task GlobalSetup()
     {
-        LocalDbApi.StopAndDelete(InstanceName);
-        DirectoryFinder.Delete(InstanceName);
+        LocalDbApi.StopAndDelete(instanceName);
+        DirectoryFinder.Delete(instanceName);
 
         LocalDbSettings.PoolSize = 4;
-        sqlInstance = new(name: InstanceName, buildTemplate: BuildTemplate);
-        await sqlInstance.Wrapper.AwaitStart();
+        sqlInstance = new(name: instanceName, buildTemplate: BuildTemplate);
+        return sqlInstance.Wrapper.AwaitStart();
     }
 
     [GlobalCleanup]
@@ -108,7 +108,7 @@ public class PooledDatabaseBenchmarks
 
     static async Task BuildTemplate(SqlConnection connection)
     {
-        for (var index = 0; index < TableCount; index++)
+        for (var index = 0; index < tableCount; index++)
         {
             await Execute(connection,
                 $"""
@@ -125,10 +125,10 @@ public class PooledDatabaseBenchmarks
         // A view that is trivial to run but costly to plan. Each branch joins across every
         // table, so the optimiser has a large search space even though the result is tiny.
         var branches = new List<string>();
-        for (var index = 0; index < UnionBranches; index++)
+        for (var index = 0; index < unionBranches; index++)
         {
             var joins = new List<string>();
-            for (var table = 1; table < TableCount; table++)
+            for (var table = 1; table < tableCount; table++)
             {
                 joins.Add($"left join dbo.T{table} t{table} on t{table}.B = t0.B + {index % 3}");
             }
