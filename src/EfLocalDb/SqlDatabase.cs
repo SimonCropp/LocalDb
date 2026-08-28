@@ -47,6 +47,7 @@ public partial class SqlDatabase<TDbContext> :
     IEnumerable<object>? data;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
     bool readOnly;
+    Func<Task>? released;
 
     internal SqlDatabase(
         SqlInstance<TDbContext> instance,
@@ -58,7 +59,8 @@ public partial class SqlDatabase<TDbContext> :
         IEnumerable<object>? data,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder,
         bool readOnly = false,
-        SqlTransaction? transaction = null)
+        SqlTransaction? transaction = null,
+        Func<Task>? released = null)
     {
         Name = name;
         this.instance = instance;
@@ -68,6 +70,7 @@ public partial class SqlDatabase<TDbContext> :
         this.data = data;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         this.readOnly = readOnly;
+        this.released = released;
         ConnectionString = connection.ConnectionString;
         Connection = connection;
         Transaction = transaction;
@@ -232,6 +235,14 @@ public partial class SqlDatabase<TDbContext> :
         if (takeOffline != null)
         {
             await takeOffline();
+        }
+
+        // Runs last: for a pooled database this returns the lease, so it must not happen
+        // until the transaction is rolled back and the connection is back in the ADO.NET pool.
+        if (released != null)
+        {
+            await released();
+            released = null;
         }
     }
 

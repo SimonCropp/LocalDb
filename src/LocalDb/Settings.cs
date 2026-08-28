@@ -46,6 +46,32 @@ public static class LocalDbSettings
     /// </summary>
     public static TimeSpan InstanceCleanupThreshold { get; set; } = ResolveInstanceCleanupThreshold();
 
+    /// <summary>
+    /// The number of databases in the pool used by pooled tests. Each pooled test leases one
+    /// database for the duration of the test and rolls its changes back on release, so this
+    /// caps how many pooled tests can run concurrently.
+    /// Can be configured via the <c>LocalDBPoolSize</c> environment variable.
+    /// Defaults to <see cref="Environment.ProcessorCount" />.
+    /// </summary>
+    public static ushort PoolSize { get; set; } = ResolvePoolSize();
+
+    static ushort ResolvePoolSize()
+    {
+        var envValue = Environment.GetEnvironmentVariable("LocalDBPoolSize");
+        if (envValue is null)
+        {
+            return (ushort) Math.Clamp(Environment.ProcessorCount, 1, ushort.MaxValue);
+        }
+
+        if (ushort.TryParse(envValue, out var size) &&
+            size > 0)
+        {
+            return size;
+        }
+
+        throw new ArgumentException($"Failed to parse LocalDBPoolSize environment variable: {envValue}");
+    }
+
     static ushort ResolveShutdownTimeout()
     {
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");

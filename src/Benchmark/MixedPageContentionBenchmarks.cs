@@ -6,7 +6,7 @@
 ///
 /// EfLocalDb clones a separate database file per test (each with its own SGAM), so parallel
 /// tests never contend here. It is only reachable when many connections allocate concurrently
-/// in one shared database — e.g. parallel <c>[SharedDbWithTransaction]</c> tests. This models
+/// in one database — e.g. parallel <c>[PooledDb]</c> tests sharing a lease-free pool entry. This models
 /// that worst case: a fixed total number of create+index+insert+drop operations split across an
 /// increasing number of concurrent workers. Ideal scaling halves the time as concurrency
 /// doubles; contention shows as the on rows failing to scale like the off rows.

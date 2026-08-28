@@ -43,7 +43,7 @@ This assumes that there is a schema and data (and DbContext in the EntityFramewo
 When the template is built, a few database-level settings are applied. These persist in the template's `.mdf`/`.ldf` files and are inherited by every database attached from the template.
 
  * `auto_update_statistics off` — avoids background statistics updates causing nondeterministic test timing.
- * `read_committed_snapshot on` — `READ COMMITTED` uses row versioning instead of shared locks. Required to prevent S/X-lock deadlocks between parallel `[SharedDbWithTransaction]` tests against the same shared database.
+ * `read_committed_snapshot on` — `READ COMMITTED` uses row versioning instead of shared locks. Required to prevent S/X-lock deadlocks between parallel transactional tests.
 
 If the template files already exist on disk from a previous build, these settings are not reapplied — the template needs to be regenerated (delete the template files, or change the timestamp passed to `SqlInstance`) for new settings to take effect.
 
