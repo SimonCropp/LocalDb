@@ -655,7 +655,7 @@ public async Task VerifyEntity_Queryable()
 
 Mark test methods with `[SharedDb]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.<!-- include: shared-db. path: /pages/mdsource/shared-db.include.md -->
 
-The shared database is read-only: attempting to save changes throws. Tests that need to write should use `[PooledDb]` instead.<!-- endInclude -->
+The shared database is read-only and any write throws, not only `SaveChanges`: `ExecuteUpdate`, `ExecuteDelete`, `ExecuteSqlRaw` and hand-written commands are blocked too. Tests that need to write should use `[PooledDb]` instead.<!-- endInclude -->
 
 <!-- snippet: SharedDbTestsNUnit -->
 <a id='snippet-SharedDbTestsNUnit'></a>
