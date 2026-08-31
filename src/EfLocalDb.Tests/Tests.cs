@@ -808,7 +808,7 @@ public class Tests
                 """
                 {
                   Type: Exception,
-                  Message: Writes are not supported on shared databases. Use useTransaction: true to allow writes.
+                  Message: Writes are not supported on shared databases. Use [PooledDb] for tests that write, or BuildShared(useTransaction: true) when building a database directly.
                 }
                 """);
     }
@@ -825,7 +825,7 @@ public class Tests
                 """
                 {
                   Type: Exception,
-                  Message: Writes are not supported on shared databases. Use useTransaction: true to allow writes.
+                  Message: Writes are not supported on shared databases. Use [PooledDb] for tests that write, or BuildShared(useTransaction: true) when building a database directly.
                 }
                 """);
     }
@@ -842,7 +842,7 @@ public class Tests
                 """
                 {
                   Type: Exception,
-                  Message: Writes are not supported on shared databases. Use useTransaction: true to allow writes.
+                  Message: Writes are not supported on shared databases. Use [PooledDb] for tests that write, or BuildShared(useTransaction: true) when building a database directly.
                 }
                 """);
     }
@@ -854,5 +854,63 @@ public class Tests
         database.Context.Add(new TestEntity { Property = "allowed" });
         var count = await database.Context.SaveChangesAsync();
         AreEqual(1, count);
+    }
+
+    // ExecuteUpdate, ExecuteDelete and ExecuteSqlRaw bypass the change tracker, so a
+    // SaveChangesInterceptor never sees them. They are blocked by the command interceptor instead.
+    [Test]
+    public async Task SharedDatabase_ReadOnly_ThrowsOnExecuteUpdate()
+    {
+        await using var database = await instance.BuildShared();
+        await ThrowsTask(
+                () => database.Context.TestEntities
+                    .ExecuteUpdateAsync(_ => _.SetProperty(_ => _.Property, "blocked")))
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Writes are not supported on shared databases. Use [PooledDb] for tests that write, or BuildShared(useTransaction: true) when building a database directly.
+                }
+                """);
+    }
+
+    [Test]
+    public async Task SharedDatabase_ReadOnly_ThrowsOnExecuteDelete()
+    {
+        await using var database = await instance.BuildShared();
+        await ThrowsTask(() => database.Context.TestEntities.ExecuteDeleteAsync())
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Writes are not supported on shared databases. Use [PooledDb] for tests that write, or BuildShared(useTransaction: true) when building a database directly.
+                }
+                """);
+    }
+
+    [Test]
+    public async Task SharedDatabase_ReadOnly_ThrowsOnExecuteSqlRaw()
+    {
+        await using var database = await instance.BuildShared();
+        await ThrowsTask(
+                () => database.Context.Database.ExecuteSqlRawAsync("delete from TestEntities"))
+            .IgnoreStackTrace()
+            .Snapshot(
+                """
+                {
+                  Type: Exception,
+                  Message: Writes are not supported on shared databases. Use [PooledDb] for tests that write, or BuildShared(useTransaction: true) when building a database directly.
+                }
+                """);
+    }
+
+    [Test]
+    public async Task SharedDatabase_ReadOnly_AllowsQueries()
+    {
+        await using var database = await instance.BuildShared();
+        await database.Context.TestEntities.CountAsync();
+        await database.Context.Database.SqlQueryRaw<int>("select 1").ToListAsync();
     }
 }

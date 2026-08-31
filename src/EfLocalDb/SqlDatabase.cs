@@ -179,7 +179,7 @@ public partial class SqlDatabase<TDbContext> :
         builder.ApplyQueryTracking(tracking);
         if (readOnly)
         {
-            builder.AddInterceptors(ReadOnlyInterceptor.Instance);
+            builder.AddInterceptors(ReadOnlyInterceptor.Instance, ReadOnlyInterceptor.Command.Instance);
         }
 
         return constructInstance(builder);
@@ -199,7 +199,7 @@ public partial class SqlDatabase<TDbContext> :
         builder.ApplyQueryTracking(tracking);
         if (readOnly)
         {
-            builder.AddInterceptors(ReadOnlyInterceptor.Instance);
+            builder.AddInterceptors(ReadOnlyInterceptor.Instance, ReadOnlyInterceptor.Command.Instance);
         }
 
         return constructInstance(builder);

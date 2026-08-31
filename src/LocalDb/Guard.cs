@@ -34,4 +34,12 @@ static class Guard
             throw new ArgumentOutOfRangeException(name, timeout, "Shutdown timeout must be greater than zero");
         }
     }
+
+    public static void AgainstZeroPoolSize(ushort size, [CallerArgumentExpression("size")] string? name = null)
+    {
+        if (size == 0)
+        {
+            throw new ArgumentOutOfRangeException(name, size, "Pool size must be greater than zero");
+        }
+    }
 }

@@ -205,6 +205,10 @@ class Wrapper : IDisposable
     async Task CreatePool(Func<SqlConnection, Task>? initialize)
     {
         var size = LocalDbSettings.PoolSize;
+        // Guarded here rather than in the setter, matching AgainstZeroShutdownTimeout: a zero
+        // would otherwise surface as an ArgumentOutOfRangeException from SemaphoreSlim on the
+        // first pooled test, with nothing naming PoolSize as the cause.
+        Guard.AgainstZeroPoolSize(size);
         poolLease = new(size, size);
 
         for (var index = 1; index <= size; index++)
