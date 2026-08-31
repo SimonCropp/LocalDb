@@ -15,5 +15,6 @@ BenchmarkSwitcher.FromTypes(
     typeof(DelayedDurabilityBenchmarks),
     typeof(AutoCloseBenchmarks),
     typeof(PooledDatabaseBenchmarks),
-    typeof(PageVerifyBenchmarks)
+    typeof(PageVerifyBenchmarks),
+    typeof(PooledWriteSettingsBenchmarks)
 ]).Run(args, config);
