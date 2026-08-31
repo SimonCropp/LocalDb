@@ -13,6 +13,8 @@ class Wrapper : IDisposable
     SemaphoreSlim? poolLease;
     ConcurrentQueue<string> poolAvailable = new();
     bool poolCreated;
+    Task? poolFill;
+    volatile Exception? poolFillException;
     public readonly string MasterConnectionString;
     string instance;
     public readonly string DataFile;
@@ -175,13 +177,19 @@ class Wrapper : IDisposable
             }
         }
 
-        // Blocks once every pooled database is leased, which is what bounds pooled
-        // concurrency to PoolSize.
+        ThrowIfPoolFillFailed();
+
+        // Blocks once every database built so far is leased, which is what bounds pooled
+        // concurrency to PoolSize. Early in a run it can also block on a database the
+        // background fill has not produced yet.
         await poolLease!.WaitAsync();
 
         if (!poolAvailable.TryDequeue(out var name))
         {
+            // Put the permit back so the next caller reaches the same conclusion rather than
+            // waiting on a database that will never arrive.
             poolLease.Release();
+            ThrowIfPoolFillFailed();
             throw new("Pooled database lease was acquired but no database was available. This indicates a release was missed.");
         }
 
@@ -209,13 +217,54 @@ class Wrapper : IDisposable
         // would otherwise surface as an ArgumentOutOfRangeException from SemaphoreSlim on the
         // first pooled test, with nothing naming PoolSize as the cause.
         Guard.AgainstZeroPoolSize(size);
-        poolLease = new(size, size);
 
-        for (var index = 1; index <= size; index++)
+        // Starts empty and gains a permit as each database lands, rather than starting full.
+        // That is what lets a lease be served off the databases that exist so far, instead of
+        // every lease waiting for the whole pool.
+        poolLease = new(0, size);
+
+        // Only the first database is awaited, so the first pooled test pays one file copy and
+        // attach rather than PoolSize of them. The rest fill in on a background task while
+        // that test runs, and a test needing more concurrency than is built yet simply waits
+        // on poolLease until the next database lands.
+        await AddPooled(1, initialize);
+
+        poolFill = Task.Run(() => FillPool(size, initialize));
+    }
+
+    async Task FillPool(ushort size, Func<SqlConnection, Task>? initialize)
+    {
+        var index = 2;
+        try
         {
-            var name = $"Pooled{index}";
-            var connection = await CreateDatabaseFromTemplate(name);
+            // Deliberately serial: the fill now runs alongside tests, and PoolSize concurrent
+            // file copies would compete with them for the same disk.
+            for (; index <= size; index++)
+            {
+                await AddPooled(index, initialize);
+            }
+        }
+        catch (Exception exception)
+        {
+            // A background failure must not leave leases waiting on databases that will never
+            // arrive. Record the cause first, then release one permit per unbuilt database so
+            // every waiter wakes, finds nothing to dequeue, and rethrows that cause. This can
+            // never exceed the semaphore maximum: index - 1 databases were built, so at most
+            // index - 1 permits are outstanding.
+            poolFillException = exception;
+            poolLease!.Release(size - index + 1);
+            return;
+        }
 
+        LocalDbLogging.LogIfVerbose($"Created pool of {size} databases");
+    }
+
+    async Task AddPooled(int index, Func<SqlConnection, Task>? initialize)
+    {
+        var name = $"Pooled{index}";
+        var connection = await CreateDatabaseFromTemplate(name);
+        try
+        {
             // Attach resets auto_close to the model default (on), under which the database
             // shuts down whenever its last connection closes and the next lease pays a full
             // database startup. Pooled databases are reopened once per test for the lifetime
@@ -226,17 +275,35 @@ class Wrapper : IDisposable
             {
                 await initialize(connection);
             }
-
+        }
+        finally
+        {
+            // Also on the failure path, so a fill that dies part way does not strand a
+            // connection against a database no one will ever lease.
 #if NET5_0_OR_GREATER
             await connection.DisposeAsync();
 #else
             connection.Dispose();
 #endif
-            poolAvailable.Enqueue(name);
         }
 
-        LocalDbLogging.LogIfVerbose($"Created pool of {size} databases");
+        // Enqueue before releasing, so a waiter woken by the release always finds a database.
+        poolAvailable.Enqueue(name);
+        poolLease!.Release();
     }
+
+    void ThrowIfPoolFillFailed()
+    {
+        var exception = poolFillException;
+        if (exception != null)
+        {
+            throw new("Failed to build the pooled databases in the background.", exception);
+        }
+    }
+
+    // Teardown deletes the instance directory, so a background fill still copying files into
+    // it has to finish first. FillPool swallows its own failure, so this cannot throw.
+    void WaitForPoolFill() => poolFill?.GetAwaiter().GetResult();
 
     public async Task<SqlConnection> OpenSharedDatabase(
         Func<SqlConnection, Task>? initialize = null)
@@ -427,6 +494,7 @@ class Wrapper : IDisposable
     [Time]
     public void DeleteInstance(ShutdownMode mode = ShutdownMode.KillProcess)
     {
+        WaitForPoolFill();
         LocalDbApi.StopAndDelete(instance, mode);
         DirectoryFinder.DeleteInstance(instance);
         DeleteDirectory();
@@ -436,6 +504,7 @@ class Wrapper : IDisposable
     [Time]
     public void DeleteInstance(ShutdownMode mode, TimeSpan timeout)
     {
+        WaitForPoolFill();
         LocalDbApi.StopAndDelete(instance, mode, timeout);
         DirectoryFinder.DeleteInstance(instance);
         DeleteDirectory();
