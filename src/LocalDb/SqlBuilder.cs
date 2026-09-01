@@ -1,4 +1,4 @@
-static class SqlBuilder
+﻿static class SqlBuilder
 {
     public static string GetCreateOrMakeOnlineCommand(string name, string dataFile, string logFile)
     {
@@ -60,6 +60,14 @@ static class SqlBuilder
     //                                 thousands of tiny commits. Benchmark
     //                                 (DelayedDurabilityBenchmarks): autocommit inserts are
     //                                 ~40% faster and write ~70% less log I/O.
+    //   page_verify none            - checksum makes the engine compute a checksum over every
+    //                                 8KB page as it is written to disk, and re-verify it on
+    //                                 read, to detect storage corrupting a page underneath it.
+    //                                 These databases are rebuilt from the template and deleted
+    //                                 with the run, so that signal is worth nothing. Benchmark
+    //                                 (PageVerifyBenchmarks): a checkpoint-heavy insert is ~5%
+    //                                 faster on average, and writes the same bytes either way -
+    //                                 the saving is CPU, not I/O.
     //   read_committed_snapshot on  - READ COMMITTED uses row versioning instead of
     //                                 shared locks, preventing S/X-lock deadlocks
     //                                 between parallel transactional tests
@@ -75,6 +83,7 @@ static class SqlBuilder
         """
         alter database [template] set auto_update_statistics off;
         alter database [template] set delayed_durability = forced;
+        alter database [template] set page_verify none;
         alter database [template] set read_committed_snapshot on with rollback immediate;
         """;
 

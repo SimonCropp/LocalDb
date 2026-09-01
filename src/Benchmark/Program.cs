@@ -1,4 +1,4 @@
-using BenchmarkDotNet.Configs;
+﻿using BenchmarkDotNet.Configs;
 
 var config = DefaultConfig.Instance
     .AddDiagnoser(new SqlServerDiagnoser());
@@ -14,5 +14,9 @@ BenchmarkSwitcher.FromTypes(
     typeof(MixedPageContentionBenchmarks),
     typeof(DelayedDurabilityBenchmarks),
     typeof(AutoCloseBenchmarks),
-    typeof(PooledDatabaseBenchmarks)
+    typeof(PooledDatabaseBenchmarks),
+    typeof(PageVerifyBenchmarks),
+    typeof(PooledWriteSettingsBenchmarks),
+    typeof(RollbackCostBenchmarks),
+    typeof(ResetStrategyBenchmarks)
 ]).Run(args, config);
