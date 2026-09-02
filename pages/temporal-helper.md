@@ -9,7 +9,9 @@ To change this file edit the source file and then run MarkdownSnippets.
 
 `SetCurrentPeriodStart` re-stamps a row's `PeriodStart` (and aligns the most recent history row's `PeriodEnd`) on a [SQL Server temporal table](https://learn.microsoft.com/sql/relational-databases/tables/temporal-tables). It exists to give back-to-back `SaveChanges` calls in tests distinct, deterministic temporal timestamps without relying on `Task.Delay` between them.
 
-The method is exposed on both `SqlInstance<TDbContext>` and `SqlDatabase<TDbContext>`. Schema lookups (table, history table, period columns, PK column) are performed once at `SqlInstance` construction and cached, so per-call overhead is only the SQL execution.
+`SetHistoryColumn` is a second helper on the same schema lookup. It writes one column on the history rows of a single entity, to put a history table into a state a freshly migrated database never reaches. See [Simulating a damaged history row](#simulating-a-damaged-history-row).
+
+Both are exposed on `SqlInstance<TDbContext>` and `SqlDatabase<TDbContext>`. Schema lookups (table, history table, period columns, PK column) are performed once at `SqlInstance` construction and cached, so per-call overhead is only the SQL execution.
 
 
 ## Why
@@ -31,6 +33,12 @@ public class TravelRequest
     public Guid Id { get; set; }
     public string Status { get; set; } = "Draft";
 
+    // Declared required here. The CASE below always matches a branch, so
+    // this is never actually null - but it has no ELSE, which leaves the
+    // column itself nullable. That gap between what the model promises and
+    // what the schema permits is what SetHistoryColumn exploits.
+    public int StatusRank { get; set; }
+
     [Timestamp]
     public byte[] RowVersion { get; set; } = null!;
 }
@@ -40,12 +48,21 @@ public class MyDbContext(DbContextOptions options) :
 {
     public DbSet<TravelRequest> TravelRequests { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder model) =>
-        model.Entity<TravelRequest>()
-            .ToTable("TravelRequests", _ => _.IsTemporal());
+    protected override void OnModelCreating(ModelBuilder model)
+    {
+        var entity = model.Entity<TravelRequest>();
+        entity.ToTable("TravelRequests", _ => _.IsTemporal());
+        entity.Property(_ => _.StatusRank)
+            .HasComputedColumnSql(
+                """
+                CASE WHEN [Status] = 'Approved' THEN 1
+                     WHEN [Status] <> 'Approved' THEN 0 END
+                """,
+                stored: true);
+    }
 }
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TemporalSnippetTests.cs#L5-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-TemporalEntityConfig' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TemporalSnippetTests.cs#L5-L41' title='Snippet source file'>snippet source</a> | <a href='#snippet-TemporalEntityConfig' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -76,7 +93,7 @@ await database.SetCurrentPeriodStart(request, anchor.AddMilliseconds(200));
 // Subsequent TemporalAsOf queries can now resolve each transition by its
 // distinct, deterministic PeriodStart instead of relying on Task.Delay.
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TemporalSnippetTests.cs#L40-L64' title='Snippet source file'>snippet source</a> | <a href='#snippet-SetCurrentPeriodStartUsage' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TemporalSnippetTests.cs#L55-L79' title='Snippet source file'>snippet source</a> | <a href='#snippet-SetCurrentPeriodStartUsage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 Two overloads are available on `SqlDatabase<TDbContext>`:
@@ -99,6 +116,55 @@ For each call the helper runs, in separate batches:
 6. `ALTER TABLE ... SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = ...))`
 
 Steps 5 and 6 run in a `finally` so a failed UPDATE doesn't leave the table without versioning.
+
+
+## Simulating a damaged history row
+
+A history table can hold values the current model says are impossible. The usual cause is a migration that drops and re-adds a column on a temporal pair — done to keep column ordinals matching between the two tables, which SQL Server requires. The current table repopulates (or recomputes, if the column is computed); the rows already in the history table are left NULL, and SQL Server does not backfill them.
+
+Nothing in a test suite reproduces that on its own, because every test database is built by migrating from empty. So the read path that trips over those NULLs — typically materialising an entity whose property is non-nullable, which throws `SqlNullValueException` — is exercised for the first time in production.
+
+`SetHistoryColumn` reproduces it:
+
+<!-- snippet: SetHistoryColumnUsage -->
+<a id='snippet-SetHistoryColumnUsage'></a>
+```cs
+await using var database = await instance.Build();
+
+var request = new TravelRequest { Id = Guid.NewGuid(), Status = "Draft" };
+database.Context.Add(request);
+await database.Context.SaveChangesAsync();
+
+request.Status = "Approved";
+await database.Context.SaveChangesAsync();
+
+// Blank the column on the history rows only. A column dropped and
+// re-added on a temporal pair leaves exactly this: the current row is
+// repopulated, the rows already in history are not, and SQL Server
+// never backfills them.
+await database.SetHistoryColumn<TravelRequest>(
+    request.Id,
+    nameof(TravelRequest.StatusRank),
+    null);
+
+// Materialising that history row now fails on a SqlNullValueException,
+// because the model reads StatusRank into a non-nullable int. That is
+// the production failure, reproduced in a test.
+var exception = CatchAsync(
+    () => database.Context.Set<TravelRequest>()
+        .TemporalAll()
+        .Where(_ => _.Id == request.Id)
+        .ToListAsync());
+NotNull(exception);
+```
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TemporalSnippetTests.cs#L85-L115' title='Snippet source file'>snippet source</a> | <a href='#snippet-SetHistoryColumnUsage' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+
+The period columns and the primary key are rejected: rewriting a period on a history row corrupts the timeline `SetCurrentPeriodStart` maintains, and does so silently, while rewriting the key detaches the row from the entity it is history for. Any other mapped column can be set, computed columns included — those are plain columns on the history table.
+
+Versioning is turned off for the write and back on in a `finally`. Unlike `SetCurrentPeriodStart` the `PERIOD` is not dropped, since the period columns are ordinary columns on the history table.
+
+For a null value the column has to permit NULL **in the database**. It is not widened here, and cannot be: SQL Server refuses to re-enable versioning when the current and history tables disagree on nullability, so a row like that could not exist in production either. The case worth reproducing is the column that is nullable in the database while the model declares the property required — a stored computed column whose `CASE` has no `ELSE` is the common way to end up there, and is what the snippet above uses.
 
 
 ## Performance

@@ -44,6 +44,19 @@ public partial class SqlInstance<TDbContext>
         where TEntity : class =>
         ResolveSchema<TEntity>().Apply(context, id, periodStart);
 
+    /// <summary>
+    /// Sets one column on every history row for <paramref name="id"/>, leaving the current row
+    /// untouched. Use in tests to reproduce a history table that a migration has left in a state
+    /// a freshly built database never reaches - most usefully a NULL in a column that was dropped
+    /// and re-added on the temporal pair, since SQL Server does not backfill such a column into
+    /// the rows already in history.
+    /// <para>The period columns cannot be set this way: rewriting those corrupts the timeline
+    /// <see cref="SetCurrentPeriodStart{TEntity}(TDbContext, object, DateTime)"/> maintains.</para>
+    /// </summary>
+    public Task SetHistoryColumn<TEntity>(TDbContext context, object id, string propertyName, object? value)
+        where TEntity : class =>
+        ResolveSchema<TEntity>().SetHistoryColumn(context, id, propertyName, value);
+
     internal TemporalSchema ResolveSchema<TEntity>()
         where TEntity : class
     {
