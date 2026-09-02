@@ -90,8 +90,15 @@ public class TemporalSnippetTests
         database.Context.Add(request);
         await database.Context.SaveChangesAsync();
 
+        // Separate the two saves, or they land in the same tick, SQL Server
+        // discards the zero-length history row, and there is no history left
+        // to blank. The two helpers are meant to be used together.
+        var anchor = DateTime.UtcNow.AddSeconds(-10);
+        await database.SetCurrentPeriodStart(request, anchor);
+
         request.Status = "Approved";
         await database.Context.SaveChangesAsync();
+        await database.SetCurrentPeriodStart(request, anchor.AddMilliseconds(100));
 
         // Blank the column on the history rows only. A column dropped and
         // re-added on a temporal pair leaves exactly this: the current row is

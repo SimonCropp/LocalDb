@@ -123,6 +123,10 @@ public class TemporalTests
 
         // Versioning has to be off to write to a history table, so a helper that failed to turn
         // it back on would silently stop every later save in the test from being versioned.
+        // The saves need distinct periods or SQL Server drops the zero-length history row, and
+        // the count below then fails for a reason that has nothing to do with versioning.
+        await database.SetCurrentPeriodStart(entity, DateTime.UtcNow.AddSeconds(-10));
+
         entity.Property = "v2";
         await database.Context.SaveChangesAsync();
 

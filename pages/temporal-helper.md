@@ -135,8 +135,15 @@ var request = new TravelRequest { Id = Guid.NewGuid(), Status = "Draft" };
 database.Context.Add(request);
 await database.Context.SaveChangesAsync();
 
+// Separate the two saves, or they land in the same tick, SQL Server
+// discards the zero-length history row, and there is no history left
+// to blank. The two helpers are meant to be used together.
+var anchor = DateTime.UtcNow.AddSeconds(-10);
+await database.SetCurrentPeriodStart(request, anchor);
+
 request.Status = "Approved";
 await database.Context.SaveChangesAsync();
+await database.SetCurrentPeriodStart(request, anchor.AddMilliseconds(100));
 
 // Blank the column on the history rows only. A column dropped and
 // re-added on a temporal pair leaves exactly this: the current row is
@@ -157,7 +164,7 @@ var exception = CatchAsync(
         .ToListAsync());
 NotNull(exception);
 ```
-<sup><a href='/src/EfLocalDb.Tests/Snippets/TemporalSnippetTests.cs#L85-L115' title='Snippet source file'>snippet source</a> | <a href='#snippet-SetHistoryColumnUsage' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.Tests/Snippets/TemporalSnippetTests.cs#L85-L122' title='Snippet source file'>snippet source</a> | <a href='#snippet-SetHistoryColumnUsage' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 The period columns and the primary key are rejected: rewriting a period on a history row corrupts the timeline `SetCurrentPeriodStart` maintains, and does so silently, while rewriting the key detaches the row from the entity it is history for. Any other mapped column can be set, computed columns included — those are plain columns on the history table.
