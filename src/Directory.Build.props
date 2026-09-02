@@ -1,7 +1,7 @@
 
 <Project>
   <PropertyGroup>
-    <NoWarn>CS1591;CA1416;CS8632;NU1608;NU1109</NoWarn>
+    <NoWarn>CS1591;CA1416;CS8632;NU1608;NU1109;SC023</NoWarn>
     <Version>26.0.1</Version>
     <LangVersion>preview</LangVersion>
     <AssemblyVersion>1.0.0</AssemblyVersion>
@@ -11,6 +11,7 @@
     <ResolveAssemblyReferencesSilent>true</ResolveAssemblyReferencesSilent>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Verify_SponsorshipLicenseIgnored>true</Verify_SponsorshipLicenseIgnored>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System.Data.Common" />
