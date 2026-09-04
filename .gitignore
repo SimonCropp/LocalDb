@@ -12,3 +12,4 @@ nul
 /BenchmarkDotNet.Artifacts
 *claude*
 /TestResults
+*.lnk
