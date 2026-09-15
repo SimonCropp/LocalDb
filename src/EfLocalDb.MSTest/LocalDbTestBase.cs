@@ -48,13 +48,9 @@ public abstract partial class LocalDbTestBase<T> :
         var methodInfo = GetType()
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .First(_ => _.Name == TestContext.TestName && !_.IsGenericMethod);
-        isSharedDb = methodInfo.GetCustomAttribute<SharedDbAttribute>() != null;
-        isPooledDb = methodInfo.GetCustomAttribute<PooledDbAttribute>() != null;
-
-        if (isPooledDb && isSharedDb)
-        {
-            throw new("[PooledDb] and [SharedDb] are mutually exclusive. Use only one on a test method.");
-        }
+        var mode = DbAttributeReader.Read<SharedDbAttribute, PooledDbAttribute, NewDbAttribute>(methodInfo, GetType());
+        isSharedDb = mode == DbMode.Shared;
+        isPooledDb = mode == DbMode.Pooled;
 
         QueryFilter.Enable();
         return Reset();

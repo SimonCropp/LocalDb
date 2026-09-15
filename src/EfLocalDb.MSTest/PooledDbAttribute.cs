@@ -8,6 +8,11 @@ namespace EfLocalDb;
 /// concurrently. Not suited to tests that need their changes committed, or that assert on state
 /// outside their own transaction.
 /// </para>
+/// <para>
+/// Can be applied to a test method, a test class, or the assembly. The nearest wins, so a method
+/// marked <see cref="SharedDbAttribute" /> in a <see cref="PooledDbAttribute" /> class uses a shared
+/// database. Use <see cref="NewDbAttribute" /> to opt a method or class out.
+/// </para>
 /// </summary>
-[AttributeUsage(AttributeTargets.Method)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Assembly)]
 public sealed class PooledDbAttribute : Attribute;
