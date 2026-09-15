@@ -25,6 +25,8 @@ snippet: EfLocalDb.MSTest.Tests/Model/Employee.cs
 
 snippet: EfLocalDb.MSTest.Tests/ModuleInitializer.cs
 
+When running with `--report-trx`, call `Initialize` from assembly setup instead. See [--report-trx and module initializers](/pages/report-trx.md).
+
 
 ## Usage in a Test
 

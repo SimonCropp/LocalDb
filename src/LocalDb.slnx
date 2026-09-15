@@ -19,6 +19,7 @@
   <Project Path="EfLocalDb.MSTest.Tests/EfLocalDb.MSTest.Tests.csproj" />
   <Project Path="EfLocalDb.TUnit/EfLocalDb.TUnit.csproj" />
   <Project Path="EfLocalDb.TUnit.Tests/EfLocalDb.TUnit.Tests.csproj" />
+  <Project Path="EfLocalDb.ReportTrxHelper/EfLocalDb.ReportTrxHelper.csproj" />
   <Project Path="EfLocalDb.Tests/EfLocalDb.Tests.csproj" />
   <Project Path="EfLocalDb/EfLocalDb.csproj" />
   <Project Path="LoadTest/LoadTest.csproj" />
