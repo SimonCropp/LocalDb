@@ -101,6 +101,8 @@ public static class ModuleInitializer
 <sup><a href='/src/EfLocalDb.TUnit.Tests/ModuleInitializer.cs#L1-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.TUnit.Tests/ModuleInitializer.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
+When running with `--report-trx`, call `Initialize` from assembly setup instead. See [--report-trx and module initializers](/pages/report-trx.md).
+
 
 ## Usage in a Test
 

@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\LocalDb.Tests\ModuleInitializer.cs" Link="ModuleInitializer.cs" />
+    <Compile Include="..\LocalDb.Tests\HelperExeResolver.cs" Link="HelperExeResolver.cs" />
     <None Include="..\TestData\suppliedTemplate.mdf" Link="suppliedTemplate.mdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -16,7 +17,6 @@
     </None>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
     <PackageReference Include="NetTopologySuite" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit3TestAdapter" />
@@ -29,6 +29,7 @@
     <PackageReference Include="DiffPlex" />
     <PackageReference Include="Verify.DiffPlex" />
     <ProjectReference Include="..\EfLocalDb\EfLocalDb.csproj" />
+    <ProjectReference Include="..\EfLocalDb.ReportTrxHelper\EfLocalDb.ReportTrxHelper.csproj" ReferenceOutputAssembly="false" Private="false" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <Using Include="NUnit.Framework.Legacy.ClassicAssert" Static="True" />
     <Using Include="NUnit.Framework.Assert" Static="True" />

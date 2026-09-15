@@ -1,0 +1,89 @@
+# `--report-trx` and module initializers
+
+`LocalDbTestBase<T>.Initialize` throws when it is called from a [module initializer](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/module-initializers) while `--report-trx` is enabled. Call it from the assembly setup API of the test framework instead, as shown below.
+
+
+## Why
+
+Microsoft.Testing.Extensions.TrxReport 2.4.0 made `--report-trx` run the tests under a [test host controller](https://github.com/microsoft/testfx/pull/10808). The test executable starts twice: once as the controller, which completes the TRX report if the test host exits early, and once as the test host, which runs the tests.
+
+A module initializer runs in both processes. When it calls `Initialize`, both processes build the template database for the same LocalDB instance at once. The test host finds the half-built template, starts a rebuild, and cannot delete the template file that the controller still has attached:
+
+```
+System.IO.IOException: The process cannot access the file '...\template.mdf' because it is being used by another process.
+```
+
+Every test that uses the instance then fails with that exception.
+
+Assembly setup APIs only run in the test host. Other module initializer work, such as Verify settings, can stay where it is.
+
+
+## NUnit
+
+A `[SetUpFixture]` outside of any namespace applies to every test in the assembly.
+
+```cs
+[SetUpFixture]
+public class AssemblySetup
+{
+    [OneTimeSetUp]
+    public void Setup() =>
+        LocalDbTestBase<TheDbContext>.Initialize();
+
+    [OneTimeTearDown]
+    public void Cleanup() =>
+        LocalDbTestBase<TheDbContext>.Shutdown();
+}
+```
+
+
+## MSTest
+
+```cs
+[TestClass]
+public class AssemblySetup
+{
+    [AssemblyInitialize]
+    public static void Setup(TestContext context) =>
+        LocalDbTestBase<TheDbContext>.Initialize();
+
+    [AssemblyCleanup]
+    public static void Cleanup() =>
+        LocalDbTestBase<TheDbContext>.Shutdown();
+}
+```
+
+
+## TUnit
+
+```cs
+public static class AssemblySetup
+{
+    [Before(HookType.Assembly)]
+    public static void Setup() =>
+        LocalDbTestBase<TheDbContext>.Initialize();
+
+    [After(HookType.Assembly)]
+    public static void Cleanup() =>
+        LocalDbTestBase<TheDbContext>.Shutdown();
+}
+```
+
+
+## xunit.v3
+
+```cs
+[assembly: AssemblyFixture(typeof(AssemblySetup))]
+
+public class AssemblySetup : IAsyncDisposable
+{
+    public AssemblySetup() =>
+        LocalDbTestBase<TheDbContext>.Initialize();
+
+    public ValueTask DisposeAsync()
+    {
+        LocalDbTestBase<TheDbContext>.Shutdown();
+        return ValueTask.CompletedTask;
+    }
+}
+```

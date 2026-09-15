@@ -20,6 +20,7 @@ public abstract partial class LocalDbTestBase<T> :
         DateTime? timestamp = null)
     {
         var callingAssembly = System.Reflection.Assembly.GetCallingAssembly();
+        ReportTrxGuard.ThrowIfModuleInitializer("a [Before(HookType.Assembly)] method");
         ThrowIfInitialized();
         sqlInstance = new(
             buildTemplate: buildTemplate,
