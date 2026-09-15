@@ -49,13 +49,9 @@ public abstract partial class LocalDbTestBase<T> :
 #pragma warning disable CS0618 // Type or member is obsolete
         var methodInfo = test.Method!.MethodInfo;
 #pragma warning restore CS0618 // Type or member is obsolete
-        isSharedDb = methodInfo.GetCustomAttribute<SharedDbAttribute>() != null;
-        isPooledDb = methodInfo.GetCustomAttribute<PooledDbAttribute>() != null;
-
-        if (isPooledDb && isSharedDb)
-        {
-            throw new("[PooledDb] and [SharedDb] are mutually exclusive. Use only one on a test method.");
-        }
+        var mode = DbAttributeReader.Read<SharedDbAttribute, PooledDbAttribute, NewDbAttribute>(methodInfo, GetType());
+        isSharedDb = mode == DbMode.Shared;
+        isPooledDb = mode == DbMode.Pooled;
 
         QueryFilter.Enable();
         return Reset();

@@ -655,6 +655,8 @@ public async Task VerifyEntity_Queryable()
 
 Mark test methods with `[SharedDb]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.<!-- include: shared-db. path: /pages/mdsource/shared-db.include.md -->
 
+`[SharedDb]` can also be applied to a test class, or to the assembly with `[assembly: SharedDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]` and `[NewDb]` to the same method, class, or assembly throws.
+
 The shared database is read-only and any write throws, not only `SaveChanges`: `ExecuteUpdate`, `ExecuteDelete`, `ExecuteSqlRaw` and hand-written commands are blocked too. Tests that need to write should use `[PooledDb]` instead.<!-- endInclude -->
 
 <!-- snippet: SharedDbTestsXunitV3 -->
@@ -679,6 +681,8 @@ public class SharedDbTests : LocalDbTestBase<TheDbContext>
 
 Mark test methods with `[PooledDb]` to lease a database from a fixed pool instead of creating one per test. The pool is built once from the template, and each test leases a database for its duration, writes inside a transaction, and rolls that transaction back on release so the next test sees the template state again.<!-- include: pooled-db. path: /pages/mdsource/pooled-db.include.md -->
 
+`[PooledDb]` can also be applied to a test class, or to the assembly with `[assembly: PooledDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]` and `[NewDb]` to the same method, class, or assembly throws.
+
 Two costs disappear. The per-test file copy and attach is gone, and — usually the larger one — so is repeated query plan compilation: SQL Server keys the plan cache by database, so a database per test means every query is compiled afresh for every test and no plan is ever reused. A small pool lets those plans be reused for the rest of the run.
 
 Pool size is `LocalDbSettings.PoolSize`, configurable via the `LocalDBPoolSize` environment variable and defaulting to `Environment.ProcessorCount`. It bounds how many pooled tests run concurrently, since a database is leased to one test at a time. Set it to `1` to serialise pooled tests onto a single database.
@@ -687,9 +691,9 @@ Not suited to every test:
 
  * Tests that need their changes committed, or that assert on state outside their own transaction.
  * Tests that assert on a timeline of changes. Inside one transaction every system-versioned temporal row shares the transaction start time, so a sequence of state changes collapses into a single instant.
- * On failure the database cannot be inspected, since the transaction is rolled back. When debugging, temporarily remove the attribute.
+ * On failure the database cannot be inspected, since the transaction is rolled back. When debugging, temporarily remove the attribute, or mark the test `[NewDb]` if the attribute is on its class or assembly.
 
-Those tests should be left to create a database per test.<!-- endInclude -->
+Those tests should be left to create a database per test, marked `[NewDb]` if `[PooledDb]` is applied to their class or assembly.<!-- endInclude -->
 
 <!-- snippet: PooledDbTestsXunitV3 -->
 <a id='snippet-PooledDbTestsXunitV3'></a>
