@@ -41,7 +41,7 @@
     <PackageVersion Include="Verify.XunitV3" Version="33.0.2" />
     <PackageVersion Include="MSTest" Version="4.4.0" />
     <PackageVersion Include="Verify.MSTest" Version="33.0.2" />
-    <PackageVersion Include="TUnit" Version="1.68.0" />
+    <PackageVersion Include="TUnit" Version="1.68.4" />
     <PackageVersion Include="Verify.TUnit" Version="33.0.2" />
   </ItemGroup>
 </Project>
