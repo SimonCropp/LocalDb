@@ -15,6 +15,8 @@ class Wrapper : IDisposable
     bool poolCreated;
     Task? poolFill;
     volatile Exception? poolFillException;
+    // Set once the instance is deleted, so a database disposed afterwards does not try to reach it.
+    volatile bool deleted;
     public readonly string MasterConnectionString;
     string instance;
     public readonly string DataFile;
@@ -495,6 +497,7 @@ class Wrapper : IDisposable
     public void DeleteInstance(ShutdownMode mode = ShutdownMode.KillProcess)
     {
         WaitForPoolFill();
+        deleted = true;
         LocalDbApi.StopAndDelete(instance, mode);
         DirectoryFinder.DeleteInstance(instance);
         DeleteDirectory();
@@ -505,6 +508,7 @@ class Wrapper : IDisposable
     public void DeleteInstance(ShutdownMode mode, TimeSpan timeout)
     {
         WaitForPoolFill();
+        deleted = true;
         LocalDbApi.StopAndDelete(instance, mode, timeout);
         DirectoryFinder.DeleteInstance(instance);
         DeleteDirectory();
@@ -551,6 +555,14 @@ class Wrapper : IDisposable
     [Time("dbName: '{dbName}'")]
     public async Task TakeOffline(string dbName)
     {
+        // A database disposed after SqlInstance.Cleanup has nothing to take offline: the instance
+        // and its files are gone. Connecting would first wait out the connect timeout, around five
+        // minutes, against an instance that does not exist, and then fail.
+        if (deleted)
+        {
+            return;
+        }
+
 #if NET5_0_OR_GREATER
         await using var connection = await OpenMasterConnection();
 #else
