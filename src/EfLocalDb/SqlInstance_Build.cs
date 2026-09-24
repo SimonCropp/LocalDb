@@ -36,7 +36,7 @@ public partial class SqlInstance<TDbContext>
     {
         Guard.AgainstBadOS();
         await using var build = await Build(data, testFile, databaseSuffix, memberName);
-        return build.NewConnectionOwnedDbContext();
+        return build.NewConnectionOwnedDbContext(null, true);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public partial class SqlInstance<TDbContext>
     {
         Guard.AgainstBadOS();
         await using var build = await Build(testFile, databaseSuffix, memberName);
-        return build.NewConnectionOwnedDbContext();
+        return build.NewConnectionOwnedDbContext(null, true);
     }
 
     public async Task<SqlDatabase<TDbContext>> Build(
@@ -92,7 +92,7 @@ public partial class SqlInstance<TDbContext>
     {
         Guard.AgainstBadOS();
         await using var build = await Build(dbName, data);
-        return build.NewConnectionOwnedDbContext();
+        return build.NewConnectionOwnedDbContext(null, true);
     }
 
     public Task<SqlDatabase<TDbContext>> Build(string dbName)
@@ -105,6 +105,6 @@ public partial class SqlInstance<TDbContext>
     {
         Guard.AgainstBadOS();
         await using var build = await Build(dbName, (IEnumerable<object>?) null);
-        return build.NewConnectionOwnedDbContext();
+        return build.NewConnectionOwnedDbContext(null, true);
     }
 }

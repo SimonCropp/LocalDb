@@ -96,7 +96,7 @@ public partial class SqlDatabase<TDbContext> :
 
     /// <summary>
     /// Gets the connection string for this database.
-    /// Can be used to create additional connections via <see cref="OpenNewConnection"/> or <see cref="NewConnectionOwnedDbContext"/>.
+    /// Can be used to create additional connections via <see cref="OpenNewConnection"/> or <see cref="NewConnectionOwnedDbContext(QueryTrackingBehavior?)"/>.
     /// </summary>
     public string ConnectionString { get; }
 
@@ -192,11 +192,23 @@ public partial class SqlDatabase<TDbContext> :
     /// </summary>
     /// <param name="tracking">Optional query tracking behavior. If null, uses the DbContext default.</param>
     /// <returns>A new <typeparamref name="TDbContext"/> instance with its own connection.</returns>
-    public TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null)
+    public TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking = null) =>
+        NewConnectionOwnedDbContext(tracking, false);
+
+    // When handOverOffline is true, the returned context takes over the take-offline step: the
+    // database goes offline when the context's connection is disposed, and this instance no
+    // longer does so on dispose.
+    internal TDbContext NewConnectionOwnedDbContext(QueryTrackingBehavior? tracking, bool handOverOffline)
     {
         var builder = DefaultOptionsBuilder.Build<TDbContext>();
         builder.UseSqlServer(Connection.ConnectionString, sqlOptionsBuilder);
         builder.ApplyQueryTracking(tracking);
+        if (handOverOffline && takeOffline != null)
+        {
+            builder.AddInterceptors(new TakeOfflineInterceptor(takeOffline));
+            takeOffline = null;
+        }
+
         if (readOnly)
         {
             builder.AddInterceptors(ReadOnlyInterceptor.Instance, ReadOnlyInterceptor.Command.Instance);

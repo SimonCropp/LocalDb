@@ -419,6 +419,23 @@ public class Tests
     }
 
     [Test]
+    public async Task BuildContext_AutoOffline()
+    {
+        using var instance = new SqlInstance<TestDbContext>(
+            builder => new(builder.Options),
+            storage: Storage.FromSuffix<TestDbContext>("autoOfflineContext"),
+            dbAutoOffline: true);
+
+        var entity = new TestEntity
+        {
+            Property = "prop"
+        };
+        await using var context = await instance.BuildContext([entity]);
+        NotNull(await context.TestEntities.FindAsync(entity.Id));
+        instance.Cleanup();
+    }
+
+    [Test]
     public async Task SqlOptionsBuilder()
     {
         var optionsBuilderCalled = false;
