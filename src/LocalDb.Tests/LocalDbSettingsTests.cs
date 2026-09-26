@@ -2,13 +2,14 @@
 public class LocalDbSettingsTests
 {
     [Test]
-    public void ShutdownTimeout_DefaultsTo500()
+    public void ShutdownTimeout_Default()
     {
-        // If LocalDBShutdownTimeout env var is not set, default is 500
+        // If LocalDBShutdownTimeout env var is not set, default is 5 minutes for AI and 10 otherwise
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
         if (envValue is null)
         {
-            That(LocalDbSettings.ShutdownTimeout, Is.EqualTo(500));
+            var expected = AiCliDetector.Detected ? 5 : 10;
+            That(LocalDbSettings.ShutdownTimeout, Is.EqualTo(expected));
         }
     }
 

@@ -1,16 +1,18 @@
 # Shutdown Timeout
 
-The `ShutdownTimeout` setting controls how long (in seconds) LocalDB waits before automatically shutting down after the last connection closes.
+The `ShutdownTimeout` setting controls how long (in minutes) LocalDB waits before automatically shutting down after the last connection closes.
 
 
 ## Default Behavior
 
-By default, LocalDB shuts down 5 minutes after the last connection closes. This is a balance between:
+By default, LocalDB shuts down 10 minutes after the last connection closes. When an AI CLI (Claude Code, Copilot, Cursor, etc.) is detected the default is 5 minutes. This is a balance between:
 
  * Keeping the instance running for quick successive test runs
  * Freeing up system resources when tests are complete
 
-The minimum allowed value is 1 second. A value of 0 will throw an `ArgumentOutOfRangeException`.
+A stopped instance is restarted on next use and reuses the existing template files, so a short timeout costs about a second of process start, not a rebuild.
+
+SQL Server accepts values from 5 to 65535 minutes. A value of 0 will throw an `ArgumentOutOfRangeException`.
 
 
 ## Configuration
@@ -27,27 +29,27 @@ Pass `shutdownTimeout` when creating a `SqlInstance`:
 var instance = new SqlInstance(
     name: "MyInstance",
     buildTemplate: connection => ...,
-    shutdownTimeout: 300);
+    shutdownTimeout: 30);
 
 // EF Core
 var instance = new SqlInstance<MyDbContext>(
     constructInstance: builder => new MyDbContext(builder.Options),
-    shutdownTimeout: 300);
+    shutdownTimeout: 30);
 
 // EF Classic
 var instance = new SqlInstance<MyDbContext>(
     constructInstance: connection => new MyDbContext(connection),
-    shutdownTimeout: 300);
+    shutdownTimeout: 30);
 ```
 
 
 ### Environment Variable
 
-Set the `LocalDBShutdownTimeout` environment variable to the desired number of seconds:
+Set the `LocalDBShutdownTimeout` environment variable to the desired number of minutes:
 
 ```bash
-# Keep instance running for 5 minutes after last connection
-set LocalDBShutdownTimeout=300
+# Keep instance running for 30 minutes after last connection
+set LocalDBShutdownTimeout=30
 ```
 
 
@@ -56,8 +58,8 @@ set LocalDBShutdownTimeout=300
 Set `LocalDbSettings.ShutdownTimeout` before creating any `SqlInstance`:
 
 ```cs
-// Keep instance running for 5 minutes after last connection
-LocalDbSettings.ShutdownTimeout = 300;
+// Keep instance running for 30 minutes after last connection
+LocalDbSettings.ShutdownTimeout = 30;
 ```
 
 
@@ -79,7 +81,7 @@ LocalDbSettings.ShutdownTimeout = 300;
 This setting configures the SQL Server `user instance timeout` advanced option via:
 
 ```sql
-execute sp_configure 'user instance timeout', <seconds>;
+execute sp_configure 'user instance timeout', <minutes>;
 ```
 
 The timeout is applied when the LocalDB instance is first started or rebuilt.

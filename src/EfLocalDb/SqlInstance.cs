@@ -80,9 +80,9 @@ public partial class SqlInstance<TDbContext> :
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
     /// <param name="shutdownTimeout">
-    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// The number of minutes LocalDB waits before shutting down after the last connection closes. Optional.
     /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
-    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes when an AI CLI is detected, otherwise 10 minutes).
     /// </param>
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.
@@ -164,9 +164,9 @@ public partial class SqlInstance<TDbContext> :
     /// Example: <c>options => options.EnableRetryOnFailure()</c>
     /// </param>
     /// <param name="shutdownTimeout">
-    /// The number of seconds LocalDB waits before shutting down after the last connection closes. Optional.
+    /// The number of minutes LocalDB waits before shutting down after the last connection closes. Optional.
     /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
-    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes).
+    /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes when an AI CLI is detected, otherwise 10 minutes).
     /// </param>
     /// <param name="dbAutoOffline">
     /// Controls whether databases are automatically taken offline when disposed.

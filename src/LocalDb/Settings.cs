@@ -24,9 +24,10 @@ public static class LocalDbSettings
     }
 
     /// <summary>
-    /// The number of seconds LocalDB waits before shutting down after the last connection closes.
+    /// The number of minutes LocalDB waits before shutting down after the last connection closes.
+    /// Maps to the <c>user instance timeout</c> server option, which accepts 5 to 65535.
     /// Can be configured via the <c>LocalDBShutdownTimeout</c> environment variable.
-    /// Defaults to 5 minutes.
+    /// Defaults to 5 minutes when an AI CLI is detected, otherwise 10 minutes.
     /// </summary>
     public static ushort ShutdownTimeout { get; set; } = ResolveShutdownTimeout();
 
@@ -77,7 +78,12 @@ public static class LocalDbSettings
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
         if (envValue is null)
         {
-            return 500;
+            if (AiCliDetector.Detected)
+            {
+                return 5;
+            }
+
+            return 10;
         }
 
         if (ushort.TryParse(envValue, out var timeout))
