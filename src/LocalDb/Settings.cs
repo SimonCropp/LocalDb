@@ -32,13 +32,6 @@ public static class LocalDbSettings
     public static ushort ShutdownTimeout { get; set; } = ResolveShutdownTimeout();
 
     /// <summary>
-    /// Controls whether databases are automatically taken offline when disposed.
-    /// Can be configured via the <c>LocalDBAutoOffline</c> environment variable ("true" or "false").
-    /// When null (default), automatically enables offline mode if a CI environment is detected.
-    /// </summary>
-    public static bool? DBAutoOffline { get; set; } = ResolveDBAutoOffline();
-
-    /// <summary>
     /// How long an instance directory must be untouched before automatic cleanup removes the
     /// instance and the directory LocalDB keeps for it. This reclaims instances whose data
     /// directory is gone, which the per run cleanup can no longer see.
@@ -92,17 +85,6 @@ public static class LocalDbSettings
         }
 
         throw new ArgumentException($"Failed to parse LocalDBShutdownTimeout environment variable: {envValue}");
-    }
-
-    static bool? ResolveDBAutoOffline()
-    {
-        var envValue = Environment.GetEnvironmentVariable("LocalDBAutoOffline");
-        return envValue switch
-        {
-            "true" => true,
-            "false" => false,
-            _ => null
-        };
     }
 
     static TimeSpan ResolveInstanceCleanupThreshold()

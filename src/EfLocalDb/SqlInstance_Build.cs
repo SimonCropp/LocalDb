@@ -71,14 +71,12 @@ public partial class SqlInstance<TDbContext>
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
         var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
-        Func<Task>? takeOffline = dbAutoOffline ? () => Wrapper.TakeOffline(dbName) : null;
         var database = new SqlDatabase<TDbContext>(
             this,
             connection,
             dbName,
             constructInstance,
             () => Wrapper.DeleteDatabase(dbName),
-            takeOffline,
             data,
             sqlOptionsBuilder);
         await database.Start();

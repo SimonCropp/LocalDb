@@ -43,7 +43,6 @@ public partial class SqlDatabase<TDbContext> :
     SqlInstance<TDbContext> instance;
     ConstructInstance<TDbContext> constructInstance;
     Func<Task> delete;
-    Func<Task>? takeOffline;
     IEnumerable<object>? data;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
     bool readOnly;
@@ -55,7 +54,6 @@ public partial class SqlDatabase<TDbContext> :
         string name,
         ConstructInstance<TDbContext> constructInstance,
         Func<Task> delete,
-        Func<Task>? takeOffline,
         IEnumerable<object>? data,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder,
         bool readOnly = false,
@@ -66,7 +64,6 @@ public partial class SqlDatabase<TDbContext> :
         this.instance = instance;
         this.constructInstance = constructInstance;
         this.delete = delete;
-        this.takeOffline = takeOffline;
         this.data = data;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
         this.readOnly = readOnly;
@@ -207,7 +204,6 @@ public partial class SqlDatabase<TDbContext> :
 
     /// <summary>
     /// Asynchronously disposes <see cref="Context"/>, <see cref="NoTrackingContext"/>, and <see cref="Connection"/>.
-    /// If <c>dbAutoOffline</c> was enabled on the <see cref="SqlInstance{TDbContext}"/>, the database is also taken offline.
     /// </summary>
     public async ValueTask DisposeAsync()
     {
@@ -232,10 +228,6 @@ public partial class SqlDatabase<TDbContext> :
         }
 
         await Connection.DisposeAsync();
-        if (takeOffline != null)
-        {
-            await takeOffline();
-        }
 
         // Runs last: for a pooled database this returns the lease, so it must not happen
         // until the transaction is rolled back and the connection is back in the ADO.NET pool.

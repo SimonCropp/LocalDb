@@ -45,7 +45,6 @@ public partial class SqlInstance<TDbContext>
                 constructInstance,
                 () => Task.CompletedTask,
                 null,
-                null,
                 sqlOptionsBuilder,
                 readOnly: false,
                 transaction: transaction,

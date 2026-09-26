@@ -13,7 +13,6 @@ public partial class SqlInstance<TDbContext>
             dbName,
             constructInstance,
             () => Task.CompletedTask,
-            null,
             null);
         await database.Start();
         return database;

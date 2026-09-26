@@ -13,7 +13,6 @@ public partial class SqlInstance<TDbContext> :
     ConstructInstance<TDbContext> constructInstance = null!;
     static Storage defaultStorage;
     Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder;
-    bool dbAutoOffline;
 
     static SqlInstance()
     {
@@ -84,12 +83,6 @@ public partial class SqlInstance<TDbContext> :
     /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
     /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes when an AI CLI is detected, otherwise 10 minutes).
     /// </param>
-    /// <param name="dbAutoOffline">
-    /// Controls whether databases are automatically taken offline when disposed.
-    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
-    /// If not specified, defaults to <see cref="LocalDbSettings.DBAutoOffline"/> (which can be configured
-    /// via the <c>LocalDBAutoOffline</c> environment variable, defaulting to auto-detection based on CI environment).
-    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromContext<TDbContext>? buildTemplate = null,
@@ -99,8 +92,7 @@ public partial class SqlInstance<TDbContext> :
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
-        ushort? shutdownTimeout = null,
-        bool? dbAutoOffline = null) :
+        ushort? shutdownTimeout = null) :
         this(
             constructInstance,
             BuildTemplateConverter.Convert(constructInstance, buildTemplate),
@@ -110,8 +102,7 @@ public partial class SqlInstance<TDbContext> :
             existingTemplate,
             callback,
             sqlOptionsBuilder,
-            shutdownTimeout,
-            dbAutoOffline)
+            shutdownTimeout)
     {
     }
 
@@ -168,12 +159,6 @@ public partial class SqlInstance<TDbContext> :
     /// If not specified, defaults to <see cref="LocalDbSettings.ShutdownTimeout"/> (which can be configured
     /// via the <c>LocalDBShutdownTimeout</c> environment variable, defaulting to 5 minutes when an AI CLI is detected, otherwise 10 minutes).
     /// </param>
-    /// <param name="dbAutoOffline">
-    /// Controls whether databases are automatically taken offline when disposed.
-    /// When true, databases are taken offline (reduces memory). When false, databases remain online.
-    /// If not specified, defaults to <see cref="LocalDbSettings.DBAutoOffline"/> (which can be configured
-    /// via the <c>LocalDBAutoOffline</c> environment variable, defaulting to auto-detection based on CI environment).
-    /// </param>
     public SqlInstance(
         ConstructInstance<TDbContext> constructInstance,
         TemplateFromConnection<TDbContext> buildTemplate,
@@ -183,8 +168,7 @@ public partial class SqlInstance<TDbContext> :
         ExistingTemplate? existingTemplate = null,
         Callback<TDbContext>? callback = null,
         Action<SqlServerDbContextOptionsBuilder>? sqlOptionsBuilder = null,
-        ushort? shutdownTimeout = null,
-        bool? dbAutoOffline = null)
+        ushort? shutdownTimeout = null)
     {
         temporalSchemas = new(() => BuildTemporalSchemas(constructInstance, sqlOptionsBuilder));
 
@@ -197,7 +181,6 @@ public partial class SqlInstance<TDbContext> :
         var resultTimestamp = GetTimestamp(timestamp, buildTemplate);
         this.constructInstance = constructInstance;
         this.sqlOptionsBuilder = sqlOptionsBuilder;
-        this.dbAutoOffline = CiDetection.ResolveDbAutoOffline(dbAutoOffline);
 
         var storageValue = storage.Value;
         StorageDirectory = storageValue.Directory;

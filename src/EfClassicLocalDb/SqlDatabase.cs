@@ -29,7 +29,6 @@ public partial class SqlDatabase<TDbContext> :
 {
     ConstructInstance<TDbContext> constructInstance;
     Func<Task> delete;
-    Func<Task>? takeOffline;
     IEnumerable<object>? data;
 
     internal SqlDatabase(
@@ -37,13 +36,11 @@ public partial class SqlDatabase<TDbContext> :
         string name,
         ConstructInstance<TDbContext> constructInstance,
         Func<Task> delete,
-        Func<Task>? takeOffline,
         IEnumerable<object>? data)
     {
         Name = name;
         this.constructInstance = constructInstance;
         this.delete = delete;
-        this.takeOffline = takeOffline;
         this.data = data;
         ConnectionString = connection.ConnectionString;
         Connection = connection;
@@ -130,7 +127,6 @@ public partial class SqlDatabase<TDbContext> :
 
     /// <summary>
     /// Disposes the <see cref="Context"/> and <see cref="Connection"/>.
-    /// If <c>dbAutoOffline</c> was enabled on the <see cref="SqlInstance{TDbContext}"/>, the database is also taken offline.
     /// </summary>
     public void Dispose()
     {
@@ -138,7 +134,6 @@ public partial class SqlDatabase<TDbContext> :
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         Context?.Dispose();
         Connection.Dispose();
-        takeOffline?.Invoke().GetAwaiter().GetResult();
     }
 
     /// <summary>
