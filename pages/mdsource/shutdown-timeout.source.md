@@ -5,7 +5,7 @@ The `ShutdownTimeout` setting controls how long (in minutes) LocalDB waits befor
 
 ## Default Behavior
 
-By default, LocalDB shuts down 10 minutes after the last connection closes. When an AI CLI (Claude Code, Copilot, Cursor, etc.) is detected the default is 5 minutes. This is a balance between:
+By default, LocalDB shuts down 10 minutes after the last connection closes. When an AI CLI (Claude Code, Copilot, Cursor, etc.) is detected the default is 5 minutes. On CI (GitHub Actions, Azure DevOps, AppVeyor, TeamCity, Jenkins, GitLab, Travis, Bitbucket Pipelines, GoCD, MyGet, or anything setting `CI`) it is always 5 minutes, and the `LocalDBShutdownTimeout` environment variable is ignored. This is a balance between:
 
  * Keeping the instance running for quick successive test runs
  * Freeing up system resources when tests are complete
@@ -72,7 +72,6 @@ LocalDbSettings.ShutdownTimeout = 30;
 
 **Decrease the timeout** when:
 
- * Running in CI where resources should be freed quickly
  * Memory is constrained and LocalDB instances should shut down promptly
 
 

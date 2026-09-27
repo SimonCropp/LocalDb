@@ -27,7 +27,7 @@ public static class LocalDbSettings
     /// The number of minutes LocalDB waits before shutting down after the last connection closes.
     /// Maps to the <c>user instance timeout</c> server option, which accepts 5 to 65535.
     /// Can be configured via the <c>LocalDBShutdownTimeout</c> environment variable.
-    /// Defaults to 5 minutes when an AI CLI is detected, otherwise 10 minutes.
+    /// Always 5 minutes on CI. Otherwise defaults to 5 minutes when an AI CLI is detected, and 10 minutes when not.
     /// </summary>
     public static ushort ShutdownTimeout { get; set; } = ResolveShutdownTimeout();
 
@@ -68,6 +68,12 @@ public static class LocalDbSettings
 
     static ushort ResolveShutdownTimeout()
     {
+        // A CI agent runs one build then idles, so there is no later run to keep the instance warm for
+        if (IsCI)
+        {
+            return 5;
+        }
+
         var envValue = Environment.GetEnvironmentVariable("LocalDBShutdownTimeout");
         if (envValue is null)
         {
@@ -85,6 +91,34 @@ public static class LocalDbSettings
         }
 
         throw new ArgumentException($"Failed to parse LocalDBShutdownTimeout environment variable: {envValue}");
+    }
+
+    // Build servers as detected by DiffEngine's BuildServerDetector, less Docker and WSL, which are
+    // dev environments. The generic CI variable also covers CircleCI and others that set it.
+    internal static bool IsCI { get; } = DetectCI(Environment.GetEnvironmentVariable);
+
+    internal static bool DetectCI(Func<string, string?> variable) =>
+        IsTrue(variable("CI")) ||
+        variable("GITHUB_ACTIONS") is not null ||
+        IsTrue(variable("TF_BUILD")) ||
+        variable("APPVEYOR") is not null ||
+        variable("TEAMCITY_VERSION") is not null ||
+        variable("JENKINS_URL") is not null ||
+        variable("GITLAB_CI") is not null ||
+        variable("TRAVIS_BUILD_ID") is not null ||
+        variable("BITBUCKET_BUILD_NUMBER") is not null ||
+        variable("GO_SERVER_URL") is not null ||
+        string.Equals(variable("BuildRunner"), "MyGet", StringComparison.OrdinalIgnoreCase);
+
+    // AppVeyor and Azure DevOps use "True", others "true" or "1"
+    static bool IsTrue(string? value)
+    {
+        if (value == "1")
+        {
+            return true;
+        }
+
+        return string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
     }
 
     static TimeSpan ResolveInstanceCleanupThreshold()
