@@ -68,8 +68,10 @@ public static class LocalDbSettings
 
     static ushort ResolveShutdownTimeout()
     {
-        // A CI agent runs one build then idles, so there is no later run to keep the instance warm for
-        if (IsCI)
+        // A CI agent runs one build then idles, so there is no later run to keep the instance warm for.
+        // Calls DetectCI rather than reading IsCI: this runs from ShutdownTimeout's initializer, which is
+        // declared above IsCI, so IsCI is still false here.
+        if (DetectCI(Environment.GetEnvironmentVariable))
         {
             return 5;
         }
