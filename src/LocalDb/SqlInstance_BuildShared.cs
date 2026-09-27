@@ -17,6 +17,6 @@ public partial class SqlInstance
 #endif
         }
 
-        return new(connection, "Shared", () => Task.CompletedTask, null, transaction);
+        return new(connection, "Shared", () => Task.CompletedTask, transaction);
     }
 }

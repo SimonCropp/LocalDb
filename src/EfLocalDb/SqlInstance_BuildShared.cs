@@ -21,7 +21,6 @@ public partial class SqlInstance<TDbContext>
             constructInstance,
             () => Task.CompletedTask,
             null,
-            null,
             sqlOptionsBuilder,
             readOnly: !useTransaction,
             transaction: transaction);
@@ -61,7 +60,6 @@ public partial class SqlInstance<TDbContext>
             "Shared",
             constructInstance,
             () => Task.CompletedTask,
-            null,
             null,
             sqlOptionsBuilder,
             readOnly: !useTransaction,

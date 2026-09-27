@@ -30,12 +30,10 @@ public partial class SqlDatabase :
     IDisposable
 {
     Func<Task> delete;
-    Func<Task>? takeOffline;
 
-    internal SqlDatabase(SqlConnection connection, string name, Func<Task> delete, Func<Task>? takeOffline = null, SqlTransaction? transaction = null)
+    internal SqlDatabase(SqlConnection connection, string name, Func<Task> delete, SqlTransaction? transaction = null)
     {
         this.delete = delete;
-        this.takeOffline = takeOffline;
         ConnectionString = connection.ConnectionString;
         Name = name;
         Connection = connection;
@@ -92,7 +90,6 @@ public partial class SqlDatabase :
 
     /// <summary>
     /// Disposes the database connection.
-    /// If <c>dbAutoOffline</c> was enabled on the <see cref="SqlInstance"/>, the database is also taken offline.
     /// </summary>
     public void Dispose()
     {
@@ -103,13 +100,11 @@ public partial class SqlDatabase :
         }
 
         Connection.Dispose();
-        takeOffline?.Invoke().GetAwaiter().GetResult();
     }
 
 #if !NET48
     /// <summary>
     /// Asynchronously disposes the database connection.
-    /// If <c>dbAutoOffline</c> was enabled on the <see cref="SqlInstance"/>, the database is also taken offline.
     /// </summary>
     public async ValueTask DisposeAsync()
     {
@@ -120,10 +115,6 @@ public partial class SqlDatabase :
         }
 
         await Connection.DisposeAsync();
-        if (takeOffline != null)
-        {
-            await takeOffline();
-        }
     }
 #endif
 

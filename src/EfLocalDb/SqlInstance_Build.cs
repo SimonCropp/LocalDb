@@ -4,6 +4,8 @@ namespace EfLocalDb;
 public partial class SqlInstance<TDbContext>
     where TDbContext : DbContext
 {
+    const string buildContextRemoved = "Removed. Use Build with the same arguments and dispose the returned SqlDatabase. Use its Context, or NewConnectionOwnedDbContext() for a context with its own connection.";
+
     /// <summary>
     ///     Build DB with a name based on the calling Method.
     /// </summary>
@@ -28,16 +30,13 @@ public partial class SqlInstance<TDbContext>
         return Build(dbName, data);
     }
 
-    public async Task<TDbContext> BuildContext(
+    [Obsolete(buildContextRemoved, error: true)]
+    public Task<TDbContext> BuildContext(
         IEnumerable<object>? data,
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
-    {
-        Guard.AgainstBadOS();
-        await using var build = await Build(data, testFile, databaseSuffix, memberName);
-        return build.NewConnectionOwnedDbContext();
-    }
+        [CallerMemberName] string memberName = "") =>
+        throw new NotImplementedException();
 
     /// <summary>
     ///     Build DB with a name based on the calling Method.
@@ -54,15 +53,12 @@ public partial class SqlInstance<TDbContext>
         return Build(null, testFile, databaseSuffix, memberName);
     }
 
-    public async Task<TDbContext> BuildContext(
+    [Obsolete(buildContextRemoved, error: true)]
+    public Task<TDbContext> BuildContext(
         [CallerFilePath] string testFile = "",
         string? databaseSuffix = null,
-        [CallerMemberName] string memberName = "")
-    {
-        Guard.AgainstBadOS();
-        await using var build = await Build(testFile, databaseSuffix, memberName);
-        return build.NewConnectionOwnedDbContext();
-    }
+        [CallerMemberName] string memberName = "") =>
+        throw new NotImplementedException();
 
     public async Task<SqlDatabase<TDbContext>> Build(
         string dbName,
@@ -71,14 +67,12 @@ public partial class SqlInstance<TDbContext>
         Guard.AgainstBadOS();
         Ensure.NotNullOrWhiteSpace(dbName);
         var connection = await Wrapper.CreateDatabaseFromTemplate(dbName);
-        Func<Task>? takeOffline = dbAutoOffline ? () => Wrapper.TakeOffline(dbName) : null;
         var database = new SqlDatabase<TDbContext>(
             this,
             connection,
             dbName,
             constructInstance,
             () => Wrapper.DeleteDatabase(dbName),
-            takeOffline,
             data,
             sqlOptionsBuilder);
         await database.Start();
@@ -86,14 +80,11 @@ public partial class SqlInstance<TDbContext>
         return database;
     }
 
-    public async Task<TDbContext> BuildContext(
+    [Obsolete(buildContextRemoved, error: true)]
+    public Task<TDbContext> BuildContext(
         string dbName,
-        IEnumerable<object>? data)
-    {
-        Guard.AgainstBadOS();
-        await using var build = await Build(dbName, data);
-        return build.NewConnectionOwnedDbContext();
-    }
+        IEnumerable<object>? data) =>
+        throw new NotImplementedException();
 
     public Task<SqlDatabase<TDbContext>> Build(string dbName)
     {
@@ -101,10 +92,7 @@ public partial class SqlInstance<TDbContext>
         return Build(dbName, (IEnumerable<object>?) null);
     }
 
-    public async Task<TDbContext> BuildContext(string dbName)
-    {
-        Guard.AgainstBadOS();
-        await using var build = await Build(dbName, (IEnumerable<object>?) null);
-        return build.NewConnectionOwnedDbContext();
-    }
+    [Obsolete(buildContextRemoved, error: true)]
+    public Task<TDbContext> BuildContext(string dbName) =>
+        throw new NotImplementedException();
 }

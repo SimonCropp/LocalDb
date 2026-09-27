@@ -15,7 +15,6 @@ public partial class SqlInstance<TDbContext>
             constructInstance,
             () => Task.CompletedTask,
             null,
-            null,
             sqlOptionsBuilder);
         await database.Start();
         return database;
