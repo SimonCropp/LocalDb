@@ -19,7 +19,7 @@
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.4.1" />
     <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
-    <PackageVersion Include="NUnit" Version="4.6.1" />
+    <PackageVersion Include="NUnit" Version="5.0.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="6.3.0" />
     <PackageVersion Include="Polyfill" Version="11.4.1" />
     <PackageVersion Include="ProjectDefaults" Version="1.0.181" />
@@ -41,7 +41,7 @@
     <PackageVersion Include="Verify.XunitV3" Version="33.1.5" />
     <PackageVersion Include="MSTest" Version="4.4.1" />
     <PackageVersion Include="Verify.MSTest" Version="33.1.5" />
-    <PackageVersion Include="TUnit" Version="1.70.0" />
+    <PackageVersion Include="TUnit" Version="1.70.1" />
     <PackageVersion Include="Verify.TUnit" Version="33.1.5" />
   </ItemGroup>
 </Project>
