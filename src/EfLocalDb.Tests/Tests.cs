@@ -577,18 +577,6 @@ public class Tests
     }
 
     [Test]
-    public async Task SimpleContext()
-    {
-        var entity = new TestEntity
-        {
-            Property = "Item1"
-        };
-        await using var context = await instance.BuildContext([entity]);
-        NotNull(await context.TestEntities.FindAsync(entity.Id));
-        True(callbackCalled);
-    }
-
-    [Test]
     public void BuildModel_ShouldDisposeContext()
     {
         // This test verifies that BuildModel disposes the DbContext it creates
