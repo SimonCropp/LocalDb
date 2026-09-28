@@ -68,12 +68,12 @@ public abstract partial class LocalDbTestBase<T>
         var expression = Expression.Lambda<Func<TEntity, bool>>(predicate, parameter);
 
         return new(
-            set.AsSplitQuery(),
+            set,
             null,
             async (settings, source) =>
             {
                 using var verifier = BuildVerifier(sourceFile, settings);
-                return await verifier.Verify(source.SingleOrDefaultAsync(expression));
+                return await verifier.Verify(QuerySplitting.SplitIfIncludesCollection(source).SingleOrDefaultAsync(expression));
             });
     }
 }

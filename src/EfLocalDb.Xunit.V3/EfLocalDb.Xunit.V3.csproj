@@ -17,6 +17,7 @@
     <Compile Include="..\EfLocalDb.MSTest\SharedDbWithTransactionAttribute.cs" Link="SharedDbWithTransactionAttribute.cs" />
     <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\QueryableSettingsTask.cs" Link="QueryableSettingsTask\QueryableSettingsTask.cs" />
     <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\NestedQueryableSettingsTask.cs" Link="QueryableSettingsTask\NestedQueryableSettingsTask.cs" />
+    <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\QuerySplitting.cs" Link="QueryableSettingsTask\QuerySplitting.cs" />
     <PackageReference Include="Verify.EntityFramework" />
     <PackageReference Include="Verify.XunitV3" />
     <PackageReference Include="Argon" />
