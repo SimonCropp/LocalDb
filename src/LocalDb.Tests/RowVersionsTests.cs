@@ -614,7 +614,7 @@ public class RowVersionsTests
         // Insert a row with Guid.Empty
         await InsertRow(connection, Guid.Empty, "Invalid");
 
-        var exception = ThrowsAsync<Exception>(async () =>
+        var exception = await ThrowsAsync<Exception>(async () =>
         {
             await RowVersions.Read(connection);
         });

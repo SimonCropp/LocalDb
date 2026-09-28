@@ -140,7 +140,7 @@ public class TemporalTests
     public async Task SetHistoryColumn_ThrowsForPeriodColumn()
     {
         await using var database = await instance.Build();
-        var ex = ThrowsAsync<InvalidOperationException>(() =>
+        var ex = await ThrowsAsync<InvalidOperationException>(() =>
             database.SetHistoryColumn<TemporalEntity>(Guid.NewGuid(), "PeriodEnd", DateTime.UtcNow));
         That(ex!.Message, Does.Contain("not a settable history column"));
     }
@@ -149,7 +149,7 @@ public class TemporalTests
     public async Task Throws_WhenEntityNotTemporal()
     {
         await using var database = await instance.Build();
-        var ex = ThrowsAsync<InvalidOperationException>(() =>
+        var ex = await ThrowsAsync<InvalidOperationException>(() =>
             database.SetCurrentPeriodStart<NonTemporalEntity>(Guid.NewGuid(), DateTime.UtcNow));
         That(ex!.Message, Does.Contain("not configured as a temporal table"));
     }

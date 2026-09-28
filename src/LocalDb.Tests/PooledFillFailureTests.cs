@@ -54,12 +54,12 @@ public class PooledFillFailureTests
             var finished = await Task.WhenAny(blocked, Task.Delay(TimeSpan.FromSeconds(30)));
             AreSame(blocked, finished, "the parked lease was never woken by the fill failure");
 
-            var waiter = ThrowsAsync<Exception>(async () => await blocked)!;
+            var waiter = (await ThrowsAsync<Exception>(async () => await blocked))!;
             AreEqual("Failed to build the pooled databases in the background.", waiter.Message);
             AreEqual("Injected pool fill failure", waiter.InnerException!.Message);
 
             // A lease arriving after the failure fails fast rather than waiting.
-            var later = ThrowsAsync<Exception>(async () => await wrapper.OpenPooledDatabase())!;
+            var later = (await ThrowsAsync<Exception>(async () => await wrapper.OpenPooledDatabase()))!;
             AreEqual("Failed to build the pooled databases in the background.", later.Message);
             AreEqual("Injected pool fill failure", later.InnerException!.Message);
 

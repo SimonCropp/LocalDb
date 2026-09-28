@@ -98,13 +98,13 @@ public class FileCopyTests
     }
 
     [Test]
-    public void CopyAsync_ThrowsWhenSourceDoesNotExist()
+    public async Task CopyAsync_ThrowsWhenSourceDoesNotExist()
     {
         using var tempDirectory = new TempDirectory();
         var sourceFile = Path.Combine(tempDirectory, "nonexistent.txt");
         var destinationFile = Path.Combine(tempDirectory, "destination.txt");
 
-        var exception = ThrowsAsync<FileNotFoundException>(() =>
+        var exception = await ThrowsAsync<FileNotFoundException>(() =>
             File.CopyAsync(sourceFile, destinationFile));
 
         IsNotNull(exception);

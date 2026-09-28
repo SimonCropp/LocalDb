@@ -24,7 +24,7 @@ public class Tests
     {
         // resolves temporal schemas lazily from the design-time model; this model has none
         await using var database = await instance.Build();
-        var exception = ThrowsAsync<InvalidOperationException>(() =>
+        var exception = await ThrowsAsync<InvalidOperationException>(() =>
             database.SetCurrentPeriodStart<TestEntity>(Guid.NewGuid(), DateTime.UtcNow));
         That(exception!.Message, Does.Contain("not configured as a temporal table"));
     }
