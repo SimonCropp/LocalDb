@@ -1,62 +1,65 @@
-// Decides whether a LocalDbTestBase test runs against a new, shared, or pooled database.
-// [NewDb], [SharedDb] and [PooledDb] can be applied to the test method or the test class, and
-// [SharedDb] and [PooledDb] also to the assembly. The nearest wins, and a new database is the
+// Decides whether a LocalDbTestBase test runs against a new, shared, or pooled database, or none.
+// [NewDb], [SharedDb], [PooledDb] and [NoDb] can be applied to the test method or the test class,
+// and [SharedDb] and [PooledDb] also to the assembly. The nearest wins, and a new database is the
 // default. Every level is validated, so two attributes on one level throw even when a nearer level
 // decides. The attribute types are type parameters because each test framework package compiles
 // its own copy of them.
 static class DbAttributeReader
 {
-    public static DbMode Read<TShared, TPooled, TNew>(MethodInfo method, Type type)
-        where TShared : Attribute
-        where TPooled : Attribute
-        where TNew : Attribute =>
-        Read<TShared, TPooled, TNew>(method, type, type.Assembly);
-
-    public static DbMode Read<TShared, TPooled, TNew>(MethodInfo method, Type type, Assembly assembly)
+    public static DbMode Read<TShared, TPooled, TNew, TNo>(MethodInfo method, Type type)
         where TShared : Attribute
         where TPooled : Attribute
         where TNew : Attribute
+        where TNo : Attribute =>
+        Read<TShared, TPooled, TNew, TNo>(method, type, type.Assembly);
+
+    public static DbMode Read<TShared, TPooled, TNew, TNo>(MethodInfo method, Type type, Assembly assembly)
+        where TShared : Attribute
+        where TPooled : Attribute
+        where TNew : Attribute
+        where TNo : Attribute
     {
-        var methodMode = ReadLevel(
-            method.GetCustomAttribute<TShared>() != null,
-            method.GetCustomAttribute<TPooled>() != null,
-            method.GetCustomAttribute<TNew>() != null,
-            "a test method");
-        var classMode = ReadLevel(
-            type.GetCustomAttribute<TShared>() != null,
-            type.GetCustomAttribute<TPooled>() != null,
-            type.GetCustomAttribute<TNew>() != null,
-            "a test class");
-        var assemblyMode = ReadLevel(
-            assembly.GetCustomAttribute<TShared>() != null,
-            assembly.GetCustomAttribute<TPooled>() != null,
-            assembly.GetCustomAttribute<TNew>() != null,
-            "an assembly");
+        var methodMode = ReadLevel<TShared, TPooled, TNew, TNo>(method, "a test method");
+        var classMode = ReadLevel<TShared, TPooled, TNew, TNo>(type, "a test class");
+        var assemblyMode = ReadLevel<TShared, TPooled, TNew, TNo>(assembly, "an assembly");
         return methodMode ?? classMode ?? assemblyMode ?? DbMode.New;
     }
 
-    static DbMode? ReadLevel(bool isShared, bool isPooled, bool isNew, string target)
+    static DbMode? ReadLevel<TShared, TPooled, TNew, TNo>(ICustomAttributeProvider provider, string target)
+        where TShared : Attribute
+        where TPooled : Attribute
+        where TNew : Attribute
+        where TNo : Attribute
     {
-        if ((isShared && isPooled) ||
-            (isShared && isNew) ||
-            (isPooled && isNew))
+        var modes = new List<DbMode>();
+        if (provider.IsDefined(typeof(TShared), true))
         {
-            throw new($"[PooledDb], [SharedDb] and [NewDb] are mutually exclusive. Use only one on {target}.");
+            modes.Add(DbMode.Shared);
         }
 
-        if (isShared)
+        if (provider.IsDefined(typeof(TPooled), true))
         {
-            return DbMode.Shared;
+            modes.Add(DbMode.Pooled);
         }
 
-        if (isPooled)
+        if (provider.IsDefined(typeof(TNew), true))
         {
-            return DbMode.Pooled;
+            modes.Add(DbMode.New);
         }
 
-        if (isNew)
+        if (provider.IsDefined(typeof(TNo), true))
         {
-            return DbMode.New;
+            modes.Add(DbMode.None);
+        }
+
+        if (modes.Count > 1)
+        {
+            throw new($"[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on {target}.");
+        }
+
+        if (modes.Count == 1)
+        {
+            return modes[0];
         }
 
         return null;

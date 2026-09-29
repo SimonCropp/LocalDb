@@ -2,5 +2,6 @@ enum DbMode
 {
     New,
     Shared,
-    Pooled
+    Pooled,
+    None
 }

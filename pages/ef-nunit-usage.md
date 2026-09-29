@@ -657,7 +657,7 @@ public async Task VerifyEntity_Queryable()
 
 Mark test methods with `[SharedDb]` to share a single database across all query-only tests. Instead of cloning the template for each test, a shared database is created once and reused. This eliminates per-test DB creation overhead for tests that only read data.<!-- include: shared-db. path: /pages/mdsource/shared-db.include.md -->
 
-`[SharedDb]` can also be applied to a test class, or to the assembly with `[assembly: SharedDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]` and `[NewDb]` to the same method, class, or assembly throws.
+`[SharedDb]` can also be applied to a test class, or to the assembly with `[assembly: SharedDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]`, `[NewDb]` and `[NoDb]` to the same method, class, or assembly throws.
 
 The shared database is read-only and any write throws, not only `SaveChanges`: `ExecuteUpdate`, `ExecuteDelete`, `ExecuteSqlRaw` and hand-written commands are blocked too. Tests that need to write should use `[PooledDb]` instead.<!-- endInclude -->
 
@@ -685,7 +685,7 @@ public class SharedDbTests :
 
 Mark test methods with `[PooledDb]` to lease a database from a fixed pool instead of creating one per test. The pool is built once from the template, and each test leases a database for its duration, writes inside a transaction, and rolls that transaction back on release so the next test sees the template state again.<!-- include: pooled-db. path: /pages/mdsource/pooled-db.include.md -->
 
-`[PooledDb]` can also be applied to a test class, or to the assembly with `[assembly: PooledDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]` and `[NewDb]` to the same method, class, or assembly throws.
+`[PooledDb]` can also be applied to a test class, or to the assembly with `[assembly: PooledDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]`, `[NewDb]` and `[NoDb]` to the same method, class, or assembly throws.
 
 Two costs disappear. The per-test file copy and attach is gone, and — usually the larger one — so is repeated query plan compilation: SQL Server keys the plan cache by database, so a database per test means every query is compiled afresh for every test and no plan is ever reused. A small pool lets those plans be reused for the rest of the run.
 
@@ -768,6 +768,17 @@ public class PooledDbTests :
 ```
 <sup><a href='/src/EfLocalDb.NUnit.Tests/PooledDbTests.cs#L1-L65' title='Snippet source file'>snippet source</a> | <a href='#snippet-PooledDbTestsNUnit' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
+
+
+## NoDb
+
+Mark a test method with `[NoDb]` when it does not touch the database, for example a test that renders a document, formats output, or runs a validator. The test still inherits from `LocalDbTestBase`, so it can live next to related database tests, but no database is built for it.<!-- include: no-db. path: /pages/mdsource/no-db.include.md -->
+
+A test without any attribute gets a new database per test, which is the most expensive mode. So a database-free test in a `LocalDbTestBase` class should be marked `[NoDb]` rather than left unmarked.
+
+In a `[NoDb]` test `Database` is null, and accessing `ArrangeData`, `ActData`, or `AssertData`, or calling `Reset`, throws.
+
+`[NoDb]` can also be applied to a test class. The nearest attribute wins, so a method marked `[PooledDb]`, `[SharedDb]`, or `[NewDb]` in a `[NoDb]` class gets a database. Applying `[NoDb]` together with `[PooledDb]`, `[SharedDb]` or `[NewDb]` to the same method or class throws.<!-- endInclude -->
 
 
 ## Parallel Execution

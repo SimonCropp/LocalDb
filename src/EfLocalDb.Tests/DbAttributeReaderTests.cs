@@ -12,6 +12,9 @@ public class DbAttributeReaderTests
     [AttributeUsage(AttributeTargets.All)]
     public sealed class NewAttribute : Attribute;
 
+    [AttributeUsage(AttributeTargets.All)]
+    public sealed class NoAttribute : Attribute;
+
     public class Plain
     {
         public static void None()
@@ -35,6 +38,29 @@ public class DbAttributeReaderTests
 
         [Pooled, New]
         public static void PooledAndNew()
+        {
+        }
+
+        [No]
+        public static void No()
+        {
+        }
+
+        [No, New]
+        public static void NoAndNew()
+        {
+        }
+    }
+
+    [No]
+    public class NoClass
+    {
+        public static void None()
+        {
+        }
+
+        [Pooled]
+        public static void Pooled()
         {
         }
     }
@@ -92,7 +118,7 @@ public class DbAttributeReaderTests
             attributes.Select(_ => new CustomAttributeBuilder(_.GetConstructor(Type.EmptyTypes)!, [])));
 
     static DbMode Read<T>(string method, Assembly assembly) =>
-        DbAttributeReader.Read<SharedAttribute, PooledAttribute, NewAttribute>(
+        DbAttributeReader.Read<SharedAttribute, PooledAttribute, NewAttribute, NoAttribute>(
             typeof(T).GetMethod(method, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)!,
             typeof(T),
             assembly);
@@ -145,30 +171,49 @@ public class DbAttributeReaderTests
         AreEqual(DbMode.Pooled, Read<NewClass>("Pooled", noneAssembly));
 
     [Test]
+    public void NoMethod() =>
+        AreEqual(DbMode.None, Read<Plain>("No", pooledAssembly));
+
+    [Test]
+    public void NoClassLevel() =>
+        AreEqual(DbMode.None, Read<NoClass>("None", pooledAssembly));
+
+    [Test]
+    public void MethodOverridesNoClass() =>
+        AreEqual(DbMode.Pooled, Read<NoClass>("Pooled", noneAssembly));
+
+    [Test]
+    public void NoAndNewOnMethodThrows()
+    {
+        var exception = Throws<Exception>(() => Read<Plain>("NoAndNew", noneAssembly))!;
+        AreEqual("[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on a test method.", exception.Message);
+    }
+
+    [Test]
     public void SharedAndPooledOnMethodThrows()
     {
         var exception = Throws<Exception>(() => Read<Plain>("SharedAndPooled", noneAssembly))!;
-        AreEqual("[PooledDb], [SharedDb] and [NewDb] are mutually exclusive. Use only one on a test method.", exception.Message);
+        AreEqual("[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on a test method.", exception.Message);
     }
 
     [Test]
     public void PooledAndNewOnMethodThrows()
     {
         var exception = Throws<Exception>(() => Read<Plain>("PooledAndNew", noneAssembly))!;
-        AreEqual("[PooledDb], [SharedDb] and [NewDb] are mutually exclusive. Use only one on a test method.", exception.Message);
+        AreEqual("[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on a test method.", exception.Message);
     }
 
     [Test]
     public void BothOnClassThrows()
     {
         var exception = Throws<Exception>(() => Read<BothClass>("Pooled", noneAssembly))!;
-        AreEqual("[PooledDb], [SharedDb] and [NewDb] are mutually exclusive. Use only one on a test class.", exception.Message);
+        AreEqual("[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on a test class.", exception.Message);
     }
 
     [Test]
     public void BothOnAssemblyThrows()
     {
         var exception = Throws<Exception>(() => Read<Plain>("Pooled", bothAssembly))!;
-        AreEqual("[PooledDb], [SharedDb] and [NewDb] are mutually exclusive. Use only one on an assembly.", exception.Message);
+        AreEqual("[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on an assembly.", exception.Message);
     }
 }

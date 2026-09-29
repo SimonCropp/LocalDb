@@ -76,6 +76,7 @@ A common split:
  * Mocks or fakes for domain and business logic.
  * LocalDb for data access, queries, migrations, and end-to-end integration tests.
  * `[PooledDb]` or `[SharedDb]` for large sets of read-only tests, with a new database per test for anything that writes.
+ * `[NoDb]` for tests in a `LocalDbTestBase` class that do not touch the database, such as rendering or validation tests. This keeps them next to related database tests without paying for a database.
 
 
 ## Summary

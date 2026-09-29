@@ -12,6 +12,6 @@ public class PooledAndSharedDbTests :
     public async Task Throws()
     {
         var exception = (await ThrowsAsync<Exception>(() => base.SetUp()))!;
-        AreEqual("[PooledDb], [SharedDb] and [NewDb] are mutually exclusive. Use only one on a test method.", exception.Message);
+        AreEqual("[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on a test method.", exception.Message);
     }
 }
