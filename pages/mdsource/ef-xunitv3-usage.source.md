@@ -83,6 +83,11 @@ include: pooled-db
 snippet: PooledDbTestsXunitV3
 
 
+## NoDb
+
+include: no-db
+
+
 ## Parallel Execution
 
 To run tests in parallel, configure parallelism at the assembly level:

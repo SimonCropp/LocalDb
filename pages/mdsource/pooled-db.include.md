@@ -1,6 +1,6 @@
 Mark test methods with `[PooledDb]` to lease a database from a fixed pool instead of creating one per test. The pool is built once from the template, and each test leases a database for its duration, writes inside a transaction, and rolls that transaction back on release so the next test sees the template state again.
 
-`[PooledDb]` can also be applied to a test class, or to the assembly with `[assembly: PooledDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]` and `[NewDb]` to the same method, class, or assembly throws.
+`[PooledDb]` can also be applied to a test class, or to the assembly with `[assembly: PooledDb]`. The nearest attribute wins: a method attribute overrides a class attribute, which overrides an assembly attribute. Mark a test method or class with `[NewDb]` to opt it out and create a database per test. Applying more than one of `[PooledDb]`, `[SharedDb]`, `[NewDb]` and `[NoDb]` to the same method, class, or assembly throws.
 
 Two costs disappear. The per-test file copy and attach is gone, and — usually the larger one — so is repeated query plan compilation: SQL Server keys the plan cache by database, so a database per test means every query is compiled afresh for every test and no plan is ever reused. A small pool lets those plans be reused for the rest of the run.
 

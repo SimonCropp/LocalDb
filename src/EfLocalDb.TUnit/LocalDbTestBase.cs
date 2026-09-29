@@ -11,6 +11,7 @@ public abstract partial class LocalDbTestBase<T> :
 
     bool isSharedDb;
     bool isPooledDb;
+    bool isNoDb;
 
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
@@ -53,9 +54,10 @@ public abstract partial class LocalDbTestBase<T> :
         var methodInfo = testDetails.ClassType
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .First(_ => _.Name == testDetails.MethodName && !_.IsGenericMethod);
-        var mode = DbAttributeReader.Read<SharedDbAttribute, PooledDbAttribute, NewDbAttribute>(methodInfo, testDetails.ClassType);
+        var mode = DbAttributeReader.Read<SharedDbAttribute, PooledDbAttribute, NewDbAttribute, NoDbAttribute>(methodInfo, testDetails.ClassType);
         isSharedDb = mode == DbMode.Shared;
         isPooledDb = mode == DbMode.Pooled;
+        isNoDb = mode == DbMode.None;
 
         // AsyncLocal values must be set in the Before hook and propagated via AddAsyncLocalValues
         CombinationCallback.SetInstance(this);
@@ -65,11 +67,17 @@ public abstract partial class LocalDbTestBase<T> :
         instance.Value = this;
         context.AddAsyncLocalValues();
 
+        if (isNoDb)
+        {
+            return Task.CompletedTask;
+        }
+
         return Reset();
     }
 
     public async Task Reset()
     {
+        ThrowIfNoDb();
         phase = Phase.Arrange;
         var context = TestContext.Current!;
         var testDetails = context.Metadata.TestDetails;
@@ -148,10 +156,19 @@ public abstract partial class LocalDbTestBase<T> :
 
     public SqlDatabase<T> Database { get; private set; } = null!;
 
+    void ThrowIfNoDb()
+    {
+        if (isNoDb)
+        {
+            throw new("The test is marked [NoDb], so it has no database. Remove [NoDb] to use ArrangeData, ActData, AssertData, or Reset.");
+        }
+    }
+
     public virtual T ArrangeData
     {
         get
         {
+            ThrowIfNoDb();
             if (phase == Phase.Act)
             {
                 throw new("Phase has already moved to Act. Check for a ActData usage in the preceding code.");
@@ -170,6 +187,7 @@ public abstract partial class LocalDbTestBase<T> :
     {
         get
         {
+            ThrowIfNoDb();
             if (phase == Phase.Act)
             {
                 return actData;
@@ -191,6 +209,7 @@ public abstract partial class LocalDbTestBase<T> :
     {
         get
         {
+            ThrowIfNoDb();
             if (phase == Phase.Assert)
             {
                 return Database.NoTrackingContext;

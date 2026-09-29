@@ -10,6 +10,6 @@ public class PooledAndSharedDbTests : LocalDbTestBase<TheDbContext>
     public async Task Throws()
     {
         var exception = await Assert.ThrowsAsync<Exception>(() => base.InitializeAsync().AsTask());
-        Assert.Equal("[PooledDb], [SharedDb] and [NewDb] are mutually exclusive. Use only one on a test method.", exception.Message);
+        Assert.Equal("[PooledDb], [SharedDb], [NewDb] and [NoDb] are mutually exclusive. Use only one on a test method.", exception.Message);
     }
 }

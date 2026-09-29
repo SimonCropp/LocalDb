@@ -13,6 +13,7 @@ public abstract partial class LocalDbTestBase<T> :
 
     bool isSharedDb;
     bool isPooledDb;
+    bool isNoDb;
 
     public static void Initialize(
         ConstructInstance<T>? constructInstance = null,
@@ -53,16 +54,23 @@ public abstract partial class LocalDbTestBase<T> :
         var methodInfo = GetType()
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .First(_ => _.Name == TestContext.TestName && !_.IsGenericMethod);
-        var mode = DbAttributeReader.Read<SharedDbAttribute, PooledDbAttribute, NewDbAttribute>(methodInfo, GetType());
+        var mode = DbAttributeReader.Read<SharedDbAttribute, PooledDbAttribute, NewDbAttribute, NoDbAttribute>(methodInfo, GetType());
         isSharedDb = mode == DbMode.Shared;
         isPooledDb = mode == DbMode.Pooled;
+        isNoDb = mode == DbMode.None;
 
         QueryFilter.Enable();
+        if (isNoDb)
+        {
+            return Task.CompletedTask;
+        }
+
         return Reset();
     }
 
     public async Task Reset()
     {
+        ThrowIfNoDb();
         phase = Phase.Arrange;
         var type = GetType().FullName!;
         var member = TestContext.TestName;
@@ -139,10 +147,19 @@ public abstract partial class LocalDbTestBase<T> :
 
     public SqlDatabase<T> Database { get; private set; } = null!;
 
+    void ThrowIfNoDb()
+    {
+        if (isNoDb)
+        {
+            throw new("The test is marked [NoDb], so it has no database. Remove [NoDb] to use ArrangeData, ActData, AssertData, or Reset.");
+        }
+    }
+
     public virtual T ArrangeData
     {
         get
         {
+            ThrowIfNoDb();
             if (phase == Phase.Act)
             {
                 throw new("Phase has already moved to Act. Check for a ActData usage in the preceding code.");
@@ -161,6 +178,7 @@ public abstract partial class LocalDbTestBase<T> :
     {
         get
         {
+            ThrowIfNoDb();
             if (phase == Phase.Act)
             {
                 return actData;
@@ -182,6 +200,7 @@ public abstract partial class LocalDbTestBase<T> :
     {
         get
         {
+            ThrowIfNoDb();
             if (phase == Phase.Assert)
             {
                 return Database.NoTrackingContext;
