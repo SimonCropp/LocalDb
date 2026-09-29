@@ -157,7 +157,7 @@ await database.SetHistoryColumn<TravelRequest>(
 // Materialising that history row now fails on a SqlNullValueException,
 // because the model reads StatusRank into a non-nullable int. That is
 // the production failure, reproduced in a test.
-var exception = CatchAsync(
+var exception = await CatchAsync(
     () => database.Context.Set<TravelRequest>()
         .TemporalAll()
         .Where(_ => _.Id == request.Id)
