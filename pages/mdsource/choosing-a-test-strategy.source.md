@@ -1,0 +1,85 @@
+# Choosing a test strategy
+
+LocalDb is one of several ways to test code that touches a database. Each approach verifies different things and has different costs. This page covers when an isolated SQL Server database per test earns its cost, and when an in-memory provider or a mock is the better fit.
+
+
+## What a database per test provides
+
+ * **Real SQL Server behavior.** Queries are translated to T-SQL and executed by the same engine used in production. Constraints, foreign keys, unique indexes, triggers, computed columns, rowversion concurrency tokens, transactions, collation, and raw SQL all behave as they do in production.
+ * **Isolation without cleanup code.** Each test starts from a known state and cannot see data written by another test. There is no teardown, no delete-in-reverse-dependency-order, and no reliance on transaction rollback.
+ * **Safe parallelism.** Since no state is shared, tests can run in parallel and in any order. Ordering coupling between tests, where a test only passes because another ran first, cannot occur.
+ * **Deterministic snapshots.** Identity values and row contents depend only on the test itself, so [Verify](https://github.com/VerifyTests/Verify) snapshots of database state are stable.
+ * **Debuggable failures.** A failed test leaves its database behind, which can be opened in [Sql Management Studio](/pages/sql-management-studio.md) to inspect the resulting state.
+ * **Migration coverage.** The template database is built from the real schema or migrations, so every test run also verifies the schema can be created.
+
+
+## Costs of a database per test
+
+ * **Windows only.** SqlLocalDB is not available on Linux or macOS, which rules it out for some CI agents and containers.
+ * **Startup time.** The first test in a run pays for starting the LocalDB instance and building the template database.
+ * **Per-test overhead.** Each test copies and attaches a database file. Also, SQL Server caches query plans per database, so each new database compiles every query from scratch. For large suites of read-mostly tests, `[PooledDb]` or `[SharedDb]` in the test framework integrations removes most of this cost.
+ * **Slower than in-process tests.** A database test is measured in milliseconds; a test against a mock is measured in microseconds.
+
+
+## When to use LocalDb
+
+Use a real database when correctness depends on what SQL Server does:
+
+ * LINQ queries whose SQL translation matters (grouping, projections, includes, string comparison, null semantics).
+ * Raw SQL, stored procedures, views, functions, or triggers.
+ * Constraint, unique index, and foreign key behavior, including the exceptions thrown when they are violated.
+ * Optimistic concurrency via rowversion.
+ * Transactions and isolation behavior.
+ * Migrations and schema changes.
+ * Integration tests covering a full request through to persisted state.
+
+
+## When to use a mock or fake
+
+Mock or fake an abstraction the application owns (for example a repository, query object, or service interface) when:
+
+ * The code under test is business logic that does not care how data is stored.
+ * The goal is to verify decisions and branching, not persistence.
+ * Very fast feedback is needed across a large number of cases.
+ * The data access layer is covered separately by database tests.
+
+Avoid mocking `DbContext` or `DbSet`. A mocked `DbSet` executes queries with LINQ-to-Objects, so it passes queries that fail against SQL Server and hides translation, casing, and null-handling differences. See Microsoft's guidance: [Choosing a testing strategy](https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy).
+
+
+## When to use an in-memory provider
+
+The [EF Core InMemory provider](https://learn.microsoft.com/en-us/ef/core/providers/in-memory/) and SQLite in-memory can be reasonable when:
+
+ * Tests must run on a platform where LocalDB is unavailable.
+ * Queries are trivial and do not rely on SQL Server specific behavior.
+ * The tests act as a fast smoke layer, with LocalDb tests covering the data access paths.
+
+Be aware of the limitations:
+
+ * InMemory is not a relational database. It does not enforce constraints, does not support rowversion, and does not support raw SQL or transactions. See [InMemory is not a relational database](https://learn.microsoft.com/en-us/ef/core/testing/testing-without-the-database#inmemory-provider).
+ * InMemory databases with the same name share mutable state, including key generation. Tests running in parallel must each use a unique database name, or they see each other's data and get unexpected key values. See [dotnet/efcore#6872](https://github.com/dotnet/efcore/issues/6872).
+ * SQLite is relational, but its SQL dialect, type system, and feature set differ from SQL Server. Some queries that work in SQLite fail in SQL Server, and the reverse.
+ * Passing tests against either provider do not demonstrate that the code works against SQL Server.
+
+
+## Combining approaches
+
+A common split:
+
+ * Mocks or fakes for domain and business logic.
+ * LocalDb for data access, queries, migrations, and end-to-end integration tests.
+ * `[PooledDb]` or `[SharedDb]` for large sets of read-only tests, with a new database per test for anything that writes.
+
+
+## Summary
+
+| Need | Mock/fake | InMemory | SQLite | LocalDb |
+|---|---|---|---|---|
+| Test speed | Fastest | Fast | Fast | Slower |
+| Runs on Linux/macOS | Yes | Yes | Yes | No |
+| SQL Server query translation | No | No | No | Yes |
+| Constraints and foreign keys | No | No | Partial | Yes |
+| Rowversion concurrency | No | No | No | Yes |
+| Raw SQL and stored procedures | No | No | Partial | Yes |
+| Inspect state after a failure | No | No | Limited | Yes |
+| Isolated per test | Yes | Only with unique names | Yes | Yes |

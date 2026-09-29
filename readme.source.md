@@ -23,6 +23,7 @@ include: sponsors
 
 
 toc
+  * [Choosing a test strategy](/pages/choosing-a-test-strategy.md)
   * [Design](/pages/design.md)
   * [Raw Connection Usage](/pages/raw-usage.md)
   * [EntityFramework Classic Usage](/pages/ef-classic-usage.md)
@@ -78,13 +79,7 @@ toc
 
 ### Why not [EntityFramework InMemory](https://docs.microsoft.com/en-us/ef/core/providers/in-memory/)
 
- * Difficult to debug the state. When debugging a test, or looking at the resultant state, it is helpful to be able to interrogate the Database using tooling
- * InMemory is implemented with shared mutable state between instance. This results in strange behaviors when running tests in parallel, for example when [creating keys](https://github.com/aspnet/EntityFrameworkCore/issues/6872).
- * InMemory is not intended to be an alternative to SqlServer, and as such it does not support the full suite of SqlServer features. For example:
-    * Does not support [Timestamp/row version](https://docs.microsoft.com/en-us/ef/core/modeling/concurrency#timestamprow-version).
-    * [Does not validate constraints](https://github.com/aspnet/EntityFrameworkCore/issues/2166).
-
-See the official guidance: [InMemory is not a relational database](https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/in-memory#inmemory-is-not-a-relational-database).
+See [Choosing a test strategy](/pages/choosing-a-test-strategy.md) for when an in-memory provider or a mock is a better fit than LocalDb, and the limitations of each.
 
 
 ## References
