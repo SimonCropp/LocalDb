@@ -103,6 +103,11 @@ static class AiCliDetector
 
         var parent = Path.GetDirectoryName(directory);
         var prefixedLeaf = Prefix + leaf;
-        return parent is null ? prefixedLeaf : Path.Combine(parent, prefixedLeaf);
+        if (parent is null)
+        {
+            return prefixedLeaf;
+        }
+
+        return Path.Combine(parent, prefixedLeaf);
     }
 }

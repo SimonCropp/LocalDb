@@ -110,6 +110,13 @@ public static class PendingChanges
         return type;
     }
 
-    static string QualifiedTable(string? schema, string name) =>
-        schema is null ? name : $"{schema}.{name}";
+    static string QualifiedTable(string? schema, string name)
+    {
+        if (schema is null)
+        {
+            return name;
+        }
+
+        return $"{schema}.{name}";
+    }
 }

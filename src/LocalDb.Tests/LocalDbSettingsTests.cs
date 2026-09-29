@@ -58,7 +58,15 @@ public class LocalDbSettingsTests
     [TestCase("GO_SERVER_URL", "https://gocd")]
     [TestCase("BuildRunner", "MyGet")]
     public void DetectCI_Detected(string name, string value) =>
-        That(LocalDbSettings.DetectCI(_ => _ == name ? value : null), Is.True);
+        That(LocalDbSettings.DetectCI(_ =>
+        {
+            if (_ == name)
+            {
+                return value;
+            }
+
+            return null;
+        }), Is.True);
 
     [TestCase("CI", "false")]
     [TestCase("CI", "0")]
@@ -67,7 +75,15 @@ public class LocalDbSettingsTests
     [TestCase("DOTNET_RUNNING_IN_CONTAINER", "true")]
     [TestCase("WSL_DISTRO_NAME", "Ubuntu")]
     public void DetectCI_NotDetected(string name, string value) =>
-        That(LocalDbSettings.DetectCI(_ => _ == name ? value : null), Is.False);
+        That(LocalDbSettings.DetectCI(_ =>
+        {
+            if (_ == name)
+            {
+                return value;
+            }
+
+            return null;
+        }), Is.False);
 
     [Test]
     public void DetectCI_NoVariables() =>

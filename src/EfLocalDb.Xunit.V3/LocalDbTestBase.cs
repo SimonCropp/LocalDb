@@ -28,7 +28,12 @@ public abstract partial class LocalDbTestBase<T> :
             constructInstance: builder =>
             {
                 builder.EnableRecording();
-                return constructInstance == null ? BuildDbContext(builder) : constructInstance(builder);
+                if (constructInstance == null)
+                {
+                    return BuildDbContext(builder);
+                }
+
+                return constructInstance(builder);
             },
             storage: GetStorage(callingAssembly),
             templateSize: templateSize,

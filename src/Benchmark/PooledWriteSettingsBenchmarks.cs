@@ -103,7 +103,15 @@ public class PooledWriteSettingsBenchmarks
         }
     }
 
-    static string OnOff(bool value) => value ? "on" : "off";
+    static string OnOff(bool value)
+    {
+        if (value)
+        {
+            return "on";
+        }
+
+        return "off";
+    }
 
     static async Task BuildTemplate(SqlConnection connection)
     {

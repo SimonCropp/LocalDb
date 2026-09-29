@@ -123,7 +123,12 @@ public class SqlServerDiagnoser : IDiagnoser
     {
         var method = benchmarkCase.Descriptor.WorkloadMethod.Name;
         var paramInfo = benchmarkCase.Parameters.DisplayInfo;
-        return paramInfo.Length == 0 ? method : $"{method} {paramInfo}";
+        if (paramInfo.Length == 0)
+        {
+            return method;
+        }
+
+        return $"{method} {paramInfo}";
     }
 
     public IEnumerable<Metric> ProcessResults(DiagnoserResults results) => [];
