@@ -20,7 +20,7 @@
     <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\NestedQueryableSettingsTask.cs" Link="QueryableSettingsTask\NestedQueryableSettingsTask.cs" />
     <Compile Include="..\EfLocalDb.MSTest\QueryableSettingsTask\QuerySplitting.cs" Link="QueryableSettingsTask\QuerySplitting.cs" />
     <PackageReference Include="Verify.EntityFramework" />
-    <PackageReference Include="TUnit" />
+    <PackageReference Include="TUnit.Core" />
     <PackageReference Include="Verify.TUnit" />
     <PackageReference Include="Argon" />
     <PackageReference Include="DiffEngine" />
