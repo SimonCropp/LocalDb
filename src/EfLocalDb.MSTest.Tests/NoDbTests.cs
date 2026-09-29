@@ -16,6 +16,11 @@ public class NoDbTests : LocalDbTestBase<TheDbContext>
 
     [TestMethod]
     [NoDb]
+    public void IsRecording() =>
+        Assert.IsTrue(Recording.IsRecording());
+
+    [TestMethod]
+    [NoDb]
     public async Task ResetThrows() =>
         await Assert.ThrowsExactlyAsync<Exception>(Reset);
 

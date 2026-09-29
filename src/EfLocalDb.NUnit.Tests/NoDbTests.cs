@@ -17,6 +17,11 @@ public class NoDbTests :
 
     [Test]
     [NoDb]
+    public void IsRecording() =>
+        That(Recording.IsRecording(), Is.True);
+
+    [Test]
+    [NoDb]
     public void ResetThrows() =>
         ThrowsAsync<Exception>(Reset);
 

@@ -778,6 +778,8 @@ A test without any attribute gets a new database per test, which is the most exp
 
 In a `[NoDb]` test `Database` is null, and accessing `ArrangeData`, `ActData`, or `AssertData`, or calling `Reset`, throws.
 
+In a database test, recording resumes on the first access of `ActData`. A `[NoDb]` test has no `ActData`, so recording is resumed when the test starts. Other recorded activity, such as NServiceBus messages sent by the code under test, still appears in the snapshot.
+
 `[NoDb]` can also be applied to a test class. The nearest attribute wins, so a method marked `[PooledDb]`, `[SharedDb]`, or `[NewDb]` in a `[NoDb]` class gets a database. Applying `[NoDb]` together with `[PooledDb]`, `[SharedDb]` or `[NewDb]` to the same method or class throws.<!-- endInclude -->
 
 

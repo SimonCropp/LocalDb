@@ -58,6 +58,9 @@ public abstract partial class LocalDbTestBase<T> :
         QueryFilter.Enable();
         if (isNoDb)
         {
+            // ActData is what resumes recording, and a [NoDb] test has none,
+            // so resume here to still record other activity such as sent messages
+            Recording.Resume();
             return;
         }
 
