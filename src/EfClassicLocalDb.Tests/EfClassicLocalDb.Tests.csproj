@@ -24,8 +24,6 @@
     <PackageReference Include="EmptyFiles" />
     <PackageReference Include="SimpleInfoName" />
     <PackageReference Include="Verify" />
-    <PackageReference Include="DiffPlex" />
-    <PackageReference Include="Verify.DiffPlex" />
     <ProjectReference Include="..\EfClassicLocalDb\EfClassicLocalDb.csproj" />
     <PackageReference Include="ProjectDefaults" PrivateAssets="all" />
     <Using Include="NUnit.Framework.Legacy.ClassicAssert" Static="True" />
