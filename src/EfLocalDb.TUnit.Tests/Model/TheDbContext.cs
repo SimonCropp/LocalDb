@@ -2,6 +2,7 @@ public class TheDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Company> Companies { get; set; } = null!;
     public DbSet<Employee> Employees { get; set; } = null!;
+    public DbSet<Vehicle> Vehicles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -15,5 +16,6 @@ public class TheDbContext(DbContextOptions options) : DbContext(options)
 
         var vehicle = builder.Entity<Vehicle>();
         vehicle.HasKey(_ => _.Id);
+        vehicle.HasQueryFilter(_ => _.Model != "filtered");
     }
 }

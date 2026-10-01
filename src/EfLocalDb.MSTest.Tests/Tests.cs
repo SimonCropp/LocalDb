@@ -104,8 +104,8 @@ public class Tests :
     [TestMethod]
     public async Task IgnoreQueryFiltersAllowedOnArrangeAndAct()
     {
-        await ArrangeData.Companies.IgnoreQueryFilters().ToListAsync();
-        await ActData.Companies.IgnoreQueryFilters().ToListAsync();
+        await ArrangeData.Vehicles.IgnoreQueryFilters().ToListAsync();
+        await ActData.Vehicles.IgnoreQueryFilters().ToListAsync();
     }
 
     [TestMethod]
