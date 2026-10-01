@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace EfLocalDb;
 
 // AsSplitQuery only changes how collections are loaded. So only apply it when an Include loads a collection,

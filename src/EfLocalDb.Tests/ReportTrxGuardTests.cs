@@ -47,7 +47,7 @@ public class ReportTrxGuardTests
         using var process = Process.Start(startInfo)!;
         var standardOutput = process.StandardOutput.ReadToEndAsync();
         var standardError = process.StandardError.ReadToEndAsync();
-        using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(2));
+        using var timeout = new CancelSource(TimeSpan.FromMinutes(2));
         try
         {
             await process.WaitForExitAsync(timeout.Token);

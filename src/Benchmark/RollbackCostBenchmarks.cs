@@ -23,9 +23,9 @@
 [SuppressMessage("Performance", "CA1822:Mark members as static")]
 public class RollbackCostBenchmarks
 {
-    const string InstanceName = "Benchmark";
-    const string DatabaseName = "RollbackCost";
-    const int Seed = 50000;
+    const string instanceName = "Benchmark";
+    const string databaseName = "RollbackCost";
+    const int seed = 50000;
 
     SqlInstance? sqlInstance;
     SqlConnection? connection;
@@ -40,15 +40,15 @@ public class RollbackCostBenchmarks
     [GlobalSetup]
     public async Task GlobalSetup()
     {
-        LocalDbApi.StopAndDelete(InstanceName);
-        DirectoryFinder.Delete(InstanceName);
+        LocalDbApi.StopAndDelete(instanceName);
+        DirectoryFinder.Delete(instanceName);
 
-        sqlInstance = new(name: InstanceName, buildTemplate: BuildTemplate);
+        sqlInstance = new(name: instanceName, buildTemplate: BuildTemplate);
         await sqlInstance.Wrapper.AwaitStart();
 
-        var created = await sqlInstance.Wrapper.CreateDatabaseFromTemplate(DatabaseName);
+        var created = await sqlInstance.Wrapper.CreateDatabaseFromTemplate(databaseName);
         await created.DisposeAsync();
-        connection = await sqlInstance.Wrapper.OpenExistingDatabase(DatabaseName);
+        connection = await sqlInstance.Wrapper.OpenExistingDatabase(databaseName);
     }
 
     [GlobalCleanup]
@@ -74,9 +74,7 @@ public class RollbackCostBenchmarks
     {
         transaction = (SqlTransaction) await connection!.BeginTransactionAsync();
         await Execute(connection,
-            $"""
-             update top ({Writes}) dbo.Rows set Value = N'updated';
-             """,
+            $"update top ({Writes}) dbo.Rows set Value = N'updated';",
             transaction);
     }
 
@@ -93,7 +91,7 @@ public class RollbackCostBenchmarks
         await Execute(connection,
             $"""
              insert dbo.Rows (Value)
-             select top ({Seed}) N'seeded'
+             select top ({seed}) N'seeded'
              from sys.all_objects a
              cross join sys.all_objects b;
              """);
