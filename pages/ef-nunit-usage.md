@@ -26,6 +26,7 @@ public class TheDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Company> Companies { get; set; } = null!;
     public DbSet<Employee> Employees { get; set; } = null!;
+    public DbSet<Vehicle> Vehicles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -39,10 +40,11 @@ public class TheDbContext(DbContextOptions options) : DbContext(options)
 
         var vehicle = builder.Entity<Vehicle>();
         vehicle.HasKey(_ => _.Id);
+        vehicle.HasQueryFilter(_ => _.Model != "filtered");
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/Model/TheDbContext.cs#L1-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MsTest.Tests/Model/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/Model/TheDbContext.cs#L1-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-EfLocalDb.MsTest.Tests/Model/TheDbContext.cs' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 <!-- snippet: EfLocalDb.MsTest.Tests/Model/Company.cs -->
@@ -222,8 +224,8 @@ public class Tests :
     [Test]
     public async Task IgnoreQueryFiltersAllowedOnArrangeAndAct()
     {
-        await ArrangeData.Companies.IgnoreQueryFilters().ToListAsync();
-        await ActData.Companies.IgnoreQueryFilters().ToListAsync();
+        await ArrangeData.Vehicles.IgnoreQueryFilters().ToListAsync();
+        await ActData.Vehicles.IgnoreQueryFilters().ToListAsync();
     }
 
     [Test]
