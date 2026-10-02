@@ -7,9 +7,14 @@ public class NoDbTests : LocalDbTestBase<TheDbContext>
 
     [Fact]
     [NoDb]
-    public void ArrangeDataThrows()
+    public void ArrangeDataIsNull() =>
+        Assert.Null(ArrangeData);
+
+    [Fact]
+    [NoDb]
+    public void ActDataThrows()
     {
-        var exception = Assert.Throws<Exception>(() => _ = ArrangeData);
+        var exception = Assert.Throws<Exception>(() => _ = ActData);
         Assert.Contains("[NoDb]", exception.Message);
     }
 

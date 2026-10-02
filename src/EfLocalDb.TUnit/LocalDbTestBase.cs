@@ -163,7 +163,7 @@ public abstract partial class LocalDbTestBase<T> :
     {
         if (isNoDb)
         {
-            throw new("The test is marked [NoDb], so it has no database. Remove [NoDb] to use ArrangeData, ActData, AssertData, or Reset.");
+            throw new("The test is marked [NoDb], so it has no database. Remove [NoDb] to use ActData, AssertData, or Reset.");
         }
     }
 
@@ -171,7 +171,13 @@ public abstract partial class LocalDbTestBase<T> :
     {
         get
         {
-            ThrowIfNoDb();
+            // Code under test often takes a context it never uses in a [NoDb] test,
+            // so return null rather than throw
+            if (isNoDb)
+            {
+                return null!;
+            }
+
             if (phase == Phase.Act)
             {
                 throw new("Phase has already moved to Act. Check for a ActData usage in the preceding code.");

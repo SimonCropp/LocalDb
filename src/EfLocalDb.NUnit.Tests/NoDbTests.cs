@@ -9,9 +9,14 @@ public class NoDbTests :
 
     [Test]
     [NoDb]
-    public void ArrangeDataThrows()
+    public void ArrangeDataIsNull() =>
+        IsNull(ArrangeData);
+
+    [Test]
+    [NoDb]
+    public void ActDataThrows()
     {
-        var exception = Throws<Exception>(() => _ = ArrangeData)!;
+        var exception = Throws<Exception>(() => _ = ActData)!;
         That(exception.Message, Does.Contain("[NoDb]"));
     }
 
