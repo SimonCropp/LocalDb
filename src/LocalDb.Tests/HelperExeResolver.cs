@@ -9,14 +9,14 @@ static class HelperExeResolver
     {
         var basedir = new DirectoryInfo(AppContext.BaseDirectory.TrimEnd('/', '\\'));
         var configFolder = basedir.Parent ?? throw new InvalidOperationException($"Unexpected base directory layout: {basedir}");
-        var srcFolder = configFolder.Parent?.Parent?.Parent ?? throw new InvalidOperationException($"Unexpected base directory layout: {basedir}");
-        var helperPath = Path.Combine(
-            srcFolder.FullName,
-            project,
-            "bin",
-            configFolder.Name,
-            "net10.0",
-            $"{project}.exe");
+        var helperPath = Path.GetFullPath(
+            Path.Combine(
+                ProjectFiles.SolutionDirectory,
+                project,
+                "bin",
+                configFolder.Name,
+                "net10.0",
+                $"{project}.exe"));
 
         if (!File.Exists(helperPath))
         {
