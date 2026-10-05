@@ -28,7 +28,7 @@
     <PackageVersion Include="System.Drawing.Common" Version="10.0.12" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageVersion Include="System.Memory" Version="4.6.3" />
-    <PackageVersion Include="Verify.NUnit" Version="33.2.0" />
+    <PackageVersion Include="Verify.NUnit" Version="33.3.0" />
     <PackageVersion Include="Verify.EntityFramework" Version="16.0.0-beta.7" />
     <PackageVersion Include="Verify.SqlServer" Version="12.2.0" />
     <PackageVersion Include="Argon" Version="0.37.0" />
