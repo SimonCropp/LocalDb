@@ -15,7 +15,7 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="10.0.12" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.0" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.5.1" />
     <PackageVersion Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageVersion Include="NetTopologySuite" Version="2.6.0" />
     <PackageVersion Include="NUnit" Version="5.0.0" />
@@ -28,20 +28,20 @@
     <PackageVersion Include="System.Drawing.Common" Version="10.0.12" />
     <PackageVersion Include="System.IO.FileSystem.AccessControl" Version="5.0.0" />
     <PackageVersion Include="System.Memory" Version="4.6.3" />
-    <PackageVersion Include="Verify.NUnit" Version="33.3.2-beta.1" />
-    <PackageVersion Include="Verify.EntityFramework" Version="16.0.0-beta.8" />
+    <PackageVersion Include="Verify.NUnit" Version="33.3.2" />
+    <PackageVersion Include="Verify.EntityFramework" Version="16.0.0" />
     <PackageVersion Include="Verify.SqlServer" Version="12.2.0" />
-    <PackageVersion Include="Argon" Version="0.38.0" />
-    <PackageVersion Include="DiffEngine" Version="20.7.0" />
-    <PackageVersion Include="EmptyFiles" Version="8.20.0" />
-    <PackageVersion Include="SimpleInfoName" Version="3.2.0" />
-    <PackageVersion Include="Verify" Version="33.3.2-beta.1" />
+    <PackageVersion Include="Argon" Version="0.38.2" />
+    <PackageVersion Include="DiffEngine" Version="20.7.2" />
+    <PackageVersion Include="EmptyFiles" Version="8.20.1" />
+    <PackageVersion Include="SimpleInfoName" Version="3.2.1" />
+    <PackageVersion Include="Verify" Version="33.3.2" />
     <PackageVersion Include="xunit.v3" Version="4.0.1" />
-    <PackageVersion Include="Verify.XunitV3" Version="33.3.2-beta.1" />
-    <PackageVersion Include="MSTest" Version="4.4.1" />
-    <PackageVersion Include="Verify.MSTest" Version="33.3.2-beta.1" />
-    <PackageVersion Include="TUnit" Version="1.72.16" />
-    <PackageVersion Include="TUnit.Core" Version="1.72.16" />
-    <PackageVersion Include="Verify.TUnit" Version="33.3.2-beta.1" />
+    <PackageVersion Include="Verify.XunitV3" Version="33.3.2" />
+    <PackageVersion Include="MSTest" Version="4.5.1" />
+    <PackageVersion Include="Verify.MSTest" Version="33.3.2" />
+    <PackageVersion Include="TUnit" Version="1.73.5" />
+    <PackageVersion Include="TUnit.Core" Version="1.73.5" />
+    <PackageVersion Include="Verify.TUnit" Version="33.3.2" />
   </ItemGroup>
 </Project>
