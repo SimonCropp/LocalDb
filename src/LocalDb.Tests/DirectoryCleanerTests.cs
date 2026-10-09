@@ -79,6 +79,49 @@ public class DirectoryCleanerTests
     }
 
     [Test]
+    public void CleanRoot_FailureDoesNotThrow()
+    {
+        using var tempDir = new TempDirectory();
+        var mdfFile = CreateStaleDbFile(tempDir, "CleanerLockedDir");
+
+        // held without delete sharing, so the delete fails the same way it does when
+        // another process is cleaning or using the directory
+        using (new FileStream(mdfFile, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            DirectoryCleaner.CleanRoot(tempDir);
+        }
+
+        True(File.Exists(mdfFile));
+    }
+
+    [Test]
+    public void CleanRoot_FailureDoesNotStopOtherDirectories()
+    {
+        using var tempDir = new TempDirectory();
+        // named so the locked directory is enumerated first
+        var lockedFile = CreateStaleDbFile(tempDir, "CleanerDirA");
+        var otherFile = CreateStaleDbFile(tempDir, "CleanerDirB");
+
+        using (new FileStream(lockedFile, FileMode.Open, FileAccess.Read, FileShare.None))
+        {
+            DirectoryCleaner.CleanRoot(tempDir);
+        }
+
+        True(File.Exists(lockedFile));
+        False(Directory.Exists(Path.GetDirectoryName(otherFile)));
+    }
+
+    static string CreateStaleDbFile(string root, string name)
+    {
+        var directory = Path.Combine(root, name);
+        Directory.CreateDirectory(directory);
+        var mdfFile = Path.Combine(directory, "file.mdf");
+        File.WriteAllText(mdfFile, "content");
+        File.SetLastWriteTime(mdfFile, DateTime.Now.AddDays(-3));
+        return mdfFile;
+    }
+
+    [Test]
     public async Task OldDbFiles_RunningInstance()
     {
         var name = "CleanerRunningInstanceTest";
