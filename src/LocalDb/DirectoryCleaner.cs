@@ -9,7 +9,16 @@
 
         foreach (var instanceDirectory in Directory.EnumerateDirectories(root))
         {
-            Clean(instanceDirectory, deleteInstance: true);
+            try
+            {
+                Clean(instanceDirectory, deleteInstance: true);
+            }
+            catch (Exception exception)
+            {
+                // cleanup must never break the test run that triggered it.
+                // eg another process can be cleaning the same stale directory
+                LocalDbLogging.LogIfVerbose($"Failed to clean directory: {instanceDirectory}. {exception.Message}");
+            }
         }
     }
 
