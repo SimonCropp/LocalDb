@@ -68,6 +68,16 @@
     //                                 (PageVerifyBenchmarks): a checkpoint-heavy insert is ~5%
     //                                 faster on average, and writes the same bytes either way -
     //                                 the saving is CPU, not I/O.
+    //   query_store off             - on by default from SQL Server 2022. It keeps query, plan
+    //                                 and runtime history across restarts, which nothing reads
+    //                                 from a database that is deleted with the run. Left on,
+    //                                 each clone writes Query Store's own tables about half a
+    //                                 second after it is first opened, and every statement is
+    //                                 tracked. Benchmark (QueryStoreBenchmarks): cloning and
+    //                                 using a database is 6-10% faster, and statements that are
+    //                                 each compiled once 5-16% faster. Those unprompted writes
+    //                                 also move the log position that change detection such as
+    //                                 Delta reads, with no write from a test.
     //   read_committed_snapshot on  - READ COMMITTED uses row versioning instead of
     //                                 shared locks, preventing S/X-lock deadlocks
     //                                 between parallel transactional tests
@@ -84,6 +94,7 @@
         alter database [template] set auto_update_statistics off;
         alter database [template] set delayed_durability = forced;
         alter database [template] set page_verify none;
+        alter database [template] set query_store = off;
         alter database [template] set read_committed_snapshot on with rollback immediate;
         """;
 

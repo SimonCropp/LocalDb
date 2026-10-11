@@ -16,6 +16,7 @@ BenchmarkSwitcher.FromTypes(
     typeof(AutoCloseBenchmarks),
     typeof(PooledDatabaseBenchmarks),
     typeof(PageVerifyBenchmarks),
+    typeof(QueryStoreBenchmarks),
     typeof(PooledWriteSettingsBenchmarks),
     typeof(RollbackCostBenchmarks),
     typeof(ResetStrategyBenchmarks)

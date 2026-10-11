@@ -109,6 +109,19 @@ public class Tests
     }
 
     [Test]
+    public async Task TemplateHasQueryStoreOff()
+    {
+        // Guards against accidental removal of the ALTER DATABASE statement that turns Query
+        // Store off on the template, and against the setting not surviving the attach, as
+        // auto_close does not.
+        await using var database = await instance.Build();
+        await using var command = database.Connection.CreateCommand();
+        command.CommandText = "select actual_state_desc from sys.database_query_store_options";
+        var state = (string) (await command.ExecuteScalarAsync())!;
+        AreEqual("OFF", state);
+    }
+
+    [Test]
     public async Task RemoveData()
     {
         var entity = new TestEntity
