@@ -1,0 +1,18 @@
+<Project>
+  <!--
+    This executable hosts no tests. ReportTrxGuardTests launches it to prove a guard, and nothing
+    else should run it.
+
+    Under Microsoft.Testing.Platform, dotnet test decides what to run from
+    IsTestingPlatformApplication, not from IsTestProject, so IsTestProject=false in the project
+    file is not enough: a solution wide dotnet test runs this too, finds zero tests, and fails the
+    whole run with exit code 8.
+
+    It has to be set here rather than in the project file. NUnit3TestAdapter's targets assign it
+    from EnableNUnitRunner unconditionally, and package targets are imported after the project
+    file's own properties but before Directory.Build.targets.
+  -->
+  <PropertyGroup>
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
+  </PropertyGroup>
+</Project>

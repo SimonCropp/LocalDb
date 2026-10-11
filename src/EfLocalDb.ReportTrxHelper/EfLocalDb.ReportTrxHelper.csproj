@@ -5,6 +5,14 @@
     <EnableNUnitRunner>true</EnableNUnitRunner>
     <IsTestProject>false</IsTestProject>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <!--
+      Directory.Build.targets turns IsTestingPlatformApplication off so that dotnet test does not
+      run this. These two default to that property, and are what make this a testing platform
+      executable that accepts report-trx in the first place: the generated Main, and the
+      registration of the TRX extension.
+    -->
+    <GenerateTestingPlatformEntryPoint>true</GenerateTestingPlatformEntryPoint>
+    <GenerateSelfRegisteredExtensions>true</GenerateSelfRegisteredExtensions>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
