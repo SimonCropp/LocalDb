@@ -36,7 +36,7 @@
     <PackageVersion Include="EmptyFiles" Version="8.20.1" />
     <PackageVersion Include="SimpleInfoName" Version="3.2.1" />
     <PackageVersion Include="Verify" Version="33.3.3" />
-    <PackageVersion Include="xunit.v3" Version="4.0.1" />
+    <PackageVersion Include="xunit.v3" Version="4.0.2" />
     <PackageVersion Include="Verify.XunitV3" Version="33.3.3" />
     <PackageVersion Include="MSTest" Version="4.5.1" />
     <PackageVersion Include="Verify.MSTest" Version="33.3.2" />
