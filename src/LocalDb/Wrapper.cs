@@ -358,7 +358,8 @@ class Wrapper : IDisposable
         {
             FileExtensions.CleanDirectory(Directory);
             LocalDbApi.CreateInstance(instance);
-            LocalDbApi.StartInstance(instance);
+            // The directory was just cleaned, so recreating the instance on a failed start loses nothing
+            LocalDbApi.StartInstance(instance, recreateOnFailure: true);
             startupTask = CreateAndDetachTemplate(
                 timestamp,
                 buildTemplate,
