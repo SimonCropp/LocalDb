@@ -24,6 +24,7 @@
     <Compile Include="..\LocalDb\DbNamer.cs" />
     <Compile Include="..\LocalDb\DirectoryFinder.cs" />
     <Compile Include="..\LocalDb\ExceptionBuilder.cs" />
+    <Compile Include="..\LocalDb\StartRetry.cs" />
     <Compile Include="..\LocalDb\FileExtensions.cs" />
     <Compile Include="..\LocalDb\Guard.cs" />
     <Compile Include="..\LocalDb\LocalDbRegistryReader.cs" />

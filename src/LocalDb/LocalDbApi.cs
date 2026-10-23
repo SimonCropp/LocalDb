@@ -166,7 +166,13 @@ static partial class LocalDbApi
 
     public static void CreateInstance(string instanceName)
     {
-        createInstance(ApiVersion, instanceName, 0);
+        // Creating an instance that already exists (with the same version) succeeds
+        var result = createInstance(ApiVersion, instanceName, 0);
+        if (result < 0)
+        {
+            throw ExceptionBuilder.CreateFailure(instanceName, result);
+        }
+
         InstanceMarker.Mark(instanceName);
     }
 
@@ -177,7 +183,7 @@ static partial class LocalDbApi
         if (!localDbInstanceInfo.Exists)
         {
             CreateInstance(instance);
-            StartInstance(instance);
+            StartInstance(instance, recreateOnFailure: true);
             return State.NotExists;
         }
 
@@ -189,12 +195,30 @@ static partial class LocalDbApi
         return State.Running;
     }
 
-    public static void StartInstance(string instanceName)
+    // recreateOnFailure deletes and recreates the instance between attempts. Only pass true when
+    // the instance was just created, so no existing template is registered with it
+    public static void StartInstance(string instanceName, bool recreateOnFailure = false)
     {
-        var connection = new StringBuilder(MaxPath);
-        var size = connection.Capacity;
-
-        startInstance(instanceName, 0, connection, ref size);
+        StartRetry.Run(
+            instanceName,
+            () =>
+            {
+                // Starting an instance that is already running succeeds
+                var connection = new StringBuilder(MaxPath);
+                var size = connection.Capacity;
+                return startInstance(instanceName, 0, connection, ref size);
+            },
+            () => GetInstance(instanceName).IsRunning,
+            () =>
+            {
+                StopInstance(instanceName, ShutdownMode.KillProcess);
+                if (recreateOnFailure)
+                {
+                    DeleteInstance(instanceName);
+                    CreateInstance(instanceName);
+                }
+            },
+            Thread.Sleep);
         // also marked here, not just on create, so instances created before marking existed
         // are picked up the next time they are used
         InstanceMarker.Mark(instanceName);
