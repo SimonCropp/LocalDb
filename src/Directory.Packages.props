@@ -38,7 +38,7 @@
     <PackageVersion Include="Verify" Version="33.3.4" />
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
     <PackageVersion Include="Verify.XunitV3" Version="33.3.4" />
-    <PackageVersion Include="MSTest" Version="4.5.1" />
+    <PackageVersion Include="MSTest" Version="4.5.2" />
     <PackageVersion Include="Verify.MSTest" Version="33.3.4" />
     <PackageVersion Include="TUnit" Version="1.76.28" />
     <PackageVersion Include="TUnit.Core" Version="1.76.28" />
