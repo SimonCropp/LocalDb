@@ -10,7 +10,7 @@
     <PackageVersion Include="Fody" Version="6.9.3" />
     <PackageVersion Include="MarkdownSnippets.MsBuild" Version="29.0.0" />
     <PackageVersion Include="MethodTimer.Fody" Version="3.2.3" />
-    <PackageVersion Include="Microsoft.Data.SqlClient" Version="7.1.1" />
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="7.1.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer.NetTopologySuite" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.14" />
