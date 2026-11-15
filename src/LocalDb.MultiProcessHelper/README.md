@@ -86,7 +86,7 @@ Standard IVT plumbing — added next to the existing entries in `src/LocalDb/Int
 
 The test project does **not** want to link the helper's assembly into its own output — it only wants the helper exe to exist on disk before tests run. `ReferenceOutputAssembly="false"` says "build it, but don't add a reference to its DLL in my compile inputs." `Private="false"` says "don't copy its outputs into my bin folder." With both set, the helper builds whenever the test project does (so a fresh `dotnet test` always finds an up-to-date helper), but there's no compile-time coupling between them.
 
-The test resolves the helper path at runtime via `HelperExeResolver.cs`, which walks up from the test's `bin/<Config>/net10.0/` to find the sibling project's matching `bin/<Config>/net10.0/LocalDb.MultiProcessHelper.exe`.
+The test resolves the helper path at runtime via `HelperExeResolver.cs`, which walks up from the test's `bin/<Config>/<Tfm>/` to find the sibling project's matching `bin/<Config>/<Tfm>/LocalDb.MultiProcessHelper.exe`. The helper must target the same framework as the test project.
 
 ### `LocalDb.slnx` entry
 
