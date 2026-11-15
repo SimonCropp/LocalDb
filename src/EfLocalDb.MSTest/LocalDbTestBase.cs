@@ -82,15 +82,12 @@ public abstract partial class LocalDbTestBase<T> :
         {
             // A pooled database is disposed, never deleted: disposing rolls the test's
             // transaction back and returns the lease to the pool.
-            if (isSharedDb || isPooledDb)
-            {
-                await Database.DisposeAsync();
-            }
-            else
+            if (!isSharedDb && !isPooledDb)
             {
                 await Database.Delete();
-                await Database.DisposeAsync();
             }
+
+            await Database.DisposeAsync();
         }
 
         if (isPooledDb)
