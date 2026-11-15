@@ -658,7 +658,8 @@ The shared database is read-only and any write throws, not only `SaveChanges`: `
 <a id='snippet-SharedDbTestsMSTest'></a>
 ```cs
 [TestClass]
-public class SharedDbTests : LocalDbTestBase<TheDbContext>
+public class SharedDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [TestMethod]
     [SharedDb]
@@ -669,7 +670,7 @@ public class SharedDbTests : LocalDbTestBase<TheDbContext>
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/SharedDbTests.cs#L1-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTestsMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/SharedDbTests.cs#L1-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-SharedDbTestsMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
@@ -695,7 +696,8 @@ Those tests should be left to create a database per test, marked `[NewDb]` if `[
 <a id='snippet-PooledDbTestsMSTest'></a>
 ```cs
 [TestClass]
-public class PooledDbTests : LocalDbTestBase<TheDbContext>
+public class PooledDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [TestMethod]
     [PooledDb]
@@ -757,7 +759,7 @@ public class PooledDbTests : LocalDbTestBase<TheDbContext>
     }
 }
 ```
-<sup><a href='/src/EfLocalDb.MSTest.Tests/PooledDbTests.cs#L1-L64' title='Snippet source file'>snippet source</a> | <a href='#snippet-PooledDbTestsMSTest' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/src/EfLocalDb.MSTest.Tests/PooledDbTests.cs#L1-L65' title='Snippet source file'>snippet source</a> | <a href='#snippet-PooledDbTestsMSTest' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 
 
