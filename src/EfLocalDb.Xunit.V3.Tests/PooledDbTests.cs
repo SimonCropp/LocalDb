@@ -1,5 +1,6 @@
 // begin-snippet: PooledDbTestsXunitV3
-public class PooledDbTests : LocalDbTestBase<TheDbContext>
+public class PooledDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [Fact]
     [PooledDb]

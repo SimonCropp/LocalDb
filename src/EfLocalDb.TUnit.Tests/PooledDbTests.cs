@@ -1,5 +1,6 @@
 // begin-snippet: PooledDbTestsTUnit
-public class PooledDbTests : LocalDbTestBase<TheDbContext>
+public class PooledDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [Test]
     [PooledDb]

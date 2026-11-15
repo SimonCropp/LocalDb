@@ -1,5 +1,6 @@
 // begin-snippet: SharedDbTestsTUnit
-public class SharedDbTests : LocalDbTestBase<TheDbContext>
+public class SharedDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [Test]
     [SharedDb]

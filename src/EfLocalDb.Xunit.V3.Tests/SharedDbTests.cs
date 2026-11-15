@@ -1,5 +1,6 @@
 // begin-snippet: SharedDbTestsXunitV3
-public class SharedDbTests : LocalDbTestBase<TheDbContext>
+public class SharedDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [Fact]
     [SharedDb]
