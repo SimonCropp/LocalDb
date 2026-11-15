@@ -1,6 +1,7 @@
 // begin-snippet: PooledDbTestsMSTest
 [TestClass]
-public class PooledDbTests : LocalDbTestBase<TheDbContext>
+public class PooledDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [TestMethod]
     [PooledDb]

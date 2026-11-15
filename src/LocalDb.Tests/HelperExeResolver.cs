@@ -1,7 +1,8 @@
 // Shared lookup for helper executables that tests launch as separate processes.
-// AppContext.BaseDirectory points at <root>/src/<TestProject>/bin/<Config>/net10.0/.
+// AppContext.BaseDirectory points at <root>/src/<TestProject>/bin/<Config>/<Tfm>/.
 // Each helper builds to its own sibling project's bin folder; reuse the same
-// configuration name so Debug and Release runs both find their matching helper.
+// configuration and target framework folder names so Debug and Release runs both
+// find their matching helper. Helpers must target the same TFM as the test projects.
 
 static class HelperExeResolver
 {
@@ -15,7 +16,7 @@ static class HelperExeResolver
                 project,
                 "bin",
                 configFolder.Name,
-                "net10.0",
+                basedir.Name,
                 $"{project}.exe"));
 
         if (!File.Exists(helperPath))

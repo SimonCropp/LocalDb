@@ -1,5 +1,6 @@
 [PooledDb]
-public class ClassLevelPooledDbTests : LocalDbTestBase<TheDbContext>
+public class ClassLevelPooledDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [Test]
     public async Task UsesPooledDb() =>

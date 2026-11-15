@@ -1,4 +1,5 @@
-public class NoDbTests : LocalDbTestBase<TheDbContext>
+public class NoDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [Test]
     [NoDb]
@@ -34,7 +35,8 @@ public class NoDbTests : LocalDbTestBase<TheDbContext>
 }
 
 [NoDb]
-public class ClassLevelNoDbTests : LocalDbTestBase<TheDbContext>
+public class ClassLevelNoDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [Test]
     public async Task HasNoDatabase() =>

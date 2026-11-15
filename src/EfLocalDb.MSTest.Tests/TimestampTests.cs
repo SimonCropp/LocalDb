@@ -1,5 +1,6 @@
 [TestClass]
-public class TimestampTests : LocalDbTestBase<TimestampDbContext>
+public class TimestampTests :
+    LocalDbTestBase<TimestampDbContext>
 {
     static TimestampTests() =>
         Initialize(

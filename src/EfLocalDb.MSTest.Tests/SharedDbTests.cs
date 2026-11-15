@@ -1,6 +1,7 @@
 // begin-snippet: SharedDbTestsMSTest
 [TestClass]
-public class SharedDbTests : LocalDbTestBase<TheDbContext>
+public class SharedDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [TestMethod]
     [SharedDb]

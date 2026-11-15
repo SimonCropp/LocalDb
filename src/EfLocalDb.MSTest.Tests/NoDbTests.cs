@@ -1,5 +1,6 @@
 [TestClass]
-public class NoDbTests : LocalDbTestBase<TheDbContext>
+public class NoDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [TestMethod]
     [NoDb]
@@ -36,7 +37,8 @@ public class NoDbTests : LocalDbTestBase<TheDbContext>
 
 [TestClass]
 [NoDb]
-public class ClassLevelNoDbTests : LocalDbTestBase<TheDbContext>
+public class ClassLevelNoDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     [TestMethod]
     public void HasNoDatabase() =>

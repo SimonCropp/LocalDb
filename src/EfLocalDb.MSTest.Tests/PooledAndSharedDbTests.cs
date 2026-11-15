@@ -1,5 +1,6 @@
 [TestClass]
-public class PooledAndSharedDbTests : LocalDbTestBase<TheDbContext>
+public class PooledAndSharedDbTests :
+    LocalDbTestBase<TheDbContext>
 {
     // SetUp would throw before the test body runs, so skip it here and
     // invoke the base implementation from within the test.
