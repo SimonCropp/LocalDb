@@ -166,13 +166,18 @@ static partial class LocalDbApi
 
     public static void CreateInstance(string instanceName)
     {
-        // Creating an instance that already exists (with the same version) succeeds
-        var result = createInstance(ApiVersion, instanceName, 0);
-        if (result < 0)
-        {
-            throw ExceptionBuilder.CreateFailure(instanceName, result);
-        }
-
+        StartRetry.Run(
+            instanceName,
+            "create",
+            // Creating an instance that already exists (with the same version) succeeds. So if a
+            // failed create still registered the instance, the retry succeeds, and a broken
+            // instance is recreated by StartInstance(recreateOnFailure: true)
+            () => createInstance(ApiVersion, instanceName, 0),
+            () => GetInstance(instanceName).IsRunning,
+            // Kill any sqlservr the failed create left behind. The instance is not deleted: another
+            // process may have created it in the meantime, and deleting it would break that process
+            () => StopInstance(instanceName, ShutdownMode.KillProcess),
+            Thread.Sleep);
         InstanceMarker.Mark(instanceName);
     }
 
@@ -201,6 +206,7 @@ static partial class LocalDbApi
     {
         StartRetry.Run(
             instanceName,
+            "start",
             () =>
             {
                 // Starting an instance that is already running succeeds
