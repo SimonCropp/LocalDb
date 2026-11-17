@@ -15,29 +15,17 @@
         return new(message, exception);
     }
 
-    public static Exception StartFailure(string name, int result, int attempts)
+    // A failed create can leave a half started sqlservr, so the cleanup stops the instance for
+    // both operations
+    public static Exception RetryFailure(string operation, string name, int result, int attempts)
     {
         var message = $"""
-            Failed to start LocalDB instance after {attempts} attempts.
+            Failed to {operation} LocalDB instance after {attempts} attempts.
             {nameof(name)}: {name}
             HRESULT: {StartRetry.ToHex(result)}
 
             To cleanup perform the following actions:
              * Execute 'sqllocaldb stop {name} -k'
-             * Execute 'sqllocaldb delete {name}'
-             * Delete the instance data directory
-            """;
-        return new(message);
-    }
-
-    public static Exception CreateFailure(string name, int result)
-    {
-        var message = $"""
-            Failed to create LocalDB instance.
-            {nameof(name)}: {name}
-            HRESULT: {StartRetry.ToHex(result)}
-
-            To cleanup perform the following actions:
              * Execute 'sqllocaldb delete {name}'
              * Delete the instance data directory
             """;
