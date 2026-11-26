@@ -16,8 +16,9 @@
     }
 
     // A failed create can leave a half started sqlservr, so the cleanup stops the instance for
-    // both operations
-    public static Exception RetryFailure(string operation, string name, int result, int attempts)
+    // both operations. errorLog, the tail of the instance's error log, goes last: it is the
+    // longest part and the cleanup steps should not be buried under it
+    public static Exception RetryFailure(string operation, string name, int result, int attempts, string? errorLog)
     {
         var message = $"""
             Failed to {operation} LocalDB instance after {attempts} attempts.
@@ -29,6 +30,15 @@
              * Execute 'sqllocaldb delete {name}'
              * Delete the instance data directory
             """;
-        return new(message);
+        if (errorLog is null)
+        {
+            return new(message);
+        }
+
+        return new($"""
+            {message}
+
+            {errorLog}
+            """);
     }
 }

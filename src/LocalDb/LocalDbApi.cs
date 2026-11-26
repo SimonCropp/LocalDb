@@ -177,6 +177,7 @@ static partial class LocalDbApi
             // Kill any sqlservr the failed create left behind. The instance is not deleted: another
             // process may have created it in the meantime, and deleting it would break that process
             () => StopInstance(instanceName, ShutdownMode.KillProcess),
+            () => InstanceErrorLog.ReadTail(instanceName),
             Thread.Sleep);
         InstanceMarker.Mark(instanceName);
     }
@@ -224,6 +225,7 @@ static partial class LocalDbApi
                     CreateInstance(instanceName);
                 }
             },
+            () => InstanceErrorLog.ReadTail(instanceName),
             Thread.Sleep);
         // also marked here, not just on create, so instances created before marking existed
         // are picked up the next time they are used
