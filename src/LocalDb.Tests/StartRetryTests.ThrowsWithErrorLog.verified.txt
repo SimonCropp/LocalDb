@@ -1,0 +1,12 @@
+﻿Failed to start LocalDB instance after 3 attempts.
+name: Instance
+HRESULT: 0x89C5010A
+
+To cleanup perform the following actions:
+ * Execute 'sqllocaldb stop Instance -k'
+ * Execute 'sqllocaldb delete Instance'
+ * Delete the instance data directory
+
+Last 2 lines of error.log:
+Error: 17204, Severity: 16, State: 1.
+FCB::Open failed: Could not open file master.mdf
