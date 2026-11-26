@@ -12,13 +12,16 @@ static class StartRetry
     // LocalDBStartInstance. operation names the call ("create" or "start") in the log and the
     // exception. Between attempts recover is called so the caller can kill any half started
     // process (and optionally recreate the instance). If another process started the instance in
-    // the meantime, that is treated as success.
+    // the meantime, that is treated as success. readErrorLog is only called once every attempt
+    // has failed, and its result goes in the exception: the HRESULT alone does not say why
+    // sqlservr failed to start.
     public static void Run(
         string instanceName,
         string operation,
         Func<int> action,
         Func<bool> isRunning,
         Action recover,
+        Func<string?> readErrorLog,
         Action<TimeSpan> sleep)
     {
         var result = 0;
@@ -46,7 +49,7 @@ static class StartRetry
             sleep(Delay(attempt));
         }
 
-        throw ExceptionBuilder.RetryFailure(operation, instanceName, result, MaxAttempts);
+        throw ExceptionBuilder.RetryFailure(operation, instanceName, result, MaxAttempts, readErrorLog());
     }
 
     // Between attempt and twice attempt seconds. Callers that failed together, such as instances

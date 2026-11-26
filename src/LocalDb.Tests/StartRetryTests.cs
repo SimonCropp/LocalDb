@@ -16,6 +16,7 @@ public class StartRetryTests
             },
             () => false,
             () => recovers++,
+            () => null,
             _ => { });
         AreEqual(1, starts);
         AreEqual(0, recovers);
@@ -37,6 +38,7 @@ public class StartRetryTests
             },
             () => false,
             () => recovers++,
+            () => throw new("The error log is only read once every attempt has failed"),
             sleeps.Add);
         AreEqual(3, starts);
         AreEqual(2, recovers);
@@ -76,6 +78,7 @@ public class StartRetryTests
             () => StartRetry.SqlServerStartupFailed,
             () => true,
             () => recovers++,
+            () => null,
             _ => { });
         AreEqual(0, recovers);
     }
@@ -95,6 +98,7 @@ public class StartRetryTests
                 },
                 () => false,
                 () => { },
+                () => null,
                 _ => { }))!;
         AreEqual(StartRetry.MaxAttempts, starts);
         return Verify(exception.Message)
@@ -127,6 +131,7 @@ public class StartRetryTests
                 },
                 () => false,
                 () => recovers++,
+                () => null,
                 _ => { }))!;
         AreEqual(StartRetry.MaxAttempts, creates);
         AreEqual(StartRetry.MaxAttempts - 1, recovers);
@@ -142,5 +147,30 @@ public class StartRetryTests
                  * Execute 'sqllocaldb delete Instance'
                  * Delete the instance data directory
                 """);
+    }
+
+    [Test]
+    public Task ThrowsWithErrorLog()
+    {
+        var reads = 0;
+        var exception = Throws<Exception>(
+            () => StartRetry.Run(
+                "Instance",
+                "start",
+                () => StartRetry.SqlServerStartupFailed,
+                () => false,
+                () => { },
+                () =>
+                {
+                    reads++;
+                    return """
+                        Last 2 lines of error.log:
+                        Error: 17204, Severity: 16, State: 1.
+                        FCB::Open failed: Could not open file master.mdf
+                        """;
+                },
+                _ => { }))!;
+        AreEqual(1, reads);
+        return Verify(exception.Message);
     }
 }
